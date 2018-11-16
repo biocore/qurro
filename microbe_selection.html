@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- Based on the Basic Example in https://github.com/vega/vega-embed -->
+<html>
+    <head>
+        <title>
+            Songbird Skin Metagenome Visualization
+        </title>
+        <!-- jQuery isn't needed for Vega et al., but it's useful for testing
+            stuff in code -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega@3/build/vega.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-lite@2.6.0/build/vega-lite.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.23.1/build/vega-embed.min.js"></script>
+        <script src="linked_plots.js"></script>
+    </head>
+
+    <body>
+        <table style="width:100%;">
+            <tr>
+                <td style="width:50%;">
+                    <h3>Rank Plot</h3>
+                    <input type="file" id="rankPlotJSONFileSelector"
+                        onChange="ssmv.readJSONFile('r');" />
+                </td>
+                <td style="width:50%;">
+                    <h3>Sample Plot</h3>
+                    <input type="file" id="samplePlotJSONFileSelector"
+                        onChange="ssmv.readJSONFile('s');" />
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:right;"><div id="rankPlot"></div></td>
+                <td style="text-align:left;"><div id="samplePlot"></div></td>
+            </tr>
+        </table>
+    </body>
+</html>
