@@ -167,12 +167,23 @@ ssmv.updateBalanceMulti = function() {
     return 5;
 };
 
-ssmv.updateSamplePlotMulti = function() {
-    // Look at search queries for #topSearch and #botSearch, then filter taxa
-    // accordingly to produce lists of taxa as ssmv.topTaxa and ssmv.bottomTaxa
-    // then modify plot
-    // TODO abstract base of this invocation of change() to its own func that
-    // both updateSamplePlot functions call
+ssmv.changeSamplePlot = function(updateBalanceFunction) {
+    // Either modify the scatterplot with the new
+    // balances, or make a new JSON data object for the
+    // scatterplot with the new balances and just make the
+    // scatterplot point to that.
+    //
+    // Right now we're doing this in-place using modify(), but if needed
+    // (due to issues with filtering infinities and NaNs)
+    // there shouldn't be a reason we can't just scrap the chart
+    // every time it changes. It doesn't take *that* long to draw
+    // it. (Alternately, remove every point, update every point,
+    // and then insert every point, although that might be a pain
+    // slash require calling run() twice. Look into it.)
+    //
+    // Based on Jeffrey Heer's comment here:
+    // https://github.com/vega/vega/issues/1028#issuecomment-334295328
+    // (This is where I learned that vega.changeset().modify() existed.)
     var dataName = ssmv.samplePlotJSON["data"]["name"];
     ssmv.samplePlotView.change(dataName, vega.changeset().modify(
         // Vega utility function: just returns true
@@ -181,8 +192,15 @@ ssmv.updateSamplePlotMulti = function() {
         // sample we want to change)
         ssmv.samplePlotJSON["datasets"]["col_names"]["balance"],
         // function to run to determine what the new balances are
-        ssmv.updateBalanceMulti
+        updateBalanceFunction
     )).run();
+};
+
+ssmv.updateSamplePlotMulti = function() {
+    // Look at search queries for #topSearch and #botSearch, then filter taxa
+    // accordingly to produce lists of taxa as ssmv.topTaxa and ssmv.bottomTaxa
+    // then modify plot
+    ssmv.changeSamplePlot(ssmv.updateBalanceMulti);
 };
 
 ssmv.updateSamplePlotSingle = function() {
@@ -211,31 +229,8 @@ ssmv.updateSamplePlotSingle = function() {
                     + ssmv.newTaxonHigh.replace(/;/g, downLvl) + "}}{\\text{"
                     + ssmv.newTaxonLow.replace(/;/g, downLvl) + "}}\\bigg)";
                 MathJax.Hub.Queue(["Text", logRatioDisp, newEq]);
-                // Either modify the scatterplot with the new
-                // balances, or make a new JSON data object for the
-                // scatterplot with the new balances and just make the
-                // scatterplot point to that.
-                //
-                // Right now we're doing this in-place using modify(), but if needed
-                // (due to issues with filtering infinities and NaNs)
-                // there shouldn't be a reason we can't just scrap the chart
-                // every time it changes. It doesn't take *that* long to draw
-                // it. (Alternately, remove every point, update every point,
-                // and then insert every point, although that might be a pain
-                // slash require calling run() twice. Look into it.)
-                //
-                // Based on Jeffrey Heer's comment here:
-                // https://github.com/vega/vega/issues/1028#issuecomment-334295328
-                // (This is where I learned that vega.changeset().modify() existed.)
-                ssmv.samplePlotView.change(dataName, vega.changeset().modify(
-                    // Vega utility function: just returns true
-                    vega.truthy,
-                    // column int for "balance" (this is the column for each
-                    // sample we want to change)
-                    ssmv.samplePlotJSON["datasets"]["col_names"]["balance"],
-                    // function to run to determine what the new balances are
-                    ssmv.updateBalanceSingle
-                )).run();
+
+                ssmv.changeSamplePlot(ssmv.updateBalanceSingle);
             }
         }
     }
