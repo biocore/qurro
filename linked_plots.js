@@ -10,6 +10,9 @@ ssmv.newTaxonLow = undefined;
 ssmv.newTaxonHigh = undefined;
 ssmv.oldTaxonLow = undefined;
 ssmv.oldTaxonHigh = undefined;
+// For selections of potentially many taxa (not via the rank plot)
+ssmv.topTaxa = undefined;
+ssmv.botTaxa = undefined;
 ssmv.samplePlotJSON = {};
 
 // Based on loadLocalDB() in MetagenomeScope: viewer/index.html
@@ -87,7 +90,8 @@ ssmv.makeSamplePlot = function(spec) {
 // its lineage -- so, at any level).
 // If startsWith is true, this will only filter to taxa names that start with
 // the phrase (at the first apparent part of their lineage).
-ssmv.filterTaxaByPhrase = function(phrase, startsWith) {
+// endsWith works the same way.
+ssmv.filterTaxaByPhrase = function(phrase, startsWith, endsWith) {
     var taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
     var filteredTaxa = [];
     for (var ti = 0; ti < taxa.length; ti++) {
@@ -98,6 +102,11 @@ ssmv.filterTaxaByPhrase = function(phrase, startsWith) {
         if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] > 24) {
             if (startsWith) {
                 if (taxa[ti].startsWith(phrase)) {
+                    filteredTaxa.push(taxa[ti]);
+                }
+            }
+            else if (endsWith) {
+                if (taxa[ti].endsWith(phrase)) {
                     filteredTaxa.push(taxa[ti]);
                 }
             }
@@ -153,18 +162,25 @@ ssmv.updateBalanceSingle = function(sampleRow) {
     return newBalance;
 };
 
-ssmv.updateBalanceMulti = function() {
+ssmv.updateBalanceMulti = function(sampleRow) {
 
     // NOTE: For multiple taxa (based on the stuff we hardcoded in
     // as virusTaxa and staphTaxa -- should be made automated soon)
-    // TODO use ssmv.topTaxa and ssmv.BottomTaxa to compute these
     // test cases in comparison to first scatterplot in Jupyter
     // Notebook: 1517, 1302.
-    //newTop = ssmv.sumAbundancesForSampleTaxa(sampleRow,
-    //    ssmv.virusTaxa, true);
-    //newBot = ssmv.sumAbundancesForSampleTaxa(sampleRow,
-    //    ssmv.staphTaxa, true);
-    return 5;
+    newTop = ssmv.sumAbundancesForSampleTaxa(sampleRow,
+        ssmv.topTaxa, true);
+    newBot = ssmv.sumAbundancesForSampleTaxa(sampleRow,
+        ssmv.botTaxa, true);
+    var newBalance = newTop - newBot;
+    if (newBalance === Infinity || newBalance === -Infinity || isNaN(newBalance)) {
+        // TODO SUPER BAD DON'T KEEP THIS IN INSTEAD FILTER OUT THE
+        // POINTS FOR THIS PLOT BY REMOVING AND THEN INSERTING
+        // EVERYTHING EVERY TIME YOU RECALCULATE THE
+        // SCATTERPLOT
+        newBalance = 0;
+    }
+    return newBalance;
 };
 
 ssmv.changeSamplePlot = function(updateBalanceFunction) {
@@ -200,6 +216,31 @@ ssmv.updateSamplePlotMulti = function() {
     // Look at search queries for #topSearch and #botSearch, then filter taxa
     // accordingly to produce lists of taxa as ssmv.topTaxa and ssmv.bottomTaxa
     // then modify plot
+    var topConstraint = $("#topSearch").val();
+    var botConstraint = $("#botSearch").val();
+    // TODO abstract this to function that you can call twice (once with
+    // topConstraint, ssmv.topTaxa, and "#topText", and next with the
+    // bot-versions of that)
+    if (topConstraint === "contains") {
+        ssmv.topTaxa = ssmv.filterTaxaByPhrase($("#topText").val());
+    }
+    else if (topConstraint === "startswith") {
+        ssmv.topTaxa = ssmv.filterTaxaByPhrase($("#topText").val(), true);
+    }
+    else if (topConstraint === "endswith") {
+        ssmv.topTaxa = ssmv.filterTaxaByPhrase($("#topText").val(), false,
+            true);
+    }
+    if (botConstraint === "contains") {
+        ssmv.botTaxa = ssmv.filterTaxaByPhrase($("#botText").val());
+    }
+    else if (botConstraint === "startswith") {
+        ssmv.botTaxa = ssmv.filterTaxaByPhrase($("#botText").val(), true);
+    }
+    else if (botConstraint === "endswith") {
+        ssmv.botTaxa = ssmv.filterTaxaByPhrase($("#botText").val(), false,
+            true);
+    }
     ssmv.changeSamplePlot(ssmv.updateBalanceMulti);
 };
 
