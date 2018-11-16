@@ -174,6 +174,20 @@ ssmv.updateSamplePlot = function() {
 
                 ssmv.taxonLowCol = ssmv.samplePlotJSON["datasets"]["col_names"][ssmv.newTaxonLow];
                 ssmv.taxonHighCol = ssmv.samplePlotJSON["datasets"]["col_names"][ssmv.newTaxonHigh];
+                // Update logRatioDisplay re: new log ratio
+                var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
+                // \rightarrow can only be used in LaTeX's "math mode," hence
+                // why we have to temporarily leave the \text{} environment
+                // before using it
+                var downLvl = "} \\rightarrow \\text{";
+                // We use a regular expression as the pattern to match in
+                // .replace() because JS' .replace(), if a string is specified
+                // as the pattern to match, only replaces the first occurrence
+                // (per the MDN)
+                var newEq = "\\log\\bigg(\\frac{\\text{"
+                    + ssmv.newTaxonHigh.replace(/;/g, downLvl) + "}}{\\text{"
+                    + ssmv.newTaxonLow.replace(/;/g, downLvl) + "}}\\bigg)";
+                MathJax.Hub.Queue(["Text", logRatioDisp, newEq]);
                 // Either modify the scatterplot with the new
                 // balances, or make a new JSON data object for the
                 // scatterplot with the new balances and just make the
