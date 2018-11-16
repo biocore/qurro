@@ -157,7 +157,7 @@ ssmv.updateBalanceSingle = function(sampleRow) {
         // POINTS FOR THIS PLOT BY REMOVING AND THEN INSERTING
         // EVERYTHING EVERY TIME YOU RECALCULATE THE
         // SCATTERPLOT
-        newBalance = 0;
+        newBalance = 10;
     }
     return newBalance;
 };
@@ -178,7 +178,7 @@ ssmv.updateBalanceMulti = function(sampleRow) {
         // POINTS FOR THIS PLOT BY REMOVING AND THEN INSERTING
         // EVERYTHING EVERY TIME YOU RECALCULATE THE
         // SCATTERPLOT
-        newBalance = 0;
+        newBalance = 10;
     }
     return newBalance;
 };
@@ -242,6 +242,9 @@ ssmv.updateSamplePlotMulti = function() {
             true);
     }
     ssmv.changeSamplePlot(ssmv.updateBalanceMulti);
+    // Clear the single-microbe association text to be clearer
+    var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
+    MathJax.Hub.Queue(["Text", logRatioDisp, ""]);
 };
 
 ssmv.updateSamplePlotSingle = function() {
