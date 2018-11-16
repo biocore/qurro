@@ -58,7 +58,7 @@ ssmv.makeRankPlot = function(spec) {
                     ssmv.newTaxonLow = i["datum"]["index"];
                     console.log("Set newTaxonLow: " +
                         ssmv.newTaxonLow);
-                    //ssmv.updateSamplePlot();
+                    //ssmv.updateSamplePlotSingle();
                 }
             }
         });
@@ -69,7 +69,7 @@ ssmv.makeRankPlot = function(spec) {
                     ssmv.newTaxonHigh = i["datum"]["index"];
                     console.log("Set newTaxonHigh: " +
                         ssmv.newTaxonHigh);
-                    ssmv.updateSamplePlot();
+                    ssmv.updateSamplePlotSingle();
                 }
             }
         });
@@ -135,19 +135,10 @@ ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa, takeTheLog) {
 /* Use abundance data to compute the new log ratio ("balance") values of
  * log(high taxon abundance) - log(low taxon abundance) for a given sample.
  */
-ssmv.updateBalance = function(sampleRow) {
+ssmv.updateBalanceSingle = function(sampleRow) {
     // For single taxa (based on selection that was just made)
     var newTop = Math.log(sampleRow[ssmv.taxonHighCol]);
     var newBot = Math.log(sampleRow[ssmv.taxonLowCol]);
-
-    // NOTE: For multiple taxa (based on the stuff we hardcoded in
-    // above -- should be made automated soon)
-    // test cases in comparison to first scatterplot in Jupyter
-    // Notebook: 1517, 1302.
-    //newTop = ssmv.sumAbundancesForSampleTaxa(sampleRow,
-    //    ssmv.virusTaxa, true);
-    //newBot = ssmv.sumAbundancesForSampleTaxa(sampleRow,
-    //    ssmv.staphTaxa, true);
 
     var newBalance = newTop - newBot;
 
@@ -160,9 +151,41 @@ ssmv.updateBalance = function(sampleRow) {
         newBalance = 0;
     }
     return newBalance;
-}
+};
 
-ssmv.updateSamplePlot = function() {
+ssmv.updateBalanceMulti = function() {
+
+    // NOTE: For multiple taxa (based on the stuff we hardcoded in
+    // as virusTaxa and staphTaxa -- should be made automated soon)
+    // TODO use ssmv.topTaxa and ssmv.BottomTaxa to compute these
+    // test cases in comparison to first scatterplot in Jupyter
+    // Notebook: 1517, 1302.
+    //newTop = ssmv.sumAbundancesForSampleTaxa(sampleRow,
+    //    ssmv.virusTaxa, true);
+    //newBot = ssmv.sumAbundancesForSampleTaxa(sampleRow,
+    //    ssmv.staphTaxa, true);
+    return 5;
+};
+
+ssmv.updateSamplePlotMulti = function() {
+    // Look at search queries for #topSearch and #botSearch, then filter taxa
+    // accordingly to produce lists of taxa as ssmv.topTaxa and ssmv.bottomTaxa
+    // then modify plot
+    // TODO abstract base of this invocation of change() to its own func that
+    // both updateSamplePlot functions call
+    var dataName = ssmv.samplePlotJSON["data"]["name"];
+    ssmv.samplePlotView.change(dataName, vega.changeset().modify(
+        // Vega utility function: just returns true
+        vega.truthy,
+        // column int for "balance" (this is the column for each
+        // sample we want to change)
+        ssmv.samplePlotJSON["datasets"]["col_names"]["balance"],
+        // function to run to determine what the new balances are
+        ssmv.updateBalanceMulti
+    )).run();
+};
+
+ssmv.updateSamplePlotSingle = function() {
     if (ssmv.newTaxonLow !== undefined && ssmv.newTaxonHigh !== undefined) {
         if (ssmv.newTaxonLow !== null && ssmv.newTaxonHigh !== null) {
             var lowsDiffer = (ssmv.oldTaxonLow != ssmv.newTaxonLow);
@@ -211,7 +234,7 @@ ssmv.updateSamplePlot = function() {
                     // sample we want to change)
                     ssmv.samplePlotJSON["datasets"]["col_names"]["balance"],
                     // function to run to determine what the new balances are
-                    ssmv.updateBalance
+                    ssmv.updateBalanceSingle
                 )).run();
             }
         }

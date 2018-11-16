@@ -5,14 +5,17 @@
         <title>
             Songbird Skin Metagenome Visualization
         </title>
-        <!-- jQuery isn't needed for Vega et al., but it's useful for testing
-            stuff in code -->
+        <!-- jQuery, Vega, Vega-Lite, Vega-Embed, MathJax -->
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vega@3/build/vega.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vega-lite@2.6.0/build/vega-lite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.23.1/build/vega-embed.min.js"></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
         <script src="linked_plots.js"></script>
+        <style>
+            h3,p { text-align: center; }
+            body,input,button { font-size: large; }
+        </style>
     </head>
 
     <body>
@@ -24,7 +27,7 @@
                         onChange="ssmv.readJSONFile('r');" />
                 </td>
                 <td style="width:50%;">
-                    <h3>Sample Plot</h3>
+                    <h3>Scatterplot of Samples</h3>
                     <input type="file" id="samplePlotJSONFileSelector"
                         onChange="ssmv.readJSONFile('s');" />
                 </td>
@@ -34,6 +37,36 @@
                 <td style="text-align:left;"><div id="samplePlot"></div></td>
             </tr>
         </table>
-        <p style="text-align:center;" id="logRatioDisplay">\[{}\]</p>
+        <h3>Single-Microbe Selections</h3>
+        <p id="logRatioDisplay">
+        \[\text{Select two microbes from the rank plot (left) to display their log ratios for each sample on the sample scatterplot (right).}\]
+        </p>
+        <h3>Multi-Microbe Selections</h3>
+        <p>
+        \[\text{Use the controls here to show more complex log ratios.}\]
+
+        Filter numerator to taxa that
+        <select id="topSearch">
+            <option value="contains">contain</option>
+            <option value="startswith">start with</option>
+            <option value="endswith">end with</option>
+        </select>
+        <input type="text" id="topText" size="40"></input>
+        </p>
+        <p>
+        Filter denominator to taxa that
+        <select id="botSearch">
+            <option value="contains">contain</option>
+            <option value="startswith">start with</option>
+            <option value="endswith">end with</option>
+        </select>
+        <input type="text" id="botText" size="40"></input>
+        </p>
+
+        <p>
+        <button onclick="ssmv.updateSamplePlotMulti();">
+            Regenerate sample plot
+        </button>
+        </p>
     </body>
 </html>
