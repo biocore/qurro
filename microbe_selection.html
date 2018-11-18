@@ -71,6 +71,25 @@
                         Regenerate sample plot
                     </button>
                     </p>
+                    <p>
+                        <label for="selectMicrobesFileSelector">
+                            <strong>
+                                Upload "Select Microbes" List:
+                            </strong>
+                        </label>
+                        <input type="file" id="selectMicrobesFileSelector"
+                            onChange="ssmv.uploadSelectMicrobesFile();" />
+                    </p>
+                    <p>
+                    <label for="zeroFillInput">
+                        <strong>
+                            Value to fill in for zero-abundance microbes:
+                        </strong>
+                    </label>
+                    <input type="number" id="zeroFillInput" min="0" max="1000"
+                        value="0">
+                    </input>
+                    </p>
                 </td>
         </table>
     </body>

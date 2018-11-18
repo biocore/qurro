@@ -4,6 +4,10 @@
 
 // We use the following "ssmv" namespace for everything here, to avoid
 // cluttering the global namespace (and to avoid potential collisions).
+// I'll be honest: I named this "ssmv" on Wednesday and I kinda already forgot
+// what that stands for. I *think* it could be Songbird Skin Metagenome
+// Visualization, but it could also be Sample Scatterplot Microbe Visualization
+// or whatever. Uh I'm gonna just ignore this for now.
 
 var ssmv = {};
 ssmv.newTaxonLow = undefined;
@@ -14,6 +18,9 @@ ssmv.oldTaxonHigh = undefined;
 ssmv.topTaxa = undefined;
 ssmv.botTaxa = undefined;
 ssmv.samplePlotJSON = {};
+// We set ssmv.selectMicrobes to undefined when no select microbes file has
+// been provided yet.
+ssmv.selectMicrobes = undefined;
 
 ssmv.makeRankPlot = function(spec) {
     vegaEmbed("#rankPlot", spec, {"actions": false}).then(function(result) {
@@ -60,11 +67,26 @@ ssmv.makeSamplePlot = function(spec) {
 // Returns list of taxa names that contain the phrase.
 // Note that the phrase can occur anywhere in the taxa name (which includes
 // its lineage -- so, at any level).
+//
+// If ssmv.selectMicrobes is not undefined, this will only search for microbes
+// within that list.
+//
 // If startsWith is true, this will only filter to taxa names that start with
 // the phrase (at the first apparent part of their lineage).
-// endsWith works the same way.
+//
+// endsWith works analogously. (If both startsWith and endsWith are true,
+// startsWith takes priority.)
 ssmv.filterTaxaByPhrase = function(phrase, startsWith, endsWith) {
-    var taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
+    var taxa;
+    if (ssmv.selectMicrobes !== undefined) {
+        // If a "select microbes" list is available, just search through that.
+        taxa = ssmv.selectMicrobes;
+    }
+    else {
+        // If that sort of list isn't available, then search through every
+        // microbe mentioned in the sample data.
+        taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
+    }
     var filteredTaxa = [];
     for (var ti = 0; ti < taxa.length; ti++) {
         // NOTE this check filters out sample metadata/etc. Everything after
@@ -93,24 +115,29 @@ ssmv.filterTaxaByPhrase = function(phrase, startsWith, endsWith) {
 };
 
 /* Given a "row" of the sample plot's JSON for a sample, and given an array
- * of taxa, return the sum of the sample's abundances for those particular taxa.
- *
- * takeTheLog is an optional argument. If it is specified as true, then this
- * returns the natural log of the abundance. Otherwise it just returns
- * the abundance without it being passed through Math.log().
+ * of taxa, return the log of the sum of the sample's abundances for those
+ * particular taxa.
  */
-ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa, takeTheLog) {
+ssmv.logSumAbundancesForSampleTaxa = function(sampleRow, taxa) {
     var abundance = 0;
+    // Figure this out now, so we don't have to do it every step of the loop
+    // ALSO: for some reason, getting the value of an input explicitly marked
+    // as having type="number" still gives you the number encased in a string.
+    // So if you add this value to something without calling parseInt() on it
+    // first... then instead of adding 0, you'll add "0", and thereby increase
+    // it by an order of magnitude... which is uh yeah that's a thing that I
+    // just spent an hour debugging.
+    var zfi = parseFloat($("#zeroFillInput").val());
     for (var t = 0; t < taxa.length; t++) {
         var colIndex = ssmv.samplePlotJSON["datasets"]["col_names"][taxa[t]];
-        abundance += sampleRow[colIndex];
+        if (sampleRow[colIndex] === 0) {
+            abundance += zfi;
+        }
+        else {
+            abundance += sampleRow[colIndex];
+        }
     }
-    if (takeTheLog) {
-        return Math.log(abundance);
-    }
-    else {
-        return abundance;
-    }
+    return Math.log(abundance);
 }
 
 /* Use abundance data to compute the new log ratio ("balance") values of
@@ -140,10 +167,10 @@ ssmv.updateBalanceMulti = function(sampleRow) {
     // as virusTaxa and staphTaxa -- should be made automated soon)
     // test cases in comparison to first scatterplot in Jupyter
     // Notebook: 1517, 1302.
-    newTop = ssmv.sumAbundancesForSampleTaxa(sampleRow,
-        ssmv.topTaxa, true);
-    newBot = ssmv.sumAbundancesForSampleTaxa(sampleRow,
-        ssmv.botTaxa, true);
+    newTop = ssmv.logSumAbundancesForSampleTaxa(sampleRow,
+        ssmv.topTaxa);
+    newBot = ssmv.logSumAbundancesForSampleTaxa(sampleRow,
+        ssmv.botTaxa);
     var newBalance = newTop - newBot;
     if (newBalance === Infinity || newBalance === -Infinity || isNaN(newBalance)) {
         // TODO SUPER BAD DON'T KEEP THIS IN INSTEAD FILTER OUT THE
@@ -249,6 +276,48 @@ ssmv.updateSamplePlotSingle = function() {
                 ssmv.changeSamplePlot(ssmv.updateBalanceSingle);
             }
         }
+    }
+};
+
+// Read through the text of a select microbes file (assumed to be just one line
+// per microbe) and store it in ssmv.selectMicrobes.
+ssmv.parseSelectMicrobesFile = function(fileText) {
+    // naive solution
+    //ssmv.selectMicrobes = fileText.split("\n");
+    ssmv.selectMicrobes = [];
+    var currMicrobe = "";
+    var currMicrobeTrimmed = "";
+    for (var i = 0; i < fileText.length; i++) {
+        if (fileText[i] === "\n") {
+            currMicrobeTrimmed = currMicrobe.trim();
+            if (currMicrobeTrimmed.length > 0) {
+                ssmv.selectMicrobes.push(currMicrobeTrimmed);
+            }
+            currMicrobe = "";
+            currMicrobeTrimmed = "";
+        }
+        else {
+            currMicrobe += fileText[i];
+        }
+    }
+    if (ssmv.selectMicrobes.length < 2) {
+        alert("Please upload a select microbes file with at least two "
+            + "microbes.");
+        ssmv.selectMicrobes = undefined;
+    }
+}
+
+// Based on loadLocalDB() in MetagenomeScope: viewer/index.html
+ssmv.uploadSelectMicrobesFile = function() {
+    var fr = new FileReader();
+    var smFile = $("#selectMicrobesFileSelector").prop("files")[0];
+    if (smFile !== undefined) {
+        fr.onload = function(e) {
+            if (e.target.readyState === FileReader.DONE) {
+                ssmv.parseSelectMicrobesFile(e.target.result);
+            }
+        }
+        fr.readAsText(smFile);
     }
 };
 
