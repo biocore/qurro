@@ -32,41 +32,46 @@
                 <td style="text-align:right;"><div id="rankPlot"></div></td>
                 <td style="text-align:left;"><div id="samplePlot"></div></td>
             </tr>
+            <tr>
+                <td>
+                    <h3>Single-Microbe Selections</h3>
+                    <p id="logRatioDisplay">
+                    Select two microbes from the rank plot (left) to display their log ratios for each sample in the sample scatterplot (right).
+                    \[\]
+                    </p>
+                </td>
+                <td>
+                    <h3>Multi-Microbe Selections</h3>
+                    <p>
+                    Use the controls here to show more complex log ratios in the sample
+                    scatterplot.
+                    </p>
+                    <p>
+
+                    Filter numerator to taxa that
+                    <select id="topSearch">
+                        <option value="contains">contain</option>
+                        <option value="startswith">start with</option>
+                        <option value="endswith">end with</option>
+                    </select>
+                    <input type="text" id="topText" size="40"></input>
+                    </p>
+                    <p>
+                    Filter denominator to taxa that
+                    <select id="botSearch">
+                        <option value="contains">contain</option>
+                        <option value="startswith">start with</option>
+                        <option value="endswith">end with</option>
+                    </select>
+                    <input type="text" id="botText" size="40"></input>
+                    </p>
+
+                    <p>
+                    <button onclick="ssmv.updateSamplePlotMulti();">
+                        Regenerate sample plot
+                    </button>
+                    </p>
+                </td>
         </table>
-        <h3>Single-Microbe Selections</h3>
-        <p id="logRatioDisplay">
-        Select two microbes from the rank plot (left) to display their log ratios for each sample in the sample scatterplot (right).
-        \[\]
-        </p>
-        <h3>Multi-Microbe Selections</h3>
-        <p>
-        Use the controls here to show more complex log ratios in the sample
-        scatterplot.
-        </p>
-        <p>
-
-        Filter numerator to taxa that
-        <select id="topSearch">
-            <option value="contains">contain</option>
-            <option value="startswith">start with</option>
-            <option value="endswith">end with</option>
-        </select>
-        <input type="text" id="topText" size="40"></input>
-        </p>
-        <p>
-        Filter denominator to taxa that
-        <select id="botSearch">
-            <option value="contains">contain</option>
-            <option value="startswith">start with</option>
-            <option value="endswith">end with</option>
-        </select>
-        <input type="text" id="botText" size="40"></input>
-        </p>
-
-        <p>
-        <button onclick="ssmv.updateSamplePlotMulti();">
-            Regenerate sample plot
-        </button>
-        </p>
     </body>
 </html>
