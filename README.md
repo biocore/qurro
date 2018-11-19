@@ -40,3 +40,8 @@ Loaded via CDN in the web visualization interface:
 
 Used to generate input JSON files for the visualization interface:
 - [Altair](https://altair-viz.github.io/)
+
+## License
+
+This tool is licensed under the [BSD 3-clause license](https://en.wikipedia.org/wiki/BSD_licenses#3-clause_license_(%22BSD_License_2.0%22,_%22Revised_BSD_License%22,_%22New_BSD_License%22,_or_%22Modified_BSD_License%22)).
+Our particular version of the license is based on [scikit-bio](https://github.com/biocore/scikit-bio)'s [license](https://github.com/biocore/scikit-bio/blob/master/COPYING.txt).
