@@ -32,7 +32,8 @@ included in this repository.
 
 ## Running the tool
 
-First off, clone this repository to your system.
+First off, clone this repository to your system. This assumes you have git
+installed on your system.
 
 ```bash
 git clone https://github.com/fedarko/RankRatioViz.git
@@ -42,16 +43,23 @@ To generate the JSON files using `gen_plots.py`: (you only need to do this if
 you're using new data, since the repository includes JSON files for the Byrd et
 al. 2017 data)
 
-1. Install NumPy, pandas, biom, and Altair (note that you may need to build
+1. Install Python 3 (if needed -- it's probably already installed on your
+   system), NumPy, pandas, biom, and Altair (note that you may need to build
    Altair from source, in order to get
    [this change](https://github.com/altair-viz/altair/pull/1143) integrated).
-2. Run `python3 gen_plots.py` from within this repository's folder
+
+2. Run `gen_plots.py` from within this repository's folder:
+   ```bash
+   python3 gen_plots.py
+   ```
 
 To view a visualization of the resulting rank plot and sample scatterplot
 defined by the JSON files:
 
 1. Run a simple server using python from within this repository's folder:
-   `python3 -m http.server`
+   ```bash
+   python3 -m http.server
+   ```
 
 2. Open your browser to `localhost:8000/microbe_selection.html`. The JSON files
    should automatically be loaded.
