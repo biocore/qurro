@@ -24,6 +24,8 @@ ssmv.newTaxonLow = undefined;
 ssmv.newTaxonHigh = undefined;
 ssmv.oldTaxonLow = undefined;
 ssmv.oldTaxonHigh = undefined;
+ssmv.taxonLowCol = undefined;
+ssmv.taxonHighCol = undefined;
 // For selections of potentially many taxa (not via the rank plot)
 ssmv.topTaxa = undefined;
 ssmv.botTaxa = undefined;
@@ -195,7 +197,20 @@ ssmv.updateBalanceMulti = function(sampleRow) {
 // Given a "row" of data about a rank, return its new classification depending
 // on the new selection that just got made.
 ssmv.updateRankColorSingle = function(rankRow) {
-    return "Both";
+    if (rankRow["index"] === ssmv.newTaxonHigh) {
+        if (rankRow["index"] === ssmv.newTaxonLow) {
+            return "Both";
+        }
+        else {
+            return "Numerator";
+        }
+    }
+    else if (rankRow["index"] === ssmv.newTaxonLow) {
+        return "Denominator";
+    }
+    else {
+        return "None";
+    }
 }
 
 ssmv.updateRankColorMulti = function(rankRow) {
