@@ -38,7 +38,11 @@ Loaded via CDN in the web visualization interface:
 - [MathJax](https://www.mathjax.org/)
 - [jQuery](https://jquery.com/)
 
-Used to generate input JSON files for the visualization interface:
+Used to generate input JSON files for the visualization interface in
+`gen_plots.py`:
+- [NumPy](http://www.numpy.org/)
+- [pandas](https://pandas.pydata.org/)
+- [biom](http://biom-format.org/)
 - [Altair](https://altair-viz.github.io/)
 
 ## License
