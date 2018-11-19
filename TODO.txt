@@ -8,10 +8,6 @@
 *2. Fix bug in the Malassezia/Propionibacterium thing? just compare divergent
    points in worst case. probably something dumb.
 
-3. Make log equation show at bottom (or top) of page, not in just a table col
-   (since that messes with page positioning and shifts stuff over/expands
-   window/etc)
-
 4. If either the numerator or denominator's text field (from the multi
    selections) are empty, handle it accordingly: JS treats "" as being in
    every string, so uh gotta figure out a workaround. Just checking if
