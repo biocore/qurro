@@ -31,9 +31,12 @@ included in this repository.
 
 ## Other tools used
 
-- Vega
-- Vega-Lite
-- Vega-Embed
-- Altair
-- MathJax
-- jQuery
+Loaded via CDN in the web visualization interface:
+- [Vega](https://vega.github.io/vega/)
+- [Vega-Lite](https://vega.github.io/vega-lite/)
+- [Vega-Embed](https://github.com/vega/vega-embed)
+- [MathJax](https://www.mathjax.org/)
+- [jQuery](https://jquery.com/)
+
+Used to generate input JSON files for the visualization interface:
+- [Altair](https://altair-viz.github.io/)
