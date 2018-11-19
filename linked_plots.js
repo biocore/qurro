@@ -20,6 +20,7 @@ ssmv.samplePlotView = undefined;
 ssmv.rankPlotJSON = {};
 ssmv.samplePlotJSON = {};
 // Used for selections of log ratios between single taxa (via the rank plot)
+ssmv.onHigh = true;
 ssmv.newTaxonLow = undefined;
 ssmv.newTaxonHigh = undefined;
 ssmv.oldTaxonLow = undefined;
@@ -36,34 +37,24 @@ ssmv.selectMicrobes = undefined;
 ssmv.makeRankPlot = function(spec) {
     vegaEmbed("#rankPlot", spec, {"actions": false}).then(function(result) {
         ssmv.rankPlotView = result.view;
-        // NOTE ideally we'd update this on dragover (since that'd
-        // let us continuously update the scatterplot as we brush
-        // the rank plot), but for some reason I can't get that to
-        // work. So I'm just using mousedown/mouseup, which works
-        // for now (with the stipulation that you need to have
-        // mousedown/mouseup be on top of the bar chart).
-        //
-        // The paradigm of this temporary mechanism is: click down to
-        // set the low taxon, release to set high taxon
-        ssmv.rankPlotView.addEventListener("mousedown", function(e, i) {
+        // Set callbacks to let users make selections in the ranks plot
+        ssmv.rankPlotView.addEventListener("click", function(e, i) {
             if (i !== null && i !== undefined) {
                 if (i["mark"]["marktype"] === "rect") {
-                    ssmv.oldTaxonLow = ssmv.newTaxonLow;
-                    ssmv.newTaxonLow = i["datum"]["index"];
-                    console.log("Set newTaxonLow: " +
-                        ssmv.newTaxonLow);
-                    //ssmv.updateSamplePlotSingle();
-                }
-            }
-        });
-        ssmv.rankPlotView.addEventListener("mouseup", function(e, i) {
-            if (i !== null && i !== undefined) {
-                if (i["mark"]["marktype"] === "rect") {
-                    ssmv.oldTaxonHigh = ssmv.newTaxonHigh;
-                    ssmv.newTaxonHigh = i["datum"]["index"];
-                    console.log("Set newTaxonHigh: " +
-                        ssmv.newTaxonHigh);
-                    ssmv.updateSamplePlotSingle();
+                    if (ssmv.onHigh) {
+                        ssmv.oldTaxonHigh = ssmv.newTaxonHigh;
+                        ssmv.newTaxonHigh = i["datum"]["index"];
+                        console.log("Set newTaxonHigh: " +
+                            ssmv.newTaxonHigh);
+                    }
+                    else {
+                        ssmv.oldTaxonLow = ssmv.newTaxonLow;
+                        ssmv.newTaxonLow = i["datum"]["index"];
+                        console.log("Set newTaxonLow: " +
+                            ssmv.newTaxonLow);
+                        ssmv.updateSamplePlotSingle();
+                    }
+                    ssmv.onHigh = !ssmv.onHigh;
                 }
             }
         });
