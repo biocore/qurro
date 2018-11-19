@@ -1,10 +1,3 @@
-*1. Filter samples with infinity/-infinity/NaN balances out of scatterplot
-   entirely. Currently they're mapped to a constant value, which is a terrible
-   thing to preserve.
-    This might necessitate recreating the entire sample plot from scratch with
-    certain samples withheld, or calling .remove() in Vega or something.
-    That's worth it, though, IMO.
-
 *2. Fix bug in the Malassezia/Propionibacterium thing? just compare divergent
    points in worst case. probably something dumb.
 

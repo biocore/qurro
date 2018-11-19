@@ -33,6 +33,15 @@ ssmv.botTaxa = undefined;
 // We set ssmv.selectMicrobes to undefined when no select microbes file has
 // been provided yet.
 ssmv.selectMicrobes = undefined;
+// List of sample indexes (IDs) for samples with an "invalid" balance.
+// We use this to filter out samples that aren't present in the log ratio's
+// taxa, and therefore end up having infinity/-infinity/NaN "balance" values
+// as a result.
+ssmv.badSamples = [];
+// like above but contains full rows for these samples so they can be restored
+ssmv.badSampleRows = [];
+// Used for accessing sample IDs from the JSON data
+ssmv.samplePlotIdxCol = undefined;
 
 ssmv.makeRankPlot = function(spec) {
     vegaEmbed("#rankPlot", spec, {"actions": false}).then(function(result) {
@@ -65,6 +74,10 @@ ssmv.makeSamplePlot = function(spec) {
     vegaEmbed("#samplePlot", spec, {"actions": false}).then(function(result) {
         ssmv.samplePlotView = result.view;
     });
+    // We'll use this to access sample IDs later on, so we save it as soon as
+    // get the JSON file (rather than re-accessing this every time we need it)
+    ssmv.samplePlotIdxCol =
+        ssmv.samplePlotJSON["datasets"]["col_names"]["index"];
 };
 
 // Returns list of taxa names that contain the phrase.
@@ -154,20 +167,17 @@ ssmv.updateBalanceSingle = function(sampleRow) {
     var newBalance = newTop - newBot;
 
     //console.log(sampleRow[0] + ", " + newTop + ", " + newBot + ", " + newBalance);
+    // If this is true, we won't include this sample in the chart.
     if (newBalance === Infinity || newBalance === -Infinity || isNaN(newBalance)) {
-        // TODO SUPER BAD DON'T KEEP THIS IN INSTEAD FILTER OUT THE
-        // POINTS FOR THIS PLOT BY REMOVING AND THEN INSERTING
-        // EVERYTHING EVERY TIME YOU RECALCULATE THE
-        // SCATTERPLOT
-        newBalance = 10;
+        ssmv.badSamples.push(sampleRow[ssmv.samplePlotIdxCol]);
+        ssmv.badSampleRows.push(sampleRow);
     }
     return newBalance;
 };
 
 ssmv.updateBalanceMulti = function(sampleRow) {
 
-    // NOTE: For multiple taxa (based on the stuff we hardcoded in
-    // as virusTaxa and staphTaxa -- should be made automated soon)
+    // NOTE: For multiple taxa Virus/Staphylococcus:
     // test cases in comparison to first scatterplot in Jupyter
     // Notebook: 1517, 1302.
     newTop = ssmv.logSumAbundancesForSampleTaxa(sampleRow,
@@ -176,11 +186,8 @@ ssmv.updateBalanceMulti = function(sampleRow) {
         ssmv.botTaxa);
     var newBalance = newTop - newBot;
     if (newBalance === Infinity || newBalance === -Infinity || isNaN(newBalance)) {
-        // TODO SUPER BAD DON'T KEEP THIS IN INSTEAD FILTER OUT THE
-        // POINTS FOR THIS PLOT BY REMOVING AND THEN INSERTING
-        // EVERYTHING EVERY TIME YOU RECALCULATE THE
-        // SCATTERPLOT
-        newBalance = 10;
+        ssmv.badSamples.push(sampleRow[ssmv.samplePlotIdxCol]);
+        ssmv.badSampleRows.push(sampleRow);
     }
     return newBalance;
 };
@@ -230,31 +237,51 @@ ssmv.updateRankColorMulti = function(rankRow) {
 }
 
 ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
-    // Either modify the scatterplot with the new
-    // balances, or make a new JSON data object for the
-    // scatterplot with the new balances and just make the
-    // scatterplot point to that.
-    //
-    // Right now we're doing this in-place using modify(), but if needed
-    // (due to issues with filtering infinities and NaNs)
-    // there shouldn't be a reason we can't just scrap the chart
-    // every time it changes. It doesn't take *that* long to draw
-    // it. (Alternately, remove every point, update every point,
-    // and then insert every point, although that might be a pain
-    // slash require calling run() twice. Look into it.)
-    //
-    // Based on Jeffrey Heer's comment here:
-    // https://github.com/vega/vega/issues/1028#issuecomment-334295328
-    // (This is where I learned that vega.changeset().modify() existed.)
     var dataName = ssmv.samplePlotJSON["data"]["name"];
+    // Make a copy so that when we insert bad samples into it when we create
+    // the next sample plot, those are inserted into an empty array
+    var badSampleRowsCopy = ssmv.badSampleRows;
+    ssmv.badSampleRows = [];
+    // We actually only use ssmv.badSamples when we're immediately creating a
+    // sample plot here. The reason we clear it here -- and not at the end of
+    // this function -- is to make it easier for debugging to tell what the
+    // omitted samples are. (Also, this array just stores sample indexes, so
+    // it shouldn't take up a lot of storage [it's just a fraction of the space
+    // taken up by ssmv.badSampleRows].)
+    ssmv.badSamples = [];
+    // First up: add back the samples we omitted from the prior iteration of
+    // the sample plot, so we can calculate their balances for the new plot
+    ssmv.samplePlotView.change(dataName, vega.changeset().insert(
+        badSampleRowsCopy
+    )).run();
     ssmv.samplePlotView.change(dataName, vega.changeset().modify(
-        // Vega utility function: just returns true
+        /* Next up: calculate the new balance for each sample. The
+         * updateBalanceFunc will also update ssmv.badSamples and
+         * ssmv.badSampleRows accordingly, as it encounters samples with
+         * unplottable balances.
+         *
+         * For reference, the use of modify() here is based on this comment:
+         * https://github.com/vega/vega/issues/1028#issuecomment-334295328
+         * (This is where I learned that vega.changeset().modify() existed.)
+         */
+        // vega.truthy is a utility function: it just returns true.
         vega.truthy,
         // column int for "balance" (this is the column for each
         // sample we want to change)
         ssmv.samplePlotJSON["datasets"]["col_names"]["balance"],
         // function to run to determine what the new balances are
         updateBalanceFunc
+    )).run();
+    ssmv.samplePlotView.change(dataName, vega.changeset().remove(
+        /* Finally, we remove all samples with unplottable balances from the
+         * plot. Their data has already been saved in the badSamples*
+         * variables, so that we can restore these samples for future plots.
+         */
+        function(sampleRow) {
+            if (ssmv.badSamples.indexOf(sampleRow[ssmv.samplePlotIdxCol]) < 0)
+                return false;
+            return true;
+        }
     )).run();
     // Update rank plot based on the new log ratio
     // Storing this within changeSamplePlot() is a (weak) safeguard that
