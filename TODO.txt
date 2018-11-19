@@ -25,6 +25,8 @@
 7. Revise code to not say "genera" (due to how viruses kinda mess with the
    notion of taxonomic classes in this case). Just "rank" should be fine.
 
-8. In filterTaxa...(), make the microbe column start point (24) be stored as
-   an attribute somewhere in the JSON file. This will make this function
+8. In ssmv.filterTaxa...(), make the microbe column start point (24) be stored
+   as an attribute somewhere in the JSON file. This will make this function
    flexible for datasets with more or less metadata for samples.
+
+9. Remove redundant code in ssmv.updateSamplePlotMulti().
