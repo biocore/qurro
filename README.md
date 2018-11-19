@@ -15,18 +15,19 @@ the rank plot.
 
 ## Inputs
 
-This tool takes as input two [Vega-Lite](https://vega.github.io/vega-lite/)
-JSON files (one for the rank plot and one for the sample scatterplot). Right
-now this is mostly configured to work with one particular example
-(using data from
-[Byrd et al. 2017](http://stm.sciencemag.org/content/9/397/eaal4651)
-on microbes associated with atopic dermatitis), but we're planning to make it
-work with arbitrary data. We currently generate these JSON files using
-[Altair](https://altair-viz.github.io/); the code for that isn't in this
-repository yet, but should be soon.
+The web visualization tool takes as input two
+[Vega-Lite](https://vega.github.io/vega-lite/)
+JSON files (one for the rank plot and one for the sample scatterplot).
+We currently generate these JSON files in a Python
+script, the code for which is located in `gen_plots.py`. Right now this script
+is configured to look for and use data from
+[Byrd et al. 2017](http://stm.sciencemag.org/content/9/397/eaal4651),
+but we're working on
+making this support arbitrary data sources (based on command-line options).
 
-You can also upload a file of "select microbes" to filter the taxa used in
-textual queries. A sample file (`byrd_select_microbes.txt`) for this is
+You can upload a file of "select microbes" to the web visualization tool to
+filter the taxa used in
+textual queries. A sample file (`byrd_inputs/byrd_select_microbes.txt`) for this is
 included in this repository.
 
 ## Other tools used
