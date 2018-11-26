@@ -13,6 +13,10 @@ run textual queries over the various taxa's lineages, in order to create more
 complicated log ratios -- the taxa used in these log ratios are highlighted in
 the rank plot.
 
+## Screenshot
+
+![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/RankRatioViz/master/screenshots/genera.png "Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'")
+
 ## Inputs
 
 The web visualization tool takes as input two
