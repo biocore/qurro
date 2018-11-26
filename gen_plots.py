@@ -3,7 +3,7 @@
 # scatterplot of log ratios.
 #
 # A lot of the code for processing input data in this file was based on code
-# code by Jamie Morton, some of which is now located in ipynb/Figure3.ipynb in
+# by Jamie Morton, some of which is now located in ipynb/Figure3.ipynb in
 # https://github.com/knightlab-analyses/reference-frames.
 #
 # NOTE: For some reason, the sample plot JSON generated here differs somehow
@@ -21,7 +21,8 @@ import sys
 sys.path.append("/Users/mfedarko/Software/altair")
 import altair as alt
 
-# TODO use click to specify output JSON filenames, input data sources, etc
+# TODO use click to specify output JSON filenames, input data sources, default
+# selected taxa?, etc
 
 print("Processing input files...")
 ##### Load input files: ranks, BIOM table, metadata, select microbes
