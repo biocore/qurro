@@ -7,11 +7,25 @@ This tool visualizes the output from a tool like
 a "ranked" plot of taxa alongside a scatterplot showing the log ratios of
 certain taxon abundances within samples.
 
-These visualizations are linked: selections in the rank plot impact the
-scatterplot of samples by changing the log ratios that are used. You can also
-run textual queries over the various taxa's lineages, in order to create more
-complicated log ratios -- the taxa used in these log ratios are highlighted in
-the rank plot.
+These visualizations are linked [1]: selections in the rank plot modify the
+scatterplot of samples. Clicking on two taxa in the rank plot sets a new
+numerator taxon (determined from the first-clicked taxon) and a new denominator
+taxon (determined from the second-clicked taxon) for the abundance log ratios
+in the scatterplot of samples.
+
+You can also run textual queries over the various taxa definitions, in order to
+create more
+complicated log ratios (e.g. "the log ratio of the combined abundances of all
+taxa with rank X over the combined abundances of all taxa with rank Y").\*
+The taxa used in these log ratios are highlighted in the rank plot.
+
+\* The ranks within a taxon are separated by semicolons, so if you want to filter
+just to taxa containing a certain rank -- e.g. "Propionibacterium" -- you can
+specify this as `;Propionibacterium;`. (Of course, if the rank you're using is
+on the species level you'll need to omit the trailing semicolon, and if the
+rank you're using is at the domain level you'll need to omit the leading
+semicolon. This feature is in development, so we'll probably remove the need
+for this behavior in the future.)
 
 ## Screenshot
 
@@ -68,7 +82,7 @@ defined by the JSON files:
 2. Open your browser to `localhost:8000/microbe_selection.html`. The JSON files
    should automatically be loaded.
 
-## Other tools used
+## Tools used
 
 Loaded via CDN in the web visualization interface:
 - [Vega](https://vega.github.io/vega/)
@@ -84,6 +98,10 @@ Used to generate input JSON files for the visualization interface in
 - [pandas](https://pandas.pydata.org/)
 - [biom](http://biom-format.org/)
 - [Altair](https://altair-viz.github.io/)
+
+## References
+
+[1] Becker, R. A. & Cleveland, W. S. (1987). Brushing scatterplots. _Technometrics, 29_(2), 127-142. (Section 4.1 in particular talks about linking visualizations.)
 
 ## License
 
