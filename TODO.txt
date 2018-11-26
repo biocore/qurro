@@ -1,3 +1,5 @@
+1. Move these TODOs to GitHub issues
+
 2. If either the numerator or denominator's text field (from the multi
    selections) are empty, handle it accordingly: JS treats "" as being in
    every string, so uh gotta figure out a workaround. Just checking if
