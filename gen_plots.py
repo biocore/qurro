@@ -98,19 +98,6 @@ postflare_rank_chart = alt.Chart(
     gridOpacity=0.35
 ).interactive()
 
-# NOTE: ideally this chart wouldn't have any horizontal space between bars. however, through zooming in, it seems
-# like it's always going to eventually devolve into each bar being a disconnected line. I've tried, uh, a lot of
-# different configuration settings to try to fix this and haven't been successful. here's a recreation of some
-# unsuccessful attempts for reference:
-#.mark_bar(binSpacing=0).encode(...)
-#
-#.configure_scale(
-#    bandPaddingInner=0,
-#    bandPaddingOuter=0,
-#    continuousPadding=0,
-#    pointPadding=0
-#)
-
 #### 2. Create Altair version of sample scatterplot data
 print("Creating sample log ratio scatterplot...")
 
