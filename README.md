@@ -30,7 +30,7 @@ for this behavior in the future.)
 ## Screenshot
 
 ![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/RankRatioViz/master/screenshots/genera.png)
-_Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium."_
+_Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `byrd\_inputs` folder of this repository._
 
 ## Inputs
 
@@ -39,10 +39,9 @@ The web visualization tool takes as input two
 JSON files (one for the rank plot and one for the sample scatterplot).
 We currently generate these JSON files in a Python
 script, the code for which is located in `gen_plots.py`. Right now this script
-is configured to look for and use data from
-[Byrd et al. 2017](http://stm.sciencemag.org/content/9/397/eaal4651),
-but we're working on
-making this support arbitrary data sources (based on command-line options).
+is configured to look for and use data from Byrd et al. 2017 [2], but we're
+working on making this support arbitrary data sources (based on command-line
+options).
 
 You can upload a file of "select microbes" to the web visualization tool to
 filter the taxa used in
@@ -103,6 +102,8 @@ Used to generate input JSON files for the visualization interface in
 ## References
 
 [1] Becker, R. A. & Cleveland, W. S. (1987). Brushing scatterplots. _Technometrics, 29_(2), 127-142. (Section 4.1 in particular talks about linking visualizations.)
+
+[2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
 
 ## License
 
