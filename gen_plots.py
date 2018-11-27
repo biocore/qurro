@@ -47,27 +47,22 @@ select_microbes = np.array(
         )
     )
 )
-# This was called "genera" in the notebook, but since the viruses in this file
-# kinda mess that up we just refer to it here as penultimate ranks
-penult_ranks = np.array(list(map(lambda x: x.split(';')[-2], select_microbes)))
 
 #### 1. Create Altair version of log(PostFlare/Flare) + K rank plot
 print("Creating rank plot...")
 
 # Define "classification." We'll use this list to determine the color each
-# rank should be. We make "classification" match the first sample scatterplot
-# drawn: all Viruses in the select_microbes file in the numerator, with all
-# Staphylococci in the select_microbes file in the denominator.
+# rank should be.
 
 # Copied from later on in the Jupyter Notebook
-viruses = select_microbes[list(map(lambda x: 'Virus' in x, select_microbes))]
-staphs = select_microbes[penult_ranks == 'Staphylococcus']
-# Check for common microbes between top and bottom of log ratio: if detected, classify them as "Both"
-# There shouldn't be any intersections with this first example (since the Staphylococcus genus isn't a virus),
-# but this code is provided here for illustrative purposes and for future reference (in case we want to change
-# up this first example).
-set_top = set(viruses)
-set_bot = set(staphs)
+numerator = []
+denominator = []
+# Check for common microbes between top and bottom of log ratio: if detected,
+# classify them as "Both."
+# This code is provided here for illustrative purposes and for future reference
+# (in case we want to display an "initial" log ratio).
+set_top = set(numerator)
+set_bot = set(denominator)
 set_both = set_top & set_bot
 set_top_excl = set_top - set_bot
 set_bot_excl = set_bot - set_top
@@ -120,8 +115,8 @@ postflare_rank_chart = alt.Chart(
 print("Creating sample log ratio scatterplot...")
 
 # From the reference-frames notebook
-top = table[viruses].sum(axis=1)
-bot = table[staphs].sum(axis=1)
+top = table[numerator].sum(axis=1)
+bot = table[denominator].sum(axis=1)
 balance = np.log(top) - np.log(bot)
 data = pd.DataFrame({'balance': balance}, index=table.index)
 data = pd.merge(data, metadata, left_index=True, right_index=True)
