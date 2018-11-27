@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from biom import load_table
 import altair as alt
+import json
 
 # TODO use click to specify output JSON filenames, input data sources, default
 # selected taxa?, etc
@@ -147,7 +148,6 @@ sample_logratio_chart = alt.Chart(
 
 # Save JSON for sample plot (throwing in the column identifying dict from earlier).
 print("Saving plot JSON files...")
-import json
 sample_logratio_chart_json = sample_logratio_chart.to_dict()
 sample_logratio_chart_json["datasets"]["col_names"] = smaa_cn2si
 # For reference: https://stackoverflow.com/a/12309296
