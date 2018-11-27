@@ -1,0 +1,10 @@
+name: rankratioviz
+channels:
+    - biocore
+    - conda-forge
+dependencies:
+    - python=3
+    - numpy
+    - pandas
+    - biom-format
+    - altair

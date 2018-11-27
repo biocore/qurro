@@ -58,27 +58,33 @@ filter the taxa used in
 textual queries. A sample file (`byrd_inputs/byrd_select_microbes.txt`) for this is
 included in this repository.
 
-## Running the tool
+## Installation
 
-First off, clone this repository to your system. This assumes you have git
-installed on your system.
+1. Clone this repository to your system:
 
 ```bash
 git clone https://github.com/fedarko/RankRatioViz.git
 ```
 
+2. Install dependencies via conda:
+
+```bash
+conda env create
+```
+
+## Running the tool
+
 ### Generating new JSON files using `gen_plots.py`
 
-Note that you only need to do this if you're using new data, since the
-repository includes JSON files for the Byrd et al. 2017 data [2].
+(Right now this just uses the Byrd et al. 2017 data -- more options to come
+shortly!)
 
-1. Install Python 3 (if needed -- it's probably already installed on your
-   system), NumPy, pandas, biom, and Altair.
+Note that this command will replace the prior JSON files contained in this
+directory.
 
-2. Run `gen_plots.py` from within this repository's folder:
-   ```bash
-   python3 gen_plots.py
-   ```
+```bash
+python3 gen_plots.py
+```
 
 ### Viewing a visualization of the plots defined by the JSON files
 
@@ -106,7 +112,7 @@ Used to generate input JSON files for the visualization interface in
 - [Python 3](https://www.python.org/)
 - [NumPy](http://www.numpy.org/)
 - [pandas](https://pandas.pydata.org/)
-- [biom](http://biom-format.org/)
+- [biom-format](http://biom-format.org/)
 - [Altair](https://altair-viz.github.io/)
 
 ## References
