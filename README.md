@@ -62,15 +62,15 @@ included in this repository.
 
 1. Clone this repository to your system:
 
-```bash
-git clone https://github.com/fedarko/RankRatioViz.git
-```
+   ```bash
+   git clone https://github.com/fedarko/RankRatioViz.git
+   ```
 
 2. Install dependencies via conda:
 
-```bash
-conda env create
-```
+   ```bash
+   conda env create
+   ```
 
 ## Running the tool
 
