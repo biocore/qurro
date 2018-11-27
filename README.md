@@ -80,8 +80,7 @@ repository includes JSON files for the Byrd et al. 2017 data [2].
    python3 gen_plots.py
    ```
 
-To view a visualization of the resulting rank plot and sample scatterplot
-defined by the JSON files:
+### Viewing a visualization of the plots defined by the JSON files
 
 1. Run a simple server using Python from within this repository's folder:
    ```bash
