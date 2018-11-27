@@ -14,11 +14,6 @@
 import numpy as np
 import pandas as pd
 from biom import load_table
-
-# Using a local build of Altair is a temporary measure until PR #1143 in the
-# Altair repo is incorporated into a release.
-import sys
-sys.path.append("/Users/mfedarko/Software/altair")
 import altair as alt
 
 # TODO use click to specify output JSON filenames, input data sources, default
