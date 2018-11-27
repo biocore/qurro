@@ -96,10 +96,15 @@ postflare_rank_chart = alt.Chart(
 #### 2. Create Altair version of sample scatterplot data
 print("Creating sample log ratio scatterplot...")
 
+# Since we don't bother setting a default log ratio, we set the balance for
+# every sample to NaN so that Altair will filter them out (producing an empty
+# scatterplot by default, which makes sense).
+#
 # From the reference-frames notebook
-top = table[numerator].sum(axis=1)
-bot = table[denominator].sum(axis=1)
-balance = np.log(top) - np.log(bot)
+#top = table[numerator].sum(axis=1)
+#bot = table[denominator].sum(axis=1)
+#balance = np.log(top) - np.log(bot)
+balance = pd.Series(index=table.index).fillna(float('nan'))
 data = pd.DataFrame({'balance': balance}, index=table.index)
 data = pd.merge(data, metadata, left_index=True, right_index=True)
 
