@@ -64,9 +64,9 @@ denominator = []
 
 # based on definition of filtered_beta earlier in the original notebook
 classification = pd.Series(index=coefs.index).fillna("None")
-classification[set_top_excl] = "Numerator"
-classification[set_bot_excl] = "Denominator"
-classification[set_both] = "Both"
+#classification[set_top_excl] = "Numerator"
+#classification[set_bot_excl] = "Denominator"
+#classification[set_both] = "Both"
 # x is a numpy.ndarray; coefs is a pandas Series
 postFlareRanksData = pd.DataFrame({'x': x, 'coefs': coefs, "classification": classification})
 
