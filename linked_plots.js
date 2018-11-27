@@ -1,14 +1,13 @@
-// Some utility functions for the page, as well as
-// code that implements the "linking" functionality between the
-// rank and sample plots.
+/* This file contains some utility functions for the page, as well as
+ * code that implements the "linking" functionality between the
+ * rank and sample plots.
+ *
+ * ssmv.makeRankPlot() and ssmv.makeSamplePlot() were based on the Basic
+ * Example in https://github.com/vega/vega-embed/.
 
-// We use the following "ssmv" namespace for everything here, to avoid
-// cluttering the global namespace (and to avoid potential collisions).
-// I'll be honest: I named this "ssmv" on Wednesday and I kinda already forgot
-// what that stands for. I *think* it could be Songbird Skin Metagenome
-// Visualization, but it could also be Sample Scatterplot Microbe Visualization
-// or whatever. Uh I'm gonna just ignore this for now.
-
+/* We use the following "ssmv" namespace for everything here, to avoid
+ * cluttering the global namespace (and to avoid potential collisions).
+ */
 var ssmv = {};
 ssmv.rankPlotView = undefined;
 ssmv.samplePlotView = undefined;
