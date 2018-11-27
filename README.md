@@ -5,19 +5,26 @@
 This tool visualizes the output from a tool like
 [Songbird](https://github.com/mortonjt/songbird). It facilitates viewing
 a "ranked" plot of taxa alongside a scatterplot showing the log ratios of
-certain taxon abundances within samples.
+selected taxon abundances within samples.
 
-These visualizations are linked [1]: selections in the rank plot modify the
-scatterplot of samples. Clicking on two taxa in the rank plot sets a new
+## Linked visualizations
+These two visualizations (the rank plot and sample scatterplot) are linked [1]:
+selections in the rank plot modify the scatterplot of samples, and
+modifications of the sample scatterplot that weren't made through the rank plot
+trigger an according update in the rank plot.
+
+To elaborate on that: clicking on two taxa in the rank plot sets a new
 numerator taxon (determined from the first-clicked taxon) and a new denominator
 taxon (determined from the second-clicked taxon) for the abundance log ratios
 in the scatterplot of samples.
 
 You can also run textual queries over the various taxa definitions, in order to
-create more
-complicated log ratios (e.g. "the log ratio of the combined abundances of all
+create more complicated log ratios
+(e.g. "the log ratio of the combined abundances of all
 taxa with rank X over the combined abundances of all taxa with rank Y").\*
-The taxa used in these log ratios are highlighted in the rank plot.
+Although this method doesn't require you to manually select taxa on the rank
+plot, the rank plot is still updated to highlight the taxa used in the log
+ratios.
 
 \* The ranks within a taxon are separated by semicolons, so if you want to filter
 just to taxa containing a certain rank -- e.g. "Propionibacterium" -- you can
@@ -36,14 +43,17 @@ _Screenshot of the log ratio of the combined abundances of all taxa with the ran
 
 The web visualization tool takes as input two
 [Vega-Lite](https://vega.github.io/vega-lite/)
-JSON files (one for the rank plot and one for the sample scatterplot).
+JSON files (one for the rank plot and one for the sample scatterplot). It tries
+to load these from its directory (that is, the root of this repository) upon
+the page loading.
+
 We currently generate these JSON files in a Python
 script, the code for which is located in `gen_plots.py`. Right now this script
 is configured to look for and use data from Byrd et al. 2017 [2], but we're
 working on making this support arbitrary data sources (based on command-line
 options).
 
-You can upload a file of "select microbes" to the web visualization tool to
+You can also upload a file of "select microbes" to the web visualization tool to
 filter the taxa used in
 textual queries. A sample file (`byrd_inputs/byrd_select_microbes.txt`) for this is
 included in this repository.
@@ -57,14 +67,13 @@ installed on your system.
 git clone https://github.com/fedarko/RankRatioViz.git
 ```
 
-To generate the JSON files using `gen_plots.py`: (you only need to do this if
-you're using new data, since the repository includes JSON files for the Byrd et
-al. 2017 data)
+### Generating new JSON files using `gen_plots.py`
+
+Note that you only need to do this if you're using new data, since the
+repository includes JSON files for the Byrd et al. 2017 data [2].
 
 1. Install Python 3 (if needed -- it's probably already installed on your
-   system), NumPy, pandas, biom, and Altair (note that you may need to build
-   Altair from source, in order to get
-   [this change](https://github.com/altair-viz/altair/pull/1143) integrated).
+   system), NumPy, pandas, biom, and Altair.
 
 2. Run `gen_plots.py` from within this repository's folder:
    ```bash
@@ -74,13 +83,15 @@ al. 2017 data)
 To view a visualization of the resulting rank plot and sample scatterplot
 defined by the JSON files:
 
-1. Run a simple server using python from within this repository's folder:
+1. Run a simple server using Python from within this repository's folder:
    ```bash
    python3 -m http.server
    ```
 
 2. Open your browser to `localhost:8000/microbe_selection.html`. The JSON files
-   should automatically be loaded.
+   should automatically be loaded. (The port might differ depending on what
+   Python did in step 1 -- look at the output of this command to determine the
+   URL to navigate to.)
 
 ## Tools used
 
