@@ -56,11 +56,11 @@ denominator = []
 # classify them as "Both."
 # This code is provided here for illustrative purposes and for future reference
 # (in case we want to display an "initial" log ratio).
-set_top = set(numerator)
-set_bot = set(denominator)
-set_both = set_top & set_bot
-set_top_excl = set_top - set_bot
-set_bot_excl = set_bot - set_top
+#set_top = set(numerator)
+#set_bot = set(denominator)
+#set_both = set_top & set_bot
+#set_top_excl = set_top - set_bot
+#set_bot_excl = set_bot - set_top
 
 # based on definition of filtered_beta earlier in the original notebook
 classification = pd.Series(index=coefs.index).fillna("None")
