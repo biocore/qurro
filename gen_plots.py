@@ -34,14 +34,6 @@ metadata = metadata.loc[set(metadata.index) - sample_exclude]
 # Get stuff ready for the rank plot
 coefs = beta["C(Timepoint, Treatment('F'))[T.PF]"].sort_values()
 x = np.arange(coefs.shape[0])
-select_microbes = np.array(
-    list(
-        map(
-            lambda x: x.rstrip(),
-            open('byrd_inputs/byrd_select_microbes.txt', 'r').readlines()
-        )
-    )
-)
 
 #### 1. Create Altair version of log(PostFlare/Flare) + K rank plot
 print("Creating rank plot...")
