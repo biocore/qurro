@@ -19,64 +19,75 @@
         </script>
 
         <style>
-            h3,p { text-align: center; }
-            body,input,button,select { font-size: large; }
+            h3,p {
+                text-align: center;
+            }
+            body,input,button,select {
+                font-size: large;
+            }
+            #plottd {
+                width: 50%;
+            }
         </style>
     </head>
 
     <body>
         <table style="width:100%;">
+            <!-- Show the actual plots -->
             <tr>
-                <td style="text-align:right; width:50%;"><div id="rankPlot"></div></td>
-                <td style="text-align:left; width:50%;"><div id="samplePlot"></div></td>
+                <td class="plottd" style="text-align: right;">
+                    <div id="rankPlot"></div>
+                </td>
+                <td class="plottd" style="text-align: left;">
+                    <div id="samplePlot"></div>
+                </td>
             </tr>
             <!-- This row of the table shows the log ratio created from
                 selecting single microbes in the rank plot.
             -->
             <tr>
                 <td colspan="2" style="text-align:left;">
-                    <p id="logRatioDisplay">
-                    \[\]
-                    </p>
+                    <p id="logRatioDisplay">\[\]</p>
                 </td>
             </tr>
             <tr>
                 <td style="vertical-align:top;">
                     <h3>Single-Microbe Selections</h3>
                     <p>
-                    Select two microbes from the rank plot (left) to display their log ratios for each sample in the sample scatterplot (right).
+                        Select two microbes from the rank plot (left) to
+                        display their log ratios for each sample in the sample
+                        scatterplot (right).
                     </p>
                 </td>
                 <td>
                     <h3>Multi-Microbe Selections</h3>
                     <p>
-                    Use the controls here to show more complex log ratios in the sample
-                    scatterplot.
+                        Use the controls here to show more complex log ratios
+                        in the sample scatterplot.
                     </p>
                     <p>
+                        Filter numerator to taxa that
+                        <select id="topSearch">
+                            <option value="contains">contain</option>
+                            <option value="startswith">start with</option>
+                            <option value="endswith">end with</option>
+                        </select>
+                        <input type="text" id="topText" size="40"></input>
+                    </p>
+                    <p>
+                        Filter denominator to taxa that
+                        <select id="botSearch">
+                            <option value="contains">contain</option>
+                            <option value="startswith">start with</option>
+                            <option value="endswith">end with</option>
+                        </select>
+                        <input type="text" id="botText" size="40"></input>
+                    </p>
 
-                    Filter numerator to taxa that
-                    <select id="topSearch">
-                        <option value="contains">contain</option>
-                        <option value="startswith">start with</option>
-                        <option value="endswith">end with</option>
-                    </select>
-                    <input type="text" id="topText" size="40"></input>
-                    </p>
                     <p>
-                    Filter denominator to taxa that
-                    <select id="botSearch">
-                        <option value="contains">contain</option>
-                        <option value="startswith">start with</option>
-                        <option value="endswith">end with</option>
-                    </select>
-                    <input type="text" id="botText" size="40"></input>
-                    </p>
-
-                    <p>
-                    <button onclick="ssmv.updateSamplePlotMulti();">
-                        Regenerate sample plot
-                    </button>
+                        <button onclick="ssmv.updateSamplePlotMulti();">
+                            Regenerate sample plot
+                        </button>
                     </p>
                     <p>
                         <label for="selectMicrobesFileSelector">
@@ -88,14 +99,14 @@
                             onChange="ssmv.uploadSelectMicrobesFile();" />
                     </p>
                     <p>
-                    <label for="zeroFillInput">
-                        <strong>
-                            Value to fill in for zero-abundance microbes:
-                        </strong>
-                    </label>
-                    <input type="number" id="zeroFillInput" min="0" max="1000"
-                        value="0">
-                    </input>
+                        <label for="zeroFillInput">
+                            <strong>
+                                Value to fill in for zero-abundance microbes:
+                            </strong>
+                        </label>
+                        <input type="number" id="zeroFillInput" min="0"
+                            max="1000" value="0">
+                        </input>
                     </p>
                 </td>
         </table>
