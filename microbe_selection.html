@@ -2,6 +2,7 @@
 <!-- Based on the Basic Example in https://github.com/vega/vega-embed -->
 <html>
     <head>
+        <meta charset="utf-8" />
         <title>
             RankRatioViz
         </title>
@@ -68,18 +69,24 @@
                     <p>
                         Filter numerator to taxa that
                         <select id="topSearch">
-                            <option value="contains">contain</option>
-                            <option value="startswith">start with</option>
-                            <option value="endswith">end with</option>
+                            <option value="rank">
+                                contain the exact rank(s)
+                            </option>
+                            <option value="text">
+                                contain the exact text
+                            </option>
                         </select>
                         <input type="text" id="topText" size="40"></input>
                     </p>
                     <p>
                         Filter denominator to taxa that
                         <select id="botSearch">
-                            <option value="contains">contain</option>
-                            <option value="startswith">start with</option>
-                            <option value="endswith">end with</option>
+                            <option value="rank">
+                                contain the exact rank(s)
+                            </option>
+                            <option value="text">
+                                contain the exact text
+                            </option>
                         </select>
                         <input type="text" id="botText" size="40"></input>
                     </p>
