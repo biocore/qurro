@@ -1,3 +1,4 @@
+'use strict';
 /* This file contains some utility functions for the page, as well as
  * code that implements the "linking" functionality between the
  * rank and sample plots.
