@@ -66,19 +66,45 @@ ssmv.makeSamplePlot = function(spec) {
     });
 };
 
-// Returns list of taxa names that contain the phrase.
-// Note that the phrase can occur anywhere in the taxa name (which includes
-// its lineage -- so, at any level).
-//
-// If ssmv.selectMicrobes is not undefined, this will only search for microbes
-// within that list.
-//
-// If startsWith is true, this will only filter to taxa names that start with
-// the phrase (at the first apparent part of their lineage).
-//
-// endsWith works analogously. (If both startsWith and endsWith are true,
-// startsWith takes priority.)
-ssmv.filterTaxaByPhrase = function(phrase, startsWith, endsWith) {
+/* Returns list of taxa names based on a match with the inputText.
+ *
+ * The way this "match" is determined depends on searchType, which can be
+ * either "rank" or "text".
+ *
+ * If searchType is "rank" then this will filter to taxa that contain a rank
+ * which exactly matches at least one of the ranks in inputText. (Multiple
+ * ranks can be specified by separating them by commas, whitespace, or
+ * semicolons.)
+ *
+ * If searchType is "text" then this will filter to taxa where the inputText is
+ * contained somewhere within their name. (This search includes characters like
+ * semicolons separating the ranks of a taxon, so those can be used in the
+ * inputText to control exactly what is being filtered.)
+ *
+ * Also: if ssmv.selectMicrobes is not undefined, this will only search for
+ * microbes within that list. Otherwise, it searches through all microbes
+ * that the sample plot JSON -- and by extension the input BIOM table -- has
+ * entries for.
+ */
+ssmv.filterTaxa = function(inputText, searchType) {
+    if (searchType === "rank") {
+        // Prepare input array of ranks to use for searching
+        var initialRankArray = inputText.trim().replace(/[,;]/g, " ").split(" ");
+        // Filter out ""s caused by repeated commas or whitespace in the input.
+        // Why we need this: "a b   c".split(" ") produces
+        // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
+        var rankArray = [];
+        var r;
+        for (var ri = 0; ri < initialRankArray.length; ri++) {
+            r = initialRankArray[ri];
+            if (r !== "") {
+                rankArray.push(r);
+            }
+        }
+    }
+
+    // Prepare array of taxa (we'll split up each taxon's lineage during the
+    // below for loop)
     var taxa;
     if (ssmv.selectMicrobes !== undefined) {
         // If a "select microbes" list is available, just search through that.
@@ -90,25 +116,51 @@ ssmv.filterTaxaByPhrase = function(phrase, startsWith, endsWith) {
         taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
     }
     var filteredTaxa = [];
+    var ranksOfTaxon;
     for (var ti = 0; ti < taxa.length; ti++) {
         // NOTE this check filters out sample metadata/etc. Everything after
         // position 24 in the col_names dataset (0-indexed) is a taxon.
         // TODO automate this as a data attr saved in JSON by Jupyter Notebook,
         // so that this can successfully ignore arbitrary amounts of metadata.
+        // ANOTHER TODO wouldn't it be ok to just initialize ti to 24? Check
+        // how we merge the datasets together in gen_plots.py, but I think it
+        // should be sufficient to just do for (var ti = 24; ...) to start this
+        // loop.
         if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] > 24) {
-            if (startsWith) {
-                if (taxa[ti].startsWith(phrase)) {
-                    filteredTaxa.push(taxa[ti]);
-                }
-            }
-            else if (endsWith) {
-                if (taxa[ti].endsWith(phrase)) {
+            if (searchType === "text") {
+                // Just use the input text to literally search through taxa for
+                // matches (including semicolons corresponding to rank
+                // separators, e.g. "Bacteria;Proteobacteria;").
+                // Note that this can lead to some weird results if you're not
+                // careful -- e.g. just searching on "Staphylococcus" will
+                // include Staph phages in the filtering (since their names
+                // contain the text "Staphylococcus").
+                if (taxa[ti].includes(inputText)) {
                     filteredTaxa.push(taxa[ti]);
                 }
             }
             else {
-                if (taxa[ti].includes(phrase)) {
-                    filteredTaxa.push(taxa[ti]);
+                // Search against individual ranks (separated by semicolons).
+                // This only searches against ranks that are indicated in the
+                // file, so if there are missing steps (e.g. no genus given)
+                // then this can't rectify that.
+                //
+                // This prevents some of the problems with searching by text --
+                // entering "Staphyloccoccus" here will have the intended
+                // result. However, the ability to search by text can be
+                // powerful, so these functionalities are both provided here
+                // for convenience.
+                //
+                // We make the assumption that each rank for the taxon is
+                // separated by a single semicolon, with no trailing or leading
+                // whitespace or semicolons. Since as far as I'm aware these
+                // files are usually automatically generated, this should be ok
+                ranksOfTaxon = taxa[ti].split(";");
+                // Loop over ranks
+                for (ri = 0; ri < rankArray.length; ri++) {
+                    if (ranksOfTaxon.includes(rankArray[ri])) {
+                        filteredTaxa.push(taxa[ti]);
+                    }
                 }
             }
         }
@@ -118,6 +170,7 @@ ssmv.filterTaxaByPhrase = function(phrase, startsWith, endsWith) {
 
 /* Given a "row" of the sample plot's JSON for a sample, and given an array of
  * taxa, return the sum of the sample's abundances for those particular taxa.
+ * TODO: add option to do log geometric means
  */
 ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa) {
     var abundance = 0;
@@ -258,34 +311,12 @@ ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
 };
 
 ssmv.updateSamplePlotMulti = function() {
-    // Look at search queries for #topSearch and #botSearch, then filter taxa
-    // accordingly to produce lists of taxa as ssmv.topTaxa and ssmv.bottomTaxa
-    // then modify plot
-    var topConstraint = $("#topSearch").val();
-    var botConstraint = $("#botSearch").val();
-    // TODO abstract this to function that you can call twice (once with
-    // topConstraint, ssmv.topTaxa, and "#topText", and next with the
-    // bot-versions of that)
-    if (topConstraint === "contains") {
-        ssmv.topTaxa = ssmv.filterTaxaByPhrase($("#topText").val());
-    }
-    else if (topConstraint === "startswith") {
-        ssmv.topTaxa = ssmv.filterTaxaByPhrase($("#topText").val(), true);
-    }
-    else if (topConstraint === "endswith") {
-        ssmv.topTaxa = ssmv.filterTaxaByPhrase($("#topText").val(), false,
-            true);
-    }
-    if (botConstraint === "contains") {
-        ssmv.botTaxa = ssmv.filterTaxaByPhrase($("#botText").val());
-    }
-    else if (botConstraint === "startswith") {
-        ssmv.botTaxa = ssmv.filterTaxaByPhrase($("#botText").val(), true);
-    }
-    else if (botConstraint === "endswith") {
-        ssmv.botTaxa = ssmv.filterTaxaByPhrase($("#botText").val(), false,
-            true);
-    }
+    // Determine how we're going to use the input for searching through taxa
+    var topType = $("#topSearch").val();
+    var botType = $("#botSearch").val();
+    // Now use these "types" to filter taxa for both parts of the log ratio
+    ssmv.topTaxa = ssmv.filterTaxa($("#topText").val(), topType);
+    ssmv.botTaxa = ssmv.filterTaxa($("#botText").val(), botType);
     ssmv.changeSamplePlot(ssmv.updateBalanceMulti, ssmv.updateRankColorMulti);
     // Clear the single-microbe association text to be clearer
     var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
