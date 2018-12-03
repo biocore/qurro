@@ -93,10 +93,11 @@ python3 gen_plots.py
    python3 -m http.server
    ```
 
-2. Open your browser to `localhost:8000/microbe_selection.html`. The JSON files
+2. Open your browser to `localhost:8000`. The JSON files
    should automatically be loaded. (The port might differ depending on what
    Python did in step 1 -- look at the output of this command to determine the
-   URL to navigate to.)
+   URL to navigate to. You can also specify the desired port as an argument to
+   Python in step 1.)
 
 ## Tools used
 
