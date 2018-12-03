@@ -11,16 +11,25 @@
 # just be an ordering issue, but a TODO is to write code that validates that
 # that is the case (and it isn't actually messing up any of the data/metadata).
 
+import json
+import sys
 import numpy as np
 import pandas as pd
 from biom import load_table
 import altair as alt
-import json
+import argparse
 
-# TODO use click to specify output JSON filenames, input data sources, default
-# selected taxa?, etc
+parser = argparse.ArgumentParser(description="""Prepares two Altair JSON plots
+-- one for a rank plot of taxa, and one for a scatterplot of sample taxon
+abundances -- as input to RankRatioViz' web interface.""")
+parser.add_argument("-r", "--rank-file", required=True, help="""CSV file
+        detailing rank values for taxa.""")
+parser.add_argument("-t", "--table-file", required=True, help="""BIOM table
+that describes taxon abundances for samples.""")
+parser.add_argument("-m", "--metadata-file", required=True, help="""Metadata
+table file for samples.""")
 
-def process_input(ranks, biom_table, metadata, samples_to_exclude):
+def process_input(ranks, biom_table, metadata):
     """Load input files: ranked taxa, BIOM table, metadata."""
 
     beta = pd.read_csv(ranks, index_col=0)
@@ -29,7 +38,8 @@ def process_input(ranks, biom_table, metadata, samples_to_exclude):
 
     # Exclude certain samples from the plots, if requested.
     # TODO make this an option from the command line
-    sample_exclude = set(samples_to_exclude)
+    # WAIT NO TODO make it doable in the web interface
+    sample_exclude = set(['MET0852', 'MET1504'])
     metadata = metadata.loc[set(metadata.index) - sample_exclude]
 
     return beta, table, metadata
@@ -172,14 +182,11 @@ def gen_sample_plot(table, metadata):
     sample_logratio_chart_json["datasets"]["col_names"] = smaa_cn2si
     return sample_logratio_chart_json
 
-def run_script():
+def run_script(cmdline_args):
+    args = parser.parse_args(cmdline_args)
     print("Processing input files...")
-    beta, table, metadata = process_input(
-        'byrd_inputs/beta.csv',
-        'byrd_inputs/byrd_skin_table.biom',
-        'byrd_inputs/byrd_metadata.txt',
-        ['MET0852', 'MET1504']
-    )
+    beta, table, metadata = process_input(args.rank_file, args.table_file,
+            args.metadata_file)
 
     print("Creating rank plot...")
     rank_plot_chart = gen_rank_plot(beta, "C(Timepoint, Treatment('F'))[T.PF]")
@@ -196,4 +203,7 @@ def run_script():
     print("Done.")
 
 if __name__ == '__main__':
-    run_script()
+    # Command-line argument paradigm based on MetagenomeScope's version
+    # (https://github.com/marbl/MetagenomeScope)
+    # (which is in turn based on https://stackoverflow.com/a/18161115)
+    run_script(sys.argv[1:])
