@@ -9,11 +9,8 @@ PORT = 8000
 # The test target was based on MetagenomeScope's testing functionality.
 # The -B in the invocation of python prevents this from creating pycache
 # 	miscellany.
-# The -s stops "capturing," which lets us do things like print to the
-#   terminal from within tests (this helps with debugging): see
-# 	https://docs.pytest.org/en/latest/capture.html for context
 test:
-	python3 -B -m pytest -s
+	python3 -B -m pytest
 	rm -r rankratioviz/tests/output/*
 run:
 	@echo "Visualizing the JSON files located in the viewer/ directory."
