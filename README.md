@@ -33,7 +33,7 @@ ratios.
 ## Screenshot
 
 ![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/RankRatioViz/master/screenshots/genera.png)
-_Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `rankratioviz/tests/input/byrd` folder of this repository._
+_Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `data/byrd` folder of this repository._
 
 ## Inputs
 
@@ -48,7 +48,7 @@ script, the code for which is located in `gen_plots.py`.
 
 You can also upload a file of "select microbes" to the web visualization tool to
 filter the taxa used in
-textual queries. A sample file (`rankratioviz/tests/input/byrd/byrd_select_microbes.txt`) for this is
+textual queries. A sample file (`data/byrd/byrd_select_microbes.txt`) for this is
 included in this repository.
 
 ## Installation
