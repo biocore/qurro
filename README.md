@@ -1,10 +1,10 @@
-# RankRatioViz
+# rankratioviz
 [![Build Status](https://travis-ci.org/fedarko/RankRatioViz.svg?branch=master)](https://travis-ci.org/fedarko/RankRatioViz)
 
 (Name subject to change.)
 
 This tool visualizes the output from a tool like
-[Songbird](https://github.com/mortonjt/songbird). It facilitates viewing
+[songbird](https://github.com/mortonjt/songbird). It facilitates viewing
 a "ranked" plot of taxa alongside a scatterplot showing the log ratios of
 selected taxon abundances within samples.
 
@@ -33,7 +33,7 @@ ratios.
 ## Screenshot
 
 ![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/RankRatioViz/master/screenshots/genera.png)
-_Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `byrd_inputs` folder of this repository._
+_Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `rankratioviz/tests/input/byrd` folder of this repository._
 
 ## Inputs
 
@@ -48,7 +48,7 @@ script, the code for which is located in `gen_plots.py`.
 
 You can also upload a file of "select microbes" to the web visualization tool to
 filter the taxa used in
-textual queries. A sample file (`byrd_inputs/byrd_select_microbes.txt`) for this is
+textual queries. A sample file (`rankratioviz/tests/input/byrd/byrd_select_microbes.txt`) for this is
 included in this repository.
 
 ## Installation
@@ -86,7 +86,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -r RANK_FILE, --rank-file RANK_FILE
                         CSV file detailing rank values for taxa. This should
-                        be the output of a tool like Songbird or DEICODE.
+                        be the output of a tool like songbird or DEICODE.
   -t TABLE_FILE, --table-file TABLE_FILE
                         BIOM table describing taxon abundances for samples.
   -m METADATA_FILE, --metadata-file METADATA_FILE
