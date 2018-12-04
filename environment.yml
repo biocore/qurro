@@ -1,4 +1,4 @@
-name: rankratioviz
+name: rrv
 channels:
     - biocore
     - conda-forge

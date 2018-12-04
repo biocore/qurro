@@ -13,4 +13,5 @@ install:
     - conda update -q conda
     - conda env create
 script:
+    - source activate rrv
     - make test
