@@ -1,3 +1,8 @@
+# NOTE: If you installed this via conda, you should activate the environment
+# created (via something like "source activate rrv") before using this.
+
+.PHONY: test run
+
 # You can modify this if you want to change the port number
 PORT = 8000
 
