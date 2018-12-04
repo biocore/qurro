@@ -9,7 +9,8 @@ PORT = 8000
 # Based on MetagenomeScope's testing functionality
 test:
 	python3 -B -m pytest
-	rm tests/output/*
+	rm -r rankratioviz/tests/output/*
 run:
-	@echo "When this gets running, open your browser to localhost:$(PORT) to view the visualization."
-	python3 -m http.server $(PORT)
+	@echo "Visualizing the JSON files located in the viewer/ directory."
+	@echo "Open your browser to localhost:$(PORT)/viewer to view the visualization."
+	@python3 -m http.server $(PORT)
