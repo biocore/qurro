@@ -69,6 +69,7 @@ included in this repository.
 ### Generating new JSON files using `gen_plots.py`
 
 Currently, you can run this script via `python3 rankratioviz/gen_plots.py`.
+(Make sure to activate the conda environment via `source activate rrv` first!)
 
 ```
 usage: gen_plots.py [-h] -r RANK_FILE -t TABLE_FILE -m METADATA_FILE
@@ -102,6 +103,8 @@ You might need to do something like Ctrl-Shift-R to force the browser to reload
 the new JSON files.)
 
 ### Viewing a visualization of the plots defined by the JSON files
+
+(Make sure the `rrv` conda environment has been activated first!)
 
 1. Run a simple server using Python from within this repository's folder:
    ```bash
