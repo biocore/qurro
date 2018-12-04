@@ -1,4 +1,5 @@
 # RankRatioViz
+[![Build Status](https://travis-ci.org/fedarko/RankRatioViz.svg?branch=master)](https://travis-ci.org/fedarko/RankRatioViz)
 
 (Name subject to change.)
 
@@ -6,6 +7,9 @@ This tool visualizes the output from a tool like
 [Songbird](https://github.com/mortonjt/songbird). It facilitates viewing
 a "ranked" plot of taxa alongside a scatterplot showing the log ratios of
 selected taxon abundances within samples.
+
+This tool is still being developed, so backwards-compatibile changes might
+occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:
@@ -21,18 +25,10 @@ in the scatterplot of samples.
 You can also run textual queries over the various taxa definitions, in order to
 create more complicated log ratios
 (e.g. "the log ratio of the combined abundances of all
-taxa with rank X over the combined abundances of all taxa with rank Y").\*
+taxa with rank X over the combined abundances of all taxa with rank Y").
 Although this method doesn't require you to manually select taxa on the rank
-plot, the rank plot is still updated to highlight the taxa used in the log
+plot, the rank plot is still updated to indicate the taxa used in the log
 ratios.
-
-\* The ranks within a taxon are separated by semicolons, so if you want to filter
-just to taxa containing a certain rank -- e.g. "Propionibacterium" -- you can
-specify this as `;Propionibacterium;`. (Of course, if the rank you're using is
-on the species level you'll need to omit the trailing semicolon, and if the
-rank you're using is at the domain level you'll need to omit the leading
-semicolon. This feature is in development, so we'll probably remove the need
-for this behavior in the future.)
 
 ## Screenshot
 
@@ -48,10 +44,7 @@ to load these from its directory (that is, the root of this repository) upon
 the page loading.
 
 We currently generate these JSON files in a Python
-script, the code for which is located in `gen_plots.py`. Right now this script
-is configured to look for and use data from Byrd et al. 2017 [2], but we're
-working on making this support arbitrary data sources (based on command-line
-options).
+script, the code for which is located in `gen_plots.py`.
 
 You can also upload a file of "select microbes" to the web visualization tool to
 filter the taxa used in
@@ -76,28 +69,43 @@ included in this repository.
 
 ### Generating new JSON files using `gen_plots.py`
 
-(Right now this just uses the Byrd et al. 2017 data -- more options to come
-shortly!)
-
 Note that this command will replace the prior JSON files contained in this
 directory.
 
-```bash
-python3 gen_plots.py
+You can just run this script via `python3 gen_plots.py`.
+
+```
+usage: gen_plots.py [-h] -r RANK_FILE -t TABLE_FILE -m METADATA_FILE
+                    [-d OUTPUT_DIRECTORY]
+
+Prepares two Altair JSON plots -- one for a rank plot of taxa, and one for a
+scatterplot of sample taxon abundances -- as input for RankRatioViz' web
+interface.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r RANK_FILE, --rank-file RANK_FILE
+                        CSV file detailing rank values for taxa. This should
+                        be the output of a tool like Songbird or DEICODE.
+  -t TABLE_FILE, --table-file TABLE_FILE
+                        BIOM table describing taxon abundances for samples.
+  -m METADATA_FILE, --metadata-file METADATA_FILE
+                        Metadata table file for samples.
+  -d OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
+                        Output directory for JSON files (defaults to CWD)
 ```
 
 ### Viewing a visualization of the plots defined by the JSON files
 
 1. Run a simple server using Python from within this repository's folder:
    ```bash
-   python3 -m http.server
+   make run
    ```
 
-2. Open your browser to `localhost:8000`. The JSON files
-   should automatically be loaded. (The port might differ depending on what
-   Python did in step 1 -- look at the output of this command to determine the
-   URL to navigate to. You can also specify the desired port as an argument to
-   Python in step 1.)
+2. Open your browser to `localhost:8000`. The JSON files in the same directory
+   as `linked_plots.js` and `index.html`
+   should automatically be loaded. (If you want, you can change the port number
+   by passing `PORT=1234` to `make run`.)
 
 ## Tools used
 
