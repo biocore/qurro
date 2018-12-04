@@ -8,3 +8,4 @@ dependencies:
     - pandas
     - biom-format
     - altair
+    - pytest
