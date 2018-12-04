@@ -1,5 +1,5 @@
 # rankratioviz
-[![Build Status](https://travis-ci.org/fedarko/RankRatioViz.svg?branch=master)](https://travis-ci.org/fedarko/RankRatioViz)
+[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz)
 
 (Name subject to change.)
 
@@ -32,7 +32,7 @@ ratios.
 
 ## Screenshot
 
-![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/RankRatioViz/master/screenshots/genera.png)
+![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/rankratioviz/master/screenshots/genera.png)
 _Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `data/byrd` folder of this repository._
 
 ## Inputs
@@ -55,7 +55,7 @@ included in this repository.
 1. Clone this repository to your system:
 
    ```bash
-   git clone https://github.com/fedarko/RankRatioViz.git
+   git clone https://github.com/fedarko/rankratioviz.git
    ```
 
 2. Install dependencies via conda:
@@ -76,7 +76,7 @@ usage: gen_plots.py [-h] -r RANK_FILE -t TABLE_FILE -m METADATA_FILE
                     [-d OUTPUT_DIRECTORY]
 
 Prepares two Altair JSON plots -- one for a rank plot of taxa, and one for a
-scatterplot of sample taxon abundances -- as input for RankRatioViz' web
+scatterplot of sample taxon abundances -- as input for rankratioviz' web
 interface.
 
 optional arguments:

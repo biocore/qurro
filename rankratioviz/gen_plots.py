@@ -22,7 +22,7 @@ import altair as alt
 
 parser = argparse.ArgumentParser(description="""Prepares two Altair JSON plots
 -- one for a rank plot of taxa, and one for a scatterplot of sample taxon
-abundances -- as input for RankRatioViz' web interface.""")
+abundances -- as input for rankratioviz' web interface.""")
 parser.add_argument("-r", "--rank-file", required=True,
     help="""CSV file detailing rank values for taxa. This should be the output
     of a tool like Songbird or DEICODE.""")
