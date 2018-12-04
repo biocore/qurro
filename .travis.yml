@@ -1,6 +1,7 @@
 language: python
 python:
-    - "3"
+    - "3.5"
+    - "3.6"
 install:
     # From the conda installation instructions:
     # https://conda.io/docs/user-guide/tasks/use-conda-with-travis-ci.html
