@@ -118,7 +118,7 @@ Loaded via CDN in the web visualization interface:
 
 Used to generate input JSON files for the visualization interface in
 `gen_plots.py`:
-- [Python 3](https://www.python.org/)
+- [Python 3](https://www.python.org/) (a version of at least 3.2 is required)
 - [NumPy](http://www.numpy.org/)
 - [pandas](https://pandas.pydata.org/)
 - [biom-format](http://biom-format.org/)

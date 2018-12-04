@@ -200,6 +200,7 @@ def run_script(cmdline_args):
     sample_plot_json = gen_sample_plot(table, metadata)
 
     print("Saving plot JSON files...")
+    os.makedirs(args.output_directory, exist_ok=True)
     rank_plot_loc = os.path.join(args.output_directory, "rank_plot.json")
     sample_plot_loc = os.path.join(args.output_directory,
             "sample_logratio_plot.json")
