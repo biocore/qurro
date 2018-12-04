@@ -13,21 +13,26 @@
 
 import json
 import sys
+import os
+import argparse
 import numpy as np
 import pandas as pd
 from biom import load_table
 import altair as alt
-import argparse
 
 parser = argparse.ArgumentParser(description="""Prepares two Altair JSON plots
 -- one for a rank plot of taxa, and one for a scatterplot of sample taxon
-abundances -- as input to RankRatioViz' web interface.""")
-parser.add_argument("-r", "--rank-file", required=True, help="""CSV file
-        detailing rank values for taxa.""")
-parser.add_argument("-t", "--table-file", required=True, help="""BIOM table
-that describes taxon abundances for samples.""")
-parser.add_argument("-m", "--metadata-file", required=True, help="""Metadata
-table file for samples.""")
+abundances -- as input for RankRatioViz' web interface.""")
+parser.add_argument("-r", "--rank-file", required=True,
+    help="""CSV file detailing rank values for taxa. This should be the output
+    of a tool like Songbird or DEICODE.""")
+parser.add_argument("-t", "--table-file", required=True,
+    help="""BIOM table describing taxon abundances for samples.""")
+parser.add_argument("-m", "--metadata-file", required=True,
+    help="""Metadata table file for samples.""")
+parser.add_argument("-d", "--output-directory", required=False,
+    default=os.getcwd(),
+    help="""Output directory for JSON files (defaults to CWD)""")
 
 def process_input(ranks, biom_table, metadata):
     """Load input files: ranked taxa, BIOM table, metadata."""
@@ -195,9 +200,13 @@ def run_script(cmdline_args):
     sample_plot_json = gen_sample_plot(table, metadata)
 
     print("Saving plot JSON files...")
-    rank_plot_chart.save("rank_plot.json")
+    rank_plot_loc = os.path.join(args.output_directory, "rank_plot.json")
+    sample_plot_loc = os.path.join(args.output_directory,
+            "sample_logratio_plot.json")
+
+    rank_plot_chart.save(rank_plot_loc)
     # For reference: https://stackoverflow.com/a/12309296
-    with open("sample_logratio_plot.json", "w") as jfile:
+    with open(sample_plot_loc, "w") as jfile:
         json.dump(sample_plot_json, jfile)
 
     print("Done.")
