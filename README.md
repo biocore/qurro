@@ -40,8 +40,7 @@ _Screenshot of the log ratio of the combined abundances of all taxa with the ran
 The web visualization tool takes as input two
 [Vega-Lite](https://vega.github.io/vega-lite/)
 JSON files (one for the rank plot and one for the sample scatterplot). It tries
-to load these from its directory (that is, the root of this repository) upon
-the page loading.
+to load these from its directory (`viewer/`) upon the page loading.
 
 We currently generate these JSON files in a Python
 script, the code for which is located in `gen_plots.py`.
@@ -69,10 +68,7 @@ included in this repository.
 
 ### Generating new JSON files using `gen_plots.py`
 
-Note that this command will replace the prior JSON files contained in this
-directory.
-
-You can just run this script via `python3 gen_plots.py`.
+Currently, you can run this script via `python3 rankratioviz/gen_plots.py`.
 
 ```
 usage: gen_plots.py [-h] -r RANK_FILE -t TABLE_FILE -m METADATA_FILE
@@ -95,6 +91,16 @@ optional arguments:
                         Output directory for JSON files (defaults to CWD)
 ```
 
+To stage these JSON files for the visualization,
+set the `-d` option to `viewer/` (or just move them to `viewer/` after running
+the Python script). Note that this will overwrite the JSON files currently in
+the `viewer/` directory.
+
+(If you already have the visualization running and want it to update to reflect
+new JSON files in the `viewer/` directory, you'll need to refresh your browser.
+You might need to do something like Ctrl-Shift-R to force the browser to reload
+the new JSON files.)
+
 ### Viewing a visualization of the plots defined by the JSON files
 
 1. Run a simple server using Python from within this repository's folder:
@@ -102,10 +108,10 @@ optional arguments:
    make run
    ```
 
-2. Open your browser to `localhost:8000`. The JSON files in the same directory
-   as `linked_plots.js` and `index.html`
-   should automatically be loaded. (If you want, you can change the port number
-   by passing `PORT=1234` to `make run`.)
+2. Open your browser to `localhost:8000/viewer`. The JSON files in this
+   directory should automatically be loaded. (If you want, you can
+   change the port number by passing an argument like `PORT=8080` to
+   `make run`.)
 
 ## Tools used
 
