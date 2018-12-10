@@ -7,5 +7,5 @@ dependencies:
     - numpy
     - pandas
     - biom-format
-    - altair=2.2.2
+    - altair
     - pytest
