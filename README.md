@@ -131,7 +131,8 @@ Used to generate input JSON files for the visualization interface in
 - [NumPy](http://www.numpy.org/)
 - [pandas](https://pandas.pydata.org/)
 - [biom-format](http://biom-format.org/)
-- [Altair](https://altair-viz.github.io/)
+- [Altair](https://altair-viz.github.io/) (currently, version 2.3.0 doesn't
+  work our use of this, so version 2.2.2 is required)
 
 ## References
 
