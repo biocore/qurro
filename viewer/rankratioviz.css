@@ -1,0 +1,9 @@
+h3, p {
+    text-align: center;
+}
+body, input, button, select {
+    font-size: large;
+}
+.plottd {
+    width: 50%;
+}
