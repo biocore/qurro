@@ -4,6 +4,18 @@ h3, p {
 body, input, button, select {
     font-size: large;
 }
-.plottd {
+.plotTD {
     width: 50%;
+}
+.topAlignedTD {
+    vertical-align: top;
+}
+#rrvTable {
+    width: 100%;
+}
+#rankPlotTD {
+    text-align: right;
+}
+#samplePlotTD {
+    text-align: left;
 }

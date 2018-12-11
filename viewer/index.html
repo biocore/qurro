@@ -23,13 +23,13 @@
     </head>
 
     <body>
-        <table style="width:100%;">
+        <table id="rrvTable">
             <!-- Show the actual plots -->
             <tr>
-                <td class="plottd" style="text-align: right;">
+                <td class="plotTD" id="rankPlotTD">
                     <div id="rankPlot"></div>
                 </td>
-                <td class="plottd" style="text-align: left;">
+                <td class="plotTD" id="samplePlotTD">
                     <div id="samplePlot"></div>
                 </td>
             </tr>
@@ -42,7 +42,7 @@
                 </td>
             </tr>
             <tr>
-                <td style="vertical-align:top;">
+                <td class="topAlignedTD">
                     <h3>Single-Microbe Selections</h3>
                     <p>
                         Select two microbes from the rank plot (left) to
