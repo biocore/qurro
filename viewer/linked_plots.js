@@ -182,7 +182,7 @@ ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa) {
     // first... then instead of adding 0, you'll add "0", and thereby increase
     // it by an order of magnitude... which is uh yeah that's a thing that I
     // just spent an hour debugging.
-    var zfi = parseFloat($("#zeroFillInput").val());
+    var zfi = parseFloat(document.getElementById("zeroFillInput").value);
     for (var t = 0; t < taxa.length; t++) {
         var colIndex = ssmv.samplePlotJSON["datasets"]["col_names"][taxa[t]];
         if (sampleRow[colIndex] === 0) {
@@ -313,11 +313,13 @@ ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
 
 ssmv.updateSamplePlotMulti = function() {
     // Determine how we're going to use the input for searching through taxa
-    var topType = $("#topSearch").val();
-    var botType = $("#botSearch").val();
+    var topType = document.getElementById("topSearch").value;
+    var botType = document.getElementById("botSearch").value;
+    var topEnteredText = document.getElementById("topText").value;
+    var botEnteredText = document.getElementById("botText").value;
     // Now use these "types" to filter taxa for both parts of the log ratio
-    ssmv.topTaxa = ssmv.filterTaxa($("#topText").val(), topType);
-    ssmv.botTaxa = ssmv.filterTaxa($("#botText").val(), botType);
+    ssmv.topTaxa = ssmv.filterTaxa(topEnteredText, topType);
+    ssmv.botTaxa = ssmv.filterTaxa(botEnteredText, botType);
     ssmv.changeSamplePlot(ssmv.updateBalanceMulti, ssmv.updateRankColorMulti);
     // Clear the single-microbe association text to be clearer
     var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
@@ -391,7 +393,8 @@ ssmv.parseSelectMicrobesFile = function(fileText) {
 // Based on loadLocalDB() in MetagenomeScope: viewer/index.html
 ssmv.uploadSelectMicrobesFile = function() {
     var fr = new FileReader();
-    var smFile = $("#selectMicrobesFileSelector").prop("files")[0];
+    var smFile = document.getElementById("selectMicrobesFileSelector")
+                    .files[0];
     if (smFile !== undefined) {
         fr.onload = function(e) {
             if (e.target.readyState === FileReader.DONE) {
