@@ -8,7 +8,7 @@ This tool visualizes the output from a tool like
 a "ranked" plot of taxa alongside a scatterplot showing the log ratios of
 selected taxon abundances within samples.
 
-This tool is still being developed, so backwards-compatibile changes might
+This tool is still being developed, so backwards-incompatibile changes might
 occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
 ## Linked visualizations
