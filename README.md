@@ -123,7 +123,6 @@ Loaded via CDN in the web visualization interface:
 - [Vega-Lite](https://vega.github.io/vega-lite/)
 - [Vega-Embed](https://github.com/vega/vega-embed)
 - [MathJax](https://www.mathjax.org/)
-- [jQuery](https://jquery.com/)
 
 Used to generate input JSON files for the visualization interface in
 `gen_plots.py`:
