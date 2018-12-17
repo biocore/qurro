@@ -323,9 +323,6 @@ ssmv.updateSamplePlotMulti = function() {
     ssmv.changeSamplePlot(ssmv.updateBalanceMulti, ssmv.updateRankColorMulti);
     // Update taxa text displays
     ssmv.updateTaxaTextDisplays();
-    // Clear the single-microbe association text to be clearer
-    var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
-    MathJax.Hub.Queue(["Text", logRatioDisp, ""]);
 };
 
 ssmv.updateSamplePlotSingle = function() {
@@ -340,37 +337,31 @@ ssmv.updateSamplePlotSingle = function() {
 
                 ssmv.taxonLowCol = ssmv.samplePlotJSON["datasets"]["col_names"][ssmv.newTaxonLow];
                 ssmv.taxonHighCol = ssmv.samplePlotJSON["datasets"]["col_names"][ssmv.newTaxonHigh];
-                // Update logRatioDisplay re: new log ratio
-                var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
-                // \rightarrow can only be used in LaTeX's "math mode," hence
-                // why we have to temporarily leave the \text{} environment
-                // before using it
-                var downLvl = "} \\rightarrow \\text{";
-                // We use a regular expression as the pattern to match in
-                // .replace() because JS' .replace(), if a string is specified
-                // as the pattern to match, only replaces the first occurrence
-                // (per the MDN)
-                var newEq = "\\log\\bigg(\\frac{\\text{"
-                    + ssmv.newTaxonHigh.replace(/;/g, downLvl) + "}}{\\text{"
-                    + ssmv.newTaxonLow.replace(/;/g, downLvl) + "}}\\bigg)";
-                MathJax.Hub.Queue(["Text", logRatioDisp, newEq]);
-                // clear, for consistency
-                ssmv.updateTaxaTextDisplays(true);
-
                 ssmv.changeSamplePlot(
                     ssmv.updateBalanceSingle,
                     ssmv.updateRankColorSingle
                 );
+                ssmv.updateTaxaTextDisplays(true);
             }
         }
     }
 };
 
-// TODO make work with single taxa display
-ssmv.updateTaxaTextDisplays = function(clear) {
+/* Updates the textareas that list the selected taxa.
+ *
+ * This defaults to updating based on the "multiple" selections' values. If you
+ * pass in a truthy value for the clear argument, this will instead clear these
+ * text areas; if you pass in a truthy value for the single argument (and clear
+ * is falsy), this will instead update based on the single selection values.
+ */
+ssmv.updateTaxaTextDisplays = function(single, clear) {
     if (clear) {
         document.getElementById("topTaxaDisplay").value = "";
         document.getElementById("botTaxaDisplay").value = "";
+    }
+    else if (single) {
+        document.getElementById("topTaxaDisplay").value = ssmv.newTaxonHigh;
+        document.getElementById("botTaxaDisplay").value = ssmv.newTaxonLow;
     }
     else {
         document.getElementById("topTaxaDisplay").value =

@@ -7,14 +7,13 @@
         </title>
         <link rel="shortcut icon" href="icon.png" />
         <link rel="stylesheet" href="rankratioviz.css" />
-        <!-- External dependencies here: Vega, Vega-Lite, Vega-Embed, MathJax.
-             Vega, Vega-Lite, and Vega-Embed are required for Vega-Embed: see
-             the Basic Example in https://github.com/vega/vega-embed.
+        <!-- External dependencies here: Vega, Vega-Lite, Vega-Embed.
+             All are required for Vega-Embed: see the Basic Example in
+             https://github.com/vega/vega-embed.
         -->
         <script src="https://cdn.jsdelivr.net/npm/vega@3/build/vega.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vega-lite@2.6.0/build/vega-lite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.23.1/build/vega-embed.min.js"></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
         <script src="linked_plots.js"></script>
         <script>
             // Run on page load
@@ -31,14 +30,6 @@
                 </td>
                 <td class="plotTD" id="samplePlotTD">
                     <div id="samplePlot"></div>
-                </td>
-            </tr>
-            <!-- This row of the table shows the log ratio created from
-                selecting single microbes in the rank plot.
-            -->
-            <tr>
-                <td colspan="2">
-                    <p id="logRatioDisplay">\[\]</p>
                 </td>
             </tr>
             <tr>
