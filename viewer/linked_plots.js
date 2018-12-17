@@ -44,14 +44,14 @@ ssmv.makeRankPlot = function(spec) {
                     if (ssmv.onHigh) {
                         ssmv.oldTaxonHigh = ssmv.newTaxonHigh;
                         ssmv.newTaxonHigh = i["datum"]["index"];
-                        console.log("Set newTaxonHigh: " +
-                            ssmv.newTaxonHigh);
+                        //console.log("Set newTaxonHigh: " +
+                        //    ssmv.newTaxonHigh);
                     }
                     else {
                         ssmv.oldTaxonLow = ssmv.newTaxonLow;
                         ssmv.newTaxonLow = i["datum"]["index"];
-                        console.log("Set newTaxonLow: " +
-                            ssmv.newTaxonLow);
+                        //console.log("Set newTaxonLow: " +
+                        //    ssmv.newTaxonLow);
                         ssmv.updateSamplePlotSingle();
                     }
                     ssmv.onHigh = !ssmv.onHigh;
