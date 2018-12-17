@@ -19,3 +19,6 @@ body, input, button, select {
 #samplePlotTD {
     text-align: left;
 }
+textarea {
+    width: 92%;
+}

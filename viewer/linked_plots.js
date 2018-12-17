@@ -321,6 +321,8 @@ ssmv.updateSamplePlotMulti = function() {
     ssmv.topTaxa = ssmv.filterTaxa(topEnteredText, topType);
     ssmv.botTaxa = ssmv.filterTaxa(botEnteredText, botType);
     ssmv.changeSamplePlot(ssmv.updateBalanceMulti, ssmv.updateRankColorMulti);
+    // Update taxa text displays
+    ssmv.updateTaxaTextDisplays();
     // Clear the single-microbe association text to be clearer
     var logRatioDisp = MathJax.Hub.getAllJax("logRatioDisplay")[0];
     MathJax.Hub.Queue(["Text", logRatioDisp, ""]);
@@ -352,6 +354,8 @@ ssmv.updateSamplePlotSingle = function() {
                     + ssmv.newTaxonHigh.replace(/;/g, downLvl) + "}}{\\text{"
                     + ssmv.newTaxonLow.replace(/;/g, downLvl) + "}}\\bigg)";
                 MathJax.Hub.Queue(["Text", logRatioDisp, newEq]);
+                // clear, for consistency
+                ssmv.updateTaxaTextDisplays(true);
 
                 ssmv.changeSamplePlot(
                     ssmv.updateBalanceSingle,
@@ -361,6 +365,20 @@ ssmv.updateSamplePlotSingle = function() {
         }
     }
 };
+
+// TODO make work with single taxa display
+ssmv.updateTaxaTextDisplays = function(clear) {
+    if (clear) {
+        document.getElementById("topTaxaDisplay").value = "";
+        document.getElementById("botTaxaDisplay").value = "";
+    }
+    else {
+        document.getElementById("topTaxaDisplay").value =
+            ssmv.topTaxa.toString().replace(/,/g, "\n");
+        document.getElementById("botTaxaDisplay").value =
+            ssmv.botTaxa.toString().replace(/,/g, "\n");
+    }
+}
 
 // Read through the text of a select microbes file (assumed to be just one line
 // per microbe) and store it in ssmv.selectMicrobes.
