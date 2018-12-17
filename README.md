@@ -11,6 +11,8 @@ selected taxon abundances within samples.
 This tool is still being developed, so backwards-incompatibile changes might
 occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
+You can view a demo of RankRatioViz [here](https://fedarko.github.io/rrv/).
+
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:
 selections in the rank plot modify the scatterplot of samples, and
