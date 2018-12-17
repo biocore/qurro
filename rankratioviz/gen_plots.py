@@ -29,7 +29,9 @@ parser.add_argument("-r", "--rank-file", required=True,
 parser.add_argument("-t", "--table-file", required=True,
     help="""BIOM table describing taxon abundances for samples.""")
 parser.add_argument("-m", "--metadata-file", required=True,
-    help="""Metadata table file for samples.""")
+    help="""Metadata table file for samples. Samples described in the BIOM
+    table must have an entry in the metadata table in order to be eligible to
+    be plotted in the application.""")
 parser.add_argument("-d", "--output-directory", required=False,
     default=os.getcwd(),
     help="""Output directory for JSON files (defaults to CWD)""")
