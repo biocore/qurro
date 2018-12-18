@@ -43,12 +43,6 @@ def process_input(ranks, biom_table, metadata):
     table = load_table(biom_table).to_dataframe().to_dense().T
     metadata = pd.read_table(metadata, index_col=0)
 
-    # Exclude certain samples from the plots, if requested.
-    # TODO make this an option from the command line
-    # WAIT NO TODO make it doable in the web interface
-    sample_exclude = set(['MET0852', 'MET1504'])
-    metadata = metadata.loc[set(metadata.index) - sample_exclude]
-
     return beta, table, metadata
 
 def gen_rank_plot(beta, rank_col):
