@@ -42,5 +42,6 @@ def rank_plot(output_dir: str, table: biom.Table,
     with open(sample_plot_loc, "w") as jfile:
         json.dump(sample_plot_json, jfile)
     #render
-    q2templates.render(index, output_dir)
+    plot_name = output_dir.split('/')[-1]
+    q2templates.render(index, output_dir, context={'plot_name': plot_name})
     return

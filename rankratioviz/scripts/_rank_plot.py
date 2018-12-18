@@ -22,6 +22,15 @@ from rankratioviz.generate import process_input,gen_rank_plot,gen_sample_plot
 def rank_plots(ranks: str, in_biom: str, in_metadata: str, 
                output_dir: str, in_taxonomy: str , in_catagory: str) -> None:
 
+    # import 
+    in_biom = load_table(in_biom)
+    in_metadata = pd.read_table(in_metadata, index_col=0)
+    if in_taxonomy is not None:
+        in_taxonomy = pd.read_table(in_taxonomy)
+        in_taxonomy.set_index('feature id',inplace=True)
+    else:
+        in_taxonomy = None
+
     U, V, table, metadata = process_input(ranks, in_biom, in_metadata, in_taxonomy)
     rank_plot_chart = gen_rank_plot(U, V, 0)
     sample_plot_json = gen_sample_plot(table, metadata, in_catagory)

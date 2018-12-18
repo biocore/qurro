@@ -27,19 +27,16 @@ def matchdf(df1,df2):
     idx = set(df1.index) & set(df2.index)
     return df1.loc[idx],df2.loc[idx]
 
-def process_input(ordination_file, biom_table, metadata, taxmeta):
+def process_input(ordination_file, biom_table, metadata, taxam=None):
     """Load input files: ordination taxa, BIOM table, metadata."""
     V = ordination_file.features
     U = ordination_file.samples
-    table = load_table(biom_table).to_dataframe().to_dense().T
-    metadata = pd.read_table(metadata, index_col=0)
+    table = biom_table.to_dataframe().to_dense().T
     #match 
     table,V = matchdf(table.T,V)
     table,U = matchdf(table.T,U)
 
-    if taxmeta is not None:
-        taxam = pd.read_table(taxmeta)
-        taxam.set_index('feature id',inplace=True)
+    if taxam is not None:
         # match and relabel 
         taxam,V = matchdf(taxam,V)
         if 'Taxon' in taxam.columns \

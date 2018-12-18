@@ -3,15 +3,60 @@
 
 (Name subject to change.)
 
-This tool visualizes the output from a tool like
+This tool visualizes the [Biplot-OrdinationResults](http://scikit-bio.org/docs/0.5.1/generated/generated/skbio.stats.ordination.OrdinationResults.html) output from a tool like
 [songbird](https://github.com/mortonjt/songbird). It facilitates viewing
-a "ranked" plot of taxa alongside a scatterplot showing the log ratios of
+a __"ranked"__ plot of taxa alongside a scatterplot showing the __log ratios__ of
 selected taxon abundances within samples.
 
 This tool is still being developed, so backwards-incompatibile changes might
 occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
 You can view a demo of RankRatioViz [here](https://fedarko.github.io/rrv/).
+
+## Installation
+
+To install the most up to date version of deicode, run the following command
+```
+# dev. version
+pip install git+https://github.com/fedarko/rankratioviz.git
+```
+Then run the following command to refresh qiime2
+
+```
+qiime dev refresh-cache
+```
+
+### Qiime2 tutorial
+
+First make sure that qiime2 is installed before installing deicode. Then run
+
+```
+qiime dev refresh-cache
+```
+
+A full example can be analysis from count table to visualization can be found [here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb). Once a file of type Biplot-OrdinationResults (i.e. ordination.qza in the example) is made the visualization can be made using the command below and visualized by dragging the file onto [this](https://view.qiime2.org/) page. 
+
+```
+!qiime rankratioviz rank-plot --i-table example/deicode_example/qiita_10422_table.biom.qza \
+                              --i-ranks example/deicode_example/ordination.qza \
+                              --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
+                              --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
+                              --p-in-catagory example/exposure_type_encode \
+                              --output-dir example/deicode_example/rank_plot
+```
+
+### Stand alone command line tutorial
+
+Simillar to the command above this is preceeded by the command to produce .
+
+```
+!rankratioviz_rankplot \
+--ranks example/deicode_example/ordination.txt \
+--in_biom example/deicode_example/qiita_10422_table.biom \
+--in_metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
+--in_taxonomy example/deicode_example/taxonomy.tsv \
+--output_dir example/deicode_example --in_catagory exposure_type_encode
+```
 
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:
@@ -36,87 +81,6 @@ ratios.
 
 ![Screenshot of the log ratio of the combined abundances of all taxa with the rank 'Staphylococcus' over the combined abundances of all taxa with the rank 'Propionibacterium.'](https://raw.githubusercontent.com/fedarko/rankratioviz/master/screenshots/genera.png)
 _Screenshot of the log ratio of the combined abundances of all taxa with the rank "Staphylococcus" over the combined abundances of all taxa with the rank "Propionibacterium." This visualization was created using sample data from Byrd et al. 2017 [2]; this data is included in the `data/byrd` folder of this repository._
-
-## Inputs
-
-The web visualization tool takes as input two
-[Vega-Lite](https://vega.github.io/vega-lite/)
-JSON files (one for the rank plot and one for the sample scatterplot). It tries
-to load these from its directory (`viewer/`) upon the page loading.
-
-We currently generate these JSON files in a Python
-script, the code for which is located in `gen_plots.py`.
-
-You can also upload a file of "select microbes" to the web visualization tool to
-filter the taxa used in
-textual queries. A sample file (`data/byrd/byrd_select_microbes.txt`) for this is
-included in this repository.
-
-## Installation
-
-1. Clone this repository to your system:
-
-   ```bash
-   git clone https://github.com/fedarko/rankratioviz.git
-   ```
-
-2. Install dependencies via conda:
-
-   ```bash
-   conda env create
-   ```
-
-## Running the tool
-
-### Generating new JSON files using `gen_plots.py`
-
-Currently, you can run this script via `python3 rankratioviz/gen_plots.py`.
-(Make sure to activate the conda environment via `source activate rrv` first!)
-
-```
-usage: gen_plots.py [-h] -r RANK_FILE -t TABLE_FILE -m METADATA_FILE
-                    [-d OUTPUT_DIRECTORY]
-
-Prepares two Altair JSON plots -- one for a rank plot of taxa, and one for a
-scatterplot of sample taxon abundances -- as input for rankratioviz' web
-interface.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -r RANK_FILE, --rank-file RANK_FILE
-                        CSV file detailing rank values for taxa. This should
-                        be the output of a tool like songbird or DEICODE.
-  -t TABLE_FILE, --table-file TABLE_FILE
-                        BIOM table describing taxon abundances for samples.
-  -m METADATA_FILE, --metadata-file METADATA_FILE
-                        Metadata table file for samples.
-  -d OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
-                        Output directory for JSON files (defaults to CWD)
-```
-
-To stage these JSON files for the visualization,
-set the `-d` option to `viewer/` (or just move them to `viewer/` after running
-the Python script). Note that this will overwrite the JSON files currently in
-the `viewer/` directory.
-
-(If you already have the visualization running and want it to update to reflect
-new JSON files in the `viewer/` directory, you'll need to refresh your browser.
-You might need to do something like Ctrl-Shift-R to force the browser to reload
-the new JSON files.)
-
-### Viewing a visualization of the plots defined by the JSON files
-
-(Make sure the `rrv` conda environment has been activated first!)
-
-1. Run a simple server using Python from within this repository's folder:
-   ```bash
-   make run
-   ```
-
-2. Open your browser to `localhost:8000/viewer`. The JSON files in this
-   directory should automatically be loaded. (If you want, you can
-   change the port number by passing an argument like `PORT=8080` to
-   `make run`.)
 
 ## Tools used
 

@@ -416,7 +416,7 @@ ssmv.uploadSelectMicrobesFile = function() {
 
 // Run on page startup: load and save JSON files, and make plots accordingly
 ssmv.loadJSONFiles = function() {
-    var jsonsToLoad = ["rank_plot.json", "sample_logratio_plot.json"];
+    var jsonsToLoad = ["rank_plot/rank_plot.json", "rank_plot/sample_logratio_plot.json"];
     for (var ji = 0; ji < 2; ji++) {
         // Use an XMLHTTPRequest to get JSON for both plots, since we want to
         // hang on to that instead of just passing it to vegaEmbed. See
@@ -429,7 +429,7 @@ ssmv.loadJSONFiles = function() {
                 // By the time this function is called, ji is (probably)
                 // already 2. So we can't rely on it to figure out the JSON
                 // this XHR is for, which is why we check the response URL.
-                if (this.responseURL.endsWith("rank_plot.json")) {
+                if (this.responseURL.endsWith("rank_plot/rank_plot.json")) {
                     ssmv.rankPlotJSON = this.response;
                     ssmv.makeRankPlot(this.response);
                 }
