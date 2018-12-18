@@ -14,63 +14,52 @@
 import json
 import sys
 import os
-import argparse
 import numpy as np
 import pandas as pd
 from biom import load_table
 import altair as alt
+from skbio import  OrdinationResults
+from matplotlib.colors import rgb2hex
+from matplotlib import cm
 
-parser = argparse.ArgumentParser(description="""Prepares two Altair JSON plots
--- one for a rank plot of taxa, and one for a scatterplot of sample taxon
-abundances -- as input for rankratioviz' web interface.""")
-parser.add_argument("-r", "--rank-file", required=True,
-    help="""CSV file detailing rank values for taxa. This should be the output
-    of a tool like Songbird or DEICODE.""")
-parser.add_argument("-t", "--table-file", required=True,
-    help="""BIOM table describing taxon abundances for samples.""")
-parser.add_argument("-m", "--metadata-file", required=True,
-    help="""Metadata table file for samples.""")
-parser.add_argument("-d", "--output-directory", required=False,
-    default=os.getcwd(),
-    help="""Output directory for JSON files (defaults to CWD)""")
 
-def process_input(ranks, biom_table, metadata):
-    """Load input files: ranked taxa, BIOM table, metadata."""
 
-    beta = pd.read_csv(ranks, index_col=0)
+
+def process_input(ordination_file, biom_table, metadata):
+    """Load input files: ordination taxa, BIOM table, metadata."""
+    ordination_res = OrdinationResults.read(ordination_file)
+    V = ordination_res.features
+    U = ordination_res.samples
     table = load_table(biom_table).to_dataframe().to_dense().T
     metadata = pd.read_table(metadata, index_col=0)
 
-    # Exclude certain samples from the plots, if requested.
-    # TODO make this an option from the command line
-    # WAIT NO TODO make it doable in the web interface
-    sample_exclude = set(['MET0852', 'MET1504'])
-    metadata = metadata.loc[set(metadata.index) - sample_exclude]
+    #(match all)
+    # TODO
+  
+    return U, V, table, metadata
 
-    return beta, table, metadata
-
-def gen_rank_plot(beta, rank_col):
+def gen_rank_plot(U, V, rank_col):
     """Generates JSON for the rank plot.
 
     Arguments:
 
-    beta: pandas DataFrame with taxon names as index column. Contains
-          multinomial ranks as other column(s).
-          For information about how these ranks are generated and what they
-          mean, see Morton & Marotz et al. 2018 (in submission) or
-          https://github.com/knightlab-analyses/reference-frames.
-    rank_col: the column index to use for getting the rank values for each
+    
+    U: sample ranks 
+    V: feature ranks 
+    rank_col: the column index to use for 
+              getting the rank values for each
               taxon.
 
     Returns:
 
     altair.Chart object for the rank plot.
+
     """
 
     # Get stuff ready for the rank plot
 
     # coefs is a pandas Series
-    coefs = beta[rank_col].sort_values()
+    coefs = V[rank_col].sort_values()
     # x is a numpy ndarray
     x = np.arange(coefs.shape[0])
 
@@ -112,7 +101,7 @@ def gen_rank_plot(beta, rank_col):
     ).interactive()
     return postflare_rank_chart
 
-def gen_sample_plot(table, metadata):
+def gen_sample_plot(table, metadata, catagory):
     """Create Altair version of sample scatterplot.
 
     Arguments:
@@ -163,19 +152,22 @@ def gen_sample_plot(table, metadata):
     # comes out to 7.5 MB, which is an underestimate).
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
+    #color palette chnage here
+    cmap = cm.get_cmap('Set1', int(len(set(smaa_cn2si[catagory]))))
+
     # Create sample plot in Altair.
     sample_logratio_chart = alt.Chart(
         sample_metadata_and_abundances,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
-        alt.X(smaa_cn2si["Objective SCORAD"], title="SCORAD"),
+        alt.X(smaa_cn2si[catagory], title=str(catagory)),
         alt.Y(smaa_cn2si["balance"], title="log(Numerator / Denominator)"),
         color=alt.Color(
-            smaa_cn2si["Timepoint"],
-            title="Time: Baseline / Flare / Post-Flare",
+            smaa_cn2si[catagory],
+            title=str(catagory),
             scale=alt.Scale(
-                domain=["B", "PF", "F"],
-                range=["#00c", "#0c0", "#c00"]
+                domain=list(set(smaa_cn2si[catagory])),
+                range=[rgb2hex(cmap(i)) for i in range(cmap.N)]
             )
         ),
         tooltip=[smaa_cn2si["index"]]
@@ -186,34 +178,3 @@ def gen_sample_plot(table, metadata):
     sample_logratio_chart_json = sample_logratio_chart.to_dict()
     sample_logratio_chart_json["datasets"]["col_names"] = smaa_cn2si
     return sample_logratio_chart_json
-
-def run_script(cmdline_args):
-    args = parser.parse_args(cmdline_args)
-    print("Processing input files...")
-    beta, table, metadata = process_input(args.rank_file, args.table_file,
-            args.metadata_file)
-
-    print("Creating rank plot...")
-    rank_plot_chart = gen_rank_plot(beta, "C(Timepoint, Treatment('F'))[T.PF]")
-
-    print("Creating sample log ratio scatterplot...")
-    sample_plot_json = gen_sample_plot(table, metadata)
-
-    print("Saving plot JSON files...")
-    os.makedirs(args.output_directory, exist_ok=True)
-    rank_plot_loc = os.path.join(args.output_directory, "rank_plot.json")
-    sample_plot_loc = os.path.join(args.output_directory,
-            "sample_logratio_plot.json")
-
-    rank_plot_chart.save(rank_plot_loc)
-    # For reference: https://stackoverflow.com/a/12309296
-    with open(sample_plot_loc, "w") as jfile:
-        json.dump(sample_plot_json, jfile)
-
-    print("Done.")
-
-if __name__ == '__main__':
-    # Command-line argument paradigm based on MetagenomeScope's version
-    # (https://github.com/marbl/MetagenomeScope)
-    # (which is in turn based on https://stackoverflow.com/a/18161115)
-    run_script(sys.argv[1:])
