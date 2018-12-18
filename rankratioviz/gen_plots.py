@@ -91,6 +91,7 @@ def gen_rank_plot(beta, rank_col):
             title="Ranks"
     ).mark_bar().encode(
         x=alt.X('x', title="Species", type="quantitative"),
+        # TODO abstract
         y=alt.Y('coefs', title="log(PostFlare / Flare) + K", type="quantitative"),
         color=alt.Color("classification",
             scale=alt.Scale(
@@ -164,11 +165,15 @@ def gen_sample_plot(table, metadata):
         sample_metadata_and_abundances,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
+        # TODO abstract: should be configurable by user in app
         alt.X(smaa_cn2si["Objective SCORAD"], title="SCORAD"),
         alt.Y(smaa_cn2si["balance"], title="log(Numerator / Denominator)"),
         color=alt.Color(
+            # TODO abstract: should be configurable by user in app
             smaa_cn2si["Timepoint"],
+            # TODO abstract
             title="Time: Baseline / Flare / Post-Flare",
+            # TODO abstract: autogenerate colors being used
             scale=alt.Scale(
                 domain=["B", "PF", "F"],
                 range=["#00c", "#0c0", "#c00"]
@@ -190,6 +195,7 @@ def run_script(cmdline_args):
             args.metadata_file)
 
     print("Creating rank plot...")
+    # TODO abstract
     rank_plot_chart = gen_rank_plot(beta, "C(Timepoint, Treatment('F'))[T.PF]")
 
     print("Creating sample log ratio scatterplot...")
