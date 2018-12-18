@@ -46,7 +46,7 @@ def process_input(ordination_file, biom_table, metadata, taxmeta):
         if 'Taxon' in taxam.columns \
             and 'Confidence' in taxam.columns:
             #combine and replace
-            taxam["Taxon_"] = [(str(x)+'_('+str(y)[:4]+')').replace(' ','') for x,y in zip(taxam.Taxon,taxam.Confidence)]
+            taxam["Taxon_"] = [(str(x)+'|('+str(y)[:4]+')').replace(' ','') for x,y in zip(taxam.Taxon,taxam.Confidence)]
             V.index = taxam["Taxon_"].values
             table.columns = taxam["Taxon_"].values
         elif 'Taxon' in taxam.columns:
@@ -137,7 +137,7 @@ def gen_sample_plot(table, metadata, catagory,palette='Set1'):
     # scatterplot by default, which makes sense).
     balance = pd.Series(index=table.index).fillna(float('nan'))
     data = pd.DataFrame({'balance': balance}, index=table.index)
-    data = pd.merge(data, metadata, left_index=True, right_index=True)
+    data = pd.merge(data, metadata[[catagory]], left_index=True, right_index=True)
 
     # Construct unified DataFrame, combining our "data" DataFrame with the
     # "table" variable (in order to associate each sample with its corresponding
@@ -171,8 +171,10 @@ def gen_sample_plot(table, metadata, catagory,palette='Set1'):
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
     #color palette chnage here
-    cmap = cm.get_cmap(palette, int(len(set(smaa_cn2si[catagory]))))
+    set_size = int(len(set(metadata[catagory])))
+    cmap = cm.get_cmap(palette, set_size)
 
+    
     # Create sample plot in Altair.
     sample_logratio_chart = alt.Chart(
         sample_metadata_and_abundances,
@@ -184,8 +186,8 @@ def gen_sample_plot(table, metadata, catagory,palette='Set1'):
             smaa_cn2si[catagory],
             title=str(catagory),
             scale=alt.Scale(
-                domain=list(set(smaa_cn2si[catagory])),
-                range=[rgb2hex(cmap(i)) for i in range(cmap.N)]
+                domain=list(set(metadata[catagory])),
+                range=[rgb2hex(cmap(i)) for i in range(set_size)]
             )
         ),
         tooltip=[smaa_cn2si["index"]]

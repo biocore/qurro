@@ -27,17 +27,17 @@ def rank_plots(ranks: str, in_biom: str, in_metadata: str,
     sample_plot_json = gen_sample_plot(table, metadata, in_catagory)
     os.makedirs(output_dir, exist_ok=True)
     #write 
-    os.mkdir(os.path.join(output_dir,'rank_plot'))
+    os.mkdir(os.path.join(output_dir,'rank_plot_'+in_catagory))
     # copy files for viz
     loc_ = os.path.dirname(os.path.realpath(__file__))
     for file_ in os.listdir(os.path.join(loc_,'data')):
         if file_ != '.DS_Store':
             copyfile(get_data_path(file_), 
-                     os.path.join(output_dir,'rank_plot',file_))
+                     os.path.join(output_dir,'rank_plot_'+in_catagory,file_))
     #write new filez
-    rank_plot_loc = os.path.join(output_dir,'rank_plot', 
+    rank_plot_loc = os.path.join(output_dir,'rank_plot_'+in_catagory, 
                                  "rank_plot.json")
-    sample_plot_loc = os.path.join(output_dir,'rank_plot',
+    sample_plot_loc = os.path.join(output_dir,'rank_plot_'+in_catagory,
                                    "sample_logratio_plot.json")
 
     rank_plot_chart.save(rank_plot_loc)
