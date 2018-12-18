@@ -29,9 +29,8 @@ def matchdf(df1,df2):
 
 def process_input(ordination_file, biom_table, metadata, taxmeta):
     """Load input files: ordination taxa, BIOM table, metadata."""
-    ordination_res = OrdinationResults.read(ordination_file)
-    V = ordination_res.features
-    U = ordination_res.samples
+    V = ordination_file.features
+    U = ordination_file.samples
     table = load_table(biom_table).to_dataframe().to_dense().T
     metadata = pd.read_table(metadata, index_col=0)
     #match 
@@ -40,7 +39,7 @@ def process_input(ordination_file, biom_table, metadata, taxmeta):
 
     if taxmeta is not None:
         taxam = pd.read_table(taxmeta)
-        taxam.set_index('Feature ID',inplace=True)
+        taxam.set_index('feature id',inplace=True)
         # match and relabel 
         taxam,V = matchdf(taxam,V)
         if 'Taxon' in taxam.columns \

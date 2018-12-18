@@ -88,7 +88,9 @@ setup(name='rankratioviz',
           'scikit-bio > 0.5.3'],
       classifiers=classifiers,
       entry_points={
+          'qiime2.plugins': ['q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin'],
           'console_scripts': ['rankratioviz_rankplot=rankratioviz.scripts._rank_plot:rank_plots']
       },
       package_data={},
       zip_safe=False)
+      
