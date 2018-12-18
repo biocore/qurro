@@ -25,6 +25,7 @@ def rank_plots(ranks: str, in_biom: str, in_metadata: str,
     # import 
     in_biom = load_table(in_biom)
     in_metadata = pd.read_table(in_metadata, index_col=0)
+    ranks = OrdinationResults.read(ranks)
     if in_taxonomy is not None:
         in_taxonomy = pd.read_table(in_taxonomy)
         in_taxonomy.set_index('feature id',inplace=True)
