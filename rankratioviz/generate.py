@@ -23,19 +23,37 @@ from matplotlib.colors import rgb2hex
 from matplotlib import cm
 
 
+def matchdf(df1,df2):
+    idx = set(df1.index) & set(df2.index)
+    return df1.loc[idx],df2.loc[idx]
 
-
-def process_input(ordination_file, biom_table, metadata):
+def process_input(ordination_file, biom_table, metadata, taxmeta):
     """Load input files: ordination taxa, BIOM table, metadata."""
     ordination_res = OrdinationResults.read(ordination_file)
     V = ordination_res.features
     U = ordination_res.samples
     table = load_table(biom_table).to_dataframe().to_dense().T
     metadata = pd.read_table(metadata, index_col=0)
+    #match 
+    table,V = matchdf(table.T,V)
+    table,U = matchdf(table.T,U)
 
-    #(match all)
-    # TODO
-  
+    if taxmeta is not None:
+        taxam = pd.read_table(taxmeta)
+        taxam.set_index('Feature ID',inplace=True)
+        # match and relabel 
+        taxam,V = matchdf(taxam,V)
+        if 'Taxon' in taxam.columns \
+            and 'Confidence' in taxam.columns:
+            #combine and replace
+            taxam["Taxon_"] = [str(x)+'_('+str(y)[:4]+')' for x,y in zip(taxam.Taxon,taxam.Confidence)]
+            V.index = taxam["Taxon_"].values
+            table.columns = taxam["Taxon_"].values
+        elif 'Taxon' in taxam.columns:
+            #only taxa
+            V.index = taxam["Taxon"].values
+            table.columns = taxam["Taxon"].values
+
     return U, V, table, metadata
 
 def gen_rank_plot(U, V, rank_col):
@@ -101,7 +119,7 @@ def gen_rank_plot(U, V, rank_col):
     ).interactive()
     return postflare_rank_chart
 
-def gen_sample_plot(table, metadata, catagory):
+def gen_sample_plot(table, metadata, catagory,palette='Set1'):
     """Create Altair version of sample scatterplot.
 
     Arguments:
@@ -153,7 +171,7 @@ def gen_sample_plot(table, metadata, catagory):
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
     #color palette chnage here
-    cmap = cm.get_cmap('Set1', int(len(set(smaa_cn2si[catagory]))))
+    cmap = cm.get_cmap(palette, int(len(set(smaa_cn2si[catagory]))))
 
     # Create sample plot in Altair.
     sample_logratio_chart = alt.Chart(
