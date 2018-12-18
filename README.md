@@ -8,7 +8,7 @@ This tool visualizes the [Biplot-OrdinationResults](http://scikit-bio.org/docs/0
 a __"ranked"__ plot of taxa alongside a scatterplot showing the __log ratios__ of
 selected taxon abundances within samples.
 
-This tool is still being developed, so backwards-incompatibile changes might
+This tool is still being developed, so backwards-incompatible changes might
 occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
 You can view a demo of RankRatioViz [here](https://fedarko.github.io/rrv/).
@@ -45,9 +45,9 @@ A full example can be analysis from count table to visualization can be found [h
                               --output-dir example/deicode_example/rank_plot
 ```
 
-### Stand alone command line tutorial
+### Stand-alone command line tutorial
 
-Simillar to the command above this is preceeded by the command to produce .
+Similar to the command above this is preceded by the command to produce.
 
 ```
 !rankratioviz_rankplot \
