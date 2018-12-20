@@ -78,6 +78,7 @@ setup(name='rankratioviz',
       cmdclass={'build_ext': build_ext},
       install_requires=[
           'Click',
+          'altair',
           'IPython >= 3.2.0',
           'matplotlib >= 1.4.3',
           'numpy >= 1.12.1',
@@ -92,5 +93,5 @@ setup(name='rankratioviz',
           'console_scripts': ['rankratioviz_rankplot=rankratioviz.scripts._rank_plot:rank_plots']
       },
       package_data={},
-      zip_safe=False)
-      
+      zip_safe=False
+)
