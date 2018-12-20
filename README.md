@@ -11,24 +11,24 @@ selected taxon abundances within samples.
 This tool is still being developed, so backwards-incompatible changes might
 occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
-You can view a demo of RankRatioViz [here](https://fedarko.github.io/rrv/).
+You can view a demo of RankRatioViz in the browser [here](https://fedarko.github.io/rrv/).
 
 ## Installation
 
-To install the most up to date version of deicode, run the following command
+To install the most up-to-date version of RankRatioViz, run the following command
 ```
-# dev. version
+# Developer version
 pip install git+https://github.com/fedarko/rankratioviz.git
 ```
-Then run the following command to refresh qiime2
+Then run the following command to refresh QIIME2:
 
 ```
 qiime dev refresh-cache
 ```
 
-### Qiime2 tutorial
+### QIIME2 tutorial
 
-First make sure that qiime2 is installed before installing deicode. Then run
+First make sure that QIIME2 is installed before installing deicode. Then run
 
 ```
 qiime dev refresh-cache
