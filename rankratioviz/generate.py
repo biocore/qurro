@@ -42,7 +42,7 @@ def process_input(ordination_file, biom_table, metadata, taxam=None):
         if 'Taxon' in taxam.columns \
             and 'Confidence' in taxam.columns:
             #combine and replace
-            taxam["Taxon_"] = [(str(x)+'|('+str(y)[:4]+')').replace(' ','') for x,y in zip(taxam.Taxon,taxam.Confidence)]
+            taxam["Taxon_"] = [str(count_)+':'+(str(x)+'|('+str(y)[:4]+')').replace(' ','') for (count_,x),y in zip(enumerate(taxam.Taxon),taxam.Confidence)]
             V.index = taxam["Taxon_"].values
             table.columns = taxam["Taxon_"].values
         elif 'Taxon' in taxam.columns:
