@@ -4,18 +4,19 @@
 (Name subject to change.)
 
 This tool visualizes the [Biplot-OrdinationResults](http://scikit-bio.org/docs/0.5.1/generated/generated/skbio.stats.ordination.OrdinationResults.html) output from a tool like
-[songbird](https://github.com/mortonjt/songbird). It facilitates viewing
+[songbird](https://github.com/mortonjt/songbird) or
+[DEICODE](https://github.com/cameronmartino/DEICODE). It facilitates viewing
 a __"ranked"__ plot of taxa alongside a scatterplot showing the __log ratios__ of
 selected taxon abundances within samples.
 
 This tool is still being developed, so backwards-incompatible changes might
 occur. If you have any questions, feel free to contact me at mfedarko@ucsd.edu.
 
-You can view a demo of RankRatioViz in the browser [here](https://fedarko.github.io/rrv/).
+You can view a demo of rankratioviz in the browser [here](https://fedarko.github.io/rrv/).
 
 ## Installation
 
-To install the most up-to-date version of RankRatioViz, run the following command
+To install the most up-to-date version of rankratioviz, run the following command
 ```
 # Developer version
 pip install git+https://github.com/fedarko/rankratioviz.git
@@ -28,7 +29,7 @@ qiime dev refresh-cache
 
 ### QIIME2 tutorial
 
-First make sure that QIIME2 is installed before installing deicode. Then run
+First make sure that QIIME2 is installed before installing rankratioviz. Then run
 
 ```
 qiime dev refresh-cache
