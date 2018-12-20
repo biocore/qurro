@@ -20,8 +20,10 @@ plugin = qiime2.plugin.Plugin(
     version=__version__,
     website="https://github.com/fedarko/rankratioviz",
     # citations=[citations['martino-unpublished']],
-    short_description=('Plugin for Rank Visualization.'),
-    description=('This is a QIIME 2 plugin supporting Rank Plot Visuals'),
+    short_description=('Plugin for visualizing taxon ranks and log ratios.'),
+    description=("""This plugin supports the visualization of taxon ranks, output
+        by a tool like songbird or DEICODE, in tandem with log ratios of their
+        abundances in samples."""),
     package='rankratioviz')
 
 plugin.visualizers.register_function(
