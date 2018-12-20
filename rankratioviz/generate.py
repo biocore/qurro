@@ -97,8 +97,8 @@ def gen_rank_plot(U, V, rank_col):
             postFlareRanksData.reset_index(),
             title="Ranks"
     ).mark_bar().encode(
-        x=alt.X('x', title="Species", type="quantitative"),
-        y=alt.Y('coefs', title="log(PostFlare / Flare) + K", type="quantitative"),
+        x=alt.X('x', title="Taxa", type="quantitative"),
+        y=alt.Y('coefs', title="Ranks", type="quantitative"),
         color=alt.Color("classification",
             scale=alt.Scale(
                 domain=["None", "Numerator", "Denominator", "Both"],
