@@ -115,7 +115,7 @@ def gen_rank_plot(U, V, rank_col):
     ).interactive()
     return postflare_rank_chart
 
-def gen_sample_plot(table, metadata, catagory,palette='Set1'):
+def gen_sample_plot(table, metadata, category,palette='Set1'):
     """Create Altair version of sample scatterplot.
 
     Arguments:
@@ -133,7 +133,7 @@ def gen_sample_plot(table, metadata, catagory,palette='Set1'):
     # scatterplot by default, which makes sense).
     balance = pd.Series(index=table.index).fillna(float('nan'))
     data = pd.DataFrame({'balance': balance}, index=table.index)
-    data = pd.merge(data, metadata[[catagory]], left_index=True, right_index=True)
+    data = pd.merge(data, metadata[[category]], left_index=True, right_index=True)
 
     # Construct unified DataFrame, combining our "data" DataFrame with the
     # "table" variable (in order to associate each sample with its corresponding
@@ -167,7 +167,7 @@ def gen_sample_plot(table, metadata, catagory,palette='Set1'):
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
     #color palette chnage here
-    set_size = int(len(set(metadata[catagory])))
+    set_size = int(len(set(metadata[category])))
     cmap = cm.get_cmap(palette, set_size)
 
     
@@ -176,13 +176,13 @@ def gen_sample_plot(table, metadata, catagory,palette='Set1'):
         sample_metadata_and_abundances,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
-        alt.X(smaa_cn2si[catagory], title=str(catagory)),
+        alt.X(smaa_cn2si[category], title=str(category)),
         alt.Y(smaa_cn2si["balance"], title="log(Numerator / Denominator)"),
         color=alt.Color(
-            smaa_cn2si[catagory],
-            title=str(catagory),
+            smaa_cn2si[category],
+            title=str(category),
             scale=alt.Scale(
-                domain=list(set(metadata[catagory])),
+                domain=list(set(metadata[category])),
                 range=[rgb2hex(cmap(i)) for i in range(set_size)]
             )
         ),
