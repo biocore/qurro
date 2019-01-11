@@ -1,5 +1,7 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, rankratioviz development team.
+# Copyright (c) 2018--, rankratioviz development team.
+#
+# NOTE: This is based on DEICODE's deicode/q2/plugin_setup.py file.
 #
 # Distributed under the terms of the Modified BSD License.
 #
