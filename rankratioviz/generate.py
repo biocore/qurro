@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 from biom import load_table
 import altair as alt
-from skbio import  OrdinationResults
+from skbio import OrdinationResults
 from matplotlib.colors import rgb2hex
 from matplotlib import cm
 
@@ -170,6 +170,7 @@ def gen_sample_plot(table, metadata, category,palette='Set1'):
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
     #color palette chnage here
+    # TODO remove reliance on matplotlib for this and rgb2hex if possible
     set_size = int(len(set(metadata[category])))
     cmap = cm.get_cmap(palette, set_size)
 
