@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, rankratioviz development team.
+# Copyright (c) 2018--, rankratioviz development team.
+#
+# NOTE: This file is derived from DEICODE's setup.py file.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -79,13 +81,10 @@ setup(name='rankratioviz',
       install_requires=[
           'Click',
           'altair',
-          'IPython >= 3.2.0',
+          'IPython >= 3.2.0', # TODO is this required?
           'matplotlib >= 1.4.3',
           'numpy >= 1.12.1',
           'pandas >= 0.10.0',
-          'scipy >= 0.19.1',
-          'nose >= 1.3.7',
-          'scikit-learn >= 0.18.1',
           'scikit-bio > 0.5.3'],
       classifiers=classifiers,
       entry_points={
