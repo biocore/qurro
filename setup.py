@@ -52,7 +52,8 @@ classes = """
 """
 classifiers = [s.strip() for s in classes.split('\n') if s]
 
-description = ('Rank Visualization Tool')
+description = \
+    'Visualizes ranked taxa and log ratios of their abundances in samples'
 
 with open('README.md') as f:
     long_description = f.read()
