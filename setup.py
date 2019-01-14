@@ -43,6 +43,7 @@ classes = """
     Topic :: Software Development :: Libraries
     Topic :: Scientific/Engineering
     Topic :: Scientific/Engineering :: Bio-Informatics
+    Topic :: Scientific/Engineering :: Visualization
     Programming Language :: Python :: 3
     Programming Language :: Python :: 3 :: Only
     Operating System :: Unix
