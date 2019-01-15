@@ -12,30 +12,7 @@
 
 import re
 import ast
-import os
 from setuptools import find_packages, setup
-from setuptools.command.build_ext import build_ext as _build_ext
-
-
-class build_ext(_build_ext):
-    def finalize_options(self):
-        _build_ext.finalize_options(self)
-        # Prevent numpy from thinking it is still in its setup process:
-        __builtins__.__NUMPY_SETUP__ = False
-        import numpy
-        self.include_dirs.append(numpy.get_include())
-
-
-# Dealing with Cython
-USE_CYTHON = os.environ.get('USE_CYTHON', False)
-ext = '.pyx' if USE_CYTHON else '.c'
-
-extensions = [
-]
-
-if USE_CYTHON:
-    from Cython.Build import cythonize
-    extensions = cythonize(extensions)
 
 classes = """
     Development Status :: 3 - Alpha
@@ -58,7 +35,6 @@ description = \
 with open('README.md') as f:
     long_description = f.read()
 
-
 # version parsing from __init__ pulled from Flask's setup.py
 # https://github.com/mitsuhiko/flask/blob/master/setup.py
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
@@ -77,9 +53,6 @@ setup(name='rankratioviz',
       maintainer="rankratioviz development team",
       maintainer_email="mfedarko@ucsd.edu",
       packages=find_packages(),
-      setup_requires=['numpy >= 1.9.2'],
-      ext_modules=extensions,
-      cmdclass={'build_ext': build_ext},
       install_requires=[
           'Click',
           'altair',
@@ -93,6 +66,5 @@ setup(name='rankratioviz',
           'qiime2.plugins': ['q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin'],
           'console_scripts': ['rankratioviz_rankplot=rankratioviz.scripts._rank_plot:rank_plots']
       },
-      package_data={},
       zip_safe=False
 )
