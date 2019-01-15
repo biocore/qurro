@@ -1,4 +1,5 @@
-IPython>4.0.0
+click
+ipython>4.0.0
 notebook
 matplotlib
 scikit-bio

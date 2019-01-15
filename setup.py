@@ -59,9 +59,9 @@ setup(name='rankratioviz',
       maintainer_email="mfedarko@ucsd.edu",
       packages=find_packages(),
       install_requires=[
-          'Click',
+          'click',
           'altair',
-          'IPython >= 3.2.0', # TODO is this required?
+          'ipython >= 3.2.0', # TODO is this required?
           'matplotlib >= 1.4.3',
           'numpy >= 1.12.1',
           'pandas >= 0.10.0',
