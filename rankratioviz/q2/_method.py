@@ -8,8 +8,8 @@ import pandas as pd
 from shutil import copyfile
 from biom import load_table
 from skbio.util import get_data_path
-from skbio import  OrdinationResults, stats
-from rankratioviz.generate import process_input,gen_rank_plot,gen_sample_plot
+from skbio import OrdinationResults
+from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 def rank_plot(output_dir: str, table: biom.Table, 
                 ranks: skbio.OrdinationResults, 
@@ -33,7 +33,7 @@ def rank_plot(output_dir: str, table: biom.Table,
                      os.path.join(output_dir,'rank_plot',file_))
         if '.html' in file_:
             index = os.path.join(output_dir,'rank_plot',file_)
-    #write new filez
+    # write new files
     rank_plot_loc = os.path.join(output_dir,'rank_plot', 
                                  "rank_plot.json")
     sample_plot_loc = os.path.join(output_dir,'rank_plot',
