@@ -58,6 +58,13 @@ setup(name='rankratioviz',
       maintainer="rankratioviz development team",
       maintainer_email="mfedarko@ucsd.edu",
       packages=find_packages(),
+      # TODO determine what versions we really care about. Also the ipython
+      # versions differ btwn. here and ci/conda_requirements.txt; figure out
+      # which is needed.
+      # I don't see a need right now to specify any of these versions, but that
+      # might change I guess (e.g. if scikit-bio doesn't have an
+      # OrdinationResults type or it doesn't conform to a certain spec until a
+      # certain version, then we should specify it in that case)
       install_requires=[
           'click',
           'altair',
