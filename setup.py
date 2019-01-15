@@ -35,6 +35,11 @@ description = \
 with open('README.md') as f:
     long_description = f.read()
 
+# TODO remove this if doable to simplify this.
+# See https://packaging.python.org/guides/single-sourcing-package-version/
+# -- option 6 is probably best, so long as we don't do something that would
+# require use of another dependency from rankratioviz/__init__.py.
+#
 # version parsing from __init__ pulled from Flask's setup.py
 # https://github.com/mitsuhiko/flask/blob/master/setup.py
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
