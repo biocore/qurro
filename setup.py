@@ -70,7 +70,6 @@ setup(name='rankratioviz',
           'altair',
           'ipython >= 3.2.0', # TODO is this required?
           'matplotlib >= 1.4.3',
-          'numpy >= 1.12.1',
           'pandas >= 0.10.0',
           'scikit-bio > 0.5.3'],
       classifiers=classifiers,

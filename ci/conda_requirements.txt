@@ -3,7 +3,6 @@ ipython>4.0.0
 notebook
 matplotlib
 scikit-bio
-numpy
 pandas
 biom-format
 altair -c conda-forge

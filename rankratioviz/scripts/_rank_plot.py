@@ -1,6 +1,12 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2018--, rankratioviz development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE.txt, distributed with this software.
+# ----------------------------------------------------------------------------
 from biom import load_table
 import pandas as pd
-import numpy as np
 from skbio import  OrdinationResults, stats
 import os
 import click
@@ -36,7 +42,7 @@ def rank_plots(ranks: str, in_biom: str, in_metadata: str,
     rank_plot_chart = gen_rank_plot(U, V, 0)
     sample_plot_json = gen_sample_plot(table, metadata, in_category)
     os.makedirs(output_dir, exist_ok=True)
-    #write 
+    # write
     os.mkdir(os.path.join(output_dir,'rank_plot_'+in_category))
     # copy files for viz
     loc_ = os.path.dirname(os.path.realpath(__file__))
@@ -44,7 +50,7 @@ def rank_plots(ranks: str, in_biom: str, in_metadata: str,
         if file_ != '.DS_Store':
             copyfile(get_data_path(file_), 
                      os.path.join(output_dir,'rank_plot_'+in_category,file_))
-    #write new files
+    # write new files
     rank_plot_loc = os.path.join(output_dir,'rank_plot_'+in_category,
                                  "rank_plot.json")
     sample_plot_loc = os.path.join(output_dir,'rank_plot_'+in_category,

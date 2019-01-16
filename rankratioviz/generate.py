@@ -22,7 +22,6 @@
 import json
 import sys
 import os
-import numpy as np
 import pandas as pd
 from biom import load_table
 import altair as alt
@@ -84,8 +83,9 @@ def gen_rank_plot(U, V, rank_col):
 
     # coefs is a pandas Series
     coefs = V[rank_col].sort_values()
-    # x is a numpy ndarray
-    x = np.arange(coefs.shape[0])
+    # x is just a range -- this can be used as a source of data in a pandas
+    # DataFrame
+    x = range(coefs.shape[0])
 
     # Set default classification of every taxon to "None"
     # (This value will be updated when a taxon is selected in the rank plot as
