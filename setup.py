@@ -30,7 +30,7 @@ classes = """
 classifiers = [s.strip() for s in classes.split('\n') if s]
 
 description = \
-    'Visualizes ranked taxa and log ratios of their abundances in samples'
+    'Visualizes ranked taxa/metabolites and log ratios of their abundances'
 
 with open('README.md') as f:
     long_description = f.read()
