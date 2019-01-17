@@ -18,7 +18,7 @@ from skbio.util import get_data_path
 from skbio import OrdinationResults
 from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
-def rank_plot(output_dir: str, table: biom.Table, 
+def plot(output_dir: str, table: biom.Table,
                 ranks: skbio.OrdinationResults, 
                 sample_metadata: qiime2.Metadata, 
                 feature_metadata: qiime2.Metadata , 

@@ -44,7 +44,7 @@ qiime dev refresh-cache
 A full example can be analysis from count table to visualization can be found [here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb). Once a file of type Biplot-OrdinationResults (i.e. ordination.qza in the example) is made the visualization can be made using the command below and visualized by dragging the file onto [this](https://view.qiime2.org/) page. 
 
 ```
-!qiime rankratioviz rank-plot --i-table example/deicode_example/qiita_10422_table.biom.qza \
+!qiime rankratioviz plot --i-table example/deicode_example/qiita_10422_table.biom.qza \
                               --i-ranks example/deicode_example/ordination.qza \
                               --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
                               --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
@@ -57,7 +57,7 @@ A full example can be analysis from count table to visualization can be found [h
 Similar to the command above this is preceded by the command to produce.
 
 ```
-!rankratioviz_rankplot \
+!rankratioviz \
 --ranks example/deicode_example/ordination.txt \
 --in_biom example/deicode_example/qiita_10422_table.biom \
 --in_metadata example/deicode_example/qiita_10422_metadata_encode.tsv \

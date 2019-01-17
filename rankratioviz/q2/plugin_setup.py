@@ -10,7 +10,7 @@
 import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
-from ._method import rank_plot
+from ._method import plot
 from qiime2.plugin import (Str, Properties, Int, Float,  
                            Metadata, Properties)
 from q2_types.feature_table import (FeatureTable, 
@@ -29,7 +29,7 @@ plugin = qiime2.plugin.Plugin(
     package='rankratioviz')
 
 plugin.visualizers.register_function(
-    function=rank_plot,
+    function=plot,
     inputs={'ranks': PCoAResults % Properties("biplot"),
             'table': FeatureTable[Frequency]},
     parameters={'sample_metadata': Metadata,

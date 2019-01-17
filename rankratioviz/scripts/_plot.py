@@ -25,7 +25,7 @@ from rankratioviz.generate import process_input,gen_rank_plot,gen_sample_plot
 @click.option('--in_category', help='Metadata table category to plot.')
 @click.option('--output_dir', help='Location of output files.')
 
-def rank_plots(ranks: str, in_biom: str, in_metadata: str, 
+def plot(ranks: str, in_biom: str, in_metadata: str, 
                output_dir: str, in_taxonomy: str , in_category: str) -> None:
 
     # import 
@@ -63,4 +63,4 @@ def rank_plots(ranks: str, in_biom: str, in_metadata: str,
     return 
 
 if __name__ == '__main__':
-    rank_plots()
+    plot()

@@ -5,6 +5,6 @@
 #
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
-from ._rank_plot import rank_plots
+from ._plot import plot
 
-__all__ = ["rank_plots"]
+__all__ = ["plot"]
