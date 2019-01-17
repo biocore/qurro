@@ -64,4 +64,3 @@ def rank_plots(ranks: str, in_biom: str, in_metadata: str,
 
 if __name__ == '__main__':
     rank_plots()
-
