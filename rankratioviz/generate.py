@@ -62,21 +62,17 @@ def process_input(ordination_file, biom_table, metadata, taxam=None):
     return U, V, table, metadata
 
 def gen_rank_plot(U, V, rank_col):
-    """Generates JSON for the rank plot.
+    """Generates altair.Chart object describing the rank plot.
 
     Arguments:
-
     
     U: sample ranks 
     V: feature ranks 
-    rank_col: the column index to use for 
-              getting the rank values for each
-              taxon.
+    rank_col: the column index to use for getting the rank values from a taxon.
 
     Returns:
 
     altair.Chart object for the rank plot.
-
     """
 
     # Get stuff ready for the rank plot
@@ -126,7 +122,7 @@ def gen_rank_plot(U, V, rank_col):
     return postflare_rank_chart
 
 def gen_sample_plot(table, metadata, category,palette='Set1'):
-    """Create Altair version of sample scatterplot.
+    """Generates altair.Chart object describing the sample scatterplot.
 
     Arguments:
 
@@ -135,7 +131,7 @@ def gen_sample_plot(table, metadata, category,palette='Set1'):
 
     Returns:
 
-    JSON (in the form of a dict) describing the sample plot.
+    altair.Chart object for the sample scatterplot.
     """
 
     # Since we don't bother setting a default log ratio, we set the balance for
