@@ -48,36 +48,37 @@ with open('rankratioviz/__init__.py', 'rb') as f:
     hit = _version_re.search(f.read().decode('utf-8')).group(1)
     version = str(ast.literal_eval(hit))
 
-setup(name='rankratioviz',
-      version=version,
-      license='BSD',
-      description=description,
-      long_description=long_description,
-      author="rankratioviz development team",
-      author_email="mfedarko@ucsd.edu",
-      maintainer="rankratioviz development team",
-      maintainer_email="mfedarko@ucsd.edu",
-      packages=find_packages(),
-      # TODO determine what versions we really care about. Also the ipython
-      # versions differ btwn. here and ci/conda_requirements.txt; figure out
-      # which is needed.
-      # I don't see a need right now to specify any of these versions, but that
-      # might change I guess (e.g. if scikit-bio doesn't have an
-      # OrdinationResults type or it doesn't conform to a certain spec until a
-      # certain version, then we should specify it in that case)
-      install_requires=[
-          'click',
-          'altair',
-          'ipython >= 3.2.0', # TODO is this required?
-          'matplotlib >= 1.4.3',
-          'pandas >= 0.10.0',
-          'scikit-bio > 0.5.3'],
-      classifiers=classifiers,
-      entry_points={
-          'qiime2.plugins':
-            ['q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin'],
-          'console_scripts':
-            ['rankratioviz=rankratioviz.scripts._plot:plot']
-      },
-      zip_safe=False
+setup(
+    name='rankratioviz',
+    version=version,
+    license='BSD',
+    description=description,
+    long_description=long_description,
+    author="rankratioviz development team",
+    author_email="mfedarko@ucsd.edu",
+    maintainer="rankratioviz development team",
+    maintainer_email="mfedarko@ucsd.edu",
+    packages=find_packages(),
+    # TODO determine what versions we really care about. Also the ipython
+    # versions differ btwn. here and ci/conda_requirements.txt; figure out
+    # which is needed.
+    # I don't see a need right now to specify any of these versions, but that
+    # might change I guess (e.g. if scikit-bio doesn't have an
+    # OrdinationResults type or it doesn't conform to a certain spec until a
+    # certain version, then we should specify it in that case)
+    install_requires=[
+        'click',
+        'altair',
+        'ipython >= 3.2.0',  # TODO is this required?
+        'matplotlib >= 1.4.3',
+        'pandas >= 0.10.0',
+        'scikit-bio > 0.5.3'],
+    classifiers=classifiers,
+    entry_points={
+        'qiime2.plugins':
+        ['q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin'],
+        'console_scripts':
+        ['rankratioviz=rankratioviz.scripts._plot:plot']
+    },
+    zip_safe=False
 )
