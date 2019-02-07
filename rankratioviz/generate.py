@@ -19,13 +19,8 @@
 # that is the case (and it isn't actually messing up any of the data/metadata).
 # ----------------------------------------------------------------------------
 
-import json
-import sys
-import os
 import pandas as pd
-from biom import load_table
 import altair as alt
-from skbio import OrdinationResults
 from matplotlib.colors import rgb2hex
 from matplotlib import cm
 

@@ -11,11 +11,7 @@ import qiime2
 import skbio
 import biom
 import q2templates
-import pandas as pd
 from shutil import copyfile
-from biom import load_table
-from skbio.util import get_data_path
-from skbio import OrdinationResults
 from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 def plot(output_dir: str, table: biom.Table,
@@ -40,7 +36,7 @@ def plot(output_dir: str, table: biom.Table,
     loc_ = os.path.dirname(os.path.realpath(__file__))
     for file_ in os.listdir(os.path.join(loc_,'data')):
         if file_ != '.DS_Store':
-            copyfile(get_data_path(file_), 
+            copyfile(skbio.util.get_data_path(file_),
                      os.path.join(output_dir,'rank_plot',file_))
         if '.html' in file_:
             index = os.path.join(output_dir,'rank_plot',file_)

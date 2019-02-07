@@ -11,10 +11,8 @@ import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
 from ._method import plot
-from qiime2.plugin import (Str, Properties, Int, Float,  
-                           Metadata, Properties)
-from q2_types.feature_table import (FeatureTable, 
-                                    Composition, Frequency)
+from qiime2.plugin import (Str, Metadata, Properties)
+from q2_types.feature_table import (FeatureTable, Frequency)
 from q2_types.ordination import PCoAResults
 
 plugin = qiime2.plugin.Plugin(
@@ -36,6 +34,7 @@ plugin.visualizers.register_function(
                 'feature_metadata': Metadata,
                 'in_catagory': Str},
     input_descriptions={
+        # TODO clearer descriptions here
         'ranks': 'The principal coordinates matrix to be plotted in biplots.',
         'table': 'A table of counts'
     },
@@ -45,7 +44,8 @@ plugin.visualizers.register_function(
                             'arrows in the plot).',
         'in_catagory': 'metadata catagory to plot'
         },
-    name='Visualize and Interact with Biplot Ranks and log-ratios',
-    description='Generates an interactive ordination rank plot where the user '
-                'can visually integrate sample and feature ranks.'
+    name='Generate a rankratioviz plot',
+    description="""Generates an interactive visualization of ranks in tandem
+    with a visualization of the log ratios of selected ranks' sample
+    abundance."""
 )

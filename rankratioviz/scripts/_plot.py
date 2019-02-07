@@ -7,11 +7,10 @@
 # ----------------------------------------------------------------------------
 from biom import load_table
 import pandas as pd
-from skbio import  OrdinationResults, stats
+import skbio
 import os
 import click
 import json 
-from skbio.util import get_data_path
 from shutil import copyfile
 import os
 from rankratioviz.generate import process_input,gen_rank_plot,gen_sample_plot
@@ -31,7 +30,7 @@ def plot(ranks: str, in_biom: str, in_metadata: str,
     # import 
     in_biom = load_table(in_biom)
     in_metadata = pd.read_table(in_metadata, index_col=0)
-    ranks = OrdinationResults.read(ranks)
+    ranks = skbio.OrdinationResults.read(ranks)
     if in_taxonomy is not None:
         in_taxonomy = pd.read_table(in_taxonomy)
         in_taxonomy.set_index('feature id',inplace=True)
@@ -48,7 +47,7 @@ def plot(ranks: str, in_biom: str, in_metadata: str,
     loc_ = os.path.dirname(os.path.realpath(__file__))
     for file_ in os.listdir(os.path.join(loc_,'data')):
         if file_ != '.DS_Store':
-            copyfile(get_data_path(file_), 
+            copyfile(skbio.util.get_data_path(file_),
                      os.path.join(output_dir,'rank_plot_'+in_category,file_))
     # write new files
     rank_plot_loc = os.path.join(output_dir,'rank_plot_'+in_category,
