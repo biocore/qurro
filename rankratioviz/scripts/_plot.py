@@ -16,20 +16,22 @@ from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 
 @click.command()
-@click.option('-r', '--ranks', required=True, help="""(str) Path to ordination
-    output from a tool like DEICODE, songbird, etc.""")
-@click.option('-at', '--abundance_table', required=True, help="""BIOM table
-    describing taxon abundances for samples.""")
-@click.option('-fm', '--feature_metadata', default=None, help="""Feature
-    metadata file for taxonomy.""")
-@click.option('-sm', '--sample_metadata', required=True, help="""Sample
-    metadata file.""")
-@click.option('-c', '--category', required=True, help="""Metadata table
-    category to plot.""")
-@click.option('-o', '--output_dir', required=True, help="""Location of output
-    files.""")
+@click.option('-r', '--ranks', required=True,
+              help="Ordination file output from a tool like DEICODE, songbird,"
+              " etc.")
+@click.option('-at', '--abundance_table', required=True,
+              help="BIOM table describing taxon/metabolite sample abundances.")
+@click.option('-fm', '--feature_metadata', default=None,
+              help="Feature metadata file for taxonomy.")
+@click.option('-sm', '--sample_metadata', required=True,
+              help="Sample metadata file.")
+@click.option('-c', '--category', required=True,
+              help="Metadata table category to plot.")
+@click.option('-o', '--output_dir', required=True,
+              help="Location of output files.")
 def plot(ranks: str, abundance_table: str, sample_metadata: str,
          output_dir: str, feature_metadata: str, category: str) -> None:
+    """Generates a plot of ranked taxa/metabolites and their abundances."""
 
     # import
     loaded_biom = load_table(abundance_table)
