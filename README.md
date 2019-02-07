@@ -25,7 +25,7 @@ You can view a demo of rankratioviz in the browser [here](https://fedarko.github
 To install the most up-to-date version of rankratioviz, run the following command
 ```
 # Developer version
-pip install git+https://github.com/fedarko/rankratioviz.git
+pip install git+https://github.com/cameronmartino/rankratioviz.git
 ```
 Then run the following command to refresh QIIME2:
 
