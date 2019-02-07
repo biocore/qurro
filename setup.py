@@ -80,5 +80,6 @@ setup(
         'console_scripts':
         ['rankratioviz=rankratioviz.scripts._plot:plot']
     },
+    package_data={},
     zip_safe=False
 )
