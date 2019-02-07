@@ -1,9 +1,14 @@
 import os
-from rankratioviz import gen_plots
+from rankratioviz import generate
 from rankratioviz.tests import testing_utilities
 
+
+def test_matchdf():
+    """Tests rankratioviz.generate.matchdf()."""
+
+
 def test_byrd():
-    """Tests the behavior of gen_plots on the Byrd et al. 2017 dataset."""
+    """Tests the JSON generation on the Byrd et al. 2017 dataset."""
 
     test_input_dir = os.path.join("data", "byrd")
     test_output_dir = os.path.join("rankratioviz", "tests", "output", "byrd")
@@ -12,10 +17,12 @@ def test_byrd():
     rank_json_loc = os.path.join(test_output_dir, "rank_plot.json")
     # Super basic initial "test." This just makes sure that we don't get any
     # errors. (I'll make this actually test stuff soon.)
-    gen_plots.run_script(["-r", input_rank_loc,
+    generate.run_script([
+        "-r", input_rank_loc,
         "-t", os.path.join(test_input_dir, "byrd_skin_table.biom"),
         "-m", os.path.join(test_input_dir, "byrd_metadata.txt"),
-        "-d", test_output_dir])
+        "-d", test_output_dir
+    ])
 
     # We use the ranks contained in column 3 (0-indexed) because they
     # correspond to the log(PostFlare/Flare) + K ranks: the column name for

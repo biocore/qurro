@@ -1,6 +1,7 @@
 import json
 from pytest import approx
 
+
 def validate_rank_plot_json(input_rank_loc, rank_json_loc, rank_col_index):
     # Record all taxa and the requested rank value in the input ranks file
     ranked_taxa = {}
