@@ -24,25 +24,27 @@ import altair as alt
 from matplotlib.colors import rgb2hex
 from matplotlib import cm
 
-def matchdf(df1,df2):
+
+def matchdf(df1, df2):
     idx = set(df1.index) & set(df2.index)
-    return df1.loc[idx],df2.loc[idx]
+    return df1.loc[idx], df2.loc[idx]
+
 
 def process_input(ordination_file, biom_table, metadata, taxam=None):
     """Load input files: ordination taxa, BIOM table, metadata."""
     V = ordination_file.features
     U = ordination_file.samples
     table = biom_table.to_dataframe().to_dense().T
-    #match 
-    table,V = matchdf(table.T,V)
-    table,U = matchdf(table.T,U)
+    # match
+    table, V = matchdf(table.T, V)
+    table, U = matchdf(table.T, U)
 
     if taxam is not None:
-        # match and relabel 
-        taxam,V = matchdf(taxam,V)
-        if 'Taxon' in taxam.columns \
-            and 'Confidence' in taxam.columns:
-            #combine and replace
+        # match and relabel
+        taxam, V = matchdf(taxam, V)
+        if 'Taxon' in taxam.columns and 'Confidence' in taxam.columns:
+            # combine and replace
+            # TODO: make this readable
             taxam["Taxon_"] = [(str(x)+'|('+str(y)[:4]+')').replace(' ','')+'|'+str(seq_) 
                                for seq_,x,y in zip(taxam.index,
                                                    taxam.Taxon,
@@ -50,19 +52,20 @@ def process_input(ordination_file, biom_table, metadata, taxam=None):
             V.index = taxam["Taxon_"].values
             table.columns = taxam["Taxon_"].values
         elif 'Taxon' in taxam.columns:
-            #only taxa
+            # only taxa
             V.index = taxam["Taxon"].values
             table.columns = taxam["Taxon"].values
 
     return U, V, table, metadata
 
+
 def gen_rank_plot(U, V, rank_col):
     """Generates altair.Chart object describing the rank plot.
 
     Arguments:
-    
-    U: sample ranks 
-    V: feature ranks 
+
+    U: sample ranks
+    V: feature ranks
     rank_col: the column index to use for getting the rank values from a taxon.
 
     Returns:
@@ -100,7 +103,8 @@ def gen_rank_plot(U, V, rank_col):
     ).mark_bar().encode(
         x=alt.X('x', title="Taxa", type="quantitative"),
         y=alt.Y('coefs', title="Ranks", type="quantitative"),
-        color=alt.Color("classification",
+        color=alt.Color(
+            "classification",
             scale=alt.Scale(
                 domain=["None", "Numerator", "Denominator", "Both"],
                 range=["#e0e0e0", "#f00", "#00f", "#949"]
@@ -116,7 +120,8 @@ def gen_rank_plot(U, V, rank_col):
     ).interactive()
     return postflare_rank_chart
 
-def gen_sample_plot(table, metadata, category,palette='Set1'):
+
+def gen_sample_plot(table, metadata, category, palette='Set1'):
     """Generates altair.Chart object describing the sample scatterplot.
 
     Arguments:
@@ -130,15 +135,15 @@ def gen_sample_plot(table, metadata, category,palette='Set1'):
     """
 
     # Since we don't bother setting a default log ratio, we set the balance for
-    # every sample to NaN so that Altair will filter them out (producing an empty
-    # scatterplot by default, which makes sense).
+    # every sample to NaN so that Altair will filter them out (producing an
+    # empty scatterplot by default, which makes sense).
     balance = pd.Series(index=table.index).fillna(float('nan'))
     data = pd.DataFrame({'balance': balance}, index=table.index)
     data = pd.merge(data, metadata[[category]], left_index=True, right_index=True)
 
     # Construct unified DataFrame, combining our "data" DataFrame with the
-    # "table" variable (in order to associate each sample with its corresponding
-    # abundances)
+    # "table" variable (in order to associate each sample with its
+    # corresponding abundances)
     sample_metadata_and_abundances = pd.merge(
         data, table, left_index=True, right_index=True
     )
@@ -167,13 +172,15 @@ def gen_sample_plot(table, metadata, category,palette='Set1'):
     # comes out to 7.5 MB, which is an underestimate).
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
-    #color palette chnage here
-    # TODO remove reliance on matplotlib for this and rgb2hex if possible
+    # color palette change here
+    # TODO remove reliance on matplotlib and rgb2hex for this if possible
     set_size = int(len(set(metadata[category])))
     cmap = cm.get_cmap(palette, set_size)
 
-    
     # Create sample plot in Altair.
+    # If desired, we can make this interactive by adding .interactive() to the
+    # alt.Chart declaration (but we don't do that currently since it makes
+    # changing the scale of the chart smoother IIRC)
     sample_logratio_chart = alt.Chart(
         sample_metadata_and_abundances,
         title="Log Ratio of Abundances in Samples"
@@ -189,7 +196,7 @@ def gen_sample_plot(table, metadata, category,palette='Set1'):
             )
         ),
         tooltip=[smaa_cn2si["index"]]
-    )#.interactive()
+    )
 
     # Save JSON for sample plot (including the column-identifying dict from
     # earlier).
