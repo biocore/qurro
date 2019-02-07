@@ -46,7 +46,7 @@ plugin.visualizers.register_function(
         'category': 'metadata category to plot'
         },
     name='Generate a rankratioviz plot',
-    description="""Generates an interactive visualization of ranks in tandem
-    with a visualization of the log ratios of selected ranks' sample
-    abundance."""
+    description="Generates an interactive visualization of ranks in tandem"
+                + " with a visualization of the log ratios of selected ranks'"
+                + " sample abundance."
 )
