@@ -16,46 +16,45 @@ from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 
 @click.command()
-@click.option('--ranks', help="""(str) Path to ordination output from a tool
+@click.option('-r', '--ranks', help="""(str) Path to ordination output from a tool
     like DEICODE, songbird, etc.""")
-@click.option('--in_biom', help="""BIOM table describing taxon abundances for
-    samples.""")
-@click.option('--in_taxonomy', default=None, help="""Metadata table file for
-    taxonomy.""")
-@click.option('--in_metadata', help='Metadata table file for samples.')
-@click.option('--in_category', help='Metadata table category to plot.')
-@click.option('--output_dir', help='Location of output files.')
-def plot(ranks: str, in_biom: str, in_metadata: str, output_dir: str,
-         in_taxonomy: str, in_category: str) -> None:
+@click.option('-at', '--abundance_table',
+    help="""BIOM table describing taxon abundances for samples.""")
+@click.option('-fm', '--feature_metadata', default=None,
+    help="""Feature metadata file for taxonomy.""")
+@click.option('-sm', '--sample_metadata', help='Sample metadata file.')
+@click.option('-c', '--category', help='Metadata table category to plot.')
+@click.option('-o', '--output_dir', help='Location of output files.')
+def plot(ranks: str, abundance_table: str, sample_metadata: str, output_dir: str,
+         feature_metadata: str, category: str) -> None:
 
     # import
-    in_biom = load_table(in_biom)
-    in_metadata = pd.read_table(in_metadata, index_col=0)
+    loaded_biom = load_table(abundance_table)
+    read_sample_metadata = pd.read_table(sample_metadata, index_col=0)
     ranks = skbio.OrdinationResults.read(ranks)
-    if in_taxonomy is not None:
-        in_taxonomy = pd.read_table(in_taxonomy)
-        in_taxonomy.set_index('feature id', inplace=True)
-    else:
-        in_taxonomy = None
+    taxonomy = None
+    if feature_metadata is not None:
+        taxonomy = pd.read_table(feature_metadata)
+        taxonomy.set_index('feature id', inplace=True)
 
     U, V, table, metadata = process_input(
-        ranks, in_biom, in_metadata, in_taxonomy
+        ranks, loaded_biom, read_sample_metadata, taxonomy
     )
     rank_plot_chart = gen_rank_plot(U, V, 0)
-    sample_plot_json = gen_sample_plot(table, metadata, in_category)
+    sample_plot_json = gen_sample_plot(table, metadata, category)
     os.makedirs(output_dir, exist_ok=True)
     # write
-    os.mkdir(os.path.join(output_dir, 'rank_plot_' + in_category))
+    os.mkdir(os.path.join(output_dir, 'rank_plot_' + category))
     # copy files for viz
     loc_ = os.path.dirname(os.path.realpath(__file__))
     for file_ in os.listdir(os.path.join(loc_, 'data')):
         if file_ != '.DS_Store':
             copyfile(
                 skbio.util.get_data_path(file_),
-                os.path.join(output_dir, 'rank_plot_'+in_category, file_)
+                os.path.join(output_dir, 'rank_plot_'+category, file_)
             )
     # write new files
-    file_prefix = 'rank_plot_' + in_category
+    file_prefix = 'rank_plot_' + category
     rank_plot_loc = os.path.join(
         output_dir,
         file_prefix,

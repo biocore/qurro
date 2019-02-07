@@ -44,11 +44,11 @@ qiime dev refresh-cache
 A full example can be analysis from count table to visualization can be found [here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb). Once a file of type Biplot-OrdinationResults (i.e. ordination.qza in the example) is made the visualization can be made using the command below and visualized by dragging the file onto [this](https://view.qiime2.org/) page. 
 
 ```
-!qiime rankratioviz plot --i-table example/deicode_example/qiita_10422_table.biom.qza \
-                              --i-ranks example/deicode_example/ordination.qza \
-                              --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
-                              --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
-                              --p-in-catagory example/exposure_type_encode \
+!qiime rankratioviz plot --abundance_table example/deicode_example/qiita_10422_table.biom.qza \
+                              --ranks example/deicode_example/ordination.qza \
+                              --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
+                              --feature-metadata example/deicode_example/taxonomy.tsv \
+                              --category example/exposure_type_encode \
                               --output-dir example/deicode_example/rank_plot
 ```
 
@@ -59,9 +59,9 @@ Similar to the command above this is preceded by the command to produce.
 ```
 !rankratioviz \
 --ranks example/deicode_example/ordination.txt \
---in_biom example/deicode_example/qiita_10422_table.biom \
---in_metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
---in_taxonomy example/deicode_example/taxonomy.tsv \
+--abundance_table example/deicode_example/qiita_10422_table.biom \
+--sample_metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
+--feature_metadata example/deicode_example/taxonomy.tsv \
 --output_dir example/deicode_example --in_catagory exposure_type_encode
 ```
 
