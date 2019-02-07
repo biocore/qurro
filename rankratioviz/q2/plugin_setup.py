@@ -32,7 +32,7 @@ plugin.visualizers.register_function(
             'table': FeatureTable[Frequency]},
     parameters={'sample_metadata': Metadata,
                 'feature_metadata': Metadata,
-                'in_catagory': Str},
+                'in_category': Str},
     input_descriptions={
         # TODO clearer descriptions here
         'ranks': 'The principal coordinates matrix to be plotted in biplots.',
@@ -42,7 +42,7 @@ plugin.visualizers.register_function(
         'sample_metadata': 'The sample metadata',
         'feature_metadata': 'The feature metadata (useful to manipulate the '
                             'arrows in the plot).',
-        'in_catagory': 'metadata catagory to plot'
+        'in_category': 'metadata category to plot'
         },
     name='Generate a rankratioviz plot',
     description="""Generates an interactive visualization of ranks in tandem
