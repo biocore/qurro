@@ -35,8 +35,8 @@ plugin.visualizers.register_function(
                 'category': Str},
     input_descriptions={
         # TODO clearer descriptions here
-        'ranks': ("""A file describing ranks of taxa/metabolites; generally
-                 produced by a tool like Songbird or DEICODE"""),
+        'ranks': "A file describing ranks of taxa/metabolites; generally"
+                 + " produced by a tool like Songbird or DEICODE",
         'abundance_table': "A table describing the abundances of ranked"
                            + " taxa/metabolites"
     },
