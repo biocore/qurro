@@ -15,9 +15,9 @@ from shutil import copyfile
 from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 
-def plot(output_dir: str, abundance_table: biom.Table, ranks: skbio.OrdinationResults,
-         sample_metadata: qiime2.Metadata, feature_metadata: qiime2.Metadata,
-         category: str) -> None:
+def plot(output_dir: str, abundance_table: biom.Table,
+         ranks: skbio.OrdinationResults, sample_metadata: qiime2.Metadata,
+         feature_metadata: qiime2.Metadata, category: str) -> None:
 
     # get data
     U, V, loaded_table, metadata = process_input(

@@ -28,8 +28,8 @@ from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
     category to plot.""")
 @click.option('-o', '--output_dir', required=True, help="""Location of output
     files.""")
-def plot(ranks: str, abundance_table: str, sample_metadata: str, output_dir: str,
-         feature_metadata: str, category: str) -> None:
+def plot(ranks: str, abundance_table: str, sample_metadata: str,
+         output_dir: str, feature_metadata: str, category: str) -> None:
 
     # import
     loaded_biom = load_table(abundance_table)

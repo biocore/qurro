@@ -139,7 +139,8 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     # empty scatterplot by default, which makes sense).
     balance = pd.Series(index=table.index).fillna(float('nan'))
     data = pd.DataFrame({'balance': balance}, index=table.index)
-    data = pd.merge(data, metadata[[category]], left_index=True, right_index=True)
+    data = pd.merge(data, metadata[[category]], left_index=True,
+                    right_index=True)
 
     # Construct unified DataFrame, combining our "data" DataFrame with the
     # "table" variable (in order to associate each sample with its
