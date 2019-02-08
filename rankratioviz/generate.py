@@ -168,8 +168,11 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
 
     # Make note of the column names in the unified data frame.
     # This constructs a dictionary mapping the column names to their integer
-    # indices (just the range of [0, 3084]). Similarly to smaa_i2sid above,
-    # we'll preserve this in the JSON.
+    # indices (just the range of [0, m + t], where:
+    #   m is the number of metadata columns
+    #   t is the number of taxa/metabolites listed in the BIOM table
+    # ). Similarly to smaa_i2sid above, we'll preserve this mapping in the
+    # sample plot JSON.
     smaa_cols = sample_metadata_and_abundances.columns
     smaa_cn2si = {}
     int_smaa_col_names = [str(i) for i in range(len(smaa_cols))]
@@ -178,8 +181,8 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
         # mostly use the new column names as strings when we can.)
         smaa_cn2si[smaa_cols[int(j)]] = j
 
-    # Now, we replace column names (which include upwards of 3,000 lineages)
-    # with just the integer indices from before.
+    # Now, we replace column names (which could include thousands of taxon
+    # names) with just the integer indices from before.
     #
     # This saves *a lot* of space in the JSON file for the sample plot, since
     # each column name is referenced once for each sample (and
