@@ -88,7 +88,8 @@ def gen_rank_plot(U, V, rank_col):
 
     # Get stuff ready for the rank plot
 
-    # coefs is a pandas Series
+    # coefs is a pandas Series whose values correspond to the actual ranks
+    # associated with each taxon/metabolite.
     coefs = V[rank_col].sort_values()
     # x is just a range -- this can be used as a source of data in a pandas
     # DataFrame
@@ -99,7 +100,7 @@ def gen_rank_plot(U, V, rank_col):
     # part of the numerator, denominator, or both parts of the current log
     # ratio.)
     classification = pd.Series(index=coefs.index).fillna("None")
-    postFlareRanksData = pd.DataFrame({
+    rank_data = pd.DataFrame({
         'x': x, 'coefs': coefs, "classification": classification
     })
     # NOTE: The default size value of mark_bar() causes an apparent offset in
@@ -110,8 +111,8 @@ def gen_rank_plot(U, V, rank_col):
     # Setting size to 1.0 fixes this; using mark_rule() also fixes this,
     # probably because the lines in rule charts are just lines with a width
     # of 1.0.
-    postflare_rank_chart = alt.Chart(
-            postFlareRanksData.reset_index(),
+    rank_chart = alt.Chart(
+            rank_data.reset_index(),
             title="Ranks"
     ).mark_bar().encode(
         x=alt.X('x', title="Taxa", type="quantitative"),
@@ -131,7 +132,7 @@ def gen_rank_plot(U, V, rank_col):
         # below)
         gridOpacity=0.35
     ).interactive()
-    return postflare_rank_chart
+    return rank_chart
 
 
 def gen_sample_plot(table, metadata, category, palette='Set1'):
