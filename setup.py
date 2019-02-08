@@ -81,5 +81,9 @@ setup(
         ['rankratioviz=rankratioviz.scripts._plot:plot']
     },
     zip_safe=False,
+    # Needed in order to ensure that q2/data/* and scripts/data/* are
+    # installed (in turn, those are specified in MANIFEST.in).
+    # See https://python-packaging.readthedocs.io/en/latest/non-code-files.html
+    # for details.
     include_package_data=True
 )
