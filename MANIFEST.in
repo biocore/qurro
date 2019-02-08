@@ -1,1 +1,2 @@
 include rankratioviz/support_files/*
+include rankratioviz/support_files/vendor/*

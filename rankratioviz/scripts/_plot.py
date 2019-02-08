@@ -11,7 +11,7 @@ import skbio
 import os
 import click
 import json
-from shutil import copyfile
+from shutil import copyfile, copytree
 from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 
@@ -51,7 +51,12 @@ def plot(ranks: str, abundance_table: str, sample_metadata: str,
     support_files_loc = os.path.join(loc_, '..', 'support_files')
     for file_ in os.listdir(support_files_loc):
         if file_ != '.DS_Store':
-            copyfile(
+            copy_func = copyfile
+            # If we hit a directory in support_files/, just copy the entire
+            # directory to our destination using shutil.copytree()
+            if os.path.isdir(os.path.join(support_files_loc, file_)):
+                copy_func = copytree
+            copy_func(
                 os.path.join(support_files_loc, file_),
                 os.path.join(output_dir, file_)
             )
