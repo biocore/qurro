@@ -19,15 +19,15 @@ from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 @click.option('-r', '--ranks', required=True,
               help="Ordination file output from a tool like DEICODE, songbird,"
               " etc.")
-@click.option('-at', '--abundance_table', required=True,
+@click.option('-at', '--abundance-table', required=True,
               help="BIOM table describing taxon/metabolite sample abundances.")
-@click.option('-fm', '--feature_metadata', default=None,
+@click.option('-fm', '--feature-metadata', default=None,
               help="Feature metadata file for taxonomy.")
-@click.option('-sm', '--sample_metadata', required=True,
+@click.option('-sm', '--sample-metadata', required=True,
               help="Sample metadata file.")
 @click.option('-c', '--category', required=True,
               help="Metadata table category to plot.")
-@click.option('-o', '--output_dir', required=True,
+@click.option('-o', '--output-dir', required=True,
               help="Location of output files.")
 def plot(ranks: str, abundance_table: str, sample_metadata: str,
          output_dir: str, feature_metadata: str, category: str) -> None:
