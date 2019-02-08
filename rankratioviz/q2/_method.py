@@ -25,8 +25,15 @@ def plot(output_dir: str, abundance_table: biom.Table,
         abundance_table,
         feature_metadata.to_dataframe()
     )
+    # We can't "subscript" Q2 Metadata types, so we have to convert this to a
+    # dataframe before working with it
+    df_sample_metadata = sample_metadata.to_dataframe()
     rank_plot_chart = gen_rank_plot(U, V, 0)
-    sample_plot_json = gen_sample_plot(loaded_table, sample_metadata, category)
+    sample_plot_json = gen_sample_plot(
+        loaded_table,
+        df_sample_metadata,
+        category
+    )
     # make dir
     os.makedirs(os.path.join(output_dir, 'rank_plot'), exist_ok=True)
     # copy files for viz
