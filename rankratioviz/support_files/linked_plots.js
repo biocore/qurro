@@ -114,20 +114,22 @@ ssmv.filterTaxa = function(inputText, searchType) {
     else {
         // If that sort of list isn't available, then search through every
         // microbe mentioned in the sample data.
+        // NOTE that this list of "taxa" includes metadata column names. We
+        // filter those out down below.
+        // TODO: is there a risk of having metadata column names that clash
+        // with taxon IDs? I don't think so, but might be worth changing up how
+        // this works to make this safer.
         taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
     }
     var filteredTaxa = [];
     var ranksOfTaxon;
     for (var ti = 0; ti < taxa.length; ti++) {
         // NOTE this check filters out sample metadata/etc. Everything after
-        // position 24 in the col_names dataset (0-indexed) is a taxon.
-        // TODO automate this as a data attr saved in JSON by Jupyter Notebook,
-        // so that this can successfully ignore arbitrary amounts of metadata.
-        // ANOTHER TODO wouldn't it be ok to just initialize ti to 24? Check
-        // how we merge the datasets together in gen_plots.py, but I think it
-        // should be sufficient to just do for (var ti = 24; ...) to start this
-        // loop.
-        if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] > 24) {
+        // position 3 in the col_names dataset (0-indexed) is a taxon.
+        // TODO when we add all metadata here, we'll need to save this "3"
+        // value (for the number of leading metadata columns) in the JSON file
+        // so we can change it up for different datasets.
+        if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] > 3) {
             if (searchType === "text") {
                 // Just use the input text to literally search through taxa for
                 // matches (including semicolons corresponding to rank
