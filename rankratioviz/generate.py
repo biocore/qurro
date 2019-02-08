@@ -41,20 +41,33 @@ def process_input(ordination_file, biom_table, taxam=None):
 
     if taxam is not None:
         # match and relabel
-        taxam, V = matchdf(taxam, V)
-        if 'Taxon' in taxam.columns and 'Confidence' in taxam.columns:
-            # combine and replace
-            # TODO: make this readable
-            taxam["Taxon_"] = [(str(x)+'|('+str(y)[:4]+')').replace(' ','')+'|'+str(seq_) 
-                               for seq_,x,y in zip(taxam.index,
-                                                   taxam.Taxon,
-                                                   taxam.Confidence)]
-            V.index = taxam["Taxon_"].values
-            table.columns = taxam["Taxon_"].values
-        elif 'Taxon' in taxam.columns:
-            # only taxa
-            V.index = taxam["Taxon"].values
-            table.columns = taxam["Taxon"].values
+        matched_taxam, V = matchdf(taxam, V)
+        if 'Taxon' in matched_taxam.columns:
+            if 'Confidence' in matched_taxam.columns:
+                # combine and replace
+                matched_taxam_zip = zip(
+                    matched_taxam.index,
+                    matched_taxam.Taxon,
+                    matched_taxam.Confidence
+                )
+                # Assign each taxon in the taxonomy metadata file a label that
+                # includes its
+                #   1) taxonomy information,
+                #   2) confidence, and
+                #   3) sequence
+                labels = []
+                for seq, taxon, confidence in matched_taxam_zip:
+                    trimmed_conf = "|(" + str(confidence)[:4] + ")"
+                    base_label = (str(taxon) + trimmed_conf).replace(' ', '')
+                    labels.append(base_label + '|' + str(seq))
+
+                matched_taxam["Taxon_"] = labels
+                V.index = matched_taxam["Taxon_"].values
+                table.columns = matched_taxam["Taxon_"].values
+            else:
+                # only taxa
+                V.index = matched_taxam["Taxon"].values
+                table.columns = matched_taxam["Taxon"].values
 
     return U, V, table
 
