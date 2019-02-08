@@ -64,5 +64,6 @@ def plot(ranks: str, abundance_table: str, sample_metadata: str,
         json.dump(sample_plot_json, jfile)
     return
 
+
 if __name__ == '__main__':
     plot()
