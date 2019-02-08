@@ -54,14 +54,17 @@ A full example can be analysis from count table to visualization can be found [h
 
 ### Stand-alone command line tutorial
 
-Similar to the command above this is preceded by the command to produce.
+rankratioviz can also be used on its own from the command line outside of QIIME 2.
+The following command produces an analogous visualization to the one generated
+with QIIME 2 above:
 
 ```
 !rankratioviz --ranks example/deicode_example/ordination.txt \
               --abundance-table example/deicode_example/qiita_10422_table.biom \
               --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
               --feature-metadata example/deicode_example/taxonomy.tsv \
-              --output-dir example/deicode_example --category exposure_type_encode
+              --output-dir example/deicode_example
+              --category exposure_type_encode
 ```
 
 ## Linked visualizations
