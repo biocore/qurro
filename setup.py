@@ -59,6 +59,11 @@ setup(
     maintainer="rankratioviz development team",
     maintainer_email="mfedarko@ucsd.edu",
     packages=find_packages(),
+    # Needed in order to ensure that q2/data/* and scripts/data/* are
+    # installed (in turn, those are specified in MANIFEST.in).
+    # See https://python-packaging.readthedocs.io/en/latest/non-code-files.html
+    # for details.
+    include_package_data=True,
     # TODO determine what versions we really care about. Also the ipython
     # versions differ btwn. here and ci/conda_requirements.txt; figure out
     # which is needed.
@@ -80,10 +85,5 @@ setup(
         'console_scripts':
         ['rankratioviz=rankratioviz.scripts._plot:plot']
     },
-    zip_safe=False,
-    # Needed in order to ensure that q2/data/* and scripts/data/* are
-    # installed (in turn, those are specified in MANIFEST.in).
-    # See https://python-packaging.readthedocs.io/en/latest/non-code-files.html
-    # for details.
-    include_package_data=True
+    zip_safe=False
 )
