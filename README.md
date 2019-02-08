@@ -5,7 +5,7 @@
 
 rankratioviz visualizes the scikit-bio [OrdinationResults](http://scikit-bio.org/docs/latest/generated/skbio.stats.ordination.OrdinationResults.html) output from a tool like
 [songbird](https://github.com/mortonjt/songbird) or
-[DEICODE](https://github.com/cameronmartino/DEICODE). It facilitates viewing
+[DEICODE](https://github.com/biocore/DEICODE). It facilitates viewing
 a __"ranked"__ plot of taxa alongside a scatterplot showing the __log ratios__ of
 selected taxon abundances within samples.
 
