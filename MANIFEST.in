@@ -1,2 +1,1 @@
-include rankratioviz/scripts/data/*
-include rankratioviz/q2/data/*
+include rankratioviz/support_files/*

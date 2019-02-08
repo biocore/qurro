@@ -46,35 +46,23 @@ def plot(ranks: str, abundance_table: str, sample_metadata: str,
     rank_plot_chart = gen_rank_plot(U, V, 0)
     sample_plot_json = gen_sample_plot(table, read_sample_metadata, category)
     os.makedirs(output_dir, exist_ok=True)
-    # write
-    os.mkdir(os.path.join(output_dir, 'rank_plot_' + category))
     # copy files for viz
     loc_ = os.path.dirname(os.path.realpath(__file__))
-    for file_ in os.listdir(os.path.join(loc_, 'data')):
+    support_files_loc = os.path.join(loc_, '..', 'support_files')
+    for file_ in os.listdir(support_files_loc):
         if file_ != '.DS_Store':
             copyfile(
-                skbio.util.get_data_path(file_),
-                os.path.join(output_dir, 'rank_plot_'+category, file_)
+                os.path.join(support_files_loc, file_),
+                os.path.join(output_dir, file_)
             )
     # write new files
-    file_prefix = 'rank_plot_' + category
-    rank_plot_loc = os.path.join(
-        output_dir,
-        file_prefix,
-        'rank_plot.json'
-    )
-    sample_plot_loc = os.path.join(
-        output_dir,
-        file_prefix,
-        'sample_logratio_plot.json'
-    )
-
+    rank_plot_loc = os.path.join(output_dir, 'rank_plot.json')
+    sample_plot_loc = os.path.join(output_dir, 'sample_logratio_plot.json')
     rank_plot_chart.save(rank_plot_loc)
     # For reference: https://stackoverflow.com/a/12309296
     with open(sample_plot_loc, "w") as jfile:
         json.dump(sample_plot_json, jfile)
     return
-
 
 if __name__ == '__main__':
     plot()
