@@ -26,7 +26,7 @@ def plot(output_dir: str, abundance_table: biom.Table,
         feature_metadata.to_dataframe()
     )
     rank_plot_chart = gen_rank_plot(U, V, 0)
-    sample_plot_json = gen_sample_plot(loaded_table, metadata, category)
+    sample_plot_json = gen_sample_plot(loaded_table, sample_metadata, category)
     # make dir
     os.makedirs(os.path.join(output_dir, 'rank_plot'), exist_ok=True)
     # copy files for viz
