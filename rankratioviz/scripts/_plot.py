@@ -42,11 +42,9 @@ def plot(ranks: str, abundance_table: str, sample_metadata: str,
         taxonomy = pd.read_table(feature_metadata)
         taxonomy.set_index('feature id', inplace=True)
 
-    U, V, table, metadata = process_input(
-        ranks, loaded_biom, read_sample_metadata, taxonomy
-    )
+    U, V, table = process_input(ranks, loaded_biom, taxonomy)
     rank_plot_chart = gen_rank_plot(U, V, 0)
-    sample_plot_json = gen_sample_plot(table, metadata, category)
+    sample_plot_json = gen_sample_plot(table, read_sample_metadata, category)
     os.makedirs(output_dir, exist_ok=True)
     # write
     os.mkdir(os.path.join(output_dir, 'rank_plot_' + category))

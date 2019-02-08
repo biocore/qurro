@@ -30,8 +30,8 @@ def matchdf(df1, df2):
     return df1.loc[idx], df2.loc[idx]
 
 
-def process_input(ordination_file, biom_table, metadata, taxam=None):
-    """Load input files: ordination taxa, BIOM table, metadata."""
+def process_input(ordination_file, biom_table, taxam=None):
+    """Loads the ordination file, BIOM table, and optionally taxonomy data."""
     V = ordination_file.features
     U = ordination_file.samples
     table = biom_table.to_dataframe().to_dense().T
@@ -56,7 +56,7 @@ def process_input(ordination_file, biom_table, metadata, taxam=None):
             V.index = taxam["Taxon"].values
             table.columns = taxam["Taxon"].values
 
-    return U, V, table, metadata
+    return U, V, table
 
 
 def gen_rank_plot(U, V, rank_col):

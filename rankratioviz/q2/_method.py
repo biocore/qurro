@@ -20,10 +20,9 @@ def plot(output_dir: str, abundance_table: biom.Table,
          feature_metadata: qiime2.Metadata, category: str) -> None:
 
     # get data
-    U, V, loaded_table, metadata = process_input(
+    U, V, loaded_table = process_input(
         ranks,
         abundance_table,
-        sample_metadata.to_dataframe(),
         feature_metadata.to_dataframe()
     )
     rank_plot_chart = gen_rank_plot(U, V, 0)
