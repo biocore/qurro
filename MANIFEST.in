@@ -1,0 +1,4 @@
+include README.md
+include rankratioviz/scripts/data/*
+include rankratioviz/q2/data/*
+include LICENSE.txt
