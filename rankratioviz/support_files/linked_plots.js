@@ -160,6 +160,8 @@ ssmv.filterTaxa = function(inputText, searchType) {
                 // files are usually automatically generated, this should be ok
                 ranksOfTaxon = taxa[ti].split(";");
                 // Loop over ranks
+                // TODO use a diff variable than ri since it may or may not
+                // have already been defined above.
                 for (ri = 0; ri < rankArray.length; ri++) {
                     if (ranksOfTaxon.includes(rankArray[ri])) {
                         filteredTaxa.push(taxa[ti]);
