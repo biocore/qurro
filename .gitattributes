@@ -1,2 +1,3 @@
 # NOTE: This file is taken from DEICODE's .gitattributes file.
 *.ipynb linguist-vendored
+rankratioviz/support_files/vendor/* linguist-vendored
