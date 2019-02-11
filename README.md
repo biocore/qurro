@@ -51,7 +51,7 @@ command below and visualized by dragging/uploading the file to
                          --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
                          --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
                          --p-category exposure_type_encode \
-                         --output-dir example/deicode_example/rank_plot
+                         --output-dir example/deicode_example/q2_rrv_plot
 ```
 
 ### Using rankratioviz as a standalone program
@@ -65,7 +65,7 @@ with QIIME 2 above:
               --abundance-table example/deicode_example/qiita_10422_table.biom \
               --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
               --feature-metadata example/deicode_example/taxonomy.tsv \
-              --output-dir example/deicode_example
+              --output-dir example/deicode_example/standalone_rrv_plot
               --category exposure_type_encode
 ```
 
