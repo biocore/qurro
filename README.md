@@ -104,7 +104,7 @@ licenses (each of which includes a respective copyright notice).
 - [Vega-Lite](https://vega.github.io/vega-lite/)
 - [Vega-Embed](https://github.com/vega/vega-embed)
 
-THe following software is required for rankratioviz's python code to function,
+The following software is required for rankratioviz's python code to function,
 although it is not distributed with rankratioviz:
 - [Python 3](https://www.python.org/) (a version of at least 3.2 is required)
 - [pandas](https://pandas.pydata.org/)
