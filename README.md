@@ -27,21 +27,23 @@ To install the most up-to-date version of rankratioviz, run the following comman
 # Developer version
 pip install git+https://github.com/cameronmartino/rankratioviz.git
 ```
-Then run the following command to refresh QIIME2:
+
+### Using rankratioviz through [QIIME 2](https://qiime2.org/)
+
+First make sure that QIIME 2 is installed before installing rankratioviz.
+Then run
 
 ```
 qiime dev refresh-cache
 ```
 
-### QIIME2 tutorial
-
-First make sure that QIIME2 is installed before installing rankratioviz. Then run
-
-```
-qiime dev refresh-cache
-```
-
-A full example can be analysis from count table to visualization can be found [here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb). Once a file of type Biplot-OrdinationResults (i.e. ordination.qza in the example) is made the visualization can be made using the command below and visualized by dragging the file onto [this](https://view.qiime2.org/) page. 
+A full example can be analysis from count table to visualization can be found
+[here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb).
+(Note that some of the command syntax is a little out-of-date.)
+Once a file of type Biplot-OrdinationResults (i.e. ordination.qza in the
+example) is made, a rankratioviz visualization can be produced using the
+command below and visualized by dragging/uploading the file to
+[view.qiime2.org](https://view.qiime2.org/).
 
 ```
 !qiime rankratioviz plot --i-abundance-table example/deicode_example/qiita_10422_table.biom.qza \
@@ -52,7 +54,7 @@ A full example can be analysis from count table to visualization can be found [h
                          --output-dir example/deicode_example/rank_plot
 ```
 
-### Stand-alone command line tutorial
+### Using rankratioviz as a standalone program
 
 rankratioviz can also be used on its own from the command line outside of QIIME 2.
 The following command produces an analogous visualization to the one generated
