@@ -10,9 +10,9 @@ a __"ranked"__ plot of taxa alongside a scatterplot showing the __log ratios__ o
 selected taxon abundances within samples.
 
 rankratioviz can be used standalone (as a Python 3 script that generates a
-HTML/JS/CSS visualization) or as a [QIIME 2](https://qiime2.org/) plugin. We're
-currently focused on restructing the tool's codebase, so please bear with us as
-we make these enhancements available.
+HTML/JS/CSS visualization) or as a [QIIME 2](https://qiime2.org/) plugin. **We're
+currently focused on restructuring the tool's codebase, so please bear with us as
+we make these enhancements available.**
 
 rankratioviz is still being developed, so backwards-incompatible changes might
 occur. If you have any questions, feel free to contact the development team at
