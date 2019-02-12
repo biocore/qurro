@@ -107,16 +107,20 @@ licenses (each of which includes a respective copyright notice).
 The following software is required for rankratioviz's python code to function,
 although it is not distributed with rankratioviz:
 - [Python 3](https://www.python.org/) (a version of at least 3.2 is required)
-- [pandas](https://pandas.pydata.org/)
-- [biom-format](http://biom-format.org/)
 - [Altair](https://altair-viz.github.io/)
+- [biom-format](http://biom-format.org/)
 - [click](https://palletsprojects.com/p/click/)
-- [matplotlib](https://matplotlib.org/)
+- [pandas](https://pandas.pydata.org/)
+- [scikit-bio](http://scikit-bio.org/)
 
 The design of rankratioviz was strongly inspired by
 [EMPeror](https://github.com/biocore/emperor) and
-[q2-emperor](https://github.com/qiime2/q2-emperor/). A big shoutout to Yoshiki
-Vázquez-Baeza for his help in planning this project.
+[q2-emperor](https://github.com/qiime2/q2-emperor/), along with
+[DEICODE](https://github.com/biocore/DEICODE). A big shoutout to
+Yoshiki Vázquez-Baeza for his help in planning this project, as well as to
+Cameron Martino for a ton of work on getting the code in a distributable state
+(and making it work with QIIME 2). Thanks also to Jamie Morton, who wrote the
+original code for producing rank plots from which this is derived.
 
 ## References
 
