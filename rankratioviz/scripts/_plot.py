@@ -35,11 +35,11 @@ def plot(ranks: str, abundance_table: str, sample_metadata: str,
 
     # import
     loaded_biom = load_table(abundance_table)
-    read_sample_metadata = pd.read_table(sample_metadata, index_col=0)
+    read_sample_metadata = pd.read_csv(sample_metadata, index_col=0, sep='\t')
     ranks = skbio.OrdinationResults.read(ranks)
     taxonomy = None
     if feature_metadata is not None:
-        taxonomy = pd.read_table(feature_metadata)
+        taxonomy = pd.read_csv(feature_metadata, sep='\t')
         taxonomy.set_index('feature id', inplace=True)
 
     U, V, table = process_input(ranks, loaded_biom, taxonomy)
