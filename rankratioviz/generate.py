@@ -200,10 +200,16 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
         alt.Y(smaa_cn2si["balance"], title="log(Numerator / Denominator)"),
         color=alt.Color(
             smaa_cn2si[category],
-            title=str(category)
+            title=str(category),
+            # This is a temporary measure. Eventually the type should be
+            # user-configurable -- some of the metadata fields might actually
+            # be nominal data, but many will likely be numeric (e.g. SCORAD for
+            # dermatits). Exposing this to the user in the visualization
+            # interface is probably the best option, for when arbitrary amounts
+            # of metadata can be passed.
+            type="nominal"
         ),
-        tooltip=[smaa_cn2si["index"]]
-    )
+        tooltip=[smaa_cn2si["index"]])
 
     # Save JSON for sample plot (including the column-identifying dict from
     # earlier).
