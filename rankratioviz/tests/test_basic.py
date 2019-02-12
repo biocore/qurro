@@ -1,7 +1,7 @@
-import os
+# import os
 from click.testing import CliRunner
-from rankratioviz import generate
-from rankratioviz.tests import testing_utilities
+# from rankratioviz import generate
+# from rankratioviz.tests import testing_utilities
 import rankratioviz.scripts._plot as rrvp
 
 
