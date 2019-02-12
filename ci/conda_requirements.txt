@@ -2,6 +2,7 @@ altair -c conda-forge
 h5py
 biom-format
 click
-pandas
+pandas >= 0.10.0
+scikit-bio > 0.5.3
 pytest
-scikit-bio
+flake8
