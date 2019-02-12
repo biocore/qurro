@@ -58,3 +58,6 @@ doc/source/generated
 
 # IPython checkpoints
 .ipynb_checkpoints
+
+# rankratioviz test outputs
+rankratioviz/tests/output/*
