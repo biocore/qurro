@@ -10,8 +10,8 @@ PORT = 8000
 # The -B in the invocation of python prevents this from creating pycache
 # 	miscellany.
 test:
-	rm -r rankratioviz/tests/output/*
 	python3 -B -m pytest
+	rm -r rankratioviz/tests/output/*
 run:
 	@echo "Visualizing the JSON files located in the viewer/ directory."
 	@echo "Open your browser to localhost:$(PORT)/viewer to view the visualization."
