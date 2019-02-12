@@ -73,7 +73,7 @@ setup(
     # certain version, then we should specify it in that case)
     install_requires=[
         'altair',
-        'biom-format',
+        'biom-format[extra]',
         'click',
         'pandas >= 0.10.0',
         'scikit-bio > 0.5.3'],

@@ -1,4 +1,5 @@
 altair -c conda-forge
+h5py
 biom-format
 click
 pandas
