@@ -1,0 +1,6 @@
+altair -c conda-forge
+biom-format
+click
+pandas
+pytest
+scikit-bio

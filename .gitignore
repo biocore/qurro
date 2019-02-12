@@ -1,3 +1,63 @@
-old_jsons/
-__pycache__/
-*.pyc
+# NOTE: This file is taken from DEICODE's .gitignore file.
+# Temporary files
+*~
+\#*#
+
+#big files 
+*simulation_base_truth.csv 
+*simulation_subsampled_noisy.csv
+*simulation_base_truth.csv 
+*simulation_subsampled_noisy.csv
+
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
+.pytest_cache/
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# vi
+.*.swp
+
+# Sphinx builds
+doc/source/generated
+
+# OSX files
+.DS_Store
+
+# IPython checkpoints
+.ipynb_checkpoints
+
+# rankratioviz test outputs
+rankratioviz/tests/output/*
