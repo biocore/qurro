@@ -21,8 +21,6 @@
 
 import pandas as pd
 import altair as alt
-from matplotlib.colors import rgb2hex
-from matplotlib import cm
 
 
 def matchdf(df1, df2):
@@ -190,11 +188,6 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     # comes out to 7.5 MB, which is an underestimate).
     sample_metadata_and_abundances.columns = int_smaa_col_names
 
-    # color palette change here
-    # TODO remove reliance on matplotlib and rgb2hex for this if possible
-    set_size = int(len(set(metadata[category])))
-    cmap = cm.get_cmap(palette, set_size)
-
     # Create sample plot in Altair.
     # If desired, we can make this interactive by adding .interactive() to the
     # alt.Chart declaration (but we don't do that currently since it makes
@@ -207,11 +200,7 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
         alt.Y(smaa_cn2si["balance"], title="log(Numerator / Denominator)"),
         color=alt.Color(
             smaa_cn2si[category],
-            title=str(category),
-            scale=alt.Scale(
-                domain=list(set(metadata[category])),
-                range=[rgb2hex(cmap(i)) for i in range(set_size)]
-            )
+            title=str(category)
         ),
         tooltip=[smaa_cn2si["index"]]
     )

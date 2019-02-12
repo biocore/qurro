@@ -72,10 +72,9 @@ setup(
     # OrdinationResults type or it doesn't conform to a certain spec until a
     # certain version, then we should specify it in that case)
     install_requires=[
-        'click',
         'altair',
-        'ipython >= 3.2.0',  # TODO is this required?
-        'matplotlib >= 1.4.3',
+        'biom-format',
+        'click',
         'pandas >= 0.10.0',
         'scikit-bio > 0.5.3'],
     classifiers=classifiers,

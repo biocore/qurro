@@ -1,9 +1,6 @@
-click
-ipython>4.0.0
-notebook
-matplotlib
-scikit-bio
-pandas
-biom-format
 altair -c conda-forge
+biom-format
+click
+pandas
 pytest
+scikit-bio
