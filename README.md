@@ -22,15 +22,15 @@ You can view a demo of rankratioviz in the browser [here](https://fedarko.github
 
 ## Installation
 
-To install the most up-to-date version of rankratioviz, run the following command
+The following command will install the most up-to-date version of rankratioviz:
 ```
 # Developer version
-pip install git+https://github.com/cameronmartino/rankratioviz.git
+pip install git+https://github.com/fedarko/rankratioviz.git
 ```
 
 ### Using rankratioviz through [QIIME 2](https://qiime2.org/)
 
-First make sure that QIIME 2 is installed before installing rankratioviz.
+First, make sure that QIIME 2 is installed before installing rankratioviz.
 Then run
 
 ```
@@ -40,9 +40,9 @@ qiime dev refresh-cache
 A full example can be analysis from count table to visualization can be found
 [here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb).
 (Note that some of the command syntax is a little out-of-date.)
-Once a file of type Biplot-OrdinationResults (i.e. ordination.qza in the
-example) is made, a rankratioviz visualization can be produced using the
-command below and visualized by dragging/uploading the file to
+A visualization.qzv file containing a rankratioviz visualization
+can be produced using the command below, and can be visualized by dragging/uploading
+the visualization.qzv file to
 [view.qiime2.org](https://view.qiime2.org/).
 
 ```
@@ -68,6 +68,15 @@ with QIIME 2 above:
               --output-dir example/deicode_example/standalone_rrv_plot
               --category exposure_type_encode
 ```
+
+This visualization can be displayed by running `python3 -m http.server` from
+the output directory containing the visualization (in this case,
+`example/deicode_example/standalone_rrv_plot`) and opening `localhost:8000` in
+your browser (replacing `8000` with the port number that you got from running
+the command).
+
+You can also host the generated visualization on a simple web server (making it
+accessible to anyone).
 
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:
