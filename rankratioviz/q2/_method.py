@@ -37,12 +37,9 @@ def plot(output_dir: str, abundance_table: biom.Table,
     # make dir
     os.makedirs(output_dir, exist_ok=True)
     # copy files for viz
-    # TODO: this is slightly unsafe -- if no .html file is found in data/, then
-    # this will fail. Solution is to define index = None first, and then after
-    # the loop double-check that index isn't None anymore. If it still is then
-    # we can fail gracefully with an explanation.
     loc_ = os.path.dirname(os.path.realpath(__file__))
     support_files_loc = os.path.join(loc_, '..', 'support_files')
+    index_path = None
     for file_ in os.listdir(support_files_loc):
         if file_ != '.DS_Store':
             copy_func = copyfile
@@ -54,8 +51,14 @@ def plot(output_dir: str, abundance_table: biom.Table,
                 os.path.join(support_files_loc, file_),
                 os.path.join(output_dir, file_)
             )
-        if '.html' in file_:
-            index = os.path.join(output_dir, file_)
+        if 'index.html' in file_:
+            index_path = os.path.join(output_dir, file_)
+
+    if index_path is None:
+        # This should never happen -- assuming rankratioviz has been installed
+        # fully, i.e. with a complete set of support_files/ -- but we handle it
+        # here just in case.
+        raise FileNotFoundError("Couldn't find index.html in support_files/")
 
     # write JSON files to the output directory
     rank_plot_loc = os.path.join(output_dir, "rank_plot.json")
@@ -67,4 +70,5 @@ def plot(output_dir: str, abundance_table: biom.Table,
     # TODO: do we need to specify plot_name in the context in this way? I'm not
     # sure where it is being used in the first place, honestly.
     plot_name = output_dir.split('/')[-1]
-    q2templates.render(index, output_dir, context={'plot_name': plot_name})
+    q2templates.render(index_path, output_dir,
+                       context={'plot_name': plot_name})
