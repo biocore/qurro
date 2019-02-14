@@ -65,7 +65,7 @@ with QIIME 2 above:
               --table example/deicode_example/qiita_10422_table.biom \
               --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
               --feature-metadata example/deicode_example/taxonomy.tsv \
-              --category exposure_type_encode
+              --category exposure_type_encode \
               --output-dir example/deicode_example/standalone_rrv_plot
 ```
 
