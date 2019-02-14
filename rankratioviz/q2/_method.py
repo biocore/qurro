@@ -15,14 +15,14 @@ from shutil import copyfile, copytree
 from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 
 
-def plot(output_dir: str, abundance_table: biom.Table,
+def plot(output_dir: str, table: biom.Table,
          ranks: skbio.OrdinationResults, sample_metadata: qiime2.Metadata,
          feature_metadata: qiime2.Metadata, category: str) -> None:
 
     # get data
-    U, V, loaded_table = process_input(
+    U, V, processed_table = process_input(
         ranks,
-        abundance_table,
+        table,
         feature_metadata.to_dataframe()
     )
     # We can't "subscript" Q2 Metadata types, so we have to convert this to a
@@ -30,7 +30,7 @@ def plot(output_dir: str, abundance_table: biom.Table,
     df_sample_metadata = sample_metadata.to_dataframe()
     rank_plot_chart = gen_rank_plot(U, V, 0)
     sample_plot_json = gen_sample_plot(
-        loaded_table,
+        processed_table,
         df_sample_metadata,
         category
     )

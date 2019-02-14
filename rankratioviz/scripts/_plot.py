@@ -19,7 +19,7 @@ from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
 @click.option('-r', '--ranks', required=True,
               help="Ordination file output from a tool like DEICODE, songbird,"
               " etc.")
-@click.option('-at', '--abundance-table', required=True,
+@click.option('-t', '--table', required=True,
               help="BIOM table describing taxon/metabolite sample abundances.")
 @click.option('-fm', '--feature-metadata', default=None,
               help="Feature metadata file for taxonomy.")
@@ -29,12 +29,12 @@ from rankratioviz.generate import process_input, gen_rank_plot, gen_sample_plot
               help="Metadata table category to plot.")
 @click.option('-o', '--output-dir', required=True,
               help="Location of output files.")
-def plot(ranks: str, abundance_table: str, sample_metadata: str,
+def plot(ranks: str, table: str, sample_metadata: str,
          output_dir: str, feature_metadata: str, category: str) -> None:
     """Generates a plot of ranked taxa/metabolites and their abundances."""
 
     # import
-    loaded_biom = load_table(abundance_table)
+    loaded_biom = load_table(table)
     read_sample_metadata = pd.read_csv(sample_metadata, index_col=0, sep='\t')
     ranks = skbio.OrdinationResults.read(ranks)
     taxonomy = None
@@ -42,9 +42,10 @@ def plot(ranks: str, abundance_table: str, sample_metadata: str,
         taxonomy = pd.read_csv(feature_metadata, sep='\t')
         taxonomy.set_index('feature id', inplace=True)
 
-    U, V, table = process_input(ranks, loaded_biom, taxonomy)
+    U, V, processed_table = process_input(ranks, loaded_biom, taxonomy)
     rank_plot_chart = gen_rank_plot(U, V, 0)
-    sample_plot_json = gen_sample_plot(table, read_sample_metadata, category)
+    sample_plot_json = gen_sample_plot(processed_table, read_sample_metadata,
+                                       category)
     os.makedirs(output_dir, exist_ok=True)
     # copy files for viz
     loc_ = os.path.dirname(os.path.realpath(__file__))

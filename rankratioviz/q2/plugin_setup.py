@@ -20,30 +20,31 @@ plugin = qiime2.plugin.Plugin(
     version=__version__,
     website="https://github.com/fedarko/rankratioviz",
     # citations=[citations['martino-unpublished']],
-    short_description=('Plugin for visualizing taxon ranks and log ratios.'),
-    description=("""This plugin supports the visualization of taxon ranks, output
-        by a tool like songbird or DEICODE, in tandem with log ratios of their
-        abundances in samples."""),
+    short_description=('Plugin for visualizing taxon/metabolite ranks and'
+                       + ' log ratios.'),
+    description=("""This QIIME 2 plugin supports the visualization of
+        taxon/metabolite ranks (output by a tool like songbird or DEICODE) in
+        tandem with log ratios of their abundances in samples."""),
     package='rankratioviz')
 
 plugin.visualizers.register_function(
     function=plot,
     inputs={'ranks': PCoAResults % Properties("biplot"),
-            'abundance_table': FeatureTable[Frequency]},
+            'table': FeatureTable[Frequency]},
     parameters={'sample_metadata': Metadata,
                 'feature_metadata': Metadata,
                 'category': Str},
     input_descriptions={
         # TODO clearer descriptions here
-        'ranks': "A file describing ranks of taxa/metabolites; generally"
-                 + " produced by a tool like Songbird or DEICODE",
-        'abundance_table': "A table describing the abundances of ranked"
-                           + " taxa/metabolites"
+        'ranks': "An ordination file describing ranks of taxa/metabolites;"
+                 + " generally produced by a tool like Songbird or DEICODE",
+        'table': "A BIOM table describing the abundances of the ranked"
+                 + " taxa/metabolites in samples"
     },
     parameter_descriptions={
         'sample_metadata': 'Metadata file describing samples',
         'feature_metadata': 'Feature metadata (indicating taxonomy)',
-        'category': 'metadata category to plot'
+        'category': 'Metadata category to plot (temporary option)'
     },
     name='Generate a rankratioviz plot',
     description="Generates an interactive visualization of ranks in tandem"

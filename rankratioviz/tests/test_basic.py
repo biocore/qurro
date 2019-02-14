@@ -10,7 +10,7 @@ def test_basic():
     # Derived from http://click.palletsprojects.com/en/7.x/testing/
     runner = CliRunner()
     result = runner.invoke(rrvp.plot, [
-        "--ranks", eg_dir + "ordination.txt", "--abundance-table",
+        "--ranks", eg_dir + "ordination.txt", "--table",
         eg_dir + "qiita_10422_table.biom", "--sample-metadata",
         eg_dir + "qiita_10422_metadata_encode.tsv", "--feature-metadata",
         eg_dir + "taxonomy.tsv", "--output-dir",

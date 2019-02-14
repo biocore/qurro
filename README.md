@@ -46,8 +46,8 @@ the visualization.qzv file to
 [view.qiime2.org](https://view.qiime2.org/).
 
 ```
-!qiime rankratioviz plot --i-abundance-table example/deicode_example/qiita_10422_table.biom.qza \
-                         --i-ranks example/deicode_example/ordination.qza \
+!qiime rankratioviz plot --i-ranks example/deicode_example/ordination.qza \
+                         --i-table example/deicode_example/qiita_10422_table.biom.qza \
                          --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
                          --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
                          --p-category exposure_type_encode \
@@ -62,11 +62,11 @@ with QIIME 2 above:
 
 ```
 !rankratioviz --ranks example/deicode_example/ordination.txt \
-              --abundance-table example/deicode_example/qiita_10422_table.biom \
+              --table example/deicode_example/qiita_10422_table.biom \
               --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
               --feature-metadata example/deicode_example/taxonomy.tsv \
-              --output-dir example/deicode_example/standalone_rrv_plot
               --category exposure_type_encode
+              --output-dir example/deicode_example/standalone_rrv_plot
 ```
 
 This visualization can be displayed by running `python3 -m http.server` from
