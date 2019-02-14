@@ -4,5 +4,5 @@ biom-format
 click
 pandas >= 0.10.0
 scikit-bio > 0.5.3
-pytest
+pytest < 4.1
 flake8
