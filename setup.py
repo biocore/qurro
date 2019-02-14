@@ -64,19 +64,18 @@ setup(
     # See https://python-packaging.readthedocs.io/en/latest/non-code-files.html
     # for details.
     include_package_data=True,
-    # TODO determine what versions we really care about. Also the ipython
-    # versions differ btwn. here and ci/conda_requirements.txt; figure out
-    # which is needed.
-    # I don't see a need right now to specify any of these versions, but that
-    # might change I guess (e.g. if scikit-bio doesn't have an
-    # OrdinationResults type or it doesn't conform to a certain spec until a
-    # certain version, then we should specify it in that case)
     install_requires=[
         'altair',
-        'h5py',
+        'h5py >= 2.2.0',
         'biom-format',
         'click',
         'pandas >= 0.10.0',
+        # Currently specified like this due to the error documented in
+        # https://github.com/pytest-dev/pytest-cov/pull/253
+        # Eventually we should adjust this, but for now even the latest version
+        # of pytest is still failing in my environment. This ensures that the
+        # tests will at least pass.
+        'pytest < 4.1',
         'scikit-bio > 0.5.3'],
     classifiers=classifiers,
     entry_points={
