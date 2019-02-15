@@ -46,12 +46,12 @@ the visualization.qzv file to
 [view.qiime2.org](https://view.qiime2.org/).
 
 ```
-!qiime rankratioviz plot --i-ranks example/deicode_example/ordination.qza \
-                         --i-table example/deicode_example/qiita_10422_table.biom.qza \
-                         --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
-                         --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
-                         --p-category exposure_type_encode \
-                         --output-dir example/deicode_example/q2_rrv_plot
+qiime rankratioviz plot --i-ranks example/deicode_example/ordination.qza \
+                        --i-table example/deicode_example/qiita_10422_table.biom.qza \
+                        --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
+                        --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
+                        --p-category exposure_type_encode \
+                        --output-dir example/deicode_example/q2_rrv_plot
 ```
 
 ### Using rankratioviz as a standalone program
@@ -61,12 +61,12 @@ The following command produces an analogous visualization to the one generated
 with QIIME 2 above:
 
 ```
-!rankratioviz --ranks example/deicode_example/ordination.txt \
-              --table example/deicode_example/qiita_10422_table.biom \
-              --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
-              --feature-metadata example/deicode_example/taxonomy.tsv \
-              --category exposure_type_encode \
-              --output-dir example/deicode_example/standalone_rrv_plot
+rankratioviz --ranks example/deicode_example/ordination.txt \
+             --table example/deicode_example/qiita_10422_table.biom \
+             --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
+             --feature-metadata example/deicode_example/taxonomy.tsv \
+             --category exposure_type_encode \
+             --output-dir example/deicode_example/standalone_rrv_plot
 ```
 
 This visualization can be displayed by running `python3 -m http.server` from
