@@ -21,7 +21,7 @@ occur. If you have any questions, feel free to contact the development team at
 
 You can view a demo of rankratioviz in the browser [here](https://fedarko.github.io/rrv/).
 
-## Installation
+## Installation and Usage
 
 The following command will install the most up-to-date version of rankratioviz:
 ```
