@@ -122,14 +122,16 @@ ssmv.filterTaxa = function(inputText, searchType) {
         taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
     }
     var filteredTaxa = [];
+    var taxonomyPart;
     var ranksOfTaxon;
     for (var ti = 0; ti < taxa.length; ti++) {
-        // NOTE this check filters out sample metadata/etc. Everything after
-        // position 3 in the col_names dataset (0-indexed) is a taxon.
+        // NOTE this check filters out sample metadata/etc.
+        // Everything on or after position 3 in the col_names dataset
+        // (0-indexed) is a taxon.
         // TODO when we add all metadata here, we'll need to save this "3"
         // value (for the number of leading metadata columns) in the JSON file
         // so we can change it up for different datasets.
-        if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] > 3) {
+        if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] >= 3) {
             if (searchType === "text") {
                 // Just use the input text to literally search through taxa for
                 // matches (including semicolons corresponding to rank
@@ -158,7 +160,15 @@ ssmv.filterTaxa = function(inputText, searchType) {
                 // separated by a single semicolon, with no trailing or leading
                 // whitespace or semicolons. Since as far as I'm aware these
                 // files are usually automatically generated, this should be ok
-                ranksOfTaxon = taxa[ti].split(";");
+                //
+                // If this taxon name includes a | character (used to separate
+                // its taxonomy information from things like confidence value
+                // or sequence), just get the part before the | and search
+                // that. (If there is no | in the taxon name, then this will
+                // just search the entire string:
+                // "abcdefg".split("|")[0] === "abcdefg")
+                taxonomyPart = taxa[ti].split("|")[0];
+                ranksOfTaxon = taxonomyPart.split(";");
                 // Loop over ranks
                 for (var ri2 = 0; ri2 < rankArray.length; ri2++) {
                     if (ranksOfTaxon.includes(rankArray[ri2])) {
