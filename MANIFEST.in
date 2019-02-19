@@ -1,2 +1,5 @@
 include rankratioviz/support_files/*
 include rankratioviz/support_files/vendor/*
+include README.md
+include LICENSE.txt
+include dependency_licenses/*
