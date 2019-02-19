@@ -19,6 +19,9 @@
 # that is the case (and it isn't actually messing up any of the data/metadata).
 # ----------------------------------------------------------------------------
 
+import json
+import os
+from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
 
@@ -217,3 +220,56 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     sample_logratio_chart_json = sample_logratio_chart.to_dict()
     sample_logratio_chart_json["datasets"]["col_names"] = smaa_cn2si
     return sample_logratio_chart_json
+
+
+def gen_visualization(U, V, processed_table, df_sample_metadata, category,
+                      output_dir):
+    """Creates a rankratioviz visualization. This function should be callable
+       from both the QIIME 2 and standalone rankratioviz scripts.
+
+       Returns:
+
+       index_path: a path to the index.html file for the output visualization.
+                   This is needed when calling q2templates.render().
+    """
+    rank_plot_chart = gen_rank_plot(U, V, 0)
+    sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata,
+                                       category)
+    os.makedirs(output_dir, exist_ok=True)
+    # copy files for the visualization
+    loc_ = os.path.dirname(os.path.realpath(__file__))
+    # NOTE: We can just join loc_ with support_files/, since support_files/ is
+    # located within the same directory as generate.py. Previously (when this
+    # code was contained in q2/_method.py and scripts/_plot.py), I joined loc_
+    # with .. and then with support_files since we had to first navigate up to
+    # the directory containing generate.py and support_files/. Now, we don't
+    # have to do that any more.
+    support_files_loc = os.path.join(loc_, 'support_files')
+    index_path = None
+    for file_ in os.listdir(support_files_loc):
+        if file_ != '.DS_Store':
+            copy_func = copyfile
+            # If we hit a directory in support_files/, just copy the entire
+            # directory to our destination using shutil.copytree()
+            if os.path.isdir(os.path.join(support_files_loc, file_)):
+                copy_func = copytree
+            copy_func(
+                os.path.join(support_files_loc, file_),
+                os.path.join(output_dir, file_)
+            )
+        if 'index.html' in file_:
+            index_path = os.path.join(output_dir, file_)
+
+    if index_path is None:
+        # This should never happen -- assuming rankratioviz has been installed
+        # fully, i.e. with a complete set of support_files/ -- but we handle it
+        # here just in case.
+        raise FileNotFoundError("Couldn't find index.html in support_files/")
+    # write new files
+    rank_plot_loc = os.path.join(output_dir, 'rank_plot.json')
+    sample_plot_loc = os.path.join(output_dir, 'sample_logratio_plot.json')
+    rank_plot_chart.save(rank_plot_loc)
+    # For reference: https://stackoverflow.com/a/12309296
+    with open(sample_plot_loc, "w") as jfile:
+        json.dump(sample_plot_json, jfile)
+    return index_path
