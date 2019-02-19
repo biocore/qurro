@@ -39,7 +39,7 @@ qiime dev refresh-cache
 ```
 
 A full example can be analysis from count table to visualization can be found
-[here](https://github.com/cameronmartino/rankratioviz/blob/master/example/deicode.ipynb).
+[here](https://github.com/fedarko/rankratioviz/blob/master/example/deicode_all.ipynb).
 (Note that some of the command syntax is a little out-of-date.)
 A visualization.qzv file containing a rankratioviz visualization
 can be produced using the command below, and can be visualized by dragging/uploading
