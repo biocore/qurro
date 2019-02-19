@@ -24,6 +24,7 @@ import altair as alt
 
 
 def matchdf(df1, df2):
+    """Filters both DataFrames to just the rows of their shared indices."""
     idx = set(df1.index) & set(df2.index)
     return df1.loc[idx], df2.loc[idx]
 
