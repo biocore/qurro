@@ -13,7 +13,7 @@ def test_basic():
     sloc = os.path.join(eg_dir, "qiita_10422_metadata_encode.tsv")
     floc = os.path.join(eg_dir, "taxonomy.tsv")
     out_dir = os.path.join("rankratioviz", "tests", "output",
-                        "standalone_test_basic")
+                           "standalone_test_basic")
     # Derived from http://click.palletsprojects.com/en/7.x/testing/
     runner = CliRunner()
     result = runner.invoke(rrvp.plot, [
