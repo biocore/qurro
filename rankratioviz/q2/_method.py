@@ -12,10 +12,15 @@ import q2templates
 from rankratioviz.generate import process_input, gen_visualization
 
 
-def plot(ranks: skbio.OrdinationResults, table: biom.Table,
+def plot(output_dir: str, ranks: skbio.OrdinationResults, table: biom.Table,
          sample_metadata: qiime2.Metadata, feature_metadata: qiime2.Metadata,
-         category: str, output_dir: str) -> None:
+         category: str) -> None:
+    """Generates a .qzv file containing a rankratioviz visualization.
 
+       (...Also, the reason the order of parameters here differs from
+       rankratioviz/scripts/_plot.py is that the first parameter has to be
+       output_dir: str, per QIIME 2's plugin requirements.)
+    """
     # get data
     df_feature_metadata = feature_metadata.to_dataframe()
     U, V, processed_table = process_input(ranks, table, df_feature_metadata)
