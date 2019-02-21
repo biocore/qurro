@@ -133,6 +133,11 @@ Cameron Martino for a ton of work on getting the code in a distributable state
 (and making it work with QIIME 2). Thanks also to Jamie Morton, who wrote the
 original code for producing rank plots from which this is derived.
 
+Some of the test data (located in `rankratioviz/tests/input/byrd/`) was taken
+from [this repository](https://github.com/knightlab-analyses/reference-frames).
+This data, in turn, originates from Byrd et al.'s 2017 study on atopic
+dermatitis [2].
+
 ## References
 
 [1] Becker, R. A. & Cleveland, W. S. (1987). Brushing scatterplots. _Technometrics, 29_(2), 127-142. (Section 4.1 in particular talks about linking visualizations.)
