@@ -23,11 +23,11 @@ def plot(output_dir: str, ranks: skbio.OrdinationResults, table: biom.Table,
     """
     # get data
     df_feature_metadata = feature_metadata.to_dataframe()
-    U, V, processed_table = process_input(ranks, table, df_feature_metadata)
+    V, processed_table = process_input(ranks, table, df_feature_metadata)
     # We can't "subscript" Q2 Metadata types, so we have to convert this to a
     # dataframe before working with it
     df_sample_metadata = sample_metadata.to_dataframe()
-    index_path = gen_visualization(U, V, processed_table, df_sample_metadata,
+    index_path = gen_visualization(V, processed_table, df_sample_metadata,
                                    category, output_dir)
     # render the visualization using q2templates.render().
     # TODO: do we need to specify plot_name in the context in this way? I'm not

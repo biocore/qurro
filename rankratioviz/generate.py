@@ -71,15 +71,14 @@ def process_input(ordination_file, biom_table, taxam=None):
                 V.index = matched_taxam["Taxon"].values
                 table.columns = matched_taxam["Taxon"].values
 
-    return U, V, table
+    return V, table
 
 
-def gen_rank_plot(U, V, rank_col):
+def gen_rank_plot(V, rank_col):
     """Generates altair.Chart object describing the rank plot.
 
     Arguments:
 
-    U: sample ranks
     V: feature ranks
     rank_col: the column index to use for getting the rank values from a taxon.
 
@@ -222,7 +221,7 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     return sample_logratio_chart_json
 
 
-def gen_visualization(U, V, processed_table, df_sample_metadata, category,
+def gen_visualization(V, processed_table, df_sample_metadata, category,
                       output_dir):
     """Creates a rankratioviz visualization. This function should be callable
        from both the QIIME 2 and standalone rankratioviz scripts.
@@ -232,7 +231,7 @@ def gen_visualization(U, V, processed_table, df_sample_metadata, category,
        index_path: a path to the index.html file for the output visualization.
                    This is needed when calling q2templates.render().
     """
-    rank_plot_chart = gen_rank_plot(U, V, 0)
+    rank_plot_chart = gen_rank_plot(V, 0)
     sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata,
                                        category)
     os.makedirs(output_dir, exist_ok=True)

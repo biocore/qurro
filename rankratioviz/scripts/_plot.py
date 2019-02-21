@@ -39,8 +39,8 @@ def plot(ranks: str, table: str, sample_metadata: str, feature_metadata: str,
         taxonomy = pd.read_csv(feature_metadata, sep='\t')
         taxonomy.set_index('feature id', inplace=True)
 
-    U, V, processed_table = process_input(ranks, loaded_biom, taxonomy)
-    gen_visualization(U, V, processed_table, df_sample_metadata, category,
+    V, processed_table = process_input(ranks, loaded_biom, taxonomy)
+    gen_visualization(V, processed_table, df_sample_metadata, category,
                       output_dir)
 
 
