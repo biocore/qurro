@@ -9,5 +9,6 @@
 # And -s prevents output capturing (letting us see the results of print
 # statements sprinkled throughout the code, which helps with debugging).
 test:
+	# Use of -f per https://unix.stackexchange.com/a/68096
+	rm -rf rankratioviz/tests/output/*
 	python3 -B -m pytest -s
-	rm -r rankratioviz/tests/output/*
