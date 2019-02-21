@@ -1,7 +1,5 @@
-import json
 import os
 from click.testing import CliRunner
-# from rankratioviz import generate
 from rankratioviz.tests import testing_utilities
 import rankratioviz.scripts._plot as rrvp
 
@@ -24,9 +22,5 @@ def test_basic():
     # Check that, at least, the test didn't cause any blatant errors
     assert result.exit_code == 0
     # Validate rank plot JSON
-    # TODO: make validate_rank_plot_json() work with arbitrary data, and also
-    # with DEICODE ordination files (probs best practice to just add a
-    # parameter that changes behavior re: songbird/DEICODE input)
-    with open(os.path.join(out_dir, "rank_plot.json"), 'r') as rplot_json:
-        rplot = json.load(rplot_json)
-        testing_utilities.basic_vegalite_json_validation(rplot)
+    rank_plot_loc = os.path.join(out_dir, "rank_plot.json")
+    testing_utilities.validate_rank_plot_json(rloc, rank_plot_loc)
