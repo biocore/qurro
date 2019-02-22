@@ -116,7 +116,7 @@ def gen_rank_plot(V, rank_col):
             rank_data.reset_index(),
             title="Ranks"
     ).mark_bar().encode(
-        x=alt.X('x', title="Taxa", type="quantitative"),
+        x=alt.X('x', title="Features", type="quantitative"),
         y=alt.Y('coefs', title="Ranks", type="quantitative"),
         color=alt.Color(
             "classification",
