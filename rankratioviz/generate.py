@@ -171,8 +171,8 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
     sample_metadata.reset_index(inplace=True)
 
-    # Make note of the column names in the "table" DataFrame.
-    # This constructs a dictionary mapping the feature (column) names to their
+    # Make note of the column IDs in the "table" DataFrame.
+    # This constructs a dictionary mapping the feature (column) IDs to their
     # integer indices (just the range of [0, f), where f is the number of
     # features in the BIOM table).
     # We'll preserve this mapping in the sample plot JSON.
@@ -182,11 +182,11 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     feature_columns_range = range(len(feature_ids))
     feature_columns_str_range = [str(i) for i in feature_columns_range]
     for j in feature_columns_range:
-        # (Altair doesn't seem to like accepting ints as column names.)
+        # (Altair doesn't seem to like accepting ints as column IDs.)
         feature_cn2si[feature_ids[j]] = feature_columns_str_range[j]
 
-    # Now, we replace column names (which could include thousands of taxon
-    # names) with just the integer indices from before.
+    # Now, we replace column IDs (which could include thousands of taxon
+    # IDs) with just the integer indices from before.
     #
     # This can save *a lot* of space in the JSON file for the sample plot,
     # since each column name is referenced once for each sample (and
@@ -225,20 +225,20 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     # -All of the feature counts for each sample (that is, taxon/metabolite
     #  abundances) are located in the features_ds dataset. These feature counts
     #  can be drawn on in the JS application when computing log ratios, and
-    #  this lets us search through all available taxon names/etc. without
+    #  this lets us search through all available taxon IDs/etc. without
     #  having to worry about accidentally mixing up metadata and feature
     #  counts.
     # -Since feature IDs can be really long (e.g. in the case where the feature
     #  ID is an entire taxonomy), we convert each feature ID to a string
     #  integer and refer to that feature by its string integer ID. We store a
     #  mapping relating actual feature IDs to their string integer IDs under
-    #  the col_names_ds dataset, which is how we'll determine what to show to
+    #  the col_ids_ds dataset, which is how we'll determine what to show to
     #  the user (and link features on the rank plot with feature counts in
     #  the sample plot) in the JS code.
     sample_chart_json = sample_chart.to_dict()
-    col_names_ds = "rankratioviz_feature_col_names"
+    col_ids_ds = "rankratioviz_feature_col_ids"
     features_ds = "rankratioviz_feature_counts"
-    sample_chart_json["datasets"][col_names_ds] = feature_cn2si
+    sample_chart_json["datasets"][col_ids_ds] = feature_cn2si
     sample_chart_json["datasets"][features_ds] = sample_features.to_dict()
     return sample_chart_json
 
