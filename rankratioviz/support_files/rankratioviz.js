@@ -34,7 +34,7 @@ ssmv.botTaxa = undefined;
 // been provided yet.
 ssmv.selectMicrobes = undefined;
 // Abstracted frequently used long strings
-ssmv.col_names = "rankratioviz_col_names";
+ssmv.col_names = "rankratioviz_feature_col_names";
 ssmv.balance_col = "rankratioviz_balance";
 
 ssmv.makeRankPlot = function(spec) {
@@ -431,7 +431,7 @@ ssmv.uploadSelectMicrobesFile = function() {
 
 // Run on page startup: load and save JSON files, and make plots accordingly
 ssmv.loadJSONFiles = function() {
-    var jsonsToLoad = ["rank_plot.json", "sample_logratio_plot.json"];
+    var jsonsToLoad = ["rank_plot.json", "sample_plot.json"];
     for (var ji = 0; ji < 2; ji++) {
         // Use an XMLHTTPRequest to get JSON for both plots, since we want to
         // hang on to that instead of just passing it to vegaEmbed. See
