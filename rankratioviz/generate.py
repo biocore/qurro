@@ -153,9 +153,13 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     # every sample to NaN so that Altair will filter them out (producing an
     # empty scatterplot by default, which makes sense).
     balance = pd.Series(index=table.index).fillna(float('nan'))
-    data = pd.DataFrame({'balance': balance}, index=table.index)
+    data = pd.DataFrame({'rankratioviz_balance': balance}, index=table.index)
+    # At this point, "data" is a DataFrame with its index as sample IDs and
+    # one column ("balance", which is solely NaNs).
     data = pd.merge(data, metadata[[category]], left_index=True,
                     right_index=True)
+    # TODO note dropped samples from this merge (by comparing data with
+    # metadata and table) and report them to user (#54).
 
     # Construct unified DataFrame, combining our "data" DataFrame with the
     # "table" variable (in order to associate each sample with its
@@ -200,7 +204,8 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
         alt.X(smaa_cn2si[category], title=str(category)),
-        alt.Y(smaa_cn2si["balance"], title="log(Numerator / Denominator)"),
+        alt.Y(smaa_cn2si["rankratioviz_balance"],
+              title="log(Numerator / Denominator)"),
         color=alt.Color(
             smaa_cn2si[category],
             title=str(category),
@@ -217,7 +222,8 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     # Save JSON for sample plot (including the column-identifying dict from
     # earlier).
     sample_logratio_chart_json = sample_logratio_chart.to_dict()
-    sample_logratio_chart_json["datasets"]["col_names"] = smaa_cn2si
+    col_names_ds = "rankratioviz_col_names"
+    sample_logratio_chart_json["datasets"][col_names_ds] = smaa_cn2si
     return sample_logratio_chart_json
 
 

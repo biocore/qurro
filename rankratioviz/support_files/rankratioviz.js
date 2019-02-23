@@ -33,6 +33,9 @@ ssmv.botTaxa = undefined;
 // We set ssmv.selectMicrobes to undefined when no select microbes file has
 // been provided yet.
 ssmv.selectMicrobes = undefined;
+// Abstracted frequently used long strings
+ssmv.col_names = "rankratioviz_col_names";
+ssmv.balance_col = "rankratioviz_balance";
 
 ssmv.makeRankPlot = function(spec) {
     vegaEmbed("#rankPlot", spec, {"actions": false}).then(function(result) {
@@ -119,19 +122,19 @@ ssmv.filterTaxa = function(inputText, searchType) {
         // TODO: is there a risk of having metadata column names that clash
         // with taxon IDs? I don't think so, but might be worth changing up how
         // this works to make this safer.
-        taxa = Object.keys(ssmv.samplePlotJSON["datasets"]["col_names"]);
+        taxa = Object.keys(ssmv.samplePlotJSON["datasets"][ssmv.col_names]);
     }
     var filteredTaxa = [];
     var taxonomyPart;
     var ranksOfTaxon;
     for (var ti = 0; ti < taxa.length; ti++) {
         // NOTE this check filters out sample metadata/etc.
-        // Everything on or after position 3 in the col_names dataset
+        // Everything on or after position 3 in the rankratioviz_col_names dataset
         // (0-indexed) is a taxon.
         // TODO when we add all metadata here, we'll need to save this "3"
         // value (for the number of leading metadata columns) in the JSON file
         // so we can change it up for different datasets.
-        if (ssmv.samplePlotJSON["datasets"]["col_names"][taxa[ti]] >= 3) {
+        if (ssmv.samplePlotJSON["datasets"][ssmv.col_names][taxa[ti]] >= 3) {
             if (searchType === "text") {
                 // Just use the input text to literally search through taxa for
                 // matches (including semicolons corresponding to rank
@@ -196,7 +199,7 @@ ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa) {
     // just spent an hour debugging.
     var zfi = parseFloat(document.getElementById("zeroFillInput").value);
     for (var t = 0; t < taxa.length; t++) {
-        var colIndex = ssmv.samplePlotJSON["datasets"]["col_names"][taxa[t]];
+        var colIndex = ssmv.samplePlotJSON["datasets"][ssmv.col_names][taxa[t]];
         if (sampleRow[colIndex] === 0) {
             abundance += zfi;
         }
@@ -306,7 +309,7 @@ ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
         vega.truthy,
         // column int for "balance" (this is the column for each
         // sample we want to change)
-        ssmv.samplePlotJSON["datasets"]["col_names"]["balance"],
+        ssmv.samplePlotJSON["datasets"][ssmv.col_names][ssmv.balance_col],
         // function to run to determine what the new balances are
         updateBalanceFunc
     )).run();
@@ -347,8 +350,8 @@ ssmv.updateSamplePlotSingle = function() {
                 // microbes.
                 var dataName = ssmv.samplePlotJSON["data"]["name"];
 
-                ssmv.taxonLowCol = ssmv.samplePlotJSON["datasets"]["col_names"][ssmv.newTaxonLow];
-                ssmv.taxonHighCol = ssmv.samplePlotJSON["datasets"]["col_names"][ssmv.newTaxonHigh];
+                ssmv.taxonLowCol = ssmv.samplePlotJSON["datasets"][ssmv.col_names][ssmv.newTaxonLow];
+                ssmv.taxonHighCol = ssmv.samplePlotJSON["datasets"][ssmv.col_names][ssmv.newTaxonHigh];
                 ssmv.changeSamplePlot(
                     ssmv.updateBalanceSingle,
                     ssmv.updateRankColorSingle
