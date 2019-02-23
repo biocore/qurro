@@ -3,11 +3,11 @@
 
 (Name subject to change.)
 
-rankratioviz visualizes the scikit-bio [OrdinationResults](http://scikit-bio.org/docs/latest/generated/skbio.stats.ordination.OrdinationResults.html) output from a tool like
+rankratioviz visualizes the output from a tool like
 [songbird](https://github.com/mortonjt/songbird) or
 [DEICODE](https://github.com/biocore/DEICODE). It facilitates viewing
-a __"ranked"__ plot of taxa alongside a scatterplot showing the __log ratios__ of
-selected taxon abundances within samples.
+a __"ranked"__ plot of features (generally either taxa or metabolites) alongside
+a scatterplot showing the __log ratios__ of selected feature counts within samples.
 
 rankratioviz can be used standalone (as a Python 3 script that generates a
 HTML/JS/CSS visualization) or as a [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be visualized at [view.qiime2.org](https://view.qiime2.org/)).
