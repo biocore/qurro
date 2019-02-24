@@ -33,8 +33,13 @@ ssmv.botTaxa = undefined;
 // We set ssmv.selectMicrobes to undefined when no select microbes file has
 // been provided yet.
 ssmv.selectMicrobes = undefined;
-// Abstracted frequently used long strings
-ssmv.col_names = "rankratioviz_col_names";
+// Used when looking up a feature's count.
+ssmv.feature_col_ids = undefined;
+ssmv.feature_cts = undefined;
+// Used when searching through features. This will be created from
+// ssmv.feature_col_ids.
+ssmv.feature_ids = undefined;
+// Abstracted frequently used long string(s)
 ssmv.balance_col = "rankratioviz_balance";
 
 ssmv.makeRankPlot = function(spec) {
@@ -68,6 +73,11 @@ ssmv.makeSamplePlot = function(spec) {
     vegaEmbed("#samplePlot", spec, {"actions": false}).then(function(result) {
         ssmv.samplePlotView = result.view;
     });
+    var rfci = "rankratioviz_feature_col_ids";
+    var rfct = "rankratioviz_feature_counts";
+    ssmv.feature_col_ids = ssmv.samplePlotJSON["datasets"][rfci];
+    ssmv.feature_ids = Object.keys(ssmv.feature_col_ids);
+    ssmv.feature_cts = ssmv.samplePlotJSON["datasets"][rfct];
 };
 
 /* Returns list of taxa names based on a match with the inputText.
@@ -116,67 +126,54 @@ ssmv.filterTaxa = function(inputText, searchType) {
     }
     else {
         // If that sort of list isn't available, then search through every
-        // microbe mentioned in the sample data.
-        // NOTE that this list of "taxa" includes metadata column names. We
-        // filter those out down below.
-        // TODO: is there a risk of having metadata column names that clash
-        // with taxon IDs? I don't think so, but might be worth changing up how
-        // this works to make this safer.
-        taxa = Object.keys(ssmv.samplePlotJSON["datasets"][ssmv.col_names]);
+        // microbe mentioned in the BIOM table.
+        taxa = ssmv.feature_ids;
     }
     var filteredTaxa = [];
     var taxonomyPart;
     var ranksOfTaxon;
     for (var ti = 0; ti < taxa.length; ti++) {
-        // NOTE this check filters out sample metadata/etc.
-        // Everything on or after position 3 in the rankratioviz_col_names dataset
-        // (0-indexed) is a taxon.
-        // TODO when we add all metadata here, we'll need to save this "3"
-        // value (for the number of leading metadata columns) in the JSON file
-        // so we can change it up for different datasets.
-        if (ssmv.samplePlotJSON["datasets"][ssmv.col_names][taxa[ti]] >= 3) {
-            if (searchType === "text") {
-                // Just use the input text to literally search through taxa for
-                // matches (including semicolons corresponding to rank
-                // separators, e.g. "Bacteria;Proteobacteria;").
-                // Note that this can lead to some weird results if you're not
-                // careful -- e.g. just searching on "Staphylococcus" will
-                // include Staph phages in the filtering (since their names
-                // contain the text "Staphylococcus").
-                if (taxa[ti].includes(inputText)) {
-                    filteredTaxa.push(taxa[ti]);
-                }
+        if (searchType === "text") {
+            // Just use the input text to literally search through taxa for
+            // matches (including semicolons corresponding to rank
+            // separators, e.g. "Bacteria;Proteobacteria;").
+            // Note that this can lead to some weird results if you're not
+            // careful -- e.g. just searching on "Staphylococcus" will
+            // include Staph phages in the filtering (since their names
+            // contain the text "Staphylococcus").
+            if (taxa[ti].includes(inputText)) {
+                filteredTaxa.push(taxa[ti]);
             }
-            else {
-                // Search against individual ranks (separated by semicolons).
-                // This only searches against ranks that are indicated in the
-                // file, so if there are missing steps (e.g. no genus given)
-                // then this can't rectify that.
-                //
-                // This prevents some of the problems with searching by text --
-                // entering "Staphyloccoccus" here will have the intended
-                // result. However, the ability to search by text can be
-                // powerful, so these functionalities are both provided here
-                // for convenience.
-                //
-                // We make the assumption that each rank for the taxon is
-                // separated by a single semicolon, with no trailing or leading
-                // whitespace or semicolons. Since as far as I'm aware these
-                // files are usually automatically generated, this should be ok
-                //
-                // If this taxon name includes a | character (used to separate
-                // its taxonomy information from things like confidence value
-                // or sequence), just get the part before the | and search
-                // that. (If there is no | in the taxon name, then this will
-                // just search the entire string:
-                // "abcdefg".split("|")[0] === "abcdefg")
-                taxonomyPart = taxa[ti].split("|")[0];
-                ranksOfTaxon = taxonomyPart.split(";");
-                // Loop over ranks
-                for (var ri2 = 0; ri2 < rankArray.length; ri2++) {
-                    if (ranksOfTaxon.includes(rankArray[ri2])) {
-                        filteredTaxa.push(taxa[ti]);
-                    }
+        }
+        else {
+            // Search against individual ranks (separated by semicolons).
+            // This only searches against ranks that are indicated in the
+            // file, so if there are missing steps (e.g. no genus given)
+            // then this can't rectify that.
+            //
+            // This prevents some of the problems with searching by text --
+            // entering "Staphyloccoccus" here will have the intended
+            // result. However, the ability to search by text can be
+            // powerful, so these functionalities are both provided here
+            // for convenience.
+            //
+            // We make the assumption that each rank for the taxon is
+            // separated by a single semicolon, with no trailing or leading
+            // whitespace or semicolons. Since as far as I'm aware these
+            // files are usually automatically generated, this should be ok
+            //
+            // If this taxon name includes a | character (used to separate
+            // its taxonomy information from things like confidence value
+            // or sequence), just get the part before the | and search
+            // that. (If there is no | in the taxon name, then this will
+            // just search the entire string:
+            // "abcdefg".split("|")[0] === "abcdefg")
+            taxonomyPart = taxa[ti].split("|")[0];
+            ranksOfTaxon = taxonomyPart.split(";");
+            // Loop over ranks
+            for (var ri2 = 0; ri2 < rankArray.length; ri2++) {
+                if (ranksOfTaxon.includes(rankArray[ri2])) {
+                    filteredTaxa.push(taxa[ti]);
                 }
             }
         }
@@ -189,6 +186,7 @@ ssmv.filterTaxa = function(inputText, searchType) {
  * TODO: add option to do log geometric means
  */
 ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa) {
+    var sampleID = sampleRow["Sample ID"];
     var abundance = 0;
     // Figure this out now, so we don't have to do it every step of the loop
     // ALSO: for some reason, getting the value of an input explicitly marked
@@ -199,12 +197,13 @@ ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa) {
     // just spent an hour debugging.
     var zfi = parseFloat(document.getElementById("zeroFillInput").value);
     for (var t = 0; t < taxa.length; t++) {
-        var colIndex = ssmv.samplePlotJSON["datasets"][ssmv.col_names][taxa[t]];
-        if (sampleRow[colIndex] === 0) {
+        var colIndex = ssmv.feature_col_ids[taxa[t]];
+        var count = ssmv.feature_cts[colIndex][sampleID];
+        if (count === 0) {
             abundance += zfi;
         }
         else {
-            abundance += sampleRow[colIndex];
+            abundance += count;
         }
     }
     return abundance;
@@ -234,9 +233,10 @@ ssmv.computeBalance = function(firstTop, firstBot) {
  * selected via the rank plot.
  */
 ssmv.updateBalanceSingle = function(sampleRow) {
-    var firstTop = sampleRow[ssmv.taxonHighCol];
-    var firstBot = sampleRow[ssmv.taxonLowCol];
-    return ssmv.computeBalance(firstTop, firstBot);
+    var sampleID = sampleRow["Sample ID"];
+    var topCt = ssmv.feature_cts[ssmv.taxonHighCol][sampleID];
+    var botCt = ssmv.feature_cts[ssmv.taxonLowCol][sampleID];
+    return ssmv.computeBalance(topCt, botCt);
 };
 
 /* Like ssmv.updateBalanceSingle, but considers potentially many taxa in the
@@ -307,9 +307,7 @@ ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
          * Also, vega.truthy is a utility function: it just returns true.
          */
         vega.truthy,
-        // column int for "balance" (this is the column for each
-        // sample we want to change)
-        ssmv.samplePlotJSON["datasets"][ssmv.col_names][ssmv.balance_col],
+        ssmv.balance_col,
         // function to run to determine what the new balances are
         updateBalanceFunc
     )).run();
@@ -348,10 +346,8 @@ ssmv.updateSamplePlotSingle = function() {
             if (lowsDiffer || highsDiffer) {
                 // Time to update the sample scatterplot regarding new
                 // microbes.
-                var dataName = ssmv.samplePlotJSON["data"]["name"];
-
-                ssmv.taxonLowCol = ssmv.samplePlotJSON["datasets"][ssmv.col_names][ssmv.newTaxonLow];
-                ssmv.taxonHighCol = ssmv.samplePlotJSON["datasets"][ssmv.col_names][ssmv.newTaxonHigh];
+                ssmv.taxonLowCol = ssmv.feature_col_ids[ssmv.newTaxonLow];
+                ssmv.taxonHighCol = ssmv.feature_col_ids[ssmv.newTaxonHigh];
                 ssmv.changeSamplePlot(
                     ssmv.updateBalanceSingle,
                     ssmv.updateRankColorSingle
@@ -431,7 +427,7 @@ ssmv.uploadSelectMicrobesFile = function() {
 
 // Run on page startup: load and save JSON files, and make plots accordingly
 ssmv.loadJSONFiles = function() {
-    var jsonsToLoad = ["rank_plot.json", "sample_logratio_plot.json"];
+    var jsonsToLoad = ["rank_plot.json", "sample_plot.json"];
     for (var ji = 0; ji < 2; ji++) {
         // Use an XMLHTTPRequest to get JSON for both plots, since we want to
         // hang on to that instead of just passing it to vegaEmbed. See

@@ -153,61 +153,59 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     # every sample to NaN so that Altair will filter them out (producing an
     # empty scatterplot by default, which makes sense).
     balance = pd.Series(index=table.index).fillna(float('nan'))
-    data = pd.DataFrame({'rankratioviz_balance': balance}, index=table.index)
+    df_balance = pd.DataFrame({'rankratioviz_balance': balance})
     # At this point, "data" is a DataFrame with its index as sample IDs and
     # one column ("balance", which is solely NaNs).
-    data = pd.merge(data, metadata[[category]], left_index=True,
-                    right_index=True)
+    sample_metadata = pd.merge(df_balance, metadata, left_index=True,
+                               right_index=True)
     # TODO note dropped samples from this merge (by comparing data with
     # metadata and table) and report them to user (#54).
 
-    # Construct unified DataFrame, combining our "data" DataFrame with the
-    # "table" variable (in order to associate each sample with its
-    # corresponding abundances)
-    sample_metadata_and_abundances = pd.merge(
-        data, table, left_index=True, right_index=True
-    )
-
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
-    sample_metadata_and_abundances.reset_index(inplace=True)
+    # First we rename the index "Sample ID", just on the off chance that
+    # there's a metadata column called "index".
+    # NOTE that there shouldn't be a metadata column called Sample ID or
+    # something like that, since that should've been used in the merge with
+    # df_balance above (and "Sample ID" follows the Q2 metadata conventions for
+    # an "Identifier Column" name).
+    sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
+    sample_metadata.reset_index(inplace=True)
 
-    # Make note of the column names in the unified data frame.
-    # This constructs a dictionary mapping the column names to their integer
-    # indices (just the range of [0, m + t], where:
-    #   m is the number of metadata columns
-    #   t is the number of taxa/metabolites listed in the BIOM table
-    # ). Similarly to smaa_i2sid above, we'll preserve this mapping in the
-    # sample plot JSON.
-    smaa_cols = sample_metadata_and_abundances.columns
-    smaa_cn2si = {}
-    int_smaa_col_names = [str(i) for i in range(len(smaa_cols))]
-    for j in int_smaa_col_names:
-        # (Altair doesn't seem to like accepting ints as column names, so we
-        # mostly use the new column names as strings when we can.)
-        smaa_cn2si[smaa_cols[int(j)]] = j
+    # Make note of the column IDs in the "table" DataFrame.
+    # This constructs a dictionary mapping the feature (column) IDs to their
+    # integer indices (just the range of [0, f), where f is the number of
+    # features in the BIOM table).
+    # We'll preserve this mapping in the sample plot JSON.
+    sample_features = table.copy()
+    feature_ids = sample_features.columns
+    feature_cn2si = {}
+    feature_columns_range = range(len(feature_ids))
+    feature_columns_str_range = [str(i) for i in feature_columns_range]
+    for j in feature_columns_range:
+        # (Altair doesn't seem to like accepting ints as column IDs.)
+        feature_cn2si[feature_ids[j]] = feature_columns_str_range[j]
 
-    # Now, we replace column names (which could include thousands of taxon
-    # names) with just the integer indices from before.
+    # Now, we replace column IDs (which could include thousands of taxon
+    # IDs) with just the integer indices from before.
     #
-    # This saves *a lot* of space in the JSON file for the sample plot, since
-    # each column name is referenced once for each sample (and
-    # 50 samples * (~3000 taxonomy IDs ) * (~50 characters per ID)
+    # This can save *a lot* of space in the JSON file for the sample plot,
+    # since each column name is referenced once for each sample (and
+    # 50 samples * (~3000 taxonomies) * (~50 characters per ID)
     # comes out to 7.5 MB, which is an underestimate).
-    sample_metadata_and_abundances.columns = int_smaa_col_names
+    sample_features.columns = feature_columns_str_range
 
     # Create sample plot in Altair.
     # If desired, we can make this interactive by adding .interactive() to the
     # alt.Chart declaration (but we don't do that currently since it makes
     # changing the scale of the chart smoother IIRC)
-    sample_logratio_chart = alt.Chart(
-        sample_metadata_and_abundances,
+    sample_chart = alt.Chart(
+        sample_metadata,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
-        alt.X(smaa_cn2si[category], title=str(category)),
-        alt.Y(smaa_cn2si["rankratioviz_balance"],
-              title="log(Numerator / Denominator)"),
+        alt.X(category, title=str(category)),
+        alt.Y("rankratioviz_balance", title="log(Numerator / Denominator)"),
         color=alt.Color(
-            smaa_cn2si[category],
+            category,
             title=str(category),
             # This is a temporary measure. Eventually the type should be
             # user-configurable -- some of the metadata fields might actually
@@ -217,14 +215,32 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
             # of metadata can be passed.
             type="nominal"
         ),
-        tooltip=[smaa_cn2si["index"]])
+        tooltip=["Sample ID"])
 
-    # Save JSON for sample plot (including the column-identifying dict from
-    # earlier).
-    sample_logratio_chart_json = sample_logratio_chart.to_dict()
-    col_names_ds = "rankratioviz_col_names"
-    sample_logratio_chart_json["datasets"][col_names_ds] = smaa_cn2si
-    return sample_logratio_chart_json
+    # Save the sample plot JSON. Some notes:
+    # -From Altair (and Vega)'s perspective, the only "dataset" that directly
+    #  connects to the chart is sample_metadata. This dataset contains the
+    #  "Sample ID" and "rankratioviz_balance" columns, in addition to all of
+    #  the sample metadata columns provided in the input sample metadata.
+    # -All of the feature counts for each sample (that is, taxon/metabolite
+    #  abundances) are located in the features_ds dataset. These feature counts
+    #  can be drawn on in the JS application when computing log ratios, and
+    #  this lets us search through all available taxon IDs/etc. without
+    #  having to worry about accidentally mixing up metadata and feature
+    #  counts.
+    # -Since feature IDs can be really long (e.g. in the case where the feature
+    #  ID is an entire taxonomy), we convert each feature ID to a string
+    #  integer and refer to that feature by its string integer ID. We store a
+    #  mapping relating actual feature IDs to their string integer IDs under
+    #  the col_ids_ds dataset, which is how we'll determine what to show to
+    #  the user (and link features on the rank plot with feature counts in
+    #  the sample plot) in the JS code.
+    sample_chart_json = sample_chart.to_dict()
+    col_ids_ds = "rankratioviz_feature_col_ids"
+    features_ds = "rankratioviz_feature_counts"
+    sample_chart_json["datasets"][col_ids_ds] = feature_cn2si
+    sample_chart_json["datasets"][features_ds] = sample_features.to_dict()
+    return sample_chart_json
 
 
 def gen_visualization(V, processed_table, df_sample_metadata, category,
@@ -272,7 +288,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, category,
         raise FileNotFoundError("Couldn't find index.html in support_files/")
     # write new files
     rank_plot_loc = os.path.join(output_dir, 'rank_plot.json')
-    sample_plot_loc = os.path.join(output_dir, 'sample_logratio_plot.json')
+    sample_plot_loc = os.path.join(output_dir, 'sample_plot.json')
     rank_plot_chart.save(rank_plot_loc)
     # For reference: https://stackoverflow.com/a/12309296
     with open(sample_plot_loc, "w") as jfile:
