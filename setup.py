@@ -69,13 +69,8 @@ setup(
         'h5py >= 2.2.0',
         'biom-format',
         'click',
-        'pandas >= 0.10.0',
-        # Currently specified like this due to the error documented in
-        # https://github.com/pytest-dev/pytest-cov/pull/253
-        # Eventually we should adjust this, but for now even the latest version
-        # of pytest is still failing in my environment. This ensures that the
-        # tests will at least pass.
-        'pytest < 4.1',
+        'pandas >= 0.20.0',
+        'pytest >= 4.2',
         'scikit-bio > 0.5.3'],
     classifiers=classifiers,
     entry_points={
