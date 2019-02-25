@@ -49,9 +49,12 @@ ssmv.addSignalsToSamplePlot = function(vegaSpec) {
     // NOTE: Based on
     // https://vega.github.io/vega/examples/scatter-plot-null-values/
     // and https://beta.observablehq.com/@domoritz/rotating-earth.
+    //
+    // NOTE that we use the existing x-axis (and color) fields, which are set
+    // in the python script to whatever the first sample metadata column is.
     var xSignal = {
         "name": "xAxis",
-        "value": "rankratioviz_balance",
+        "value": vegaSpec["marks"][0]["encode"]["update"]["x"]["field"],
         "bind": {
             "input": "select",
             "options": ssmv.metadataCols
@@ -59,7 +62,7 @@ ssmv.addSignalsToSamplePlot = function(vegaSpec) {
     };
     var colorSignal = {
         "name": "color",
-        "value": ssmv.metadataCols[0],
+        "value": vegaSpec["marks"][0]["encode"]["update"]["fill"]["field"],
         "bind": {
             "input": "select",
             "options": ssmv.metadataCols

@@ -149,6 +149,9 @@ def gen_sample_plot(table, metadata):
     altair.Chart object for the sample scatterplot.
     """
 
+    default_metadata_col = metadata.columns[0]
+    print(default_metadata_col)
+
     # Since we don't bother setting a default log ratio, we set the balance for
     # every sample to NaN so that Altair will filter them out (producing an
     # empty scatterplot by default, which makes sense).
@@ -202,10 +205,10 @@ def gen_sample_plot(table, metadata):
         sample_metadata,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
-        alt.X("rankratioviz_balance"),
+        alt.X(default_metadata_col),
         alt.Y("rankratioviz_balance", title="log(Numerator / Denominator)"),
         color=alt.Color(
-            "rankratioviz_balance",
+            default_metadata_col,
             # This is a temporary measure. Eventually the type should be
             # user-configurable -- some of the metadata fields might actually
             # be nominal data, but many will likely be numeric (e.g. SCORAD for
