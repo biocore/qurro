@@ -22,12 +22,10 @@ from rankratioviz.generate import process_input, gen_visualization
               help="Feature metadata file for taxonomy.")
 @click.option('-sm', '--sample-metadata', required=True,
               help="Sample metadata file.")
-@click.option('-c', '--category', required=True,
-              help="Metadata table category to plot.")
 @click.option('-o', '--output-dir', required=True,
               help="Location of output files.")
 def plot(ranks: str, table: str, sample_metadata: str, feature_metadata: str,
-         category: str, output_dir: str) -> None:
+         output_dir: str) -> None:
     """Generates a plot of ranked taxa/metabolites and their abundances."""
 
     # import
@@ -40,8 +38,7 @@ def plot(ranks: str, table: str, sample_metadata: str, feature_metadata: str,
         taxonomy.set_index('feature id', inplace=True)
 
     V, processed_table = process_input(ranks, loaded_biom, taxonomy)
-    gen_visualization(V, processed_table, df_sample_metadata, category,
-                      output_dir)
+    gen_visualization(V, processed_table, df_sample_metadata, output_dir)
 
 
 if __name__ == '__main__':

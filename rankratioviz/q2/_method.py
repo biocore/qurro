@@ -13,8 +13,7 @@ from rankratioviz.generate import process_input, gen_visualization
 
 
 def plot(output_dir: str, ranks: skbio.OrdinationResults, table: biom.Table,
-         sample_metadata: qiime2.Metadata, feature_metadata: qiime2.Metadata,
-         category: str) -> None:
+         sample_metadata: qiime2.Metadata, feature_metadata: qiime2.Metadata) -> None:
     """Generates a .qzv file containing a rankratioviz visualization.
 
        (...Also, the reason the order of parameters here differs from
@@ -28,7 +27,7 @@ def plot(output_dir: str, ranks: skbio.OrdinationResults, table: biom.Table,
     # dataframe before working with it
     df_sample_metadata = sample_metadata.to_dataframe()
     index_path = gen_visualization(V, processed_table, df_sample_metadata,
-                                   category, output_dir)
+                                   output_dir)
     # render the visualization using q2templates.render().
     # TODO: do we need to specify plot_name in the context in this way? I'm not
     # sure where it is being used in the first place, honestly.

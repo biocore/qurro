@@ -11,7 +11,7 @@ import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
 from ._method import plot
-from qiime2.plugin import (Str, Metadata, Properties)
+from qiime2.plugin import (Metadata, Properties)
 from q2_types.feature_table import (FeatureTable, Frequency)
 from q2_types.ordination import PCoAResults
 
@@ -32,8 +32,7 @@ plugin.visualizers.register_function(
     inputs={'ranks': PCoAResults % Properties("biplot"),
             'table': FeatureTable[Frequency]},
     parameters={'sample_metadata': Metadata,
-                'feature_metadata': Metadata,
-                'category': Str},
+                'feature_metadata': Metadata},
     input_descriptions={
         # TODO clearer descriptions here
         'ranks': "An ordination file describing ranks of taxa/metabolites;"
@@ -44,7 +43,6 @@ plugin.visualizers.register_function(
     parameter_descriptions={
         'sample_metadata': 'Metadata file describing samples',
         'feature_metadata': 'Feature metadata (indicating taxonomy)',
-        'category': 'Metadata category to plot (temporary option)'
     },
     name='Generate a rankratioviz plot',
     description="Generates an interactive visualization of ranks in tandem"

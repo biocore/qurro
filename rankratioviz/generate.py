@@ -136,7 +136,7 @@ def gen_rank_plot(V, rank_col):
     return rank_chart
 
 
-def gen_sample_plot(table, metadata, category, palette='Set1'):
+def gen_sample_plot(table, metadata):
     """Generates altair.Chart object describing the sample scatterplot.
 
     Arguments:
@@ -202,20 +202,20 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
         sample_metadata,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
-        alt.X(category, title=str(category)),
+        alt.X("rankratioviz_balance"),
         alt.Y("rankratioviz_balance", title="log(Numerator / Denominator)"),
         color=alt.Color(
-            category,
-            title=str(category),
+            "rankratioviz_balance",
             # This is a temporary measure. Eventually the type should be
             # user-configurable -- some of the metadata fields might actually
             # be nominal data, but many will likely be numeric (e.g. SCORAD for
-            # dermatits). Exposing this to the user in the visualization
+            # dermatitis). Exposing this to the user in the visualization
             # interface is probably the best option, for when arbitrary amounts
             # of metadata can be passed.
             type="nominal"
         ),
-        tooltip=["Sample ID"])
+        tooltip=["Sample ID"]
+    )
 
     # Save the sample plot JSON. Some notes:
     # -From Altair (and Vega)'s perspective, the only "dataset" that directly
@@ -243,8 +243,7 @@ def gen_sample_plot(table, metadata, category, palette='Set1'):
     return sample_chart_json
 
 
-def gen_visualization(V, processed_table, df_sample_metadata, category,
-                      output_dir):
+def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     """Creates a rankratioviz visualization. This function should be callable
        from both the QIIME 2 and standalone rankratioviz scripts.
 
@@ -254,8 +253,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, category,
                    This is needed when calling q2templates.render().
     """
     rank_plot_chart = gen_rank_plot(V, 0)
-    sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata,
-                                       category)
+    sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata)
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
     loc_ = os.path.dirname(os.path.realpath(__file__))

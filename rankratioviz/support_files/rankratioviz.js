@@ -39,8 +39,70 @@ ssmv.feature_cts = undefined;
 // Used when searching through features. This will be created from
 // ssmv.feature_col_ids.
 ssmv.feature_ids = undefined;
+// Set when the sample plot JSON is loaded. Used to populate possible sample
+// plot x-axis/colorization options.
+ssmv.metadataCols = undefined;
 // Abstracted frequently used long string(s)
 ssmv.balance_col = "rankratioviz_balance";
+
+ssmv.addSignalsToSamplePlot = function(vegaSpec) {
+    // NOTE: Based on
+    // https://vega.github.io/vega/examples/scatter-plot-null-values/
+    // and https://beta.observablehq.com/@domoritz/rotating-earth.
+    var xSignal = {
+        "name": "xAxis",
+        "value": "rankratioviz_balance",
+        "bind": {
+            "input": "select",
+            "options": ssmv.metadataCols
+        }
+    };
+    var colorSignal = {
+        "name": "color",
+        "value": ssmv.metadataCols[0],
+        "bind": {
+            "input": "select",
+            "options": ssmv.metadataCols
+        }
+    };
+    var newSpec = vegaSpec;
+    // Update the actual encodings
+    // (this assumes that there will only be one set of marks in the sample
+    // plot JSON)
+    newSpec["signals"] = [xSignal, colorSignal];
+    newSpec["marks"][0]["encode"]["update"]["x"]["field"] = {"signal": "xAxis"};
+    newSpec["marks"][0]["encode"]["update"]["fill"]["field"] = {"signal": "color"};
+    // Update the x-axis / color labels
+    // Note that at least with the example Vega plot I'm working with, there
+    // are two axes with an "x" scale. We change the one that already has a
+    // "title" attribute.
+    for (var a = 0; a < newSpec["axes"].length; a++) {
+        if (newSpec["axes"][a]["scale"] === "x") {
+            if (newSpec["axes"][a]["title"] !== undefined) {
+                newSpec["axes"][a]["title"] = {"signal": "xAxis"};
+                break;
+            }
+        }
+    }
+    // Searching in a for loop this way prevents accidentally overwriting other
+    // legends for other attributes.
+    for (var c = 0; c < newSpec["legends"].length; c++) {
+        if (newSpec["legends"][c]["fill"] === "color")  {
+            newSpec["legends"][c]["title"] = {"signal": "color"};
+            break;
+        }
+    }
+    // Update scales
+    for (var s = 0; s < newSpec["scales"].length; s++) {
+        if (newSpec["scales"][s]["name"] === "x") {
+            newSpec["scales"][s]["domain"]["field"] = {"signal": "xAxis"};
+        }
+        else if (newSpec["scales"][s]["name"] === "color") {
+            newSpec["scales"][s]["domain"]["field"] = {"signal": "color"};
+        }
+    }
+    return newSpec;
+};
 
 ssmv.makeRankPlot = function(spec) {
     vegaEmbed("#rankPlot", spec, {"actions": false}).then(function(result) {
@@ -69,8 +131,27 @@ ssmv.makeRankPlot = function(spec) {
     });
 };
 
+ssmv.identifyMetadataColumns = function(samplePlotSpec) {
+    // Given a Vega sample plot specification, find all the metadata columns.
+    // Just uses whatever the first available sample's keys are as a
+    // reference. So, uh, if the input sample plot JSON has zero samples, this
+    // will fail. (But that should have been caught in the python script.)
+    var dataName = samplePlotSpec["data"]["name"];
+    var mdCols = Object.keys(samplePlotSpec["datasets"][dataName][0]);
+    if (mdCols.length > 0) {
+        return mdCols;
+    } else {
+        throw new Error("No metadata columns identified. Something seems "
+                      + "wrong with the sample plot JSON.");
+    }
+}
+
 ssmv.makeSamplePlot = function(spec) {
-    vegaEmbed("#samplePlot", spec, {"actions": false}).then(function(result) {
+    ssmv.metadataCols = ssmv.identifyMetadataColumns(spec);
+    // NOTE: Use of "patch" based on
+    // https://beta.observablehq.com/@domoritz/rotating-earth
+    var embedParams = {"actions": false, "patch": ssmv.addSignalsToSamplePlot};
+    vegaEmbed("#samplePlot", spec, embedParams).then(function(result) {
         ssmv.samplePlotView = result.view;
     });
     var rfci = "rankratioviz_feature_col_ids";
