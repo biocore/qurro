@@ -74,13 +74,12 @@ def process_input(ordination_file, biom_table, taxam=None):
     return V, table
 
 
-def gen_rank_plot(V, rank_col):
+def gen_rank_plot(V):
     """Generates altair.Chart object describing the rank plot.
 
     Arguments:
 
     V: feature ranks
-    rank_col: the column index to use for getting the rank values from a taxon.
 
     Returns:
 
@@ -88,22 +87,38 @@ def gen_rank_plot(V, rank_col):
     """
 
     # Get stuff ready for the rank plot
+    # First off, convert all rank column IDs to strings (since Altair gets
+    # angry if you pass in ints as column IDs). This is a problem with
+    # OrdinationResults files, since just getting the raw column IDs gives int
+    # values (0 for the first column, 1 for the second column, etc.)
+    V.columns = [str(c) for c in V.columns]
 
-    # coefs is a pandas Series whose values correspond to the actual ranks
-    # associated with each taxon/metabolite.
-    coefs = V[rank_col].sort_values()
-    # x is just a range -- this can be used as a source of data in a pandas
-    # DataFrame
-    x = range(coefs.shape[0])
+    # The default rank column is just whatever the first rank is. This is what
+    # the rank plot will use when it's first drawn.
+    default_rank_col = V.columns[0]
+
+    # Sort the ranked features in ascending order by their first rank.
+    rank_vals = V.sort_values(by=[default_rank_col])
+
+    # "x" keeps track of the sorted order of the ranks. It's just a range of
+    # [0, F), where F = the number of ranked features.
+    x = range(rank_vals.shape[0])
 
     # Set default classification of every taxon to "None"
     # (This value will be updated when a taxon is selected in the rank plot as
     # part of the numerator, denominator, or both parts of the current log
     # ratio.)
-    classification = pd.Series(index=coefs.index).fillna("None")
-    rank_data = pd.DataFrame({
-        'x': x, 'coefs': coefs, "classification": classification
-    })
+    classification = pd.Series(index=rank_vals.index).fillna("None")
+
+    # Start populating the DataFrame we'll pass into Altair as the main source
+    # of data for the rank plot.
+    rank_data = pd.DataFrame({'x': x, "Classification": classification})
+
+    # Merge that DataFrame with the actual rank values. Their indices should be
+    # identical, since we constructed rank_data based on rank_vals.
+    rank_data = pd.merge(rank_data, rank_vals, left_index=True,
+                         right_index=True)
+
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
@@ -120,20 +135,19 @@ def gen_rank_plot(V, rank_col):
         title="Ranks"
     ).mark_bar().encode(
         x=alt.X('x', title="Features", type="quantitative"),
-        y=alt.Y('coefs', title="Ranks", type="quantitative"),
+        y=alt.Y(default_rank_col, type="quantitative"),
         color=alt.Color(
-            "classification",
+            "Classification",
             scale=alt.Scale(
                 domain=["None", "Numerator", "Denominator", "Both"],
                 range=["#e0e0e0", "#f00", "#00f", "#949"]
             )
         ),
         size=alt.value(1.0),
-        tooltip=["x", "coefs", "classification", "Feature ID"]
+        tooltip=["Classification", "Feature ID"]
     ).configure_axis(
         # Done in order to differentiate "None"-classification taxa from grid
-        # lines (an imperfect solution to the problem mentioned in the NOTE
-        # below)
+        # lines
         gridOpacity=0.35
     ).interactive()
     return rank_chart
@@ -258,7 +272,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
        index_path: a path to the index.html file for the output visualization.
                    This is needed when calling q2templates.render().
     """
-    rank_plot_chart = gen_rank_plot(V, 0)
+    rank_plot_chart = gen_rank_plot(V)
     sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata)
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization

@@ -403,7 +403,7 @@ ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
     var rankDataName = ssmv.rankPlotJSON["data"]["name"];
     ssmv.rankPlotView.change(rankDataName, vega.changeset().modify(
         vega.truthy,
-        "classification",
+        "Classification",
         updateRankColorFunc
     )).run();
 };
