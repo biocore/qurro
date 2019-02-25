@@ -116,9 +116,9 @@ def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
                 # NOTE Based on how we construct feature labels from DEICODE
                 # input. If that changes, this will need to change or this
                 # will break.
-                feature_id = rank["index"].split("|")[2]
+                feature_id = rank["Feature ID"].split("|")[2]
             else:
-                feature_id = rank["index"]
+                feature_id = rank["Feature ID"]
             # NOTE This assumes that the 0-th rank (i.e. the first) is the one
             # stored in the rank plot. When we eventually update this so that
             # an arbitrary number of ranks for each feature are stored in the
