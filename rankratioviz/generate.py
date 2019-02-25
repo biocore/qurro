@@ -104,6 +104,9 @@ def gen_rank_plot(V, rank_col):
     rank_data = pd.DataFrame({
         'x': x, 'coefs': coefs, "classification": classification
     })
+    # Replace "index" with "Feature ID". looks nicer in the visualization :)
+    rank_data.rename_axis("Feature ID", axis="index", inplace=True)
+    rank_data.reset_index(inplace=True)
     # NOTE: The default size value of mark_bar() causes an apparent offset in
     # the interval selection (we're not using that right now, except for the
     # .interactive() thing, though, so I don't think this is currently
@@ -113,8 +116,8 @@ def gen_rank_plot(V, rank_col):
     # probably because the lines in rule charts are just lines with a width
     # of 1.0.
     rank_chart = alt.Chart(
-            rank_data.reset_index(),
-            title="Ranks"
+        rank_data,
+        title="Ranks"
     ).mark_bar().encode(
         x=alt.X('x', title="Features", type="quantitative"),
         y=alt.Y('coefs', title="Ranks", type="quantitative"),
@@ -126,7 +129,7 @@ def gen_rank_plot(V, rank_col):
             )
         ),
         size=alt.value(1.0),
-        tooltip=["x", "coefs", "classification", "index"]
+        tooltip=["x", "coefs", "classification", "Feature ID"]
     ).configure_axis(
         # Done in order to differentiate "None"-classification taxa from grid
         # lines (an imperfect solution to the problem mentioned in the NOTE
@@ -149,8 +152,8 @@ def gen_sample_plot(table, metadata):
     altair.Chart object for the sample scatterplot.
     """
 
+    # Used to set x-axis and color
     default_metadata_col = metadata.columns[0]
-    print(default_metadata_col)
 
     # Since we don't bother setting a default log ratio, we set the balance for
     # every sample to NaN so that Altair will filter them out (producing an

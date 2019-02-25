@@ -116,13 +116,13 @@ ssmv.makeRankPlot = function(spec) {
                 if (i["mark"]["marktype"] === "rect") {
                     if (ssmv.onHigh) {
                         ssmv.oldTaxonHigh = ssmv.newTaxonHigh;
-                        ssmv.newTaxonHigh = i["datum"]["index"];
+                        ssmv.newTaxonHigh = i["datum"]["Feature ID"];
                         console.log("Set newTaxonHigh: " +
                             ssmv.newTaxonHigh);
                     }
                     else {
                         ssmv.oldTaxonLow = ssmv.newTaxonLow;
-                        ssmv.newTaxonLow = i["datum"]["index"];
+                        ssmv.newTaxonLow = i["datum"]["Feature ID"];
                         console.log("Set newTaxonLow: " +
                             ssmv.newTaxonLow);
                         ssmv.updateSamplePlotSingle();
@@ -339,15 +339,15 @@ ssmv.updateBalanceMulti = function(sampleRow) {
 // Given a "row" of data about a rank, return its new classification depending
 // on the new selection that just got made.
 ssmv.updateRankColorSingle = function(rankRow) {
-    if (rankRow["index"] === ssmv.newTaxonHigh) {
-        if (rankRow["index"] === ssmv.newTaxonLow) {
+    if (rankRow["Feature ID"] === ssmv.newTaxonHigh) {
+        if (rankRow["Feature ID"] === ssmv.newTaxonLow) {
             return "Both";
         }
         else {
             return "Numerator";
         }
     }
-    else if (rankRow["index"] === ssmv.newTaxonLow) {
+    else if (rankRow["Feature ID"] === ssmv.newTaxonLow) {
         return "Denominator";
     }
     else {
@@ -358,10 +358,10 @@ ssmv.updateRankColorSingle = function(rankRow) {
 ssmv.updateRankColorMulti = function(rankRow) {
     var inTop = false;
     var inBot = false;
-    if (ssmv.topTaxa.indexOf(rankRow["index"]) >= 0) {
+    if (ssmv.topTaxa.indexOf(rankRow["Feature ID"]) >= 0) {
         inTop = true;
     }
-    if (ssmv.botTaxa.indexOf(rankRow["index"]) >= 0) {
+    if (ssmv.botTaxa.indexOf(rankRow["Feature ID"]) >= 0) {
         inBot = true;
     }
     if (inTop) {
