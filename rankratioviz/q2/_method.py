@@ -13,7 +13,8 @@ from rankratioviz.generate import process_input, gen_visualization
 
 
 def plot(output_dir: str, ranks: skbio.OrdinationResults, table: biom.Table,
-         sample_metadata: qiime2.Metadata, feature_metadata: qiime2.Metadata) -> None:
+         sample_metadata: qiime2.Metadata,
+         feature_metadata: qiime2.Metadata) -> None:
     """Generates a .qzv file containing a rankratioviz visualization.
 
        (...Also, the reason the order of parameters here differs from
