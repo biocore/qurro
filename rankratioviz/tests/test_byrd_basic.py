@@ -22,7 +22,7 @@
 #     runner = CliRunner()
 #     result = runner.invoke(rrvp.plot, [
 #         "--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
-#         "--output-dir", out_dir, "--category", "Objective SCORAD"
+#         "--output-dir", out_dir
 #     ])
 #     # Check that, at least, the test didn't cause any blatant errors
 #     assert result.exit_code == 0

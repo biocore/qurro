@@ -16,8 +16,7 @@ def test_basic():
     runner = CliRunner()
     result = runner.invoke(rrvp.plot, [
         "--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
-        "--feature-metadata", floc, "--output-dir", out_dir, "--category",
-        "exposure_type_encode"
+        "--feature-metadata", floc, "--output-dir", out_dir
     ])
     # Check that, at least, the test didn't cause any blatant errors
     assert result.exit_code == 0
