@@ -70,8 +70,8 @@ setup(
         'biom-format',
         'click',
         'pandas >= 0.20.0',
-        'pytest >= 4.2',
         'scikit-bio > 0.5.3'],
+    tests_require=['pytest >= 4.2'],
     classifiers=classifiers,
     entry_points={
         'qiime2.plugins':
