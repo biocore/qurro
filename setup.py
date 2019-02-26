@@ -66,8 +66,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'altair',
-        'h5py >= 2.2.0',
-        'biom-format',
+        'biom-format[hdf5]',
         'click',
         'pandas >= 0.20.0',
         'scikit-bio > 0.5.3'],

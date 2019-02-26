@@ -1,5 +1,4 @@
 altair -c conda-forge
-h5py
 biom-format
 click
 pandas >= 0.20.0
