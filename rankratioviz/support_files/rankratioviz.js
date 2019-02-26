@@ -42,8 +42,11 @@ ssmv.feature_ids = undefined;
 // Set when the sample plot JSON is loaded. Used to populate possible sample
 // plot x-axis/colorization options.
 ssmv.metadataCols = undefined;
+// Ordered list of all ranks
+ssmv.rankOrdering = undefined;
 // Abstracted frequently used long string(s)
 ssmv.balance_col = "rankratioviz_balance";
+
 
 ssmv.addSignalsToSamplePlot = function(vegaSpec) {
     // NOTE: Based on
@@ -107,8 +110,41 @@ ssmv.addSignalsToSamplePlot = function(vegaSpec) {
     return newSpec;
 };
 
+ssmv.addSignalsToRankPlot = function(vegaSpec) {
+    var rankSignal = {
+        "name": "rank",
+        "value": ssmv.rankOrdering[0],
+        "bind": {
+            "input": "select",
+            "options": ssmv.rankOrdering
+        }
+    };
+    var newSpec = vegaSpec;
+    newSpec["signals"].push(rankSignal);
+    newSpec["marks"][0]["encode"]["update"]["y"]["field"] = {"signal": "rank"};
+    // Update y-axis label
+    for (var a = 0; a < newSpec["axes"].length; a++) {
+        if (newSpec["axes"][a]["scale"] === "y") {
+            if (newSpec["axes"][a]["title"] !== undefined) {
+                newSpec["axes"][a]["title"] = {"signal": "rank"};
+                break;
+            }
+        }
+    }
+    // Update y-axis scale
+    for (var s = 0; s < newSpec["scales"].length; s++) {
+        if (newSpec["scales"][s]["name"] === "y") {
+            newSpec["scales"][s]["domain"]["field"] = {"signal": "rank"};
+            break;
+        }
+    }
+    return newSpec;
+};
+
 ssmv.makeRankPlot = function(spec) {
-    vegaEmbed("#rankPlot", spec, {"actions": false}).then(function(result) {
+    ssmv.rankOrdering = spec["datasets"]["rankratioviz_rank_ordering"];
+    var embedParams = {"actions": false, "patch": ssmv.addSignalsToRankPlot};
+    vegaEmbed("#rankPlot", spec, embedParams).then(function(result) {
         ssmv.rankPlotView = result.view;
         // Set callbacks to let users make selections in the ranks plot
         ssmv.rankPlotView.addEventListener("click", function(e, i) {
@@ -131,6 +167,8 @@ ssmv.makeRankPlot = function(spec) {
                 }
             }
         });
+        // NOTE We can add a signal listener for the "rank" signal here if we
+        // want to re-sort the features upon changing the rank in effect
     });
 };
 
@@ -403,7 +441,7 @@ ssmv.changeSamplePlot = function(updateBalanceFunc, updateRankColorFunc) {
     var rankDataName = ssmv.rankPlotJSON["data"]["name"];
     ssmv.rankPlotView.change(rankDataName, vega.changeset().modify(
         vega.truthy,
-        "classification",
+        "Classification",
         updateRankColorFunc
     )).run();
 };

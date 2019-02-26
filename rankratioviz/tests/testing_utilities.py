@@ -101,12 +101,15 @@ def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
         assert rank_plot["title"] == "Ranks"
         basic_vegalite_json_validation(rank_plot)
         dn = rank_plot["data"]["name"]
-        # Check that we have the same count of ranks as in the input ranks file
+        # Check that we have the same count of ranked features as in the
+        # input ranks file: this assumes that every ranked feature has an entry
+        # in the BIOM table, which is a reasonable assumption
         assert len(rank_plot["datasets"][dn]) == len(ranked_features)
         # Loop over every rank included in this JSON file:
-        prev_coefs_val = float("-inf")
+        rank_ordering = rank_plot["datasets"]["rankratioviz_rank_ordering"]
+        prev_rank_0_val = float("-inf")
         prev_x_val = -1
-        for rank in rank_plot["datasets"][dn]:
+        for feature in rank_plot["datasets"][dn]:
             # Check that we're using the correct "coefs" value
             # We use pytest's approx class to get past floating point
             # imprecisions. Note that we just leave this at the default for
@@ -116,28 +119,26 @@ def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
                 # NOTE Based on how we construct feature labels from DEICODE
                 # input. If that changes, this will need to change or this
                 # will break.
-                feature_id = rank["Feature ID"].split("|")[2]
+                feature_id = feature["Feature ID"].split("|")[2]
             else:
-                feature_id = rank["Feature ID"]
-            # NOTE This assumes that the 0-th rank (i.e. the first) is the one
-            # stored in the rank plot. When we eventually update this so that
-            # an arbitrary number of ranks for each feature are stored in the
-            # rank plot, we'll need to ensure that there's a one-to-one
-            # correspondence between the various "coefs" and
-            # ranked_features[feature_id].
-            assert ranked_features[feature_id][0] == approx(rank["coefs"])
-            # Check that the ranks are in order (i.e. their "coefs" vals are
-            # monotonically increasing)
+                feature_id = feature["Feature ID"]
+
+            # Check that each ranked feature matches
+            for r in range(len(rank_ordering)):
+                actual_rank_val = ranked_features[feature_id][r]
+                assert actual_rank_val == approx(feature[rank_ordering[r]])
+            # Check that the ranks are in order (i.e. their initial rank vals
+            # are monotonically increasing)
             # (If this rank is approximately equal to the previous rank, then
             # don't bother with the comparison -- but still update
-            # prev_coefs_val, of course.)
-            if rank["coefs"] != approx(prev_coefs_val):
-                assert rank["coefs"] >= prev_coefs_val
+            # prev_rank_0_val, of course.)
+            if feature[rank_ordering[0]] != approx(prev_rank_0_val):
+                assert feature[rank_ordering[0]] >= prev_rank_0_val
             # Check that x values are also in order
-            assert rank["x"] == prev_x_val + 1
+            assert feature["x"] == prev_x_val + 1
             # Update prev_ things for the next iteration of the loop
-            prev_coefs_val = rank["coefs"]
-            prev_x_val = rank["x"]
+            prev_rank_0_val = feature[rank_ordering[0]]
+            prev_x_val = feature["x"]
 
 
 def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json_loc):
