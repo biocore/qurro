@@ -83,7 +83,7 @@ def gen_rank_plot(V):
 
     Returns:
 
-    altair.Chart object for the rank plot.
+    JSON describing altair.Chart for the rank plot.
     """
 
     # Get stuff ready for the rank plot
@@ -91,7 +91,7 @@ def gen_rank_plot(V):
     # angry if you pass in ints as column IDs). This is a problem with
     # OrdinationResults files, since just getting the raw column IDs gives int
     # values (0 for the first column, 1 for the second column, etc.)
-    V.columns = [str(c) for c in V.columns]
+    V.columns = ["Rank " + str(c) for c in V.columns]
 
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
@@ -150,7 +150,11 @@ def gen_rank_plot(V):
         # lines
         gridOpacity=0.35
     ).interactive()
-    return rank_chart
+
+    rank_chart_json = rank_chart.to_dict()
+    rank_ordering = "rankratioviz_rank_ordering"
+    rank_chart_json["datasets"][rank_ordering] = list(V.columns)
+    return rank_chart_json
 
 
 def gen_sample_plot(table, metadata):
@@ -163,7 +167,7 @@ def gen_sample_plot(table, metadata):
 
     Returns:
 
-    altair.Chart object for the sample scatterplot.
+    JSON describing altair.Chart for the sample plot.
     """
 
     # Used to set x-axis and color
@@ -272,7 +276,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
        index_path: a path to the index.html file for the output visualization.
                    This is needed when calling q2templates.render().
     """
-    rank_plot_chart = gen_rank_plot(V)
+    rank_plot_json = gen_rank_plot(V)
     sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata)
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
@@ -307,8 +311,9 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # write new files
     rank_plot_loc = os.path.join(output_dir, 'rank_plot.json')
     sample_plot_loc = os.path.join(output_dir, 'sample_plot.json')
-    rank_plot_chart.save(rank_plot_loc)
     # For reference: https://stackoverflow.com/a/12309296
-    with open(sample_plot_loc, "w") as jfile:
-        json.dump(sample_plot_json, jfile)
+    with open(rank_plot_loc, "w") as jf:
+        json.dump(rank_plot_json, jf)
+    with open(sample_plot_loc, "w") as jf2:
+        json.dump(sample_plot_json, jf2)
     return index_path
