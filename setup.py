@@ -69,8 +69,8 @@ setup(
         'biom-format[hdf5]',
         'click',
         'pandas >= 0.20.0',
-        'scikit-bio > 0.5.3'],
-    tests_require=['pytest >= 4.2'],
+        'scikit-bio > 0.5.3',
+        'pytest >= 4.2'],
     classifiers=classifiers,
     entry_points={
         'qiime2.plugins':
