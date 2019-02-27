@@ -6,7 +6,7 @@
 rankratioviz visualizes the output from a tool like
 [songbird](https://github.com/mortonjt/songbird) or
 [DEICODE](https://github.com/biocore/DEICODE). It facilitates viewing
-a __"ranked"__ plot of features (generally either taxa or metabolites) alongside
+a __"ranked"__ plot of features (generally taxa or metabolites) alongside
 a scatterplot showing the __log ratios__ of selected feature counts within samples.
 
 rankratioviz can be used standalone (as a Python 3 script that generates a
@@ -30,6 +30,11 @@ pip install git+https://github.com/fedarko/rankratioviz.git
 ```
 
 ### Using rankratioviz through [QIIME 2](https://qiime2.org/)
+
+In order to use songbird `FeatureData[Differential]` outputs with rankratioviz
+through QIIME 2, [songbird](https://github.com/mortonjt/songbird/) needs to be
+installed. (You can still work with songbird outputs in rankratioviz'
+standalone mode, however.)
 
 First, make sure that QIIME 2 is installed before installing rankratioviz.
 Then run
@@ -115,12 +120,15 @@ licenses (each of which includes a respective copyright notice).
 The following software projects are required for rankratioviz's python code
 to function, although they are not distributed with rankratioviz (and are
 instead installed alongside rankratioviz).
-- [Python 3](https://www.python.org/) (a version of at least 3.2 is required)
+- [Python 3](https://www.python.org/) (a version of at least 3.5 is required)
 - [Altair](https://altair-viz.github.io/)
 - [biom-format](http://biom-format.org/)
 - [click](https://palletsprojects.com/p/click/)
 - [pandas](https://pandas.pydata.org/)
 - [scikit-bio](http://scikit-bio.org/)
+
+rankratioviz also uses [pytest](https://docs.pytest.org/en/latest/) and
+[flake8](http://flake8.pycqa.org/en/latest/).
 
 The design of rankratioviz was strongly inspired by
 [EMPeror](https://github.com/biocore/emperor) and
