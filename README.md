@@ -52,11 +52,11 @@ the visualization.qzv file to
 [view.qiime2.org](https://view.qiime2.org/).
 
 ```
-qiime rankratioviz plot --i-ranks example/deicode_example/ordination.qza \
-                        --i-table example/deicode_example/qiita_10422_table.biom.qza \
-                        --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
-                        --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
-                        --output-dir example/deicode_example/q2_rrv_plot
+qiime rankratioviz unsupervised-rank-plot --i-ranks example/deicode_example/ordination.qza \
+                                          --i-table example/deicode_example/qiita_10422_table.biom.qza \
+                                          --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
+                                          --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
+                                          --output-dir example/deicode_example/q2_rrv_plot
 ```
 
 ### Using rankratioviz as a standalone program
