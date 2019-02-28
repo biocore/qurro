@@ -22,7 +22,7 @@ def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
         # exhaustive; they're mainly intended to verify that a general plot
         # matching our specs is being created)
         assert rank_plot["mark"] == "bar"
-        assert rank_plot["title"] == "Ranks"
+        assert rank_plot["title"] == "Feature Ranks"
         basic_vegalite_json_validation(rank_plot)
         dn = rank_plot["data"]["name"]
         # Check that we have the same count of ranked features as in the
@@ -35,11 +35,7 @@ def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
         prev_rank_0_val = float("-inf")
         prev_x_val = -1
         for feature in rank_plot["datasets"][dn]:
-            # TODO when we merge in songbird-support, the 2 here should be
-            # replaced with a 0 (since we consistently have the
-            # augmented-with-feature-metadata feature IDs start with their
-            # initial ID). otherwise this will fail lol
-            feature_id = feature["Feature ID"].split("|")[2]
+            feature_id = feature["Feature ID"].split("|")[0]
             # Identify corresponding "reference" feature in the original data.
             #
             # We already should have asserted in the generation code that the
