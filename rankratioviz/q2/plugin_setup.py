@@ -40,11 +40,6 @@ plugin = qiime2.plugin.Plugin(
 # Shared stuff between the two plot options
 params = {'sample_metadata': Metadata, 'feature_metadata': Metadata}
 
-param_descs = {
-    'sample_metadata': 'Metadata file describing samples',
-            'feature_metadata': 'Feature metadata (indicating taxonomy)',
-}
-
 ranks_desc = "A {} file describing ranks produced by {}"
 table_desc = ("A BIOM table describing the abundances of the ranked features"
               + "in samples.")
@@ -64,7 +59,6 @@ if songbird_accessible:
             'ranks': ranks_desc.format("differentials", "songbird"),
             'table': table_desc
         },
-        parameter_descriptions=param_descs,
         name=short_desc.format("songbird"),
         description=long_desc.format("songbird")
     )
@@ -78,7 +72,6 @@ plugin.visualizers.register_function(
         'ranks': ranks_desc.format("ordination", "DEICODE"),
         'table': table_desc
     },
-    parameter_descriptions=param_descs,
     name=short_desc.format("DEICODE"),
     description=long_desc.format("DEICODE")
 )
