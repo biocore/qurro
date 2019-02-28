@@ -13,7 +13,7 @@ def basic_vegalite_json_validation(json_obj):
 def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
     """Ensure that the rank plot JSON makes sense."""
 
-    ranked_features = rank_file_to_df(input_ranks_loc)
+    reference_features = rank_file_to_df(input_ranks_loc)
     # Validate the rank plot JSON.
     with open(rank_json_loc, "r") as rank_plot_file:
         rank_plot = json.load(rank_plot_file)
@@ -26,42 +26,44 @@ def validate_rank_plot_json(input_ranks_loc, rank_json_loc):
         basic_vegalite_json_validation(rank_plot)
         dn = rank_plot["data"]["name"]
         # Check that we have the same count of ranked features as in the
-        # input ranks file: this assumes that every ranked feature has an entry
-        # in the BIOM table, which is a reasonable assumption
-        assert len(rank_plot["datasets"][dn]) == len(ranked_features)
+        # input ranks file (no ranked features should be dropped during the
+        # generation process -- there's an assertion in the code that checks
+        # for this, actually)
+        assert len(rank_plot["datasets"][dn]) == len(reference_features)
         # Loop over every rank included in this JSON file:
         rank_ordering = rank_plot["datasets"]["rankratioviz_rank_ordering"]
         prev_rank_0_val = float("-inf")
         prev_x_val = -1
-        # (we go through the reference features DataFrame simultaneously)
-        ranked_features_iterator = ranked_features.iterrows()
         for feature in rank_plot["datasets"][dn]:
-            # Check that we're using the correct "coefs" value
+            # TODO when we merge in songbird-support, the 2 here should be
+            # replaced with a 0 (since we consistently have the
+            # augmented-with-feature-metadata feature IDs start with their
+            # initial ID). otherwise this will fail lol
+            feature_id = feature["Feature ID"].split("|")[2]
+            # Identify corresponding "reference" feature in the original data.
+            #
+            # We already should have asserted in the generation code that the
+            # feature IDs were unique, so we don't need to worry about
+            # accidentally using the same reference feature twice here.
+            #
+            # Also, we use .loc[feature ID] here in order to access a row of
+            # the DataFrame. Because just straight indexing the DataFrame gives
+            # you the column.
+            reference_feature_series = reference_features.loc[feature_id]
+
+            # Each rank value between the JSON and reference feature should
+            # match.
             # We use pytest's approx class to get past floating point
             # imprecisions. Note that we just leave this at the default for
             # approx, so if this starts failing then adjusting the tolerances
             # in approx() might be needed.
-            if "ordination.txt" in input_ranks_loc:
-                # NOTE Based on how we construct feature labels from DEICODE
-                # input. If that changes, this will need to change or this
-                # will break.
-                feature_id = feature["Feature ID"].split("|")[2]
-            else:
-                feature_id = feature["Feature ID"]
-
-            # Check that each ranked feature matches:
-            curr_iter_feature = next(ranked_features_iterator)
-            # IDs should match
-            assert feature_id == curr_iter_feature[0]
-            # Each rank value should match
             for r in range(len(rank_ordering)):
-                # curr_iter_feature[1][r] is the r-th rank of the feature
-                # defined by the current row in the DataFrame.
-                actual_rank_val = curr_iter_feature[1][r]
+                actual_rank_val = reference_feature_series[r]
                 assert actual_rank_val == approx(feature[rank_ordering[r]])
 
-            # Check that the initial ranks are in order (i.e. the first rank of
-            # each feature should be monotonically increasing)
+            # Check that the initial ranks of the JSON features are in order
+            # (i.e. the first rank of each feature should be monotonically
+            # increasing)
             # (If this rank is approximately equal to the previous rank, then
             # don't bother with the comparison -- but still update
             # prev_rank_0_val.)
