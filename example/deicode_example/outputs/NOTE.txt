@@ -1,0 +1,6 @@
+This directory is where all of the outputs of the example jupyter notebook
+will be stored when the notebook's cells are run.
+
+This file is just included in rankratioviz' repository in order to make git
+include this output directory in the repository (since git doesn't keep
+track of empty directories).

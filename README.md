@@ -43,20 +43,20 @@ Then run
 qiime dev refresh-cache
 ```
 
-A full example can be analysis from count table to visualization can be found
-[here](https://github.com/fedarko/rankratioviz/blob/master/example/deicode_all.ipynb).
-(Note that some of the command syntax is a little out-of-date.)
-A visualization.qzv file containing a rankratioviz visualization
+A full example of analysis that uses DEICODE to from a count table to feature
+ranks to a visualization is provided
+[here](https://github.com/fedarko/rankratioviz/blob/master/example/rankratioviz_deicode_example.ipynb).
+A QZV file containing a rankratioviz visualization
 can be produced using the command below, and can be visualized by dragging/uploading
-the visualization.qzv file to
+the QZV file to
 [view.qiime2.org](https://view.qiime2.org/).
 
 ```
 qiime rankratioviz unsupervised-rank-plot --i-ranks example/deicode_example/ordination.qza \
                                           --i-table example/deicode_example/qiita_10422_table.biom.qza \
-                                          --m-sample-metadata-file example/deicode_example/qiita_10422_metadata_encode.tsv \
+                                          --m-sample-metadata-file example/deicode_example/qiita_10422_metadata.tsv \
                                           --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
-                                          --output-dir example/deicode_example/q2_rrv_plot
+                                          --o-visualization example/deicode_example/rrv_plot_q2.qzv
 ```
 
 ### Using rankratioviz as a standalone program
@@ -68,7 +68,7 @@ with QIIME 2 above:
 ```
 rankratioviz --ranks example/deicode_example/ordination.txt \
              --table example/deicode_example/qiita_10422_table.biom \
-             --sample-metadata example/deicode_example/qiita_10422_metadata_encode.tsv \
+             --sample-metadata example/deicode_example/qiita_10422_metadata.tsv \
              --feature-metadata example/deicode_example/taxonomy.tsv \
              --output-dir example/deicode_example/standalone_rrv_plot
 ```

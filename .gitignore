@@ -61,3 +61,7 @@ doc/source/generated
 
 # rankratioviz test outputs
 rankratioviz/tests/output/*
+# rankratioviz example notebook outputs (except NOTE.txt)
+# solution c/o https://stackoverflow.com/a/2820310
+example/deicode_example/outputs/*
+!example/deicode_example/outputs/NOTE.txt
