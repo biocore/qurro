@@ -75,7 +75,10 @@ ssmv.addSignalsToSamplePlot = function(vegaSpec) {
     // Update the actual encodings
     // (this assumes that there will only be one set of marks in the sample
     // plot JSON)
-    newSpec["signals"] = [xSignal, colorSignal];
+    // Important: we just push to the signals instead of overwriting the list
+    // of signals. Overwriting that list can cause problems when we overwrite
+    // signals that Vega generated.
+    newSpec["signals"].push(xSignal, colorSignal);
     newSpec["marks"][0]["encode"]["update"]["x"]["field"] = {"signal": "xAxis"};
     newSpec["marks"][0]["encode"]["update"]["fill"]["field"] = {"signal": "color"};
     // Update the x-axis / color labels
