@@ -61,10 +61,6 @@ doc/source/generated
 
 # rankratioviz test outputs
 rankratioviz/tests/output/*
-# rankratioviz example notebook outputs (except NOTE.txt)
-# solution c/o https://stackoverflow.com/a/2820310
-example/output/*
-!example/output/NOTE.txt
 
 # to cut down on clutter in this directory
 tmp_files/*

@@ -139,16 +139,22 @@ Cameron Martino for a ton of work on getting the code in a distributable state
 (and making it work with QIIME 2). Thanks also to Jamie Morton, who wrote the
 original code for producing rank plots from which this is derived.
 
-Some of the test data (located in `rankratioviz/tests/input/byrd/`) was taken
-from [this repository](https://github.com/knightlab-analyses/reference-frames).
+The test data located in `rankratioviz/tests/input/byrd/` is from
+[this repository](https://github.com/knightlab-analyses/reference-frames).
 This data, in turn, originates from Byrd et al.'s 2017 study on atopic
 dermatitis [2].
+
+Additionally, the test data located in `rankratioviz/tests/input/sleep_apnea/`
+is from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
+which is associated with Tripathi et al.'s 2018 study on sleep apnea [3].
 
 ## References
 
 [1] Becker, R. A. & Cleveland, W. S. (1987). Brushing scatterplots. _Technometrics, 29_(2), 127-142. (Section 4.1 in particular talks about linking visualizations.)
 
 [2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
+
+[3] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
 
 ## License
 

@@ -4,16 +4,16 @@ from rankratioviz.tests import testing_utilities
 import rankratioviz.scripts._plot as rrvp
 
 
-def test_deicode_input():
+def test_sleep_apnea_basic():
 
-    in_dir = os.path.join("rankratioviz", "tests", "input", "deicode_example")
+    in_dir = os.path.join("rankratioviz", "tests", "input", "sleep_apnea")
 
     rloc = os.path.join(in_dir, "ordination.txt")
     tloc = os.path.join(in_dir, "qiita_10422_table.biom")
     sloc = os.path.join(in_dir, "qiita_10422_metadata.tsv")
     floc = os.path.join(in_dir, "taxonomy.tsv")
     out_dir = os.path.join("rankratioviz", "tests", "output",
-                           "deicode_input_test")
+                           "sleep_apnea")
     # Derived from http://click.palletsprojects.com/en/7.x/testing/
     runner = CliRunner()
     result = runner.invoke(rrvp.plot, [
