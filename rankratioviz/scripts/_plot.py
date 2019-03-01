@@ -19,7 +19,7 @@ from rankratioviz._rank_processing import rank_file_to_df
 @click.option('-t', '--table', required=True,
               help="BIOM table describing taxon/metabolite sample abundances.")
 @click.option('-fm', '--feature-metadata', default=None,
-              help="Feature metadata file for taxonomy.")
+              help="Feature metadata file.")
 @click.option('-sm', '--sample-metadata', required=True,
               help="Sample metadata file.")
 @click.option('-o', '--output-dir', required=True,
