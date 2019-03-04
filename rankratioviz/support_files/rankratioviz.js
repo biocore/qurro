@@ -48,6 +48,21 @@ ssmv.rankOrdering = undefined;
 ssmv.balance_col = "rankratioviz_balance";
 
 
+ssmv.addSignalsToSpec = function(spec, signalArray) {
+    // Add the signals in signalArray to spec["signals"] if the Vega spec
+    // already has signals, or create spec["signals"] if the Vega spec doesn't
+    // have any signals yet.
+    // Note that this just modifies spec without returning anything.
+    if (spec["signals"] === undefined) {
+        spec["signals"] = signalArray;
+    }
+    else {
+        for (var s = 0; s < signalArray.length; s++) {
+            spec["signals"].push(signalArray[s]);
+        }
+    }
+}
+
 ssmv.addSignalsToSamplePlot = function(vegaSpec) {
     // NOTE: Based on
     // https://vega.github.io/vega/examples/scatter-plot-null-values/
@@ -71,46 +86,42 @@ ssmv.addSignalsToSamplePlot = function(vegaSpec) {
             "options": ssmv.metadataCols
         }
     };
-    var newSpec = vegaSpec;
     // Update the actual encodings
     // (this assumes that there will only be one set of marks in the sample
     // plot JSON)
-    // Important: we just push to the signals instead of overwriting the list
-    // of signals. Overwriting that list can cause problems when we overwrite
-    // signals that Vega generated.
-    newSpec["signals"].push(xSignal, colorSignal);
-    newSpec["marks"][0]["encode"]["update"]["x"]["field"] = {"signal": "xAxis"};
-    newSpec["marks"][0]["encode"]["update"]["fill"]["field"] = {"signal": "color"};
+    ssmv.addSignalsToSpec(vegaSpec, [xSignal, colorSignal]);
+    vegaSpec["marks"][0]["encode"]["update"]["x"]["field"] = {"signal": "xAxis"};
+    vegaSpec["marks"][0]["encode"]["update"]["fill"]["field"] = {"signal": "color"};
     // Update the x-axis / color labels
     // Note that at least with the example Vega plot I'm working with, there
     // are two axes with an "x" scale. We change the one that already has a
     // "title" attribute.
-    for (var a = 0; a < newSpec["axes"].length; a++) {
-        if (newSpec["axes"][a]["scale"] === "x") {
-            if (newSpec["axes"][a]["title"] !== undefined) {
-                newSpec["axes"][a]["title"] = {"signal": "xAxis"};
+    for (var a = 0; a < vegaSpec["axes"].length; a++) {
+        if (vegaSpec["axes"][a]["scale"] === "x") {
+            if (vegaSpec["axes"][a]["title"] !== undefined) {
+                vegaSpec["axes"][a]["title"] = {"signal": "xAxis"};
                 break;
             }
         }
     }
     // Searching in a for loop this way prevents accidentally overwriting other
     // legends for other attributes.
-    for (var c = 0; c < newSpec["legends"].length; c++) {
-        if (newSpec["legends"][c]["fill"] === "color")  {
-            newSpec["legends"][c]["title"] = {"signal": "color"};
+    for (var c = 0; c < vegaSpec["legends"].length; c++) {
+        if (vegaSpec["legends"][c]["fill"] === "color")  {
+            vegaSpec["legends"][c]["title"] = {"signal": "color"};
             break;
         }
     }
     // Update scales
-    for (var s = 0; s < newSpec["scales"].length; s++) {
-        if (newSpec["scales"][s]["name"] === "x") {
-            newSpec["scales"][s]["domain"]["field"] = {"signal": "xAxis"};
+    for (var s = 0; s < vegaSpec["scales"].length; s++) {
+        if (vegaSpec["scales"][s]["name"] === "x") {
+            vegaSpec["scales"][s]["domain"]["field"] = {"signal": "xAxis"};
         }
-        else if (newSpec["scales"][s]["name"] === "color") {
-            newSpec["scales"][s]["domain"]["field"] = {"signal": "color"};
+        else if (vegaSpec["scales"][s]["name"] === "color") {
+            vegaSpec["scales"][s]["domain"]["field"] = {"signal": "color"};
         }
     }
-    return newSpec;
+    return vegaSpec;
 };
 
 ssmv.addSignalsToRankPlot = function(vegaSpec) {
@@ -122,26 +133,25 @@ ssmv.addSignalsToRankPlot = function(vegaSpec) {
             "options": ssmv.rankOrdering
         }
     };
-    var newSpec = vegaSpec;
-    newSpec["signals"].push(rankSignal);
-    newSpec["marks"][0]["encode"]["update"]["y"]["field"] = {"signal": "rank"};
+    ssmv.addSignalsToSpec(vegaSpec, [rankSignal]);
+    vegaSpec["marks"][0]["encode"]["update"]["y"]["field"] = {"signal": "rank"};
     // Update y-axis label
-    for (var a = 0; a < newSpec["axes"].length; a++) {
-        if (newSpec["axes"][a]["scale"] === "y") {
-            if (newSpec["axes"][a]["title"] !== undefined) {
-                newSpec["axes"][a]["title"] = {"signal": "rank"};
+    for (var a = 0; a < vegaSpec["axes"].length; a++) {
+        if (vegaSpec["axes"][a]["scale"] === "y") {
+            if (vegaSpec["axes"][a]["title"] !== undefined) {
+                vegaSpec["axes"][a]["title"] = {"signal": "rank"};
                 break;
             }
         }
     }
     // Update y-axis scale
-    for (var s = 0; s < newSpec["scales"].length; s++) {
-        if (newSpec["scales"][s]["name"] === "y") {
-            newSpec["scales"][s]["domain"]["field"] = {"signal": "rank"};
+    for (var s = 0; s < vegaSpec["scales"].length; s++) {
+        if (vegaSpec["scales"][s]["name"] === "y") {
+            vegaSpec["scales"][s]["domain"]["field"] = {"signal": "rank"};
             break;
         }
     }
-    return newSpec;
+    return vegaSpec;
 };
 
 ssmv.makeRankPlot = function(spec) {
