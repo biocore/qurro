@@ -22,11 +22,7 @@ def supervised_rank_plot(output_dir: str, ranks: pd.DataFrame,
        output_dir: str, per QIIME 2's plugin requirements.)
     """
 
-    # TODO: is this always gonna be necessary?
-    # We use index_col=0 when we read the .tsv file in the standalone
-    # script, but I don't think Q2 is using it.
-    feature_ranks = ranks.set_index(ranks.columns[0])
-    create_q2_visualization(output_dir, feature_ranks, table, sample_metadata,
+    create_q2_visualization(output_dir, ranks, table, sample_metadata,
                             feature_metadata)
 
 
