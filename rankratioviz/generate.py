@@ -133,7 +133,7 @@ def gen_rank_plot(V):
     # angry if you pass in ints as column IDs). This is a problem with
     # OrdinationResults files, since just getting the raw column IDs gives int
     # values (0 for the first column, 1 for the second column, etc.)
-    V.columns = ["Rank " + str(c) for c in V.columns]
+    V.columns = [str(c) for c in V.columns]
 
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
