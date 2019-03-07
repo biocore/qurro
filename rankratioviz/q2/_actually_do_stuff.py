@@ -12,7 +12,9 @@ from rankratioviz.generate import process_input, gen_visualization
 def create_q2_visualization(output_dir, feature_ranks, table, sample_metadata,
                             feature_metadata):
 
-    df_feature_metadata = feature_metadata.to_dataframe()
+    df_feature_metadata = None
+    if feature_metadata is not None:
+        df_feature_metadata = feature_metadata.to_dataframe()
     df_sample_metadata = sample_metadata.to_dataframe()
     V, processed_table = process_input(feature_ranks, df_sample_metadata,
                                        table, df_feature_metadata)
