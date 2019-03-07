@@ -16,9 +16,49 @@
 
 import json
 import os
+# import re
 from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
+
+
+def fix_id(fid):
+    """Like escape_id() but a lot lazier."""
+
+    new_id = ""
+    for c in fid:
+        if c == '.':
+            new_id += ':'
+        elif c == ']':
+            new_id += ')'
+        elif c == '[':
+            new_id += '('
+        elif c == "'" or c == '"' or c == '\\':
+            continue
+        else:
+            new_id += c
+    return new_id
+
+# def escape_id(fid):
+#     """Escapes certain characters in an ID for a Vega/Vega-Lite spec.
+#
+#        This is in order to prevent Vega-Lite from interpreting stuff from
+#        these IDs, which results in problems.
+#
+#        See https://vega.github.io/vega-lite/docs/field.html for context.
+#     """
+#
+#     # Characters that need to be escaped: ."'\[]
+#     # (JSON doesn't assign special significance to the single-quote (') but
+#     # Vega-Lite does, which is why we escape it anyway.)
+#     spec_char_regex = re.compile("[\.\"\'\\\[\]]")
+#     new_id = ""
+#     for c in fid:
+#         if spec_char_regex.match(c):
+#             new_id += "\\{}".format(c)
+#         else:
+#             new_id += c
+#     return new_id
 
 
 def matchdf(df1, df2):
@@ -133,7 +173,7 @@ def gen_rank_plot(V):
     # angry if you pass in ints as column IDs). This is a problem with
     # OrdinationResults files, since just getting the raw column IDs gives int
     # values (0 for the first column, 1 for the second column, etc.)
-    V.columns = [str(c) for c in V.columns]
+    V.columns = [fix_id(str(c)) for c in V.columns]
 
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
