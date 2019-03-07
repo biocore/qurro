@@ -180,8 +180,58 @@ ssmv.makeRankPlot = function(spec) {
                 }
             }
         });
-        // NOTE We can add a signal listener for the "rank" signal here if we
-        // want to re-sort the features upon changing the rank in effect
+        // Change each feature's "x" value in order to resort them based on
+        // their new rank value.
+        // TODO: it would be simpler to just bind some sort of vega/vega-lite
+        // esque sort operation to be done on the rank signal for each
+        // feature's x value, rather than doing it manually.
+        ssmv.rankPlotView.addSignalListener("rank", function(_, newRank) {
+            // Determine active rank, then sort all features by their
+            // corresponding ranking. This is done as a procedural change to
+            // the "x" value of each feature, analogous to how the balance of
+            // each sample is updated in ssmv.changeSamplePlot().
+            var dataName = ssmv.rankPlotJSON["data"]["name"];
+
+            // Get a copy of all the feature data in the rank plot. Sort it by
+            // each feature's newRank value.
+            var featureDataCopy = ssmv.rankPlotJSON["datasets"][dataName].slice();
+            featureDataCopy.sort(function(f1, f2) {
+                if (f1[newRank] > f2[newRank])
+                    return 1;
+                else if (f1[newRank] < f2[newRank])
+                    return -1;
+                return 0;
+            });
+            // Use the sorted feature data (featureDataCopy) to make a mapping
+            // from feature IDs to their new "x" value -- which is just an
+            // integer in the range of [0, number of ranked features) -- which
+            // we'll use as the basis for setting each feature's new "x" value.
+            // (We can't guarantee the order of traversal during modify()
+            // below, which is why we define this as a mapping from the feature
+            // ID to its new x value.)
+            var featureIDToNewX = {};
+            for (var x = 0; x < featureDataCopy.length; x++) {
+                featureIDToNewX[featureDataCopy[x]["Feature ID"]] = x;
+            }
+            // Now, we can just iterate through the rank plot and change each
+            // feature accordingly.
+            var sortFunc = function() {
+                ssmv.rankPlotView.change(dataName, vega.changeset().modify(
+                    vega.truthy,
+                    "x",
+                    function(rankRow) {
+                        return featureIDToNewX[rankRow["Feature ID"]];
+                    }
+                ))
+            };
+            // NOTE that we use runAfter() instead of run() because, since this
+            // is being run from within a signal listener, we're still in the
+            // middle of that "dataflow." If we use run() here as well, we get
+            // an error about "Dataflow invoked recursively". The docs say to
+            // use runAsync() to resolve this, but I can't get that working
+            // here. So we're doing this.
+            ssmv.samplePlotView.runAfter(sortFunc);
+        });
     });
 };
 
