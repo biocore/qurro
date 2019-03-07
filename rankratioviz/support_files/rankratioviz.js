@@ -196,9 +196,9 @@ ssmv.makeRankPlot = function(spec) {
             // each feature's newRank value.
             var featureDataCopy = ssmv.rankPlotJSON["datasets"][dataName].slice();
             featureDataCopy.sort(function(f1, f2) {
-                if (f1[newRank] > f2[newRank])
+                if (parseFloat(f1[newRank]) > parseFloat(f2[newRank]))
                     return 1;
-                else if (f1[newRank] < f2[newRank])
+                else if (parseFloat(f1[newRank]) < parseFloat(f2[newRank]))
                     return -1;
                 return 0;
             });
