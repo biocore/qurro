@@ -35,6 +35,14 @@ The following command will install the most up-to-date version of rankratioviz:
 pip install git+https://github.com/fedarko/rankratioviz.git
 ```
 
+## Temporary Caveat
+
+**Please make sure that your sample metadata fields do not contain any period or
+square bracket characters (`.[]`).** This is due to Vega-Lite's special treatment
+of these characters. (Eventually rankratioviz should be able to handle this
+accordingly, but in the meantime this is a necessary fix.) See
+[this issue](https://github.com/fedarko/rankratioviz/issues/66) for context.
+
 ### Using rankratioviz through [QIIME 2](https://qiime2.org/)
 
 In order to use [songbird](https://github.com/biocore/songbird/)'s `FeatureData[Differential]`
