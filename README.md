@@ -35,7 +35,7 @@ The following command will install the most up-to-date version of rankratioviz:
 pip install git+https://github.com/fedarko/rankratioviz.git
 ```
 
-## Temporary Caveat
+### Temporary Caveat
 
 **Please make sure that your sample metadata fields do not contain any period or
 square bracket characters (`.[]`).** This is due to Vega-Lite's special treatment
