@@ -100,8 +100,17 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     assert V.shape[0] == feature_ranks.shape[0]
 
     table, U = matchdf(table.T, sample_metadata)
-    # Assert that every sample was present in the BIOM table.
-    assert U.shape[0] == sample_metadata.shape[0]
+    # Allow for dropped samples (e.g. negative controls), but ensure that at
+    # least one sample is supported by the BIOM table.
+    assert U.shape[0] >= 1
+    dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
+    if dropped_sample_ct > 0:
+        print("NOTE: {} samples in the sample metadata file were unsupported "
+              "in the BIOM table, and have been removed from the "
+              "visualization.".format(dropped_sample_ct))
+    else:
+        print("All samples in the sample metadata file were supported in "
+              "the BIOM table.")
 
     labelled_feature_ranks = feature_ranks.copy()
     # Now that we've matched up the BIOM table with the feature ranks and
@@ -152,7 +161,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # that something isn't going horribly wrong somehow.
     assert_df_indices_unique(labelled_feature_ranks)
 
-    return labelled_feature_ranks, table
+    return U, labelled_feature_ranks, table
 
 
 def gen_rank_plot(V):

@@ -39,9 +39,9 @@ def plot(ranks: str, table: str, sample_metadata: str, feature_metadata: str,
     if feature_metadata is not None:
         df_feature_metadata = read_metadata(feature_metadata)
 
-    V, processed_table = process_input(feature_ranks, df_sample_metadata,
-                                       loaded_biom, df_feature_metadata)
-    gen_visualization(V, processed_table, df_sample_metadata, output_dir)
+    U, V, processed_table = process_input(feature_ranks, df_sample_metadata,
+                                          loaded_biom, df_feature_metadata)
+    gen_visualization(V, processed_table, U, output_dir)
 
 
 if __name__ == '__main__':
