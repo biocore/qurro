@@ -26,3 +26,4 @@ def test_sleep_apnea_basic():
     # Validate rank plot JSON
     rank_plot_loc = os.path.join(out_dir, "rank_plot.json")
     testing_utilities.validate_rank_plot_json(rloc, rank_plot_loc)
+    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_json_loc)

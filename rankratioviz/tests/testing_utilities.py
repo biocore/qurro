@@ -106,5 +106,6 @@ def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json_loc):
         basic_vegalite_json_validation(sample_plot)
         # dn = sample_plot["data"]["name"]
         # TODO check that all metadata samples are accounted for in BIOM table
-        # TODO check that every log ratio is correct! I guess that'll make us
+        # TODO check that every log ratio is correct? I guess that'll make us
         # load the rank plots file, but it's worth it (tm)
+        # TODO check anything else in the sample plot JSON I'm forgetting

@@ -18,24 +18,25 @@ def test_matching():
 
     rloc = os.path.join(input_dir, "differentials.tsv")
     tloc = os.path.join(input_dir, "mt.biom")
-    smloc = os.path.join(input_dir, "sample_metadata.txt")
-    fmloc = os.path.join(input_dir, "feature_metadata.txt")
+    sloc = os.path.join(input_dir, "sample_metadata.txt")
+    floc = os.path.join(input_dir, "feature_metadata.txt")
 
     runner = CliRunner()
     result = runner.invoke(rrvp.plot, [
-        "--ranks", rloc, "--table", tloc, "--sample-metadata", smloc,
-        "--feature-metadata", fmloc, "--output-dir", out_dir
+        "--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
+        "--feature-metadata", floc, "--output-dir", out_dir
     ])
     # Check that, at least, the test didn't cause any blatant errors
     assert result.exit_code == 0
     testing_utilities.validate_samples_supported_output(result.output, 1)
     testing_utilities.validate_rank_plot_json(rloc, rank_json_loc)
+    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_json_loc)
 
     # Assert that Taxon3 has been annotated.
     with open(rank_json_loc, 'r') as rank_plot_file:
         rank_plot = json.load(rank_plot_file)
         data_name = rank_plot["data"]["name"]
-        # Hardcoded based on the one populated row in fmloc. This shouldn't
+        # Hardcoded based on the one populated row in floc. This shouldn't
         # change in the future, so hardcoding it here is fine.
         relevant_feature_metadata = ["Taxon3", "Yeet", "100"]
         # We know Taxon3 will be in the 1th position because the feature should

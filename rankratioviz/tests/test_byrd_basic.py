@@ -11,7 +11,7 @@ def test_byrd():
     out_dir = os.path.join("rankratioviz", "tests", "output", "byrd")
 
     rank_json_loc = os.path.join(out_dir, "rank_plot.json")
-    # sample_json_loc = os.path.join(out_dir, "sample_logratio_plot.json")
+    sample_json_loc = os.path.join(out_dir, "sample_logratio_plot.json")
 
     rloc = os.path.join(byrd_input_dir, "byrd_differentials.tsv")
     tloc = os.path.join(byrd_input_dir, "byrd_skin_table.biom")
@@ -23,9 +23,9 @@ def test_byrd():
         "--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
         "--output-dir", out_dir
     ])
-    # Check that, at least, the test didn't cause any blatant errors
+    # Validate basic stuff about the program execution
     assert result.exit_code == 0
     testing_utilities.validate_samples_supported_output(result.output, 0)
-    # Validate rank plot JSON
+    # Validate the rank and sample plot JSON files against the original data
     testing_utilities.validate_rank_plot_json(rloc, rank_json_loc)
-    # TODO call testing_utilities.validate_sample_plot_json() here
+    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_json_loc)
