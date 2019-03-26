@@ -105,11 +105,11 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     assert U.shape[0] >= 1
     dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
     if dropped_sample_ct > 0:
-        print("NOTE: {} samples in the sample metadata file were unsupported "
-              "in the BIOM table, and have been removed from the "
+        print("NOTE: {} sample(s) in the sample metadata file were not "
+              "supported in the BIOM table, and have been removed from the "
               "visualization.".format(dropped_sample_ct))
     else:
-        print("All samples in the sample metadata file were supported in "
+        print("All sample(s) in the sample metadata file were supported in "
               "the BIOM table.")
 
     labelled_feature_ranks = feature_ranks.copy()
