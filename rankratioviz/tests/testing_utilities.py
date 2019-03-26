@@ -3,6 +3,32 @@ from pytest import approx
 from rankratioviz._rank_processing import rank_file_to_df
 
 
+def validate_samples_supported_output(output, expected_unsupported_samples):
+    """Checks that the correct message has been based on BIOM sample support.
+
+       Parameters
+       ----------
+       output: str
+          All of the printed output from running rankratioviz.
+          This can be obtained as result.output, if result is the return value
+          of click's CliRunner.invoke().
+
+       expected_unsupported_samples: int
+          The number of samples expected to be unsupported in the BIOM table.
+          If 0, expects all samples to be supported.
+    """
+    if expected_unsupported_samples == 0:
+        expected_msg = ("All sample(s) in the sample metadata file were "
+                        "supported in the BIOM table.")
+    else:
+        expected_msg = ("NOTE: {} sample(s) in the sample metadata file were "
+                        "not supported in the BIOM table, and have been "
+                        "removed from the visualization.".format(
+                            expected_unsupported_samples))
+
+    assert expected_msg in output
+
+
 def basic_vegalite_json_validation(json_obj):
     """Basic validations of Vega-Lite JSON objects go here."""
 

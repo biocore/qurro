@@ -25,6 +25,7 @@ def test_byrd():
     ])
     # Check that, at least, the test didn't cause any blatant errors
     assert result.exit_code == 0
+    testing_utilities.validate_samples_supported_output(result.output, 0)
     # Validate rank plot JSON
     testing_utilities.validate_rank_plot_json(rloc, rank_json_loc)
     # TODO call testing_utilities.validate_sample_plot_json() here
