@@ -1,7 +1,8 @@
 # rankratioviz
 [![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![Coverage Status](https://coveralls.io/repos/github/fedarko/rankratioviz/badge.svg?branch=master)](https://coveralls.io/github/fedarko/rankratioviz?branch=master)
 
-(Name subject to change.)
+(Name subject to change. Also, note that the coveralls link only covers the
+Python side of this codebase right now.)
 
 rankratioviz visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
