@@ -23,7 +23,8 @@ def test_sleep_apnea_basic():
     # Check that, at least, the test didn't cause any blatant errors
     assert result.exit_code == 0
     testing_utilities.validate_samples_supported_output(result.output, 0)
-    # Validate rank plot JSON
+    # Validate JSON
     rank_plot_loc = os.path.join(out_dir, "rank_plot.json")
+    sample_plot_loc = os.path.join(out_dir, "sample_plot.json")
     testing_utilities.validate_rank_plot_json(rloc, rank_plot_loc)
-    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_json_loc)
+    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_plot_loc)
