@@ -1,5 +1,5 @@
 # rankratioviz
-[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz)
+[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![Coverage Status](https://coveralls.io/repos/github/fedarko/rankratioviz/badge.svg?branch=master)](https://coveralls.io/github/fedarko/rankratioviz?branch=master)
 
 (Name subject to change.)
 

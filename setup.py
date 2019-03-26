@@ -70,7 +70,8 @@ setup(
         'click',
         'pandas >= 0.20.0',
         'scikit-bio > 0.5.3',
-        'pytest >= 4.2'],
+        'pytest >= 4.2',
+        'pytest-cov >= 2.0'],
     classifiers=classifiers,
     entry_points={
         'qiime2.plugins':
