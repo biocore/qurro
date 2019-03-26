@@ -66,11 +66,11 @@ the QZV file to
 [view.qiime2.org](https://view.qiime2.org/).
 
 ```
-qiime rankratioviz unsupervised-rank-plot --i-ranks example/deicode_example/ordination.qza \
-                                          --i-table example/deicode_example/qiita_10422_table.biom.qza \
-                                          --m-sample-metadata-file example/deicode_example/qiita_10422_metadata.tsv \
-                                          --m-feature-metadata-file example/deicode_example/taxonomy.tsv \
-                                          --o-visualization example/deicode_example/rrv_plot_q2.qzv
+qiime rankratioviz unsupervised-rank-plot --i-ranks example/output/ordination.qza \
+                                          --i-table example/output/qiita_10422_table.biom.qza \
+                                          --m-sample-metadata-file rankratioviz/tests/input/sleep_apnea/qiita_10422_metadata.tsv \
+                                          --m-feature-metadata-file rankratioviz/tests/input/sleep_apnea/taxonomy.tsv \
+                                          --o-visualization example/output/rrv_plot_q2_readme.qzv
 ```
 
 ### Using rankratioviz as a standalone program
@@ -80,16 +80,16 @@ The following command produces an analogous visualization to the one generated
 with QIIME 2 above:
 
 ```
-rankratioviz --ranks example/deicode_example/ordination.txt \
-             --table example/deicode_example/qiita_10422_table.biom \
-             --sample-metadata example/deicode_example/qiita_10422_metadata.tsv \
-             --feature-metadata example/deicode_example/taxonomy.tsv \
-             --output-dir example/deicode_example/standalone_rrv_plot
+rankratioviz --ranks example/output/ordination.txt \
+             --table rankratioviz/tests/input/sleep_apnea/qiita_10422_table.biom \
+             --sample-metadata rankratioviz/tests/input/sleep_apnea/qiita_10422_metadata.tsv \
+             --feature-metadata rankratioviz/tests/input/sleep_apnea/taxonomy.tsv \
+             --output-dir example/output/standalone_rrv_plot_readme
 ```
 
 This visualization can be displayed by running `python3 -m http.server` from
 the output directory containing the visualization (in this case,
-`example/deicode_example/standalone_rrv_plot`) and opening `localhost:8000` in
+`example/output/standalone_rrv_plot_readme`) and opening `localhost:8000` in
 your browser (replacing `8000` with the port number that you got from running
 the command).
 
