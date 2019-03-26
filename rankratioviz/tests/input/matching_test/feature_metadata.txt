@@ -1,0 +1,2 @@
+Feature_ID	FeatureMetadata1	FeatureMetadata2
+Taxon3	Yeet	100
