@@ -396,7 +396,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
                 os.path.join(support_files_loc, file_),
                 os.path.join(output_dir, file_)
             )
-        if 'index.html' in file_:
+        if file_ == 'index.html':
             index_path = os.path.join(output_dir, file_)
 
     if index_path is None:
