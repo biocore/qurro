@@ -136,8 +136,11 @@ instead installed alongside rankratioviz).
 - [pandas](https://pandas.pydata.org/)
 - [scikit-bio](http://scikit-bio.org/)
 
-rankratioviz also uses [pytest](https://docs.pytest.org/en/latest/) and
+rankratioviz also uses [pytest](https://docs.pytest.org/en/latest/),
+[pytest-cov](https://github.com/pytest-dev/pytest-cov), and
 [flake8](http://flake8.pycqa.org/en/latest/).
+(Along with [Travis-CI](https://travis-ci.org/) and
+[Coveralls](https://coveralls.io/).)
 
 The design of rankratioviz was strongly inspired by
 [EMPeror](https://github.com/biocore/emperor) and
