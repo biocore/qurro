@@ -31,8 +31,8 @@ This visualization (which uses some of the
 ## Installation and Usage
 
 The following command will install the most up-to-date version of rankratioviz:
+
 ```
-# Developer version
 pip install git+https://github.com/fedarko/rankratioviz.git
 ```
 
@@ -46,17 +46,24 @@ accordingly, but in the meantime this is a necessary fix.) See
 
 ### Using rankratioviz through [QIIME 2](https://qiime2.org/)
 
-In order to use [songbird](https://github.com/biocore/songbird/)'s `FeatureData[Differential]`
-outputs with rankratioviz through QIIME 2, songbird needs to be
-installed. (You can still work with songbird outputs in rankratioviz'
-standalone mode, however.)
-
 First, make sure that QIIME 2 is installed before installing rankratioviz.
 Then run
 
 ```
 qiime dev refresh-cache
 ```
+
+You can use the `qiime rankratioviz unsupervised-rank-plot` command to
+visualize DEICODE output, and you can use the
+`qiime rankratioviz supervised-rank-plot` command to visualize songbird output.
+
+The only difference in using these commands is the QIIME 2 type accepted by
+their `--i-ranks` option.
+`unsupervised-rank-plot` expects a `PCoAResults % Properties(['biplot'])` input (i.e. an ordination file produced by DEICODE),
+and `supervised-rank-plot` expects a `FeatureData[Differential]` input (i.e. a
+differentials file produced by songbird).
+
+#### Using rankratioviz in QIIME 2 with [DEICODE](https://github.com/biocore/DEICODE) output
 
 A full example of analysis that uses DEICODE to from a count table to feature
 ranks to a visualization is provided
@@ -71,8 +78,25 @@ qiime rankratioviz unsupervised-rank-plot --i-ranks example/output/ordination.qz
                                           --i-table example/output/qiita_10422_table.biom.qza \
                                           --m-sample-metadata-file rankratioviz/tests/input/sleep_apnea/qiita_10422_metadata.tsv \
                                           --m-feature-metadata-file rankratioviz/tests/input/sleep_apnea/taxonomy.tsv \
-                                          --o-visualization example/output/rrv_plot_q2_readme.qzv
+                                          --o-visualization example/output/sleep_apnea_deicode_rrv.qzv
 ```
+
+#### Using rankratioviz in QIIME 2 with [songbird](https://github.com/biocore/songbird) output
+
+In order to use [songbird](https://github.com/biocore/songbird/)'s `FeatureData[Differential]`
+outputs with rankratioviz through QIIME 2, songbird needs to be
+installed. (You can still work with songbird outputs in rankratioviz'
+standalone mode, however.) If you install songbird after you install
+rankratioviz, you might need to run `qiime dev refresh-cache` in order to get
+QIIME 2 to find songbird.
+
+```
+qiime rankratioviz supervised-rank-plot --i-ranks rankratioviz/tests/input/byrd_differentials.tsv \
+                                        --i-table rankratioviz/tests/input/byrd_skin_table.biom \
+                                        --m-sample-metadata-file rankratioviz/tests/input/byrd_metadata.txt \
+                                        --o-visualization byrd_songbird_rrv.qzv
+```
+
 
 ### Using rankratioviz as a standalone program
 
