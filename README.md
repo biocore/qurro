@@ -59,8 +59,9 @@ visualize DEICODE output, and you can use the
 
 The only difference in using these commands is the QIIME 2 type accepted by
 their `--i-ranks` option.
-`unsupervised-rank-plot` expects a `PCoAResults % Properties(['biplot'])` input (i.e. an ordination file produced by DEICODE),
-and `supervised-rank-plot` expects a `FeatureData[Differential]` input (i.e. a
+`unsupervised-rank-plot` expects a `PCoAResults % Properties(['biplot'])` artifact
+(i.e. an ordination file produced by DEICODE),
+and `supervised-rank-plot` expects a `FeatureData[Differential]` artifact (i.e. a
 differentials file produced by songbird).
 
 #### Using rankratioviz in QIIME 2 with [DEICODE](https://github.com/biocore/DEICODE) output
@@ -100,9 +101,10 @@ qiime rankratioviz supervised-rank-plot --i-ranks rankratioviz/tests/input/byrd_
 
 ### Using rankratioviz as a standalone program
 
-rankratioviz can also be used on its own from the command line outside of QIIME 2.
-The following command produces an analogous visualization to the one generated
-with QIIME 2 above:
+rankratioviz can also be used on its own from the command line outside of QIIME 2,
+with either DEICODE or songbird output.
+The following command produces an analogous visualization to the first one generated
+from with QIIME 2 above:
 
 ```
 rankratioviz --ranks example/output/ordination.txt \
