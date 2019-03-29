@@ -46,7 +46,7 @@ accordingly, but in the meantime this is a necessary fix.) See
 
 ### Using rankratioviz through [QIIME 2](https://qiime2.org/)
 
-First, make sure that QIIME 2 is installed before installing rankratioviz.
+First, please make sure that QIIME 2 is installed before installing rankratioviz.
 Then run
 
 ```
@@ -56,6 +56,9 @@ qiime dev refresh-cache
 You can use the `qiime rankratioviz unsupervised-rank-plot` command to
 visualize DEICODE output, and you can use the
 `qiime rankratioviz supervised-rank-plot` command to visualize songbird output.
+Both of these commands generate a `.qzv` file that you can view using
+[view.qiime2.org](https://view.qiime2.org). (Currently, this file is not
+viewable using `qiime tools view`, but we're working on making that doable.)
 
 The only difference in using these commands is the QIIME 2 type accepted by
 their `--i-ranks` option.
@@ -64,57 +67,24 @@ their `--i-ranks` option.
 and `supervised-rank-plot` expects a `FeatureData[Differential]` artifact (i.e. a
 differentials file produced by songbird).
 
-#### Using rankratioviz in QIIME 2 with [DEICODE](https://github.com/biocore/DEICODE) output
+Examples of using rankratioviz through QIIME 2 are available in both of
+rankratioviz' example Jupyter notebooks, which are located [here](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks):
 
-A full example of analysis that uses DEICODE to from a count table to feature
-ranks to a visualization is provided
-[here](https://github.com/fedarko/rankratioviz/blob/master/example/rankratioviz_deicode_example.ipynb).
-A QZV file containing a rankratioviz visualization
-can be produced using the command below, and can be visualized by dragging/uploading
-the QZV file to
-[view.qiime2.org](https://view.qiime2.org/).
-
-```
-qiime rankratioviz unsupervised-rank-plot --i-ranks example/output/ordination.qza \
-                                          --i-table example/output/qiita_10422_table.biom.qza \
-                                          --m-sample-metadata-file rankratioviz/tests/input/sleep_apnea/qiita_10422_metadata.tsv \
-                                          --m-feature-metadata-file rankratioviz/tests/input/sleep_apnea/taxonomy.tsv \
-                                          --o-visualization example/output/sleep_apnea_deicode_rrv.qzv
-```
-
-#### Using rankratioviz in QIIME 2 with [songbird](https://github.com/biocore/songbird) output
-
-In order to use [songbird](https://github.com/biocore/songbird/)'s `FeatureData[Differential]`
-outputs with rankratioviz through QIIME 2, songbird needs to be
-installed. (You can still work with songbird outputs in rankratioviz'
-standalone mode, however.) If you install songbird after you install
-rankratioviz, you might need to run `qiime dev refresh-cache` in order to get
-QIIME 2 to find songbird.
-
-```
-qiime rankratioviz supervised-rank-plot --i-ranks rankratioviz/tests/input/byrd_differentials.tsv \
-                                        --i-table rankratioviz/tests/input/byrd_skin_table.biom \
-                                        --m-sample-metadata-file rankratioviz/tests/input/byrd_metadata.txt \
-                                        --o-visualization byrd_songbird_rrv.qzv
-```
-
+    - The notebook contained in the folder `DEICODE_sleep_apnea`
+      demonstrates using
+      [DEICODE](https://github.com/biocore/DEICODE) and then using
+      rankratioviz to visualize DEICODE's output.
+    - The notebook contained in the folder `songbird_red_sea` demonstrates using
+      [songbird](https://github.com/biocore/songbird) and then using
+      rankratioviz to visualize songbird's output.
 
 ### Using rankratioviz as a standalone program
 
-rankratioviz can also be used on its own from the command line outside of QIIME 2,
-with either DEICODE or songbird output.
-The following command produces an analogous visualization to the first one generated
-from with QIIME 2 above:
+Both of the above example Jupyter notebooks also show how you can use
+rankratioviz outside of QIIME 2, just through the command `rankratioviz`.
 
-```
-rankratioviz --ranks example/output/ordination.txt \
-             --table rankratioviz/tests/input/sleep_apnea/qiita_10422_table.biom \
-             --sample-metadata rankratioviz/tests/input/sleep_apnea/qiita_10422_metadata.tsv \
-             --feature-metadata rankratioviz/tests/input/sleep_apnea/taxonomy.tsv \
-             --output-dir example/output/standalone_rrv_plot_readme
-```
-
-This visualization can be displayed by running `python3 -m http.server` from
+This generates a directory containing a web visualization, which you can just view
+in a modern web browser by running `python3 -m http.server` from
 the output directory containing the visualization (in this case,
 `example/output/standalone_rrv_plot_readme`) and opening `localhost:8000` in
 your browser (replacing `8000` with the port number that you got from running

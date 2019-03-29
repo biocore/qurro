@@ -61,6 +61,8 @@ doc/source/generated
 
 # rankratioviz test outputs
 rankratioviz/tests/output/*
+# example jupyter notebook outputs
+example_notebooks/*/output/*
 
 # to cut down on clutter in this directory
 tmp_files/*
