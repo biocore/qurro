@@ -69,14 +69,14 @@ differentials file produced by songbird).
 
 Examples of using rankratioviz through QIIME 2 are available in both of
 rankratioviz' example Jupyter notebooks, which are located [here](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks):
-
-    - The notebook contained in the folder `DEICODE_sleep_apnea`
-      demonstrates using
-      [DEICODE](https://github.com/biocore/DEICODE) and then using
-      rankratioviz to visualize DEICODE's output.
-    - The notebook contained in the folder `songbird_red_sea` demonstrates using
-      [songbird](https://github.com/biocore/songbird) and then using
-      rankratioviz to visualize songbird's output.
+- The notebook contained in the folder [`DEICODE_sleep_apnea`](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks/DEICODE_sleep_apnea)
+  demonstrates using
+  [DEICODE](https://github.com/biocore/DEICODE) and then using
+  rankratioviz to visualize DEICODE's output.
+- The notebook contained in the folder [`songbird_red_sea`](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks/songbird_red_sea)
+  demonstrates using
+  [songbird](https://github.com/biocore/songbird) and then using
+  rankratioviz to visualize songbird's output.
 
 ### Using rankratioviz as a standalone program
 
