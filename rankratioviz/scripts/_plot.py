@@ -42,6 +42,8 @@ def plot(ranks: str, table: str, sample_metadata: str, feature_metadata: str,
     U, V, processed_table = process_input(feature_ranks, df_sample_metadata,
                                           loaded_biom, df_feature_metadata)
     gen_visualization(V, processed_table, U, output_dir)
+    print("Successfully generated a visualization in the folder {}.".format(
+          output_dir))
 
 
 if __name__ == '__main__':
