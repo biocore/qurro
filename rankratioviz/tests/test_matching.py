@@ -1,5 +1,4 @@
 import os
-import json
 from click.testing import CliRunner
 from rankratioviz.tests import testing_utilities
 import rankratioviz.scripts._plot as rrvp
