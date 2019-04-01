@@ -15,10 +15,6 @@
         <script src="vendor/vega-lite.min.js"></script>
         <script src="vendor/vega-embed.min.js"></script>
         <script src="rankratioviz.js"></script>
-        <script>
-            // Run on page load
-            ssmv.loadJSONFiles();
-        </script>
     </head>
 
     <body>
@@ -112,5 +108,32 @@
                     </p>
                 </td>
         </table>
+        <!-- This file will be created by the rankratioviz python script.
+             It will contain definitions for ssmv.rankPlotJSON and
+             ssmv.samplePlotJSON, and then invoke ssmv.makeRankPlot() and
+             ssmv.makeSamplePlot().
+
+             Leaving this code at the bottom of the page is sufficient to wait
+             until the rest of the stuff in the page has been loaded:
+             see https://stackoverflow.com/a/1861233.
+
+             We need to wait for the page to load before trying to construct
+             the Vega plots using vegaEmbed(); otherwise, plots.js' uses of
+             ssmv.makeRankPlot() and ssmv.makeSamplePlot() (which call
+             vegaEmbed()) will fail with the "ERROR: Signal bind element not
+             found: null" error described at
+             https://github.com/vega/vega-embed/issues/64.
+
+             In the past, this "accidentally" worked because I loaded the JSON
+             files using XMLHTTPRequests, which apparently take long enough /
+             start after the page has loaded. Switching to embedding the JSON
+             directly in the JS code caused this to start failing (since
+             the make...Plot() methods were being called immediately, and the
+             #rankPlot and #samplePlot DOM elements didn't exist yet).
+             Delaying the JSON loading and make...Plot() methods being called
+             until after everything else has been loaded (as is done by loading
+             the plots.js script at the bottom of the markup) fixes this.
+        -->
+        <script src="plots.js"></script>
     </body>
 </html>

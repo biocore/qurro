@@ -11,7 +11,7 @@ a __"ranked"__ plot of features (generally taxa or metabolites) alongside
 a scatterplot showing the __log ratios__ of selected feature counts within samples.
 
 rankratioviz can be used standalone (as a Python 3 script that generates a
-HTML/JS/CSS visualization) or as a [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be visualized at [view.qiime2.org](https://view.qiime2.org/)).
+HTML/JS/CSS visualization) or as a [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be visualized at [view.qiime2.org](https://view.qiime2.org/) or by using `qiime tools view`).
 **We're
 currently focused on restructuring the tool's codebase, so please bear with us as
 we make these enhancements available.**
@@ -57,8 +57,7 @@ You can use the `qiime rankratioviz unsupervised-rank-plot` command to
 visualize DEICODE output, and you can use the
 `qiime rankratioviz supervised-rank-plot` command to visualize songbird output.
 Both of these commands generate a `.qzv` file that you can view using
-[view.qiime2.org](https://view.qiime2.org). (Currently, this file is not
-viewable using `qiime tools view`, but we're working on making that doable.)
+[view.qiime2.org](https://view.qiime2.org).
 
 The only difference in using these commands is the QIIME 2 type accepted by
 their `--i-ranks` option.
@@ -83,15 +82,12 @@ rankratioviz' example Jupyter notebooks, which are located [here](https://github
 Both of the above example Jupyter notebooks also show how you can use
 rankratioviz outside of QIIME 2, just through the command `rankratioviz`.
 
-This generates a directory containing a web visualization, which you can just view
-in a modern web browser by running `python3 -m http.server` from
-the output directory containing the visualization (in this case,
-`example/output/standalone_rrv_plot_readme`) and opening `localhost:8000` in
-your browser (replacing `8000` with the port number that you got from running
-the command).
+This generates a directory containing a web visualization. You can view this
+visualization by opening the `index.html` file inside this directory in a
+modern web browser.
 
-You can also host the generated visualization on a simple web server (making it
-accessible to anyone).
+Of course, you can also host the generated visualization on a simple web
+server (making it accessible to anyone).
 
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:

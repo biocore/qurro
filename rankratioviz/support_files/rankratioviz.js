@@ -609,32 +609,3 @@ ssmv.uploadSelectMicrobesFile = function() {
         fr.readAsText(smFile);
     }
 };
-
-// Run on page startup: load and save JSON files, and make plots accordingly
-ssmv.loadJSONFiles = function() {
-    var jsonsToLoad = ["rank_plot.json", "sample_plot.json"];
-    for (var ji = 0; ji < 2; ji++) {
-        // Use an XMLHTTPRequest to get JSON for both plots, since we want to
-        // hang on to that instead of just passing it to vegaEmbed. See
-        // http://www.henryalgus.com/reading-binary-files-using-jquery-ajax/.
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", jsonsToLoad[ji]);
-        xhr.responseType = "json";
-        xhr.onload = function(e) {
-            if (this.status === 200) {
-                // By the time this function is called, ji is (probably)
-                // already 2. So we can't rely on it to figure out the JSON
-                // this XHR is for, which is why we check the response URL.
-                if (this.responseURL.endsWith("rank_plot.json")) {
-                    ssmv.rankPlotJSON = this.response;
-                    ssmv.makeRankPlot(this.response);
-                }
-                else {
-                    ssmv.samplePlotJSON = this.response;
-                    ssmv.makeSamplePlot(this.response);
-                }
-            }
-        };
-        xhr.send();
-    }
-}
