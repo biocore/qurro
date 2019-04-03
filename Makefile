@@ -11,4 +11,4 @@
 test:
 	# Use of -f per https://unix.stackexchange.com/a/68096
 	rm -rf rankratioviz/tests/output/*
-	python3 -B -m pytest rankratioviz/tests -s --cov=rankratioviz --cov-branch
+	python3 -B -m pytest rankratioviz/tests -s --cov=rankratioviz

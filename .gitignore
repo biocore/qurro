@@ -66,3 +66,5 @@ example_notebooks/*/output/*
 
 # to cut down on clutter in this directory
 tmp_files/*
+# Duplicate .coverage files
+.coverage.*
