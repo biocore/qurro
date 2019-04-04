@@ -96,20 +96,28 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # sample_metadata, respectively -- this is totally fine. The opposite,
     # though, is a big no-no.)
     table, V = matchdf(table, feature_ranks)
-    # Assert that every ranked feature was present in the BIOM table.
-    assert V.shape[0] == feature_ranks.shape[0]
+    # Ensure that every ranked feature was present in the BIOM table. Raise an
+    # error if this isn't the case.
+    if V.shape[0] != feature_ranks.shape[0]:
+        unsupported_feature_ct = feature_ranks.shape[0] - V.shape[0]
+        raise ValueError("Of the {} ranked features, {} were not present in "
+                         "the input BIOM table.".format(
+                             feature_ranks.shape[0], unsupported_feature_ct))
 
     table, U = matchdf(table.T, sample_metadata)
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
-    assert U.shape[0] >= 1
+    if U.shape[0] < 1:
+        raise ValueError("None of the {} samples in the sample metadata file "
+                         "are present in the input BIOM table.")
+
     dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
     if dropped_sample_ct > 0:
         print("NOTE: {} sample(s) in the sample metadata file were not "
-              "supported in the BIOM table, and have been removed from the "
+              "present in the BIOM table, and have been removed from the "
               "visualization.".format(dropped_sample_ct))
     else:
-        print("All sample(s) in the sample metadata file were supported in "
+        print("All sample(s) in the sample metadata file were present in "
               "the BIOM table.")
 
     labelled_feature_ranks = feature_ranks.copy()
