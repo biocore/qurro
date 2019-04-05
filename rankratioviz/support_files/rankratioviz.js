@@ -405,6 +405,9 @@ ssmv.sumAbundancesForSampleTaxa = function(sampleRow, taxa) {
  * property is true [which is default]).
  */
 ssmv.computeBalance = function(firstTop, firstBot) {
+    if (typeof firstTop !== "number" || typeof firstBot !== "number") {
+        throw "ssmv.computeBalance() called with non-numerical input(s)";
+    }
     if (firstTop <= 0 || firstBot <= 0) {
         return NaN;
     }
