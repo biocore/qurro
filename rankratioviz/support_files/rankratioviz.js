@@ -6,7 +6,7 @@
  * ssmv.makeRankPlot() and ssmv.makeSamplePlot() were based on the Basic
  * Example in https://github.com/vega/vega-embed/.
 
-/* We use the following "ssmv" namespace for everything here, to avoid
+ * We use the following "ssmv" namespace for everything here, to avoid
  * cluttering the global namespace (and to avoid potential collisions).
  */
 var ssmv = {};
