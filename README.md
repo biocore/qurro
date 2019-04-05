@@ -110,6 +110,8 @@ ratios.
 
 ## Acknowledgements
 
+### Dependencies
+
 Code files for the following three projects are distributed within
 `rankratioviz/support_file/vendor/`.
 See the `dependency_licenses/` directory for copies of these software projects'
@@ -128,6 +130,8 @@ instead installed alongside rankratioviz).
 - [pandas](https://pandas.pydata.org/)
 - [scikit-bio](http://scikit-bio.org/)
 
+### Testing Dependencies
+
 For python testing/style checking, rankratioviz uses
 [pytest](https://docs.pytest.org/en/latest/),
 [pytest-cov](https://github.com/pytest-dev/pytest-cov), and
@@ -140,6 +144,26 @@ For JavaScript testing/style checking, rankratioviz uses
 rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
 [Coveralls](https://coveralls.io/).
 
+### Data Sources
+
+The test data located in `rankratioviz/tests/input/byrd/` is from
+[this repository](https://github.com/knightlab-analyses/reference-frames).
+This data, in turn, originates from Byrd et al.'s 2017 study on atopic
+dermatitis [2].
+
+The test data located in `rankratioviz/tests/input/sleep_apnea/`
+(and in `example_notebooks/DEICODE_sleep_apnea/input/`)
+is from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
+which is associated with Tripathi et al.'s 2018 study on sleep apnea [4].
+
+Lastly, the data located in `example_notebooks/songbird_red_sea/input/` was
+taken from songbird's GitHub repository in its
+[`data/redsea/`](https://github.com/biocore/songbird/tree/master/data/redsea)
+folder, and is associated with
+[this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/) [3].
+
+### Special Thanks
+
 The design of rankratioviz was strongly inspired by
 [EMPeror](https://github.com/biocore/emperor) and
 [q2-emperor](https://github.com/qiime2/q2-emperor/), along with
@@ -149,22 +173,17 @@ Cameron Martino for a ton of work on getting the code in a distributable state
 (and making it work with QIIME 2). Thanks also to Jamie Morton, who wrote the
 original code for producing rank plots from which this is derived.
 
-The test data located in `rankratioviz/tests/input/byrd/` is from
-[this repository](https://github.com/knightlab-analyses/reference-frames).
-This data, in turn, originates from Byrd et al.'s 2017 study on atopic
-dermatitis [2].
-
-Additionally, the test data located in `rankratioviz/tests/input/sleep_apnea/`
-is from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
-which is associated with Tripathi et al.'s 2018 study on sleep apnea [3].
-
 ## References
 
 [1] Becker, R. A. & Cleveland, W. S. (1987). Brushing scatterplots. _Technometrics, 29_(2), 127-142. (Section 4.1 in particular talks about linking visualizations.)
 
 [2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
 
-[3] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
+[3] Thompson, L. R., Williams, G. J., Haroon, M. F., Shibl, A., Larsen, P.,
+Shorenstein, J., ... & Stingl, U. (2017). Metagenomic covariation along densely
+sampled environmental gradients in the Red Sea. _The ISME journal, 11_(1), 138.
+
+[4] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
 
 ## License
 
