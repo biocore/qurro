@@ -128,11 +128,17 @@ instead installed alongside rankratioviz).
 - [pandas](https://pandas.pydata.org/)
 - [scikit-bio](http://scikit-bio.org/)
 
-rankratioviz also uses [pytest](https://docs.pytest.org/en/latest/),
+For python testing/style checking, rankratioviz uses
+[pytest](https://docs.pytest.org/en/latest/),
 [pytest-cov](https://github.com/pytest-dev/pytest-cov), and
 [flake8](http://flake8.pycqa.org/en/latest/).
-(Along with [Travis-CI](https://travis-ci.org/) and
-[Coveralls](https://coveralls.io/).)
+
+For JavaScript testing/style checking, rankratioviz uses
+[Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), and
+[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome).
+
+rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
+[Coveralls](https://coveralls.io/).
 
 The design of rankratioviz was strongly inspired by
 [EMPeror](https://github.com/biocore/emperor) and

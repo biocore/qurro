@@ -12,3 +12,4 @@ test:
 	# Use of -f per https://unix.stackexchange.com/a/68096
 	rm -rf rankratioviz/tests/output/*
 	python3 -B -m pytest rankratioviz/tests -s --cov=rankratioviz
+	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html
