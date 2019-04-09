@@ -226,18 +226,14 @@ def gen_rank_plot(V):
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
-    # NOTE: The default size value of mark_bar() causes an apparent offset in
-    # the interval selection (we're not using that right now, except for the
-    # .interactive() thing, though, so I don't think this is currently
-    # relevant).
-    #
-    # Setting size to 1.0 fixes this; using mark_rule() also fixes this,
-    # probably because the lines in rule charts are just lines with a width
-    # of 1.0.
     rank_chart = alt.Chart(
         rank_data,
         title="Feature Ranks"
     ).mark_bar().encode(
+        # type="ordinal" needed on the scale here to make bars adjacent;
+        # see https://stackoverflow.com/a/55544817/10730311. We stick with
+        # type="quantitative" in order to allow for zooming/panning along the
+        # x-axis
         x=alt.X('x', title="Features", type="quantitative"),
         y=alt.Y(default_rank_col, type="quantitative"),
         color=alt.Color(
@@ -252,7 +248,7 @@ def gen_rank_plot(V):
     ).configure_axis(
         # Done in order to differentiate "None"-classification taxa from grid
         # lines
-        gridOpacity=0.35
+        gridColor="#f2f2f2"
     ).interactive()
 
     rank_chart_json = rank_chart.to_dict()
