@@ -231,9 +231,9 @@ def gen_rank_plot(V):
         title="Feature Ranks"
     ).mark_bar().encode(
         # type="ordinal" needed on the scale here to make bars adjacent;
-        # see https://stackoverflow.com/a/55544817/10730311. We stick with
-        # type="quantitative" in order to allow for zooming/panning along the
-        # x-axis
+        # see https://stackoverflow.com/a/55544817/10730311. For now, we're
+        # sticking with type="quantitative" in order to allow for
+        # zooming/panning along the x-axis.
         x=alt.X('x', title="Features", type="quantitative"),
         y=alt.Y(default_rank_col, type="quantitative"),
         color=alt.Color(
