@@ -43,10 +43,11 @@ def test_integration_q2_sleep_apnea():
     # Verify correctness of output.
     testing_utilities.validate_plots_js(out_dir, rloc, tloc, sloc)
 
+
 def test_integration_q2_byrd():
     """Tests rankratioviz on songbird output in the context of QIIME 2.
-    
-       Same notes as the above test function apply.
+
+       Same notes as in the above test function apply.
     """
 
     in_dir = os.path.join("rankratioviz", "tests", "input", "byrd")
