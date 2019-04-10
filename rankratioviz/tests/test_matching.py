@@ -55,7 +55,7 @@ def test_matchdf():
     assert_frame_equal(B, df41, check_like=True)
 
 
-def test_matching():
+def test_feature_metadata_and_dropped_sample():
     """Tests the behavior of rrv in matching sample metadata, feature metadata,
        ranks, and the BIOM table together.
     """

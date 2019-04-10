@@ -71,9 +71,10 @@ def matchdf(df1, df2):
     return df1.loc[idx], df2.loc[idx]
 
 
-def assert_df_indices_unique(df):
+def ensure_df_indices_unique(df, df_name):
     """Assert that the index of this DataFrame consists of unique IDs."""
-    assert len(df.index.unique()) == df.shape[0]
+    if len(df.index.unique()) != df.shape[0]:
+        raise ValueError("Index of the {} DataFrame is not unique.")
 
 
 def process_input(feature_ranks, sample_metadata, biom_table,
@@ -85,8 +86,8 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # feature and sample IDs, but we shouldn't be using sample IDs to query
     # feature IDs anyway. And besides, I think that should technically be
     # allowed.)
-    assert_df_indices_unique(feature_ranks)
-    assert_df_indices_unique(sample_metadata)
+    ensure_df_indices_unique(feature_ranks, "feature ranks")
+    ensure_df_indices_unique(sample_metadata, "sample metadata")
 
     table = biom_table.to_dataframe().to_dense()
     # Match features to BIOM table, and then match samples to BIOM table.
@@ -108,7 +109,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
     if U.shape[0] < 1:
-        raise ValueError("None of the {} samples in the sample metadata file "
+        raise ValueError("None of the samples in the sample metadata file "
                          "are present in the input BIOM table.")
 
     dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
@@ -131,7 +132,8 @@ def process_input(feature_ranks, sample_metadata, biom_table,
         # look at features that don't have any assigned metadata. However, if
         # we ever decide to enforce that all features must have corresponding
         # metadata values, this is how we'd do that.
-        # assert V.shape[0] == feature_ranks.shape[0]
+        # if V.shape[0] != feature_ranks.shape[0]:
+        #     raise ValueError("not every feature has corresponding metadata")
 
         no_metadata_feature_ids = (set(feature_ranks.index)
                                    - set(matched_feature_metadata.index))
@@ -164,7 +166,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # Assuming each feature ID is preserved in the new ID this should never be
     # the case, but in case we modify the above code this will still ensure
     # that something isn't going horribly wrong somehow.
-    assert_df_indices_unique(labelled_feature_ranks)
+    ensure_df_indices_unique(labelled_feature_ranks, "labelled feature ranks")
 
     return U, labelled_feature_ranks, table
 
