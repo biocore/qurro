@@ -116,9 +116,6 @@ def process_input(feature_ranks, sample_metadata, biom_table,
         print("NOTE: {} sample(s) in the sample metadata file were not "
               "present in the BIOM table, and have been removed from the "
               "visualization.".format(dropped_sample_ct))
-    else:
-        print("All sample(s) in the sample metadata file were present in "
-              "the BIOM table.")
 
     labelled_feature_ranks = feature_ranks.copy()
     # Now that we've matched up the BIOM table with the feature ranks and

@@ -91,16 +91,12 @@ def validate_samples_supported_output(output, expected_unsupported_samples):
           The number of samples expected to be unsupported in the BIOM table.
           If 0, expects all samples to be supported.
     """
-    if expected_unsupported_samples == 0:
-        expected_msg = ("All sample(s) in the sample metadata file were "
-                        "present in the BIOM table.")
-    else:
+    if expected_unsupported_samples > 0:
         expected_msg = ("NOTE: {} sample(s) in the sample metadata file were "
                         "not present in the BIOM table, and have been "
                         "removed from the visualization.".format(
                             expected_unsupported_samples))
-
-    assert expected_msg in output
+        assert expected_msg in output
 
 
 def basic_vegalite_json_validation(json_obj):
