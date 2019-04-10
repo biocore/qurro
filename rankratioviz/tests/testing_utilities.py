@@ -1,7 +1,69 @@
 import os
 import json
 from pytest import approx
+from click.testing import CliRunner
+from qiime2 import Artifact, Metadata
+from qiime2.plugins import rankratioviz as q2rankratioviz
+import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_processing import rank_file_to_df
+
+
+def run_integration_test(input_dir_name, output_dir_name, ranks_name,
+                         table_name, sample_metadata_name,
+                         feature_metadata_name=None, use_q2=False,
+                         q2_ranking_tool="songbird",
+                         expected_unsupported_samples=0):
+    """Runs rankratioviz, and validates the output somewhat."""
+
+    in_dir = os.path.join("rankratioviz", "tests", "input", input_dir_name)
+    rloc = os.path.join(in_dir, ranks_name)
+    tloc = os.path.join(in_dir, table_name)
+    sloc = os.path.join(in_dir, sample_metadata_name)
+    floc = None
+    if feature_metadata_name is not None:
+        floc = os.path.join(in_dir, feature_metadata_name)
+    out_dir = os.path.join("rankratioviz", "tests", "output", output_dir_name)
+
+    rrv_qzv = result = None
+    if use_q2:
+        if q2_ranking_tool == "songbird":
+            q2_action = q2rankratioviz.actions.supervised_rank_plot
+            q2_rank_type = "FeatureData[Differential]"
+        elif q2_ranking_tool == "DEICODE":
+            q2_action = q2rankratioviz.actions.unsupervised_rank_plot
+            q2_rank_type = "PCoAResults % Properties(['biplot'])"
+        else:
+            raise ValueError(
+                "Unknown q2_ranking_tool: {}".format(q2_ranking_tool)
+            )
+        # Import all of these files as Q2 artifacts or metadata.
+        rank_qza = Artifact.import_data(q2_rank_type, rloc)
+        table_qza = Artifact.import_data("FeatureTable[Frequency]", tloc)
+        sample_metadata = Metadata.load(sloc)
+        feature_metadata = None
+        if floc is not None:
+            feature_metadata = Metadata.load(floc)
+
+        # Now that everything's imported, try running rankratioviz
+        rrv_qzv = q2_action(ranks=rank_qza, table=table_qza,
+                            sample_metadata=sample_metadata,
+                            feature_metadata=feature_metadata)
+        # Output the contents of the visualization to out_dir.
+        rrv_qzv.visualization.export_data(out_dir)
+    else:
+        # Run rankratioviz "standalone" -- i.e. outside of QIIME 2
+        runner = CliRunner()
+        args = ["--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
+                "--output-dir", out_dir]
+        if floc is not None:
+            args += ["--feature-metadata", floc]
+        result = runner.invoke(rrvp.plot, args)
+        # Validate that the correct exit code and output were recorded
+        validate_standalone_result(
+            result, expected_unsupported_samples=expected_unsupported_samples
+        )
+    rank_json, sample_json = validate_plots_js(out_dir, rloc, tloc, sloc)
+    return rank_json, sample_json
 
 
 def validate_standalone_result(result, expected_unsupported_samples=0):

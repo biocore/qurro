@@ -1,7 +1,4 @@
-import os
-from click.testing import CliRunner
-from rankratioviz.tests import testing_utilities
-import rankratioviz.scripts._plot as rrvp
+from rankratioviz.tests.testing_utilities import run_integration_test
 
 
 def test_matching():
@@ -9,30 +6,11 @@ def test_matching():
        ranks, and the BIOM table together.
     """
 
-    # TODO abstract all of this (down to sample plot JSON validation) down to a
-    # testing_utilities function, which can be called with test name and input
-    # file names. Ideally we can have all the integration tests just be one
-    # line long or something.
-    input_dir = os.path.join("rankratioviz", "tests", "input", "matching_test")
-    out_dir = os.path.join("rankratioviz", "tests", "output", "matching_test")
-
-    rloc = os.path.join(input_dir, "differentials.tsv")
-    tloc = os.path.join(input_dir, "mt.biom")
-    sloc = os.path.join(input_dir, "sample_metadata.txt")
-    floc = os.path.join(input_dir, "feature_metadata.txt")
-
-    runner = CliRunner()
-    result = runner.invoke(rrvp.plot, [
-        "--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
-        "--feature-metadata", floc, "--output-dir", out_dir
-    ])
-
-    # The 1 we pass to validate_standalone_result() corresponds to the 1
-    # unsupported sample -- this lets the function know what output to expect
-    testing_utilities.validate_standalone_result(result, 1)
-    rank_json, sample_json = testing_utilities.validate_plots_js(out_dir, rloc,
-                                                                 tloc, sloc)
-
+    rank_json, sample_json = run_integration_test(
+        "matching_test", "matching_test", "differentials.tsv", "mt.biom",
+        "sample_metadata.txt", feature_metadata_name="feature_metadata.txt",
+        expected_unsupported_samples=1
+    )
     # Assert that Taxon3 has been annotated.
     data_name = rank_json["data"]["name"]
     # Hardcoded based on the one populated row in floc. This shouldn't
