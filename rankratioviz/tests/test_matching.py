@@ -1,4 +1,58 @@
+from pandas import DataFrame
+from pandas.testing import assert_frame_equal
+from rankratioviz.generate import matchdf
 from rankratioviz.tests.testing_utilities import run_integration_test
+
+
+def test_matchdf():
+    """Tests the matchdf() function in rankratioviz.generate."""
+
+    df1 = DataFrame({'col1': [1, 2, 3, 4, 5], 'col2': [6, 7, 8, 9, 10],
+                     'col3': [11, 12, 13, 14, 15]},
+                    index=['a', 'b', 'c', 'd', 'e'])
+    df2 = DataFrame({'colA': [5, 4, 3, 2, 1], 'colB': [10, 9, 8, 7, 6],
+                     'colC': [15, 14, 13, 12, 11],
+                     'colD': ['q', 'w', 'e', 'r', 't']},
+                    index=['a', 'c', 'd', 'x', 'y'])
+    df3 = DataFrame(index=['a', 'x'])
+    df4 = DataFrame(index=['x'])
+
+    # The ground truth DF from matching dfX with dfY is named dfXY
+    df12 = DataFrame({'col1': [1, 3, 4], 'col2': [6, 8, 9],
+                      'col3': [11, 13, 14]}, index=['a', 'c', 'd'])
+    df21 = DataFrame({'colA': [5, 4, 3], 'colB': [10, 9, 8],
+                     'colC': [15, 14, 13], 'colD': ['q', 'w', 'e']},
+                     index=['a', 'c', 'd'])
+    df13 = DataFrame({'col1': [1], 'col2': [6], 'col3': [11]}, index=['a'])
+    df31 = DataFrame(index=['a'])
+    # we need to specify a dtype of "int64" here because pandas, by default,
+    # infers that df14's dtype is just "object"; however, the result of
+    # matching df1 and df4 will have an "int64" dtype (since df1 already has
+    # an inferred "int64" dtype).
+    df14 = DataFrame(columns=['col1', 'col2', 'col3']).astype("int64")
+    df41 = DataFrame()
+
+    # Basic testing: ensure that matching results match up with the ground
+    # truths
+    A, B = matchdf(df1, df2)
+    assert_frame_equal(A, df12, check_like=True)
+    assert_frame_equal(B, df21, check_like=True)
+
+    # Test "commutativity" of matchdf() -- reversing the DFs' orders shouldn't
+    # change the matching results (aside from the output order, of course)
+    A, B = matchdf(df2, df1)
+    assert_frame_equal(A, df21, check_like=True)
+    assert_frame_equal(B, df12, check_like=True)
+
+    # Test that matching with empty DFs works as expected
+    # First, try matching in the case where at least one index name matches
+    A, B = matchdf(df1, df3)
+    assert_frame_equal(A, df13, check_like=True)
+    assert_frame_equal(B, df31, check_like=True)
+    # Next, try matching in the case where there's no overlap in index names
+    A, B = matchdf(df1, df4)
+    assert_frame_equal(A, df14, check_like=True)
+    assert_frame_equal(B, df41, check_like=True)
 
 
 def test_matching():
