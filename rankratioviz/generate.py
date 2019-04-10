@@ -192,16 +192,20 @@ def gen_rank_plot(V):
     # values (0 for the first column, 1 for the second column, etc.)
     V.columns = [fix_id(str(c)) for c in V.columns]
 
+    # NOTE that until this point we've treated the actual rank values as just
+    # "objects", as far as pandas is concerned. However, if we continue to
+    # treat them as objects when sorting them, we'll get a list of feature
+    # ranks in lexicographic order... which is not what we want. So we just
+    # ensure that all of the columns contain numeric data.
+    for col in V.columns:
+        V[col] = pd.to_numeric(V[col])
+
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
     default_rank_col = V.columns[0]
 
-    # Sort the ranked features in ascending order by their first rank.
-    # NOTE that until this point we've treated the actual rank values as just
-    # "objects", as far as pandas is concerned. However, if we continue to
-    # treat them as objects when sorting them, we'll get a list of feature
-    # ranks in lexicographic order... which is not what we want.
-    V[default_rank_col] = pd.to_numeric(V[default_rank_col])
+    # Sort the ranked features in ascending order by their first rank. Since
+    # all the columns in V are now numeric, this should work ok.
     rank_vals = V.sort_values(by=[default_rank_col])
 
     # "x" keeps track of the sorted order of the ranks. It's just a range of
