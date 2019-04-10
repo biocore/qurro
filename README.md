@@ -11,7 +11,10 @@ a __"ranked"__ plot of features (generally taxa or metabolites) alongside
 a scatterplot showing the __log ratios__ of selected feature counts within samples.
 
 rankratioviz can be used standalone (as a Python 3 script that generates a
-HTML/JS/CSS visualization) or as a [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be visualized at [view.qiime2.org](https://view.qiime2.org/) or by using `qiime tools view`).
+folder containing a HTML/JS/CSS visualization) or as a
+[QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
+visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
+`qiime tools view`).
 **We're
 currently focused on restructuring the tool's codebase, so please bear with us as
 we make these enhancements available.**
