@@ -6,9 +6,9 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 from biom import load_table
-import pandas as pd
 import click
-from rankratioviz.generate import process_input, gen_visualization
+from rankratioviz.generate import (process_input, gen_visualization,
+                                   read_metadata_from_filepath)
 from rankratioviz._rank_processing import rank_file_to_df
 
 
@@ -28,16 +28,13 @@ def plot(ranks: str, table: str, sample_metadata: str, feature_metadata: str,
          output_dir: str) -> None:
     """Generates a plot of ranked taxa/metabolites and their abundances."""
 
-    def read_metadata(md_file_loc):
-        return pd.read_csv(md_file_loc, index_col=0, sep='\t')
-
     loaded_biom = load_table(table)
-    df_sample_metadata = read_metadata(sample_metadata)
+    df_sample_metadata = read_metadata_from_filepath(sample_metadata)
     feature_ranks = rank_file_to_df(ranks)
 
     df_feature_metadata = None
     if feature_metadata is not None:
-        df_feature_metadata = read_metadata(feature_metadata)
+        df_feature_metadata = read_metadata_from_filepath(feature_metadata)
 
     U, V, processed_table = process_input(feature_ranks, df_sample_metadata,
                                           loaded_biom, df_feature_metadata)

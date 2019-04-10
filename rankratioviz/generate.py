@@ -61,6 +61,16 @@ def fix_id(fid):
 #     return new_id
 
 
+def read_metadata_from_filepath(path):
+    """Given a metadata file path, reads it in (returning a pandas DataFrame).
+
+       Assumes the metadata file is tab-separated and has an "index column" of
+       0 (that is, the first column in the metadata file defines the sample
+       IDs).
+    """
+    return pd.read_csv(path, sep='\t', index_col=0)
+
+
 def matchdf(df1, df2):
     """Filters both DataFrames to just the rows of their shared indices.
 
