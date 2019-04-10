@@ -11,7 +11,8 @@ def test_matching():
 
     # TODO abstract all of this (down to sample plot JSON validation) down to a
     # testing_utilities function, which can be called with test name and input
-    # file names.
+    # file names. Ideally we can have all the integration tests just be one
+    # line long or something.
     input_dir = os.path.join("rankratioviz", "tests", "input", "matching_test")
     out_dir = os.path.join("rankratioviz", "tests", "output", "matching_test")
 
@@ -26,14 +27,11 @@ def test_matching():
         "--feature-metadata", floc, "--output-dir", out_dir
     ])
 
-    plots_loc = os.path.join(out_dir, "plots.js")
-    rank_json, sample_json = testing_utilities.get_plot_jsons(plots_loc)
-
-    # Check that, at least, the test didn't cause any blatant errors
-    assert result.exit_code == 0
-    testing_utilities.validate_samples_supported_output(result.output, 1)
-    testing_utilities.validate_rank_plot_json(rloc, rank_json)
-    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_json)
+    # The 1 we pass to validate_standalone_result() corresponds to the 1
+    # unsupported sample -- this lets the function know what output to expect
+    testing_utilities.validate_standalone_result(result, 1)
+    rank_json, sample_json = testing_utilities.validate_plots_js(out_dir, rloc,
+                                                                 tloc, sloc)
 
     # Assert that Taxon3 has been annotated.
     data_name = rank_json["data"]["name"]

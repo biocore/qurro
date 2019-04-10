@@ -1,6 +1,48 @@
+import os
 import json
 from pytest import approx
 from rankratioviz._rank_processing import rank_file_to_df
+
+
+def validate_standalone_result(result, expected_unsupported_samples=0):
+    """Validates the result (exit code and output) of running rrv standalone.
+
+       Parameters
+       ----------
+       result: click.testing.Result
+          This is returned from click's CliRunner.invoke() method.
+
+       expected_unsupported_samples: int
+          The number of samples expected to be unsupported in the BIOM table.
+          Defaults to 0 (i.e. all samples are expected to be supported).
+    """
+    assert result.exit_code == 0
+    validate_samples_supported_output(result.output,
+                                      expected_unsupported_samples)
+
+
+def validate_plots_js(out_dir, rloc, tloc, sloc):
+    """Takes care of extracting JSONs from plots.js and validating them.
+
+       Parameters
+       ----------
+       out_dir: str
+           The output directory (containing the various "support files" of a
+           rankratioviz visualization, including plots.js).
+
+       rloc, tloc, sloc: str
+           Paths to the ranks file (either DEICODE or songbird), BIOM table,
+           and sample metadata file used as input to rankratioviz.
+    """
+
+    plots_loc = os.path.join(out_dir, "plots.js")
+    rank_json, sample_json = get_plot_jsons(plots_loc)
+
+    # Validate plot JSONs
+    validate_rank_plot_json(rloc, rank_json)
+    validate_sample_plot_json(tloc, sloc, sample_json)
+
+    return rank_json, sample_json
 
 
 def get_plot_jsons(plots_js_loc):

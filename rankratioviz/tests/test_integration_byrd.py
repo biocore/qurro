@@ -21,12 +21,5 @@ def test_byrd():
         "--output-dir", out_dir
     ])
 
-    plots_loc = os.path.join(out_dir, "plots.js")
-    rank_json, sample_json = testing_utilities.get_plot_jsons(plots_loc)
-
-    # Validate basic stuff about the program execution
-    assert result.exit_code == 0
-    testing_utilities.validate_samples_supported_output(result.output, 0)
-    # Validate the rank and sample plot JSON files against the original data
-    testing_utilities.validate_rank_plot_json(rloc, rank_json)
-    testing_utilities.validate_sample_plot_json(tloc, sloc, sample_json)
+    testing_utilities.validate_standalone_result(result)
+    testing_utilities.validate_plots_js(out_dir, rloc, tloc, sloc)
