@@ -1,6 +1,5 @@
 language: python
 python:
-    - "3.5"
     - "3.6"
 before_install:
     # Here, we install the stuff needed to test the q2-rankratioviz plugin.
@@ -15,18 +14,16 @@ before_install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda info -a
-    # 2. Install QIIME 2 (exact version depends on python version) (wget and
-    # conda commands here from https://docs.qiime2.org/201[x.y]/install/native)
-    - if [ $TRAVIS_PYTHON_VERSION == "3.6" ];
-      then
-        wget https://data.qiime2.org/distro/core/qiime2-2019.1-py36-linux-conda.yml;
-        conda env create -n qiime2-2019.1 --file qiime2-2019.1-py36-linux-conda.yml;
-        source activate qiime2-2019.1;
-      else
-        wget https://data.qiime2.org/distro/core/qiime2-2018.11-py35-linux-conda.yml;
-        conda env create -n qiime2-2018.11 --file qiime2-2018.11-py35-linux-conda.yml;
-        source activate qiime2-2018.11;
-      fi
+    # 2. Install QIIME 2 2019.1 (commands from
+    # https://docs.qiime2.org/2019.1/install/native)
+    #
+    # With QIIME 2 2018.11, I get a version conflict with tensorflow (needed
+    # for songbird) and Q2's required numpy versions. We could probably get
+    # around that, but I'm ok with q2-rankratioviz only supporting QIIME 2
+    # 2019.1 or later.
+    - wget https://data.qiime2.org/distro/core/qiime2-2019.1-py36-linux-conda.yml
+    - conda env create -n qiime2-2019.1 --file qiime2-2019.1-py36-linux-conda.yml
+    - source activate qiime2-2019.1
     # 3. Install songbird (needed so QIIME 2 knows how to load
     # FeatureData[Differential] artifacts).
     - git clone https://github.com/biocore/songbird.git
