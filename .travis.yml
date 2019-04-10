@@ -2,12 +2,40 @@ language: python
 python:
     - "3.5"
     - "3.6"
+before_install:
+    # Here, we install the stuff needed to test the q2-rankratioviz plugin.
+    # This will cause tests to take a while, but that's an ok price to pay.
+    #
+    # 1. Install conda (commands from
+    # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/use-conda-with-travis-ci.html)
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH="$HOME/miniconda/bin:$PATH"
+    - hash -r
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda info -a
+    # 2. Install QIIME 2 (exact version depends on python version) (wget and
+    # conda commands here from https://docs.qiime2.org/201[x.y]/install/native)
+    - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then
+        wget https://data.qiime2.org/distro/core/qiime2-2019.1-py36-linux-conda.yml
+        conda env create -n qiime2-2019.1 --file qiime2-2019.1-py36-linux-conda.yml
+      else
+        wget https://data.qiime2.org/distro/core/qiime2-2018.11-py35-linux-conda.yml
+        conda env create -n qiime2-2018.11 --file qiime2-2018.11-py35-linux-conda.yml
+      fi
+    # 3. Install songbird (needed so QIIME 2 knows how to load
+    # FeatureData[Differential] artifacts).
+    - git clone https://github.com/biocore/songbird.git
+    - pip install -e songbird
 install:
     - pip install -e .
     - pip install flake8
     - pip install coveralls
     - npm install -g mocha-headless-chrome
 script:
+    # Just to be safe, and to ensure that we pick up on the songbird install
+    - qiime dev refresh-cache
     - make test
     - flake8
 after_success:
