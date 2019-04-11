@@ -47,50 +47,17 @@ of these characters. (Eventually rankratioviz should be able to handle this
 accordingly, but in the meantime this is a necessary fix.) See
 [this issue](https://github.com/fedarko/rankratioviz/issues/66) for context.
 
-### Using rankratioviz through [QIIME 2](https://qiime2.org/)
+### Tutorials
 
-First, please make sure that QIIME 2 is installed before installing rankratioviz.
-Then run
-
-```
-qiime dev refresh-cache
-```
-
-You can use the `qiime rankratioviz unsupervised-rank-plot` command to
-visualize DEICODE output, and you can use the
-`qiime rankratioviz supervised-rank-plot` command to visualize songbird output.
-Both of these commands generate a `.qzv` file that you can view using
-[view.qiime2.org](https://view.qiime2.org).
-
-The only difference in using these commands is the QIIME 2 type accepted by
-their `--i-ranks` option.
-`unsupervised-rank-plot` expects a `PCoAResults % Properties(['biplot'])` artifact
-(i.e. an ordination file produced by DEICODE),
-and `supervised-rank-plot` expects a `FeatureData[Differential]` artifact (i.e. a
-differentials file produced by songbird).
-
-Examples of using rankratioviz through QIIME 2 are available in both of
-rankratioviz' example Jupyter notebooks, which are located [here](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks):
-- The notebook contained in the folder [`DEICODE_sleep_apnea`](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks/DEICODE_sleep_apnea)
-  demonstrates using
-  [DEICODE](https://github.com/biocore/DEICODE) and then using
+Examples of using rankratioviz (both inside and outside of QIIME 2) are
+available in rankratioviz' example Jupyter notebooks, which are located
+[here](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks):
+- [`deicode_example.ipynb`](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
+  demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and using
   rankratioviz to visualize DEICODE's output.
-- The notebook contained in the folder [`songbird_red_sea`](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks/songbird_red_sea)
-  demonstrates using
-  [songbird](https://github.com/biocore/songbird) and then using
+- [`songbird_example.ipynb`](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
+  demonstrates using [songbird](https://github.com/biocore/songbird) and using
   rankratioviz to visualize songbird's output.
-
-### Using rankratioviz as a standalone program
-
-Both of the above example Jupyter notebooks also show how you can use
-rankratioviz outside of QIIME 2, just through the command `rankratioviz`.
-
-This generates a directory containing a web visualization. You can view this
-visualization by opening the `index.html` file inside this directory in a
-modern web browser.
-
-Of course, you can also host the generated visualization on a simple web
-server (making it accessible to anyone).
 
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:
