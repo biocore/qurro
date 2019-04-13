@@ -117,6 +117,9 @@ def validate_standalone_result(result, expected_unsupported_samples=0,
         expected_message = ("{} {} not present in the input BIOM "
                             "table.".format(expected_unsupported_features,
                                             word))
+        # Checking .stderr didn't seem to work for me, so to check the text of
+        # the ValueError we just use its .args property (which should contain
+        # the message we passed when raising it)
         assert expected_message in result.exc_info[1].args[0]
     elif expect_all_unsupported_samples:
         assert result.exit_code != 0
