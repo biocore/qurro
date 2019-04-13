@@ -89,7 +89,7 @@ def ensure_df_headers_unique(df, df_name):
            error message thrown if the DataFrame has any non-unique IDs.
     """
     if len(df.index.unique()) != df.shape[0]:
-        raise ValueError("Index of the {} DataFrame is not"
+        raise ValueError("Indices of the {} DataFrame are not"
                          " unique.".format(df_name))
 
     if len(df.columns.unique()) != df.shape[1]:
