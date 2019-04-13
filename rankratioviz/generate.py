@@ -101,9 +101,14 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # error if this isn't the case.
     if V.shape[0] != feature_ranks.shape[0]:
         unsupported_feature_ct = feature_ranks.shape[0] - V.shape[0]
-        raise ValueError("Of the {} ranked features, {} were not present in "
+        # making this error message as pretty as possible
+        word = "were"
+        if unsupported_feature_ct == 1:
+            word = "was"
+        raise ValueError("Of the {} ranked features, {} {} not present in "
                          "the input BIOM table.".format(
-                             feature_ranks.shape[0], unsupported_feature_ct))
+                             feature_ranks.shape[0], unsupported_feature_ct,
+                             word))
 
     table, U = matchdf(table.T, sample_metadata)
     # Allow for dropped samples (e.g. negative controls), but ensure that at
