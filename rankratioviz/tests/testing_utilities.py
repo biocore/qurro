@@ -123,7 +123,7 @@ def validate_standalone_result(result, expected_unsupported_samples=0,
         assert type(result.exception) == ValueError
         expected_message = ("None of the samples in the sample metadata file "
                             "are present in the input BIOM table.")
-        assert expected_message in result.exc_info.args[1].args[0]
+        assert expected_message in result.exc_info[1].args[0]
     else:
         # There shouldn't be any errors in the output!
         # *Maybe* a warning about unsupported samples, but we know that at

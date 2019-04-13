@@ -57,11 +57,21 @@ def test_matchdf():
 
 def test_dropping_features():
     """Tests that rrv raises an error when a feature is unsupported."""
-    rank_json, sample_json = run_integration_test(
+    run_integration_test(
         "matching_test", "matching_test/dropped_feature", "differentials.tsv",
         "dropped_feature.biom", "sample_metadata.txt",
         feature_metadata_name="feature_metadata.txt",
         expected_unsupported_features=1
+    )
+
+
+def test_dropping_all_samples():
+    """Tests that rrv raises an error when all samples are unsupported."""
+    run_integration_test(
+        "matching_test", "matching_test/all_samples_dropped",
+        "differentials.tsv", "all_samples_dropped.biom", "sample_metadata.txt",
+        feature_metadata_name="feature_metadata.txt",
+        expect_all_unsupported_samples=True
     )
 
 
