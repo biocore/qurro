@@ -74,7 +74,8 @@ def matchdf(df1, df2):
 def ensure_df_indices_unique(df, df_name):
     """Assert that the index of this DataFrame consists of unique IDs."""
     if len(df.index.unique()) != df.shape[0]:
-        raise ValueError("Index of the {} DataFrame is not unique.")
+        raise ValueError("Index of the {} DataFrame is not"
+                         " unique.".format(df_name))
 
 
 def process_input(feature_ranks, sample_metadata, biom_table,
