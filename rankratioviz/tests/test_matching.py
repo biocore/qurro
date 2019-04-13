@@ -55,6 +55,16 @@ def test_matchdf():
     assert_frame_equal(B, df41, check_like=True)
 
 
+def test_dropping_features():
+    """Tests that rrv raises an error when a feature is unsupported."""
+    rank_json, sample_json = run_integration_test(
+        "matching_test", "matching_test/dropped_feature", "differentials.tsv",
+        "dropped_feature.biom", "sample_metadata.txt",
+        feature_metadata_name="feature_metadata.txt",
+        expected_unsupported_features=1
+    )
+
+
 def test_feature_metadata_and_dropped_sample():
     """Tests the behavior of rrv in matching sample metadata, feature metadata,
        ranks, and the BIOM table together.

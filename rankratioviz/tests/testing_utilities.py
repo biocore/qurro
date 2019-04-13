@@ -12,7 +12,9 @@ def run_integration_test(input_dir_name, output_dir_name, ranks_name,
                          table_name, sample_metadata_name,
                          feature_metadata_name=None, use_q2=False,
                          q2_ranking_tool="songbird",
-                         expected_unsupported_samples=0):
+                         expected_unsupported_samples=0,
+                         expected_unsupported_features=0,
+                         expect_all_unsupported_samples=False):
     """Runs rankratioviz, and validates the output somewhat."""
 
     in_dir = os.path.join("rankratioviz", "tests", "input", input_dir_name)
@@ -60,13 +62,25 @@ def run_integration_test(input_dir_name, output_dir_name, ranks_name,
         result = runner.invoke(rrvp.plot, args)
         # Validate that the correct exit code and output were recorded
         validate_standalone_result(
-            result, expected_unsupported_samples=expected_unsupported_samples
+            result, expected_unsupported_samples=expected_unsupported_samples,
+            expect_all_unsupported_samples=expect_all_unsupported_samples,
+            expected_unsupported_features=expected_unsupported_features
         )
-    rank_json, sample_json = validate_plots_js(out_dir, rloc, tloc, sloc)
-    return rank_json, sample_json
+    # If we expected this test to fail due to invalid inputs, don't bother
+    # doing any JSON validation.
+    # (Input validity checking is done in generate.process_input(), before
+    # any output files are created in generate.gen_visualization() -- so no
+    # output should be created anyway in these cases.)
+    if expect_all_unsupported_samples or expected_unsupported_features > 0:
+        return None, None
+    else:
+        rank_json, sample_json = validate_plots_js(out_dir, rloc, tloc, sloc)
+        return rank_json, sample_json
 
 
-def validate_standalone_result(result, expected_unsupported_samples=0):
+def validate_standalone_result(result, expected_unsupported_samples=0,
+                               expect_all_unsupported_samples=False,
+                               expected_unsupported_features=0):
     """Validates the result (exit code and output) of running rrv standalone.
 
        Parameters
@@ -77,10 +91,46 @@ def validate_standalone_result(result, expected_unsupported_samples=0):
        expected_unsupported_samples: int
           The number of samples expected to be unsupported in the BIOM table.
           Defaults to 0 (i.e. all samples are expected to be supported).
+
+       expect_all_unsupported_samples: bool
+          Whether or not to expect *all* samples to be unsupported in the BIOM
+          table. Defaults to False (i.e. at least one sample is expected to be
+          supported). If this is set to True, expected_unsupported_samples will
+          not be used.
+
+       expected_unsupported_featuress: int
+          The number of features expected to be unsupported in the BIOM table.
+          Defaults to 0 (i.e. all features are expected to be supported).
     """
-    assert result.exit_code == 0
-    validate_samples_supported_output(result.output,
-                                      expected_unsupported_samples)
+    # NOTE: we expect an error with unsupported feature(s) to take precedence
+    # over an error with all unsupported samples. There isn't a super complex
+    # reason for this aside from that being how I structured the order of
+    # checks in rankratioviz.generate.
+    if expected_unsupported_features > 0:
+        # The program should fail with a nonzero exit code (indicating some
+        # sort of error).
+        assert result.exit_code != 0
+        assert type(result.exception) == ValueError
+        word = "were"
+        if expected_unsupported_features == 1:
+            word = "was"
+        expected_message = ("{} {} not present in the input BIOM "
+                            "table.".format(expected_unsupported_features,
+                                            word))
+        assert expected_message in result.exc_info[1].args[0]
+    elif expect_all_unsupported_samples:
+        assert result.exit_code != 0
+        assert type(result.exception) == ValueError
+        expected_message = ("None of the samples in the sample metadata file "
+                            "are present in the input BIOM table.")
+        assert expected_message in result.exc_info.args[1].args[0]
+    else:
+        # There shouldn't be any errors in the output!
+        # *Maybe* a warning about unsupported samples, but we know that at
+        # least one sample should be supported (so rrv can still work).
+        assert result.exit_code == 0
+        validate_samples_supported_output(result.output,
+                                          expected_unsupported_samples)
 
 
 def validate_plots_js(out_dir, rloc, tloc, sloc):
