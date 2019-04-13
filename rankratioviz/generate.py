@@ -71,10 +71,29 @@ def matchdf(df1, df2):
     return df1.loc[idx], df2.loc[idx]
 
 
-def ensure_df_indices_unique(df, df_name):
-    """Assert that the index of this DataFrame consists of unique IDs."""
+def ensure_df_headers_unique(df, df_name):
+    """Raises an error if the index or columns of the DataFrame aren't unique.
+
+       (If both index and columns are non-unique, the index error will take
+       precedence.)
+
+       If these fields are unique, no errors are raised and nothing (None) is
+       implicitly returned.
+
+       Parameters
+       ----------
+
+       df: pandas.DataFrame
+       df_name: str
+           The "name" of the DataFrame -- this is displayed to the user in the
+           error message thrown if the DataFrame has any non-unique IDs.
+    """
     if len(df.index.unique()) != df.shape[0]:
         raise ValueError("Index of the {} DataFrame is not"
+                         " unique.".format(df_name))
+
+    if len(df.columns.unique()) != df.shape[1]:
+        raise ValueError("Columns of the {} DataFrame are not"
                          " unique.".format(df_name))
 
 
@@ -87,8 +106,8 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # feature and sample IDs, but we shouldn't be using sample IDs to query
     # feature IDs anyway. And besides, I think that should technically be
     # allowed.)
-    ensure_df_indices_unique(feature_ranks, "feature ranks")
-    ensure_df_indices_unique(sample_metadata, "sample metadata")
+    ensure_df_headers_unique(feature_ranks, "feature ranks")
+    ensure_df_headers_unique(sample_metadata, "sample metadata")
 
     table = biom_table.to_dataframe().to_dense()
     # Match features to BIOM table, and then match samples to BIOM table.
@@ -172,7 +191,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # Assuming each feature ID is preserved in the new ID this should never be
     # the case, but in case we modify the above code this will still ensure
     # that something isn't going horribly wrong somehow.
-    ensure_df_indices_unique(labelled_feature_ranks, "labelled feature ranks")
+    ensure_df_headers_unique(labelled_feature_ranks, "labelled feature ranks")
 
     return U, labelled_feature_ranks, table
 
