@@ -56,12 +56,21 @@ def test_matchdf():
 
 
 def test_dropping_features():
-    """Tests that rrv raises an error when a feature is unsupported."""
+    """Tests that rrv raises an error when > 0 feature(s) are unsupported."""
+
+    # Test that dropping 1 feature produces an error
     run_integration_test(
         "matching_test", "matching_test/dropped_feature", "differentials.tsv",
         "dropped_feature.biom", "sample_metadata.txt",
         feature_metadata_name="feature_metadata.txt",
         expected_unsupported_features=1
+    )
+    # Test that dropping 2 features produces an error
+    run_integration_test(
+        "matching_test", "matching_test/dropped_features", "differentials.tsv",
+        "dropped_features.biom", "sample_metadata.txt",
+        feature_metadata_name="feature_metadata.txt",
+        expected_unsupported_features=2
     )
 
 
@@ -75,18 +84,25 @@ def test_dropping_all_samples():
     )
 
 
-def test_dropping_all_samples_and_one_feature():
-    """Tests rrv's behavior when a feature and all samples are unsupported.
+def test_dropping_all_samples_and_features():
+    """Tests rrv's behavior when > 0 feature(s) and all samples are unsupported.
 
-       In particular, rankratioviz should just throw an error about the feature
-       being unsupported -- the feature check should come before the sample
-       check (not for any particular reason, that's just how I wrote the code).
+       In particular, rankratioviz should just throw an error about the
+       feature(s) being unsupported -- the feature check should come before the
+       sample check (not for any particular reason, that's just how I wrote the
+       code).
     """
     run_integration_test(
         "matching_test", "matching_test/all_samples_and_one_feature_dropped",
         "differentials.tsv", "all_samples_and_one_feature_dropped.biom",
         "sample_metadata.txt", feature_metadata_name="feature_metadata.txt",
         expect_all_unsupported_samples=True, expected_unsupported_features=1
+    )
+    run_integration_test(
+        "matching_test", "matching_test/all_samples_and_two_features_dropped",
+        "differentials.tsv", "all_samples_and_two_features_dropped.biom",
+        "sample_metadata.txt", feature_metadata_name="feature_metadata.txt",
+        expect_all_unsupported_samples=True, expected_unsupported_features=2
     )
 
 
