@@ -52,12 +52,10 @@ accordingly, but in the meantime this is a necessary fix.) See
 Examples of using rankratioviz (both inside and outside of QIIME 2) are
 available in rankratioviz' example Jupyter notebooks, which are located
 [here](https://github.com/fedarko/rankratioviz/tree/master/example_notebooks):
-- [`deicode_example.ipynb`](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
-  demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and using
-  rankratioviz to visualize DEICODE's output.
-- [`songbird_example.ipynb`](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
-  demonstrates using [songbird](https://github.com/biocore/songbird) and using
-  rankratioviz to visualize songbird's output.
+- [**`deicode_example.ipynb`**](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
+  demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and then using rankratioviz to visualize DEICODE's output.
+- [**`songbird_example.ipynb`**](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
+  demonstrates using [songbird](https://github.com/biocore/songbird) and then using rankratioviz to visualize songbird's output.
 
 ## Linked visualizations
 These two visualizations (the rank plot and sample scatterplot) are linked [1]:
