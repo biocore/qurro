@@ -80,7 +80,7 @@ ratios.
 
 ### Dependencies
 
-Code files for the following three projects are distributed within
+Code files for the following projects are distributed within
 `rankratioviz/support_file/vendor/`.
 See the `dependency_licenses/` directory for copies of these software projects'
 licenses (each of which includes a respective copyright notice).
