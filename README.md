@@ -87,6 +87,7 @@ licenses (each of which includes a respective copyright notice).
 - [Vega](https://vega.github.io/vega/)
 - [Vega-Lite](https://vega.github.io/vega-lite/)
 - [Vega-Embed](https://github.com/vega/vega-embed)
+- [RequireJS](https://requirejs.org/)
 
 The following software projects are required for rankratioviz's python code
 to function, although they are not distributed with rankratioviz (and are
@@ -105,7 +106,7 @@ For python testing/style checking, rankratioviz uses
 [pytest-cov](https://github.com/pytest-dev/pytest-cov), and
 [flake8](http://flake8.pycqa.org/en/latest/).
 
-For JavaScript testing/style checking, rankratioviz uses
+For JavaScript testing, rankratioviz uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), and
 [mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome).
 
