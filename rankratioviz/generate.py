@@ -437,15 +437,16 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
         # fully, i.e. with a complete set of support_files/ -- but we handle it
         # here just in case.
         raise FileNotFoundError("Couldn't find index.html in support_files/")
-    # create JS code that loads these JSON files in plots.js
+    # create JS code that loads these JSON files in main.js
     # note that this JS code should be run *after* all of the page's
     # elements (or at least the #rankPlot and #samplePlot <div> elements) have
     # been loaded, since the ssmv.makeRankPlot() and ssmv.makeSamplePlot()
     # functions will fail if these elements don't exist yet.
-    plot_loc = os.path.join(output_dir, 'plots.js')
-    with open(plot_loc, 'w') as pf:
-        pf.write("ssmv.rankPlotJSON = {};\n".format(rank_plot_str))
-        pf.write("ssmv.samplePlotJSON = {};\n".format(sample_plot_str))
-        pf.write("ssmv.makeRankPlot(ssmv.rankPlotJSON);\n")
-        pf.write("ssmv.makeSamplePlot(ssmv.samplePlotJSON);")
+    main_loc = os.path.join(output_dir, 'main.js')
+    with open(main_loc, 'w') as pf:
+        pf.write("""requirejs(['js/display', 'js/feature_computation'],
+    function(display, feature_computation) {{
+        rrv = new display.RRVDisplay({}, {});
+    }}
+);""".format(rank_plot_str, sample_plot_str))
     return index_path
