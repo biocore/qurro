@@ -442,11 +442,20 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # elements (or at least the #rankPlot and #samplePlot <div> elements) have
     # been loaded, since the ssmv.makeRankPlot() and ssmv.makeSamplePlot()
     # functions will fail if these elements don't exist yet.
+    #
+    # Also note that the lengths of the JS variable names defined here
+    # (rankPlotJSON and samplePlotJSON), as well as the fact that the rank plot
+    # JSON is defined on line 3 and the sample plot JSON is defined on line 4,
+    # are relied on in the python tests when extracting the JSON files from
+    # generated main.js files. If you change the JS code formatting here up, it
+    # will probably cause some python integration tests to break.
     main_loc = os.path.join(output_dir, 'main.js')
     with open(main_loc, 'w') as pf:
         pf.write("""requirejs(['js/display', 'js/feature_computation'],
     function(display, feature_computation) {{
-        rrv = new display.RRVDisplay({}, {});
+        var rankPlotJSON = {};
+        var samplePlotJSON = {};
+        rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON);
     }}
 );""".format(rank_plot_str, sample_plot_str))
     return index_path
