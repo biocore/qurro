@@ -5,32 +5,37 @@
         <title>rankratioviz tests</title>
         <link rel="shortcut icon" href="../../support_files/icon.png" />
         <link rel="stylesheet" href="vendor/mocha.css" />
-        <script src="vendor/chai.js"></script>
-        <script src="vendor/mocha.js"></script>
         <script src="../../support_files/vendor/vega.min.js"></script>
         <script src="../../support_files/vendor/vega-lite.min.js"></script>
         <script src="../../support_files/vendor/vega-embed.min.js"></script>
-        <!-- Actual code to be tested -->
-        <script src="../../support_files/rankratioviz.js"></script>
     </head>
     <body>
         <div id="mocha"></div>
+        <!-- The following DOM elements are all used by rrv's JS code in some
+             way. Currently, we don't really care about the formatting of these
+             elements within this test web page; we just care that these
+             elements exist, so that the code can make the needed changes to
+             them.
+        -->
         <div id="rankPlot"></div>
         <div id="samplePlot"></div>
+        <button id="multiFeatureButton"></button>
+        <select id="topSearch">
+            <option value="rank"></option>
+            <option value="text"></option>
+        </select>
+        <!-- TODO instead of querying the DOM in the plot update functions,
+             just make the search types and strings arguments (will make testing
+             a lot easier)
+        -->
+        <input type="text" id="topText"></input>
+        <select id="botSearch">
+            <option value="rank"></option>
+            <option value="text"></option>
+        </select>
+        <input type="text" id="botText"></input>
+        <textarea id="topTaxaDisplay"></textarea>
+        <textarea id="botTaxaDisplay"></textarea>
     </body>
-    <!-- Set up mocha: derived from
-         https://mochajs.org/#running-mocha-in-the-browser
-    -->
-    <script>
-        mocha.setup('bdd');
-        // This enables checking for global variables created while running
-        // tests.
-        mocha.checkLeaks();
-    </script>
-    <!-- Tests go here: since these manipulate the DOM, they should be loaded
-         after the HTML body has been loaded above.
-    -->
-    <script src="test_computing_balances.js"></script>
-    <!-- Actually run tests -->
-    <script>mocha.run();</script>
+    <script data-main="setup" src="../../support_files/vendor/require.js"></script>
 </html>
