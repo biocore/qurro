@@ -15,13 +15,17 @@ define(function() {
      * used in the inputText to control exactly what is being filtered.)
      */
     function filterFeatures(potentialFeatures, inputText, searchType) {
+        if (searchType !== "rank" && searchType !== "text") {
+            throw new Error('searchType must be either "rank" or "text"');
+        }
+        // Only used if searchType === "rank"
+        var rankArray = [];
         if (searchType === "rank") {
             // Prepare input array of ranks to use for searching
             var initialRankArray = inputText.trim().replace(/[,;]/g, " ").split(" ");
             // Filter out ""s caused by repeated commas or whitespace in the input.
             // Why we need this: "a b   c".split(" ") produces
             // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
-            var rankArray = [];
             var r;
             for (var ri = 0; ri < initialRankArray.length; ri++) {
                 r = initialRankArray[ri];
