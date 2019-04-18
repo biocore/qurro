@@ -81,7 +81,7 @@ define(function() {
             }
         }
         return filteredFeatures;
-    };
+    }
     
     /* Vega-Lite doesn't filter out infinities (caused by taking log(0)
      * or of log(0)/log(0), etc.) by default. If left unchecked, this leads to

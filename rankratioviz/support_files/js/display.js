@@ -98,16 +98,16 @@ define(["./feature_computation"], function(feature_computation) {
             // Set callbacks to let users make selections in the ranks plot
             display.rankPlotView.addEventListener("click", function(e, i) {
                 if (i !== null && i !== undefined) {
-                    if (i["mark"]["marktype"] === "rect") {
+                    if (i.mark.marktype === "rect") {
                         if (display.onHigh) {
                             display.oldTaxonHigh = display.newTaxonHigh;
-                            display.newTaxonHigh = i["datum"]["Feature ID"];
+                            display.newTaxonHigh = i.datum["Feature ID"];
                             console.log("Set newTaxonHigh: " +
                                 display.newTaxonHigh);
                         }
                         else {
                             display.oldTaxonLow = display.newTaxonLow;
-                            display.newTaxonLow = i["datum"]["Feature ID"];
+                            display.newTaxonLow = i.datum["Feature ID"];
                             console.log("Set newTaxonLow: " +
                                 display.newTaxonLow);
                             display.updateSamplePlotSingle();
@@ -129,11 +129,11 @@ define(["./feature_computation"], function(feature_computation) {
                 // corresponding ranking. This is done as a procedural change to
                 // the "x" value of each feature, analogous to how the balance of
                 // each sample is updated in display.changeSamplePlot().
-                var dataName = display.rankPlotJSON["data"]["name"];
+                var dataName = display.rankPlotJSON.data.name;
     
                 // Get a copy of all the feature data in the rank plot. Sort it by
                 // each feature's newRank value.
-                var featureDataCopy = display.rankPlotJSON["datasets"][dataName].slice();
+                var featureDataCopy = display.rankPlotJSON.datasets[dataName].slice();
                 featureDataCopy.sort(function(f1, f2) {
                     if (parseFloat(f1[newRank]) > parseFloat(f2[newRank]))
                         return 1;
@@ -186,9 +186,9 @@ define(["./feature_computation"], function(feature_computation) {
             });
             var rfci = "rankratioviz_feature_col_ids";
             var rfct = "rankratioviz_feature_counts";
-            this.feature_col_ids = this.samplePlotJSON["datasets"][rfci];
+            this.feature_col_ids = this.samplePlotJSON.datasets[rfci];
             this.feature_ids = Object.keys(this.feature_col_ids);
-            this.feature_cts = this.samplePlotJSON["datasets"][rfct];
+            this.feature_cts = this.samplePlotJSON.datasets[rfct];
         }
     
         // Given a "row" of data about a rank, return its new classification depending
@@ -236,7 +236,7 @@ define(["./feature_computation"], function(feature_computation) {
         }
         
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
-            var dataName = this.samplePlotJSON["data"]["name"];
+            var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
             this.samplePlotView.change(dataName, vega.changeset().modify(
                 /* Calculate the new balance for each sample.
@@ -258,7 +258,7 @@ define(["./feature_computation"], function(feature_computation) {
             // changes to the state of the sample plot (at least enacted using the UI
             // controls on the page, not the dev console) also propagate to the rank
             // plot.
-            var rankDataName = this.rankPlotJSON["data"]["name"];
+            var rankDataName = this.rankPlotJSON.data.name;
             this.rankPlotView.change(rankDataName, vega.changeset().modify(
                 vega.truthy,
                 "Classification",
@@ -332,16 +332,16 @@ define(["./feature_computation"], function(feature_computation) {
         }
     
         static addSignalsToSpec(spec, signalArray) {
-            // Add the signals in signalArray to spec["signals"] if the Vega spec
-            // already has signals, or create spec["signals"] if the Vega spec doesn't
+            // Add the signals in signalArray to spec.signals if the Vega spec
+            // already has signals, or create spec.signals if the Vega spec doesn't
             // have any signals yet.
             // Note that this just modifies spec without returning anything.
-            if (spec["signals"] === undefined) {
-                spec["signals"] = signalArray;
+            if (spec.signals === undefined) {
+                spec.signals = signalArray;
             }
             else {
                 for (var s = 0; s < signalArray.length; s++) {
-                    spec["signals"].push(signalArray[s]);
+                    spec.signals.push(signalArray[s]);
                 }
             }
         }
@@ -355,7 +355,7 @@ define(["./feature_computation"], function(feature_computation) {
             // in the python script to whatever the first sample metadata column is.
             var xSignal = {
                 "name": "xAxis",
-                "value": vegaSpec["marks"][0]["encode"]["update"]["x"]["field"],
+                "value": vegaSpec.marks[0].encode.update.x.field,
                 "bind": {
                     "input": "select",
                     "options": display.metadataCols
@@ -363,7 +363,7 @@ define(["./feature_computation"], function(feature_computation) {
             };
             var colorSignal = {
                 "name": "color",
-                "value": vegaSpec["marks"][0]["encode"]["update"]["fill"]["field"],
+                "value": vegaSpec.marks[0].encode.update.fill.field,
                 "bind": {
                     "input": "select",
                     "options": display.metadataCols
@@ -373,39 +373,39 @@ define(["./feature_computation"], function(feature_computation) {
             // (this assumes that there will only be one set of marks in the sample
             // plot JSON)
             RRVDisplay.addSignalsToSpec(vegaSpec, [xSignal, colorSignal]);
-            vegaSpec["marks"][0]["encode"]["update"]["x"]["field"] = {"signal": "xAxis"};
-            vegaSpec["marks"][0]["encode"]["update"]["fill"]["field"] = {"signal": "color"};
+            vegaSpec.marks[0].encode.update.x.field = {"signal": "xAxis"};
+            vegaSpec.marks[0].encode.update.fill.field = {"signal": "color"};
             // Update the x-axis / color labels
             // Note that at least with the example Vega plot I'm working with, there
             // are two axes with an "x" scale. We change the one that already has a
             // "title" attribute.
-            for (var a = 0; a < vegaSpec["axes"].length; a++) {
-                if (vegaSpec["axes"][a]["scale"] === "x") {
-                    if (vegaSpec["axes"][a]["title"] !== undefined) {
-                        vegaSpec["axes"][a]["title"] = {"signal": "xAxis"};
+            for (var a = 0; a < vegaSpec.axes.length; a++) {
+                if (vegaSpec.axes[a].scale === "x") {
+                    if (vegaSpec.axes[a].title !== undefined) {
+                        vegaSpec.axes[a].title = {"signal": "xAxis"};
                         break;
                     }
                 }
             }
             // Searching in a for loop this way prevents accidentally overwriting other
             // legends for other attributes.
-            for (var c = 0; c < vegaSpec["legends"].length; c++) {
-                if (vegaSpec["legends"][c]["fill"] === "color")  {
-                    vegaSpec["legends"][c]["title"] = {"signal": "color"};
+            for (var c = 0; c < vegaSpec.legends.length; c++) {
+                if (vegaSpec.legends[c].fill === "color")  {
+                    vegaSpec.legends[c].title = {"signal": "color"};
                     break;
                 }
             }
             // Update scales
-            for (var s = 0; s < vegaSpec["scales"].length; s++) {
-                if (vegaSpec["scales"][s]["name"] === "x") {
-                    vegaSpec["scales"][s]["domain"]["field"] = {"signal": "xAxis"};
+            for (var s = 0; s < vegaSpec.scales.length; s++) {
+                if (vegaSpec.scales[s].name === "x") {
+                    vegaSpec.scales[s].domain.field = {"signal": "xAxis"};
                 }
-                else if (vegaSpec["scales"][s]["name"] === "color") {
-                    vegaSpec["scales"][s]["domain"]["field"] = {"signal": "color"};
+                else if (vegaSpec.scales[s].name === "color") {
+                    vegaSpec.scales[s].domain.field = {"signal": "color"};
                 }
             }
             return vegaSpec;
-        };
+        }
         
         static addSignalsToRankPlot(display, vegaSpec) {
             var rankSignal = {
@@ -417,38 +417,38 @@ define(["./feature_computation"], function(feature_computation) {
                 }
             };
             RRVDisplay.addSignalsToSpec(vegaSpec, [rankSignal]);
-            vegaSpec["marks"][0]["encode"]["update"]["y"]["field"] = {"signal": "rank"};
+            vegaSpec.marks[0].encode.update.y.field = {"signal": "rank"};
             // Update y-axis label
-            for (var a = 0; a < vegaSpec["axes"].length; a++) {
-                if (vegaSpec["axes"][a]["scale"] === "y") {
-                    if (vegaSpec["axes"][a]["title"] !== undefined) {
-                        vegaSpec["axes"][a]["title"] = {"signal": "rank"};
+            for (var a = 0; a < vegaSpec.axes.length; a++) {
+                if (vegaSpec.axes[a].scale === "y") {
+                    if (vegaSpec.axes[a].title !== undefined) {
+                        vegaSpec.axes[a].title = {"signal": "rank"};
                         break;
                     }
                 }
             }
             // Update y-axis scale
-            for (var s = 0; s < vegaSpec["scales"].length; s++) {
-                if (vegaSpec["scales"][s]["name"] === "y") {
-                    vegaSpec["scales"][s]["domain"]["field"] = {"signal": "rank"};
+            for (var s = 0; s < vegaSpec.scales.length; s++) {
+                if (vegaSpec.scales[s].name === "y") {
+                    vegaSpec.scales[s].domain.field = {"signal": "rank"};
                     break;
                 }
             }
             return vegaSpec;
-        };
+        }
     
         static identifyMetadataColumns(samplePlotSpec) {
             // Given a Vega-Lite sample plot specification, find all the metadata cols.
             // Just uses whatever the first available sample's keys are as a
             // reference. So, uh, if the input sample plot JSON has zero samples, this
             // will fail. (But that should have been caught in the python script.)
-            var dataName = samplePlotSpec["data"]["name"];
-            var mdCols = Object.keys(samplePlotSpec["datasets"][dataName][0]);
+            var dataName = samplePlotSpec.data.name;
+            var mdCols = Object.keys(samplePlotSpec.datasets[dataName][0]);
             if (mdCols.length > 0) {
                 return mdCols;
             } else {
-                throw new Error("No metadata columns identified. Something seems "
-                              + "wrong with the sample plot JSON.");
+                throw new Error("No metadata columns identified. Something seems " +
+                                "wrong with the sample plot JSON.");
             }
         }
     
@@ -477,7 +477,7 @@ define(["./feature_computation"], function(feature_computation) {
             var topCt = this.feature_cts[this.taxonHighCol][sampleID];
             var botCt = this.feature_cts[this.taxonLowCol][sampleID];
             return feature_computation.computeBalance(topCt, botCt);
-        };
+        }
         
         /* Like updateBalanceSingle, but considers potentially many taxa in the
          * numerator and denominator of the log ratio. For log ratios generated
@@ -490,7 +490,7 @@ define(["./feature_computation"], function(feature_computation) {
             var topCt = this.sumAbundancesForSampleFeatures(sampleRow, this.topTaxa);
             var botCt = this.sumAbundancesForSampleFeatures(sampleRow, this.botTaxa);
             return feature_computation.computeBalance(topCt, botCt);
-        };
+        }
 
         /* Clears the effects of this rrv instance on the DOM, including
          * clearing the HTML inside the rank and sample plot <div> elements.
