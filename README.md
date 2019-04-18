@@ -15,9 +15,9 @@ folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
 `qiime tools view`).
-**We're
-currently focused on restructuring the tool's codebase, so please bear with us as
-we make these enhancements available.**
+
+rankratioviz should work with most modern web browsers. Firefox or Chrome are
+recommended.
 
 rankratioviz is still being developed, so backwards-incompatible changes might
 occur. If you have any questions, feel free to contact the development team at
