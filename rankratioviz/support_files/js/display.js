@@ -68,7 +68,7 @@ define(["./feature_computation"], function(feature_computation) {
             var display = this;
             document.getElementById("multiFeatureButton").onclick = function() {
                 display.updateSamplePlotMulti();
-            }
+            };
         }
     
         makePlots() {
