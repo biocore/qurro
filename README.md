@@ -106,9 +106,9 @@ For python testing/style checking, rankratioviz uses
 [pytest-cov](https://github.com/pytest-dev/pytest-cov), and
 [flake8](http://flake8.pycqa.org/en/latest/).
 
-For JavaScript testing, rankratioviz uses
-[Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), and
-[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome).
+For JavaScript testing/style checking, rankratioviz uses
+[Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
+[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome), and [jshint](https://jshint.com/).
 
 rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
 [Coveralls](https://coveralls.io/).

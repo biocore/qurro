@@ -33,10 +33,12 @@ install:
     - pip install flake8
     - pip install coveralls
     - npm install -g mocha-headless-chrome
+    - npm install -g jshint
 script:
     # Just to be safe, and to ensure that we pick up on the songbird install
     - qiime dev refresh-cache
     - make test
     - flake8
+    - jshint rankratioviz/support_files/js/ rankratioviz/tests/web_tests/tests/ rankratioviz/tests/web_tests/setup.js
 after_success:
     - coveralls
