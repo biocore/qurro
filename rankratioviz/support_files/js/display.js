@@ -161,7 +161,7 @@ define(["./feature_computation"], function(feature_computation) {
                         function(rankRow) {
                             return featureIDToNewX[rankRow["Feature ID"]];
                         }
-                    ))
+                    ));
                 };
                 // NOTE that we use runAfter() instead of run() because, since this
                 // is being run from within a signal listener, we're still in the
@@ -189,7 +189,7 @@ define(["./feature_computation"], function(feature_computation) {
             this.feature_col_ids = this.samplePlotJSON["datasets"][rfci];
             this.feature_ids = Object.keys(this.feature_col_ids);
             this.feature_cts = this.samplePlotJSON["datasets"][rfct];
-        };
+        }
     
         // Given a "row" of data about a rank, return its new classification depending
         // on the new selection that just got made.
@@ -266,7 +266,7 @@ define(["./feature_computation"], function(feature_computation) {
                     updateRankColorFunc.call(parentDisplay, rankRow);
                 }
             )).run();
-        };
+        }
         
         updateSamplePlotMulti() {
             // Determine how we're going to use the input for searching through
@@ -285,7 +285,7 @@ define(["./feature_computation"], function(feature_computation) {
             this.changeSamplePlot(this.updateBalanceMulti, this.updateRankColorMulti);
             // Update taxa text displays
             this.updateTaxaTextDisplays();
-        };
+        }
         
         updateSamplePlotSingle() {
             if (this.newTaxonLow !== undefined && this.newTaxonHigh !== undefined) {
@@ -305,7 +305,7 @@ define(["./feature_computation"], function(feature_computation) {
                     }
                 }
             }
-        };
+        }
         
         /* Updates the textareas that list the selected taxa.
          *
