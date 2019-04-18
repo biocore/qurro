@@ -23,11 +23,11 @@ ssmv.parseSelectMicrobesFile = function(fileText) {
         }
     }
     if (ssmv.selectMicrobes.length < 2) {
-        alert("Please upload a select microbes file with at least two "
-            + "microbes.");
+        alert("Please upload a select microbes file with at least two " +
+              "microbes.");
         ssmv.selectMicrobes = undefined;
     }
-}
+};
 
 // Based on loadLocalDB() in MetagenomeScope: viewer/index.html
 ssmv.uploadSelectMicrobesFile = function() {
@@ -39,7 +39,7 @@ ssmv.uploadSelectMicrobesFile = function() {
             if (e.target.readyState === FileReader.DONE) {
                 ssmv.parseSelectMicrobesFile(e.target.result);
             }
-        }
+        };
         fr.readAsText(smFile);
     }
 };
