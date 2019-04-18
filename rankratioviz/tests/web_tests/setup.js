@@ -4,7 +4,8 @@ requirejs.config({
         'feature_computation': '../../support_files/js/feature_computation',
         'mocha': 'vendor/mocha',
         'chai': 'vendor/chai',
-        'test_computing_balances': 'tests/test_computing_balances'
+        'test_compute_balance': 'tests/test_compute_balance',
+        'test_identify_metadata_columns': 'tests/test_identify_metadata_columns'
     },
     'shim': {
         // Mocha shim based on
@@ -22,12 +23,14 @@ requirejs(['display',
           'feature_computation',
           'mocha',
           'chai',
-          'test_computing_balances'],
+          'test_compute_balance',
+          'test_identify_metadata_columns'],
     function(display,
              feature_computation,
              mocha,
              chai,
-             test_computing_balances) {
+             test_compute_balance,
+             test_identify_metadata_columns) {
         // Enables checking for global variables created while running tests
         mocha.checkLeaks();
         // Actually run tests :D
