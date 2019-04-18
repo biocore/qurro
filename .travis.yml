@@ -38,7 +38,6 @@ script:
     # Just to be safe, and to ensure that we pick up on the songbird install
     - qiime dev refresh-cache
     - make test
-    - flake8
-    - jshint rankratioviz/support_files/js/ rankratioviz/tests/web_tests/tests/ rankratioviz/tests/web_tests/setup.js
+    - make stylecheck
 after_success:
     - coveralls
