@@ -101,7 +101,9 @@ define(function() {
      */
     function computeBalance(topValue, botValue) {
         if (typeof topValue !== "number" || typeof botValue !== "number") {
-            throw "computeBalance() called with non-numerical input(s)";
+            throw new Error(
+                "computeBalance() called with non-numerical input(s)"
+            );
         }
         if (topValue <= 0 || botValue <= 0) {
             return NaN;
