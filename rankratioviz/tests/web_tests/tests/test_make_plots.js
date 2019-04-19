@@ -9,7 +9,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         after(function() {
             rrv.destroy();
         });
-        it("Properly initializes an RRVDisplay object", function() {
+        it("Initializes an RRVDisplay object", function() {
+            // This test doesn't check much. Unit tests of the RRVDisplay
+            // methods are needed to validate things more carefully.
             chai.assert.strictEqual(rrv.rankPlotJSON, rankPlotJSON);
             chai.assert.strictEqual(rrv.samplePlotJSON, samplePlotJSON);
             // RRVDisplay.onHigh indicates that the next "single"-selected
