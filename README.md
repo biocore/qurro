@@ -108,7 +108,7 @@ For python testing/style checking, rankratioviz uses
 
 For JavaScript testing/style checking, rankratioviz uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
-[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome), [jshint](https://jshint.com/), and [prettier](https://prettier.io/).
+[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome), [nyc](https://github.com/istanbuljs/nyc), [jshint](https://jshint.com/), and [prettier](https://prettier.io/).
 
 rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
 [Coveralls](https://coveralls.io/).
