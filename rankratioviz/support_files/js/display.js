@@ -270,7 +270,10 @@ define(["./feature_computation"], function(feature_computation) {
                         "rankratioviz_balance",
                         // function to run to determine what the new balances are
                         function(sampleRow) {
-                            updateBalanceFunc.call(parentDisplay, sampleRow);
+                            return updateBalanceFunc.call(
+                                parentDisplay,
+                                sampleRow
+                            );
                         }
                     )
                 )
@@ -289,7 +292,10 @@ define(["./feature_computation"], function(feature_computation) {
                         .modify(vega.truthy, "Classification", function(
                             rankRow
                         ) {
-                            updateRankColorFunc.call(parentDisplay, rankRow);
+                            return updateRankColorFunc.call(
+                                parentDisplay,
+                                rankRow
+                            );
                         })
                 )
                 .run();
