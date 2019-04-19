@@ -6,20 +6,23 @@
 # flake8. See the Travis-CI configuration file (.travis.yml) for examples of
 # how to install these extra utilities.
 
-.PHONY: test stylecheck style
+.PHONY: test pytest jstest stylecheck style
 
 JSLOCS = rankratioviz/support_files/js/*.js rankratioviz/tests/web_tests/tests/*.js rankratioviz/tests/web_tests/setup.js
 HTMLCSSLOCS = rankratioviz/support_files/index.html rankratioviz/tests/web_tests/index.html rankratioviz/support_files/rankratioviz.css
 
-# The test target was based on MetagenomeScope's testing functionality.
+test: pytest jstest
+
 # The -B in the invocation of python prevents this from creating pycache
 # miscellany.
 # And -s prevents output capturing (letting us see the results of print
 # statements sprinkled throughout the code, which helps with debugging).
-test:
+pytest:
 	# Use of -f per https://unix.stackexchange.com/a/68096
 	rm -rf rankratioviz/tests/output/*
 	python3 -B -m pytest rankratioviz/tests -s --cov=rankratioviz
+
+jstest:
 	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html
 
 # Assumes this is being run from the root directory of the rankratioviz repo
