@@ -22,7 +22,10 @@ define(function() {
         var rankArray = [];
         if (searchType === "rank") {
             // Prepare input array of ranks to use for searching
-            var initialRankArray = inputText.trim().replace(/[,;]/g, " ").split(" ");
+            var initialRankArray = inputText
+                .trim()
+                .replace(/[,;]/g, " ")
+                .split(" ");
             // Filter out ""s caused by repeated commas or whitespace in the input.
             // Why we need this: "a b   c".split(" ") produces
             // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
@@ -34,7 +37,7 @@ define(function() {
                 }
             }
         }
-    
+
         var filteredFeatures = [];
         var taxonomyPart;
         var ranksOfTaxon;
@@ -50,8 +53,7 @@ define(function() {
                 if (potentialFeatures[ti].includes(inputText)) {
                     filteredFeatures.push(potentialFeatures[ti]);
                 }
-            }
-            else {
+            } else {
                 // Search against individual ranks (separated by semicolons).
                 // This only searches against ranks that are indicated in the
                 // file, so if there are missing steps (e.g. no genus given)
@@ -86,7 +88,7 @@ define(function() {
         }
         return filteredFeatures;
     }
-    
+
     /* Vega-Lite doesn't filter out infinities (caused by taking log(0)
      * or of log(0)/log(0), etc.) by default. If left unchecked, this leads to
      * weird and not-useful charts due to the presence of infinities.
@@ -106,5 +108,5 @@ define(function() {
         }
         return Math.log(topValue) - Math.log(botValue);
     }
-    return {"filterFeatures": filterFeatures, "computeBalance": computeBalance};
+    return { filterFeatures: filterFeatures, computeBalance: computeBalance };
 });

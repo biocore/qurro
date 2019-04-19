@@ -6,7 +6,9 @@
 # flake8. See the Travis-CI configuration file (.travis.yml) for examples of
 # how to install these extra utilities.
 
-.PHONY: test stylecheck
+.PHONY: test stylecheck style
+
+JSLOCS = rankratioviz/support_files/js/*.js rankratioviz/tests/web_tests/tests/*.js rankratioviz/tests/web_tests/setup.js
 
 # The test target was based on MetagenomeScope's testing functionality.
 # The -B in the invocation of python prevents this from creating pycache
@@ -23,4 +25,10 @@ test:
 # (since that's where the .jshintrc is located).
 stylecheck:
 	flake8 rankratioviz/ setup.py
-	jshint rankratioviz/support_files/js/ rankratioviz/tests/web_tests/tests/ rankratioviz/tests/web_tests/setup.js
+	jshint $(JSLOCS)
+	prettier --check --tab-width 4 $(JSLOCS)
+
+# If we'd want to do any automatic python code formatting (e.g. with black), we
+# could do that here
+style:
+	prettier --write --tab-width 4 $(JSLOCS)

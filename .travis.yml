@@ -30,10 +30,13 @@ before_install:
     - pip install -e songbird
 install:
     - pip install -e .
+    # Install various external testing/stylechecking packages that we use on
+    # Travis but aren't required to just use rankratioviz
     - pip install flake8
     - pip install coveralls
     - npm install -g mocha-headless-chrome
     - npm install -g jshint
+    - npm install -g prettier
 script:
     # Just to be safe, and to ensure that we pick up on the songbird install
     - qiime dev refresh-cache

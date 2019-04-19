@@ -17,14 +17,15 @@ ssmv.parseSelectMicrobesFile = function(fileText) {
             }
             currMicrobe = "";
             currMicrobeTrimmed = "";
-        }
-        else {
+        } else {
             currMicrobe += fileText[i];
         }
     }
     if (ssmv.selectMicrobes.length < 2) {
-        alert("Please upload a select microbes file with at least two " +
-              "microbes.");
+        alert(
+            "Please upload a select microbes file with at least two " +
+                "microbes."
+        );
         ssmv.selectMicrobes = undefined;
     }
 };
@@ -32,8 +33,7 @@ ssmv.parseSelectMicrobesFile = function(fileText) {
 // Based on loadLocalDB() in MetagenomeScope: viewer/index.html
 ssmv.uploadSelectMicrobesFile = function() {
     var fr = new FileReader();
-    var smFile = document.getElementById("selectMicrobesFileSelector")
-                    .files[0];
+    var smFile = document.getElementById("selectMicrobesFileSelector").files[0];
     if (smFile !== undefined) {
         fr.onload = function(e) {
             if (e.target.readyState === FileReader.DONE) {
