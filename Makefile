@@ -18,12 +18,13 @@ test: pytest jstest
 # And -s prevents output capturing (letting us see the results of print
 # statements sprinkled throughout the code, which helps with debugging).
 pytest:
-	# Use of -f per https://unix.stackexchange.com/a/68096
+	@# Use of -f per https://unix.stackexchange.com/a/68096
 	rm -rf rankratioviz/tests/output/*
-	python3 -B -m pytest rankratioviz/tests -s --cov=rankratioviz
+	python3 -B -m pytest rankratioviz/tests -s --cov rankratioviz
 
 jstest:
-	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html
+	nyc instrument rankratioviz/support_files/js/ rankratioviz/tests/web_tests/instrumented_js/
+	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html -c js_coverage.json
 
 # Assumes this is being run from the root directory of the rankratioviz repo
 # (since that's where the .jshintrc is located).
