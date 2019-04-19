@@ -37,7 +37,7 @@ install:
     - npm install -g mocha-headless-chrome
     - npm install -g jshint
     - npm install -g prettier
-    - npm install -g nyc
+      # - npm install -g nyc
 script:
     # Just to be safe, and to ensure that we pick up on the songbird install
     - qiime dev refresh-cache

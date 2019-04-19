@@ -23,8 +23,8 @@ pytest:
 	python3 -B -m pytest rankratioviz/tests -s --cov rankratioviz
 
 jstest:
-	nyc instrument rankratioviz/support_files/js/ rankratioviz/tests/web_tests/instrumented_js/
-	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html -c js_coverage.json
+	@#nyc instrument rankratioviz/support_files/js/ rankratioviz/tests/web_tests/instrumented_js/
+	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html #-c js_coverage.json
 
 # Assumes this is being run from the root directory of the rankratioviz repo
 # (since that's where the .jshintrc is located).

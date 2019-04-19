@@ -1,7 +1,7 @@
 requirejs.config({
     paths: {
-        display: "instrumented_js/display",
-        feature_computation: "instrumented_js/feature_computation",
+        display: "../../support_files/js/display",
+        feature_computation: "../../support_files/js/feature_computation",
         mocha: "vendor/mocha",
         chai: "vendor/chai",
         test_compute_balance: "tests/test_compute_balance",
