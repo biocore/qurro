@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
@@ -13,7 +13,7 @@
         <script src="vendor/vega-lite.min.js"></script>
         <script src="vendor/vega-embed.min.js"></script>
     </head>
- 
+
     <body>
         <table id="rrvTable">
             <!-- Show the actual plots -->
@@ -29,8 +29,8 @@
                 <td class="topAlignedTD">
                     <h3>Single-Feature Selections</h3>
                     <p>
-                        Select two features from the rank plot (left) to
-                        display their log ratios for each sample in the sample
+                        Select two features from the rank plot (left) to display
+                        their log ratios for each sample in the sample
                         scatterplot (right).
                     </p>
                     <!-- Note for future reference: whitespace between the
@@ -51,8 +51,8 @@
                 <td>
                     <h3>Multi-Feature Selections</h3>
                     <p>
-                        Use the controls here to show more complex log ratios
-                        in the sample scatterplot.
+                        Use the controls here to show more complex log ratios in
+                        the sample scatterplot.
                     </p>
                     <p>
                         Filter numerator to features that
@@ -64,7 +64,7 @@
                                 contain the exact text
                             </option>
                         </select>
-                        <input type="text" id="topText" size="40"></input>
+                        <input type="text" id="topText" size="40" />
                     </p>
                     <p>
                         Filter denominator to features that
@@ -76,7 +76,7 @@
                                 contain the exact text
                             </option>
                         </select>
-                        <input type="text" id="botText" size="40"></input>
+                        <input type="text" id="botText" size="40" />
                     </p>
 
                     <p>
@@ -109,7 +109,9 @@
                     </p>
                     -->
                 </td>
+            </tr>
         </table>
+
         <!-- This file will be created by the rankratioviz python script.
              It will contain definitions for the rank plot and sample plot
              JSON, and will use these to create an instance of RRVDisplay

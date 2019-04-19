@@ -9,6 +9,7 @@
 .PHONY: test stylecheck style
 
 JSLOCS = rankratioviz/support_files/js/*.js rankratioviz/tests/web_tests/tests/*.js rankratioviz/tests/web_tests/setup.js
+HTMLLOCS = rankratioviz/support_files/index.html rankratioviz/tests/web_tests/index.html
 
 # The test target was based on MetagenomeScope's testing functionality.
 # The -B in the invocation of python prevents this from creating pycache
@@ -26,9 +27,9 @@ test:
 stylecheck:
 	flake8 rankratioviz/ setup.py
 	jshint $(JSLOCS)
-	prettier --check --tab-width 4 $(JSLOCS)
+	prettier --check --tab-width 4 $(JSLOCS) $(HTMLLOCS)
 
 # If we'd want to do any automatic python code formatting (e.g. with black), we
 # could do that here
 style:
-	prettier --write --tab-width 4 $(JSLOCS)
+	prettier --write --tab-width 4 $(JSLOCS) $(HTMLLOCS)
