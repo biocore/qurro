@@ -44,4 +44,4 @@ script:
     - make test
     - make stylecheck
 after_success:
-    - coveralls --merge js_coverage.json
+    - coveralls #--merge js_coverage.json
