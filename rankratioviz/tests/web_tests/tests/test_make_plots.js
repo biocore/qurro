@@ -9,6 +9,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         after(function() {
             rrv.destroy();
         });
+
         it("Initializes an RRVDisplay object", function() {
             // This test doesn't check much. Unit tests of the RRVDisplay
             // methods are needed to validate things more carefully.
@@ -21,6 +22,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.exists(rrv.rankPlotView);
             chai.assert.exists(rrv.samplePlotView);
         });
+
         it("Identifies nonexistent sample IDs", function() {
             chai.assert.doesNotThrow(function() {
                 rrv.validateSampleID("Sample2");
@@ -29,6 +31,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 rrv.validateSampleID("SuperFakeSampleName");
             });
         });
+
         it("Computes the correct sample log ratio in single-feature selections", function() {
             // Recall that .featureHighCol and .featureLowCol correspond to the
             // feature column IDs (as an example, in this case:
@@ -77,6 +80,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 rrv.updateBalanceSingle({ "Sample ID": "lolthisisntreal" });
             });
         });
+
         it("Correctly sums feature abundances in a sample", function() {
             // Check case when number of features is just one
             chai.assert.equal(
@@ -125,6 +129,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
             });
         });
+
         it("Computes the correct sample log ratio in multi-feature selections", function() {
             // Standard 2-taxon / 2-taxon case
             rrv.topFeatures = ["Taxon1", "Taxon3|Yeet|100"];
@@ -168,9 +173,100 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 rrv.updateBalanceMulti({ "Sample ID": "lolthisisntreal" });
             });
         });
-        // TODO add tests that things like balance computations (via
-        // updateBalance*, and sumAbundancesForSampleFeatures) work
-        // properly based on this object. Now that we can arbitrarily
-        // define rrv objects, this should be feasible!!!!
+
+        it('Updates "feature text" DOM elements in single-feature selections', function() {
+            rrv.newFeatureHigh = "New feature name high";
+            rrv.newFeatureLow = "New feature name low";
+            rrv.updateFeaturesTextDisplays(true);
+            chai.assert.equal(
+                document.getElementById("topFeaturesDisplay").value,
+                rrv.newFeatureHigh
+            );
+            chai.assert.equal(
+                document.getElementById("botFeaturesDisplay").value,
+                rrv.newFeatureLow
+            );
+            // Check it again -- ensure that the updating action overwrites the
+            // previous values
+            rrv.newFeatureHigh = "Thing 1!";
+            rrv.newFeatureLow = "Thing 2!";
+            rrv.updateFeaturesTextDisplays(true);
+            chai.assert.equal(
+                document.getElementById("topFeaturesDisplay").value,
+                rrv.newFeatureHigh
+            );
+            chai.assert.equal(
+                document.getElementById("botFeaturesDisplay").value,
+                rrv.newFeatureLow
+            );
+        });
+
+        it('Updates "feature text" DOM elements in multi-feature selections', function() {
+            // Standard case
+            rrv.topFeatures = ["abc", "def", "ghi", "lmno pqrs", "tuv"];
+            rrv.botFeatures = ["asdf", "ghjk"];
+            var expectedTopText = "abc\ndef\nghi\nlmno pqrs\ntuv";
+            var expectedBotText = "asdf\nghjk";
+            rrv.updateFeaturesTextDisplays();
+            chai.assert.equal(
+                document.getElementById("topFeaturesDisplay").value,
+                expectedTopText
+            );
+            chai.assert.equal(
+                document.getElementById("botFeaturesDisplay").value,
+                expectedBotText
+            );
+            // Check case where there's only one feature in a list
+            // In this case, the denominator + expected bottom text are the
+            // same as before
+            rrv.topFeatures = ["onlyfeature"];
+            expectedTopText = "onlyfeature";
+            rrv.updateFeaturesTextDisplays();
+            chai.assert.equal(
+                document.getElementById("topFeaturesDisplay").value,
+                expectedTopText
+            );
+            chai.assert.equal(
+                document.getElementById("botFeaturesDisplay").value,
+                expectedBotText
+            );
+            // Check case where lists are empty
+            rrv.topFeatures = [];
+            rrv.botFeatures = [];
+            rrv.updateFeaturesTextDisplays();
+            chai.assert.isEmpty(
+                document.getElementById("topFeaturesDisplay").value
+            );
+            chai.assert.isEmpty(
+                document.getElementById("botFeaturesDisplay").value
+            );
+        });
+
+        it('Clears "feature text" DOM elements', function() {
+            // Populate the DOM elements
+            rrv.newFeatureHigh = "Thing 1!";
+            rrv.newFeatureLow = "Thing 2!";
+            rrv.updateFeaturesTextDisplays(true);
+            // Check that clearing works
+            rrv.updateFeaturesTextDisplays(false, true);
+            chai.assert.isEmpty(
+                document.getElementById("topFeaturesDisplay").value
+            );
+            chai.assert.isEmpty(
+                document.getElementById("botFeaturesDisplay").value
+            );
+            // Repopulate the DOM elements
+            rrv.newFeatureHigh = "Thing 1!";
+            rrv.newFeatureLow = "Thing 2!";
+            rrv.updateFeaturesTextDisplays(true);
+            // Check that clearing is done, even if "single" is true (the "clear" argument takes priority)
+            rrv.updateFeaturesTextDisplays(true, true);
+            chai.assert.isEmpty(
+                document.getElementById("topFeaturesDisplay").value
+            );
+            chai.assert.isEmpty(
+                document.getElementById("botFeaturesDisplay").value
+            );
+        });
     });
 });
