@@ -109,14 +109,56 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     []
                 )
             );
+            // Check that an invalid sample ID causes an error
+            chai.assert.throws(function() {
+                rrv.sumAbundancesForSampleFeatures(
+                    { "Sample ID": "lolthisisntreal" },
+                    []
+                );
+            });
         });
         it("Computes the correct sample log ratio in multi-feature selections", function() {
+            // Standard 2-taxon / 2-taxon case
             rrv.topFeatures = ["Taxon1", "Taxon3|Yeet|100"];
             rrv.botFeatures = ["Taxon2", "Taxon4"];
             chai.assert.equal(
                 Math.log(2 / 7),
                 rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
             );
+            // only one feature over another (therefore should be equal to
+            // updateBalanceSingle -- this is the same test as done above)
+            rrv.topFeatures = ["Taxon3|Yeet|100"];
+            rrv.botFeatures = ["Taxon4"];
+            chai.assert.equal(
+                Math.log(2),
+                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+            );
+            // Test what happens when numerator and/or denominator feature
+            // lists are empty. If either or both of these feature lists are
+            // empty, we should get a NaN balance (since that corresponds to
+            // the numerator and/or denominator of the log ratio being 0).
+            // 1. Both numerator and denominator are empty
+            rrv.topFeatures = [];
+            rrv.botFeatures = [];
+            chai.assert.isNaN(
+                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+            );
+            // 2. Just numerator is empty
+            rrv.botFeatures = ["Taxon4"];
+            chai.assert.isNaN(
+                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+            );
+            // 3. Just denominator is empty
+            rrv.topFeatures = ["Taxon2"];
+            rrv.botFeatures = [];
+            chai.assert.isNaN(
+                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+            );
+            // Same as in the updateBalanceSingle test -- verify that
+            // a nonexistent sample ID causes an error
+            chai.assert.throws(function() {
+                rrv.updateBalanceMulti({ "Sample ID": "lolthisisntreal" });
+            });
         });
         // TODO add tests that things like balance computations (via
         // updateBalance*, and sumAbundancesForSampleFeatures) work

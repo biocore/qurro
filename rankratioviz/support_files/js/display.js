@@ -512,12 +512,19 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        validateSampleID(sampleID) {
+            if (this.feature_cts[0][sampleID] === undefined) {
+                throw new Error("Invalid sample ID: " + sampleID);
+            }
+        }
+
         /* Given a "row" of the sample plot's JSON for a sample, and given an array of
          * features, return the sum of the sample's abundances for those particular features.
          * TODO: add option to do log geometric means
          */
         sumAbundancesForSampleFeatures(sampleRow, features) {
             var sampleID = sampleRow["Sample ID"];
+            this.validateSampleID(sampleID);
             var abundance = 0;
             for (var t = 0; t < features.length; t++) {
                 var colIndex = this.feature_col_ids[features[t]];
@@ -534,6 +541,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          */
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
+            this.validateSampleID(sampleID);
             var topCt = this.feature_cts[this.featureHighCol][sampleID];
             var botCt = this.feature_cts[this.featureLowCol][sampleID];
             return feature_computation.computeBalance(topCt, botCt);
@@ -544,6 +552,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * by textual queries.
          */
         updateBalanceMulti(sampleRow) {
+            this.validateSampleID(sampleRow["Sample ID"]);
             // NOTE: For multiple features Virus/Staphylococcus:
             // test cases in comparison to first scatterplot in Jupyter
             // Notebook: 1517, 1302.
