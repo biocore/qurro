@@ -22,45 +22,45 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.exists(rrv.samplePlotView);
         });
         it('Computes the correct sample log ratio in "single" feature selections', function() {
-            // Recall that .taxonHighCol and .taxonLowCol correspond to the
+            // Recall that .featureHighCol and .featureLowCol correspond to the
             // feature column IDs (as an example, in this case:
             // "0" -> "Taxon3|Yeet|100" and "1" -> "Taxon4").
-            rrv.taxonHighCol = "0";
-            rrv.taxonLowCol = "1";
+            rrv.featureHighCol = "0";
+            rrv.featureLowCol = "1";
             chai.assert.equal(
                 Math.log(3),
                 rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
             );
             // Test that flipping the counts within the log ratio works
-            rrv.taxonHighCol = "1";
-            rrv.taxonLowCol = "0";
+            rrv.featureHighCol = "1";
+            rrv.featureLowCol = "0";
             chai.assert.equal(
                 -Math.log(3),
                 rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
             );
             // Try the same stuff out with different features and sample
-            rrv.taxonHighCol = "2";
-            rrv.taxonLowCol = "4";
+            rrv.featureHighCol = "2";
+            rrv.featureLowCol = "4";
             chai.assert.equal(
                 Math.log(2),
                 rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
             );
-            rrv.taxonHighCol = "4";
-            rrv.taxonLowCol = "2";
+            rrv.featureHighCol = "4";
+            rrv.featureLowCol = "2";
             chai.assert.equal(
                 -Math.log(2),
                 rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
             );
             // Test that NaNs are returned
             // In this first case, only the numerator is a 0.
-            rrv.taxonHighCol = "2";
-            rrv.taxonLowCol = "4";
+            rrv.featureHighCol = "2";
+            rrv.featureLowCol = "4";
             chai.assert.isNaN(
                 rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
             );
             // In this next case, both the numerator and denominator are 0.
-            rrv.taxonHighCol = "2";
-            rrv.taxonLowCol = "2";
+            rrv.featureHighCol = "2";
+            rrv.featureLowCol = "2";
             chai.assert.isNaN(
                 rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
             );

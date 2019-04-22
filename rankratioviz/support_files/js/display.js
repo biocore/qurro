@@ -32,18 +32,19 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * rankratioviz' web interface in a bunch of other environments.)
          */
         constructor(rankPlotJSON, samplePlotJSON) {
-            // Used for selections of log ratios between single taxa (via the rank plot)
+            // Used for selections of log ratios between single features (via
+            // the rank plot)
             this.onHigh = true;
-            this.newTaxonLow = undefined;
-            this.newTaxonHigh = undefined;
-            this.oldTaxonLow = undefined;
-            this.oldTaxonHigh = undefined;
-            this.taxonLowCol = undefined;
-            this.taxonHighCol = undefined;
+            this.newFeatureLow = undefined;
+            this.newFeatureHigh = undefined;
+            this.oldFeatureLow = undefined;
+            this.oldFeatureHigh = undefined;
+            this.featureLowCol = undefined;
+            this.featureHighCol = undefined;
 
-            // For selections of potentially many taxa (not via the rank plot)
-            this.topTaxa = undefined;
-            this.botTaxa = undefined;
+            // For selections of potentially many features (not via the rank plot)
+            this.topFeatures = undefined;
+            this.botFeatures = undefined;
 
             // Used when looking up a feature's count.
             this.feature_col_ids = undefined;
@@ -110,16 +111,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 if (i !== null && i !== undefined) {
                     if (i.mark.marktype === "rect") {
                         if (display.onHigh) {
-                            display.oldTaxonHigh = display.newTaxonHigh;
-                            display.newTaxonHigh = i.datum["Feature ID"];
+                            display.oldFeatureHigh = display.newFeatureHigh;
+                            display.newFeatureHigh = i.datum["Feature ID"];
                             console.log(
-                                "Set newTaxonHigh: " + display.newTaxonHigh
+                                "Set newFeatureHigh: " + display.newFeatureHigh
                             );
                         } else {
-                            display.oldTaxonLow = display.newTaxonLow;
-                            display.newTaxonLow = i.datum["Feature ID"];
+                            display.oldFeatureLow = display.newFeatureLow;
+                            display.newFeatureLow = i.datum["Feature ID"];
                             console.log(
-                                "Set newTaxonLow: " + display.newTaxonLow
+                                "Set newFeatureLow: " + display.newFeatureLow
                             );
                             display.updateSamplePlotSingle();
                         }
@@ -221,13 +222,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         // Given a "row" of data about a rank, return its new classification depending
         // on the new selection that just got made.
         updateRankColorSingle(rankRow) {
-            if (rankRow["Feature ID"] === this.newTaxonHigh) {
-                if (rankRow["Feature ID"] === this.newTaxonLow) {
+            if (rankRow["Feature ID"] === this.newFeatureHigh) {
+                if (rankRow["Feature ID"] === this.newFeatureLow) {
                     return "Both";
                 } else {
                     return "Numerator";
                 }
-            } else if (rankRow["Feature ID"] === this.newTaxonLow) {
+            } else if (rankRow["Feature ID"] === this.newFeatureLow) {
                 return "Denominator";
             } else {
                 return "None";
@@ -237,10 +238,10 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         updateRankColorMulti(rankRow) {
             var inTop = false;
             var inBot = false;
-            if (this.topTaxa.indexOf(rankRow["Feature ID"]) >= 0) {
+            if (this.topFeatures.indexOf(rankRow["Feature ID"]) >= 0) {
                 inTop = true;
             }
-            if (this.botTaxa.indexOf(rankRow["Feature ID"]) >= 0) {
+            if (this.botFeatures.indexOf(rankRow["Feature ID"]) >= 0) {
                 inBot = true;
             }
             if (inTop) {
@@ -313,12 +314,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             var topEnteredText = document.getElementById("topText").value;
             var botEnteredText = document.getElementById("botText").value;
             // Now use these "types" to filter features for both parts of the log ratio
-            this.topTaxa = feature_computation.filterFeatures(
+            this.topFeatures = feature_computation.filterFeatures(
                 this.feature_ids,
                 topEnteredText,
                 topType
             );
-            this.botTaxa = feature_computation.filterFeatures(
+            this.botFeatures = feature_computation.filterFeatures(
                 this.feature_ids,
                 botEnteredText,
                 botType
@@ -327,62 +328,66 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
-            // Update taxa text displays
-            this.updateTaxaTextDisplays();
+            // Update features text displays
+            this.updateFeaturesTextDisplays();
         }
 
         updateSamplePlotSingle() {
             if (
-                this.newTaxonLow !== undefined &&
-                this.newTaxonHigh !== undefined
+                this.newFeatureLow !== undefined &&
+                this.newFeatureHigh !== undefined
             ) {
-                if (this.newTaxonLow !== null && this.newTaxonHigh !== null) {
-                    var lowsDiffer = this.oldTaxonLow != this.newTaxonLow;
-                    var highsDiffer = this.oldTaxonHigh != this.newTaxonHigh;
+                if (
+                    this.newFeatureLow !== null &&
+                    this.newFeatureHigh !== null
+                ) {
+                    var lowsDiffer = this.oldFeatureLow != this.newFeatureLow;
+                    var highsDiffer =
+                        this.oldFeatureHigh != this.newFeatureHigh;
                     if (lowsDiffer || highsDiffer) {
                         // Time to update the sample scatterplot regarding new
                         // microbes.
-                        this.taxonLowCol = this.feature_col_ids[
-                            this.newTaxonLow
+                        this.featureLowCol = this.feature_col_ids[
+                            this.newFeatureLow
                         ];
-                        this.taxonHighCol = this.feature_col_ids[
-                            this.newTaxonHigh
+                        this.featureHighCol = this.feature_col_ids[
+                            this.newFeatureHigh
                         ];
                         this.changeSamplePlot(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
-                        this.updateTaxaTextDisplays(true);
+                        this.updateFeaturesTextDisplays(true);
                     }
                 }
             }
         }
 
-        /* Updates the textareas that list the selected taxa.
+        /* Updates the textareas that list the selected features.
          *
          * This defaults to updating based on the "multiple" selections' values. If you
          * pass in a truthy value for the clear argument, this will instead clear these
          * text areas; if you pass in a truthy value for the single argument (and clear
          * is falsy), this will instead update based on the single selection values.
          */
-        updateTaxaTextDisplays(single, clear) {
+        updateFeaturesTextDisplays(single, clear) {
             if (clear) {
-                document.getElementById("topTaxaDisplay").value = "";
-                document.getElementById("botTaxaDisplay").value = "";
+                document.getElementById("topFeaturesDisplay").value = "";
+                document.getElementById("botFeaturesDisplay").value = "";
             } else if (single) {
                 document.getElementById(
-                    "topTaxaDisplay"
-                ).value = this.newTaxonHigh;
+                    "topFeaturesDisplay"
+                ).value = this.newFeatureHigh;
                 document.getElementById(
-                    "botTaxaDisplay"
-                ).value = this.newTaxonLow;
+                    "botFeaturesDisplay"
+                ).value = this.newFeatureLow;
             } else {
                 document.getElementById(
-                    "topTaxaDisplay"
-                ).value = this.topTaxa.toString().replace(/,/g, "\n");
+                    "topFeaturesDisplay"
+                ).value = this.topFeatures.toString().replace(/,/g, "\n");
                 document.getElementById(
-                    "botTaxaDisplay"
-                ).value = this.botTaxa.toString().replace(/,/g, "\n");
+                    "botFeaturesDisplay"
+                ).value = this.botFeatures.toString().replace(/,/g, "\n");
             }
         }
 
@@ -522,33 +527,33 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         }
 
         /* Use abundance data to compute the new log ratio ("balance") values of
-         * log(high taxon abundance) - log(low taxon abundance) for a given sample.
+         * log(high feature abundance) - log(low feature abundance) for a given sample.
          *
-         * This particular function is for log ratios of two individual taxa that were
+         * This particular function is for log ratios of two individual features that were
          * selected via the rank plot.
          */
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
-            var topCt = this.feature_cts[this.taxonHighCol][sampleID];
-            var botCt = this.feature_cts[this.taxonLowCol][sampleID];
+            var topCt = this.feature_cts[this.featureHighCol][sampleID];
+            var botCt = this.feature_cts[this.featureLowCol][sampleID];
             return feature_computation.computeBalance(topCt, botCt);
         }
 
-        /* Like updateBalanceSingle, but considers potentially many taxa in the
+        /* Like updateBalanceSingle, but considers potentially many features in the
          * numerator and denominator of the log ratio. For log ratios generated
          * by textual queries.
          */
         updateBalanceMulti(sampleRow) {
-            // NOTE: For multiple taxa Virus/Staphylococcus:
+            // NOTE: For multiple features Virus/Staphylococcus:
             // test cases in comparison to first scatterplot in Jupyter
             // Notebook: 1517, 1302.
             var topCt = this.sumAbundancesForSampleFeatures(
                 sampleRow,
-                this.topTaxa
+                this.topFeatures
             );
             var botCt = this.sumAbundancesForSampleFeatures(
                 sampleRow,
-                this.botTaxa
+                this.botFeatures
             );
             return feature_computation.computeBalance(topCt, botCt);
         }
@@ -564,8 +569,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * displays in quick succession).
          */
         destroy() {
-            // Clear the "taxa text" displays
-            this.updateTaxaTextDisplays(false, true);
+            // Clear the "features text" displays
+            this.updateFeaturesTextDisplays(false, true);
             document.getElementById("multiFeatureButton").onclick = undefined;
             this.rankPlotView.finalize();
             this.samplePlotView.finalize();
