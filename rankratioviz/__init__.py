@@ -4,7 +4,7 @@
 # samples. It can generate visualizations either as a standalone tool or as
 # a plugin for QIIME 2.
 #
-# Copyright (c) 2018--, rankratiotoviz development team.
+# Copyright (c) 2018--, rankratioviz development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #

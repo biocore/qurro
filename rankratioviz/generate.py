@@ -99,7 +99,7 @@ def ensure_df_headers_unique(df, df_name):
 
 def process_input(feature_ranks, sample_metadata, biom_table,
                   feature_metadata=None):
-    """Loads the ordination file, BIOM table, and optionally taxonomy data."""
+    """Processes the input files to rankratioviz."""
 
     # Assert that the feature IDs and sample IDs contain only unique IDs.
     # (This doesn't check that there aren't any identical IDs between the
@@ -236,9 +236,9 @@ def gen_rank_plot(V):
     # [0, F), where F = the number of ranked features.
     x = range(rank_vals.shape[0])
 
-    # Set default classification of every taxon to "None"
-    # (This value will be updated when a taxon is selected in the rank plot as
-    # part of the numerator, denominator, or both parts of the current log
+    # Set default classification of every feature to "None"
+    # (This value will be updated when a feature is selected in the rank plot
+    # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
     classification = pd.Series(index=rank_vals.index).fillna("None")
 
@@ -274,8 +274,8 @@ def gen_rank_plot(V):
         size=alt.value(1.0),
         tooltip=["x", "Classification", "Feature ID"]
     ).configure_axis(
-        # Done in order to differentiate "None"-classification taxa from grid
-        # lines
+        # Done in order to differentiate "None"-classification features from
+        # grid lines
         gridColor="#f2f2f2"
     ).interactive()
 
@@ -290,7 +290,7 @@ def gen_sample_plot(table, metadata):
 
     Arguments:
 
-    table: pandas DataFrame describing taxon abundances for each sample.
+    table: pandas DataFrame describing feature abundances for each sample.
     metadata: pandas DataFrame describing metadata for each sample.
 
     Returns:
@@ -337,12 +337,12 @@ def gen_sample_plot(table, metadata):
         # (Altair doesn't seem to like accepting ints as column IDs.)
         feature_cn2si[feature_ids[j]] = feature_columns_str_range[j]
 
-    # Now, we replace column IDs (which could include thousands of taxon
+    # Now, we replace column IDs (which could include thousands of feature
     # IDs) with just the integer indices from before.
     #
     # This can save *a lot* of space in the JSON file for the sample plot,
     # since each column name is referenced once for each sample (and
-    # 50 samples * (~3000 taxonomies) * (~50 characters per ID)
+    # 50 samples * (~3000 annotated feature IDs) * (~50 characters per ID)
     # comes out to 7.5 MB, which is an underestimate).
     sample_features.columns = feature_columns_str_range
 
@@ -377,7 +377,7 @@ def gen_sample_plot(table, metadata):
     # -All of the feature counts for each sample (that is, taxon/metabolite
     #  abundances) are located in the features_ds dataset. These feature counts
     #  can be drawn on in the JS application when computing log ratios, and
-    #  this lets us search through all available taxon IDs/etc. without
+    #  this lets us search through all available feature IDs/etc. without
     #  having to worry about accidentally mixing up metadata and feature
     #  counts.
     # -Since feature IDs can be really long (e.g. in the case where the feature
