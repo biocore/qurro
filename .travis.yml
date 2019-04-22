@@ -33,15 +33,18 @@ install:
     # Install various external testing/stylechecking packages that we use on
     # Travis but aren't required to just use rankratioviz
     - pip install flake8
-    - pip install coveralls
     - npm install -g mocha-headless-chrome
     - npm install -g jshint
     - npm install -g prettier
-      # - npm install -g nyc
+    - npm install -g nyc
 script:
     # Just to be safe, and to ensure that we pick up on the songbird install
     - qiime dev refresh-cache
     - make test
     - make stylecheck
 after_success:
-    - coveralls #--merge js_coverage.json
+    - wget -O codecov.sh https://codecov.io/bash
+    # Upload Python coverage information (see
+    # https://docs.codecov.io/docs/merging-reports)
+    - bash codecov.sh -cF python
+    - bash codecov.sh -f "js_coverage.json" -cF javascript
