@@ -181,19 +181,17 @@ def get_plot_jsons(main_js_loc):
     """
     rank_plot_json_str = None
     sample_plot_json_str = None
-    with open(main_js_loc, 'r') as pf:
-        i = 1
-        for line in pf:
+    with open(main_js_loc, 'r') as mf:
+        for line in mf:
             # Use strip() to trim off starting and trailing whitespace; use the
             # first position in the slice to ignore the
             # "var [rank/sample]PlotJSON = " stuff; use the second position in
             # the slice (-1) to remove the trailing semicolon
-            if i == 3:
+            if line.lstrip().startswith("var rankPlotJSON = "):
                 rank_plot_json_str = line.strip()[19:-1]
-            elif i == 4:
+            elif line.lstrip().startswith("var samplePlotJSON = "):
                 sample_plot_json_str = line.strip()[21:-1]
                 break
-            i += 1
     return json.loads(rank_plot_json_str), json.loads(sample_plot_json_str)
 
 

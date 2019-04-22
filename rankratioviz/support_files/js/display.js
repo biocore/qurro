@@ -4,7 +4,11 @@
  * RRVDisplay.makeRankPlot() and RRVDisplay.makeSamplePlot() were based on the
  * Basic Example in https://github.com/vega/vega-embed/.
  */
-define(["./feature_computation"], function(feature_computation) {
+define(["./feature_computation", "vega", "vega-embed"], function(
+    feature_computation,
+    vega,
+    vegaEmbed
+) {
     class RRVDisplay {
         /* Class representing a display in rankratioviz (involving two plots:
          * one bar plot containing feature ranks, and one scatterplot

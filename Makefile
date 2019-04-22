@@ -8,7 +8,7 @@
 
 .PHONY: test pytest jstest stylecheck style
 
-JSLOCS = rankratioviz/support_files/js/*.js rankratioviz/tests/web_tests/tests/*.js rankratioviz/tests/web_tests/setup.js
+JSLOCS = rankratioviz/support_files/js/*.js rankratioviz/support_files/main.js rankratioviz/tests/web_tests/tests/*.js rankratioviz/tests/web_tests/setup.js
 HTMLCSSLOCS = rankratioviz/support_files/index.html rankratioviz/tests/web_tests/index.html rankratioviz/support_files/rankratioviz.css
 
 test: pytest jstest

@@ -437,6 +437,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
         # fully, i.e. with a complete set of support_files/ -- but we handle it
         # here just in case.
         raise FileNotFoundError("Couldn't find index.html in support_files/")
+
     # create JS code that loads these JSON files in main.js
     # note that this JS code should be run *after* all of the page's
     # elements (or at least the #rankPlot and #samplePlot <div> elements) have
@@ -444,18 +445,25 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # functions will fail if these elements don't exist yet.
     #
     # Also note that the lengths of the JS variable names defined here
-    # (rankPlotJSON and samplePlotJSON), as well as the fact that the rank plot
-    # JSON is defined on line 3 and the sample plot JSON is defined on line 4,
-    # are relied on in the python tests when extracting the JSON files from
-    # generated main.js files. If you change the JS code formatting here up, it
-    # will probably cause some python integration tests to break.
-    main_loc = os.path.join(output_dir, 'main.js')
-    with open(main_loc, 'w') as pf:
-        pf.write("""requirejs(['js/display', 'js/feature_computation'],
-    function(display, feature_computation) {{
-        var rankPlotJSON = {};
-        var samplePlotJSON = {};
-        rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON);
-    }}
-);""".format(rank_plot_str, sample_plot_str))
+    # (rankPlotJSON and samplePlotJSON), as well as them being defined on
+    # separate lines of the file, are relied on in the python tests when
+    # extracting the JSON files from generated main.js files.
+    # If you change the JS code formatting here up, it will probably cause
+    # some python integration tests to break.
+    this_viz_main_js_contents = ""
+    main_loc = os.path.join(support_files_loc, 'main.js')
+    with open(main_loc, 'r') as main_file:
+        # read in basic main.js contents. Replace {}s in definitions of the
+        # plot JSONs with the actual JSON.
+        for line in main_file:
+            output_line = line
+            if line.lstrip().startswith("var rankPlotJSON = {};"):
+                output_line = output_line.replace("{}", rank_plot_str)
+            elif line.lstrip().startswith("var samplePlotJSON = {};"):
+                output_line = output_line.replace("{}", sample_plot_str)
+            this_viz_main_js_contents += output_line
+
+    with open(os.path.join(output_dir, 'main.js'), 'w') as this_main_file:
+        this_main_file.write(this_viz_main_js_contents)
+
     return index_path
