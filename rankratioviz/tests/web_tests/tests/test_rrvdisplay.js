@@ -32,241 +32,261 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
         });
 
-        it("Computes the correct sample log ratio in single-feature selections", function() {
-            // Recall that .featureHighCol and .featureLowCol correspond to the
-            // feature column IDs (as an example, in this case:
-            // "0" -> "Taxon3|Yeet|100" and "1" -> "Taxon4").
-            rrv.featureHighCol = "0";
-            rrv.featureLowCol = "1";
-            chai.assert.equal(
-                Math.log(3),
-                rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
-            );
-            // Test that flipping the counts within the log ratio works
-            rrv.featureHighCol = "1";
-            rrv.featureLowCol = "0";
-            chai.assert.equal(
-                -Math.log(3),
-                rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
-            );
-            // Try the same stuff out with different features and sample
-            rrv.featureHighCol = "2";
-            rrv.featureLowCol = "4";
-            chai.assert.equal(
-                Math.log(2),
-                rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
-            );
-            rrv.featureHighCol = "4";
-            rrv.featureLowCol = "2";
-            chai.assert.equal(
-                -Math.log(2),
-                rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
-            );
-            // Test that NaNs are returned
-            // In this first case, only the numerator is a 0.
-            rrv.featureHighCol = "2";
-            rrv.featureLowCol = "4";
-            chai.assert.isNaN(
-                rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
-            );
-            // In this next case, both the numerator and denominator are 0.
-            rrv.featureHighCol = "2";
-            rrv.featureLowCol = "2";
-            chai.assert.isNaN(
-                rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
-            );
-            // Test that invalid sample IDs result in an error
-            chai.assert.throws(function() {
-                rrv.updateBalanceSingle({ "Sample ID": "lolthisisntreal" });
+        describe("Computing sample log ratios", function() {
+            describe("Single-feature selections", function() {
+                it("Computes the correct sample log ratio", function() {
+                    // Recall that .featureHighCol and .featureLowCol correspond to the
+                    // feature column IDs (as an example, in this case:
+                    // "0" -> "Taxon3|Yeet|100" and "1" -> "Taxon4").
+                    rrv.featureHighCol = "0";
+                    rrv.featureLowCol = "1";
+                    chai.assert.equal(
+                        Math.log(3),
+                        rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
+                    );
+                    // Test that flipping the counts within the log ratio works
+                    rrv.featureHighCol = "1";
+                    rrv.featureLowCol = "0";
+                    chai.assert.equal(
+                        -Math.log(3),
+                        rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
+                    );
+                    // Try the same stuff out with different features and sample
+                    rrv.featureHighCol = "2";
+                    rrv.featureLowCol = "4";
+                    chai.assert.equal(
+                        Math.log(2),
+                        rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
+                    );
+                    rrv.featureHighCol = "4";
+                    rrv.featureLowCol = "2";
+                    chai.assert.equal(
+                        -Math.log(2),
+                        rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
+                    );
+                });
+                it("Returns NaN when numerator and/or denominator is 0", function() {
+                    // In this first case, only the numerator is a 0.
+                    rrv.featureHighCol = "2";
+                    rrv.featureLowCol = "4";
+                    chai.assert.isNaN(
+                        rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
+                    );
+                    // In this next case, both the numerator and denominator are 0.
+                    rrv.featureHighCol = "2";
+                    rrv.featureLowCol = "2";
+                    chai.assert.isNaN(
+                        rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
+                    );
+                });
+
+                it("Throws an error if sample ID isn't present in data", function() {
+                    chai.assert.throws(function() {
+                        rrv.updateBalanceSingle({
+                            "Sample ID": "lolthisisntreal"
+                        });
+                    });
+                });
+            });
+            describe("Multi-feature selections", function() {
+                it("Computes the correct sample log ratio", function() {
+                    // Standard 2-taxon / 2-taxon case
+                    rrv.topFeatures = ["Taxon1", "Taxon3|Yeet|100"];
+                    rrv.botFeatures = ["Taxon2", "Taxon4"];
+                    chai.assert.equal(
+                        Math.log(2 / 7),
+                        rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+                    );
+                    // only one feature over another (therefore should be equal to
+                    // updateBalanceSingle -- this is the same test as done above)
+                    rrv.topFeatures = ["Taxon3|Yeet|100"];
+                    rrv.botFeatures = ["Taxon4"];
+                    chai.assert.equal(
+                        Math.log(2),
+                        rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+                    );
+                });
+                it("Returns NaN when numerator and/or denominator feature lists are empty", function() {
+                    // Test what happens when numerator and/or denominator feature
+                    // lists are empty. If either or both of these feature lists are
+                    // empty, we should get a NaN balance (since that corresponds to
+                    // the numerator and/or denominator of the log ratio being 0).
+                    // 1. Both numerator and denominator are empty
+                    rrv.topFeatures = [];
+                    rrv.botFeatures = [];
+                    chai.assert.isNaN(
+                        rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+                    );
+                    // 2. Just numerator is empty
+                    rrv.botFeatures = ["Taxon4"];
+                    chai.assert.isNaN(
+                        rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+                    );
+                    // 3. Just denominator is empty
+                    rrv.topFeatures = ["Taxon2"];
+                    rrv.botFeatures = [];
+                    chai.assert.isNaN(
+                        rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
+                    );
+                });
+                it("Throws an error if sample ID isn't present in data", function() {
+                    // Same as in the updateBalanceSingle test -- verify that
+                    // a nonexistent sample ID causes an error
+                    chai.assert.throws(function() {
+                        rrv.updateBalanceMulti({
+                            "Sample ID": "lolthisisntreal"
+                        });
+                    });
+                });
+            });
+            describe("Summing feature abundances in a sample", function() {
+                it("Correctly sums feature abundances in a sample", function() {
+                    // Check case when number of features is just one
+                    chai.assert.equal(
+                        6,
+                        rrv.sumAbundancesForSampleFeatures(
+                            { "Sample ID": "Sample1" },
+                            ["Taxon2"]
+                        )
+                    );
+                    // Check with multiple features
+                    chai.assert.equal(
+                        7,
+                        rrv.sumAbundancesForSampleFeatures(
+                            { "Sample ID": "Sample1" },
+                            ["Taxon2", "Taxon4"]
+                        )
+                    );
+                    chai.assert.equal(
+                        7,
+                        rrv.sumAbundancesForSampleFeatures(
+                            { "Sample ID": "Sample1" },
+                            ["Taxon2", "Taxon4", "Taxon1"]
+                        )
+                    );
+                    // Check with another sample + an annotated feature
+                    chai.assert.equal(
+                        8,
+                        rrv.sumAbundancesForSampleFeatures(
+                            { "Sample ID": "Sample2" },
+                            ["Taxon2", "Taxon3|Yeet|100"]
+                        )
+                    );
+                });
+                it("Returns 0 when the input list of features is empty", function() {
+                    chai.assert.equal(
+                        0,
+                        rrv.sumAbundancesForSampleFeatures(
+                            { "Sample ID": "Sample3" },
+                            []
+                        )
+                    );
+                });
+                it("Throws an error if sample ID isn't present in data", function() {
+                    // Check that an invalid sample ID causes an error
+                    chai.assert.throws(function() {
+                        rrv.sumAbundancesForSampleFeatures(
+                            { "Sample ID": "lolthisisntreal" },
+                            []
+                        );
+                    });
+                });
             });
         });
 
-        it("Correctly sums feature abundances in a sample", function() {
-            // Check case when number of features is just one
-            chai.assert.equal(
-                6,
-                rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample1" }, [
-                    "Taxon2"
-                ])
-            );
-            // Check with multiple features
-            chai.assert.equal(
-                7,
-                rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample1" }, [
-                    "Taxon2",
-                    "Taxon4"
-                ])
-            );
-            chai.assert.equal(
-                7,
-                rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample1" }, [
-                    "Taxon2",
-                    "Taxon4",
-                    "Taxon1"
-                ])
-            );
-            // Check with another sample + an annotated feature
-            chai.assert.equal(
-                8,
-                rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample2" }, [
-                    "Taxon2",
-                    "Taxon3|Yeet|100"
-                ])
-            );
-            // Check 0-features case (should just return 0)
-            chai.assert.equal(
-                0,
-                rrv.sumAbundancesForSampleFeatures(
-                    { "Sample ID": "Sample3" },
-                    []
-                )
-            );
-            // Check that an invalid sample ID causes an error
-            chai.assert.throws(function() {
-                rrv.sumAbundancesForSampleFeatures(
-                    { "Sample ID": "lolthisisntreal" },
-                    []
+        describe('Updating "feature text" DOM elements', function() {
+            it("Works for single-feature selections", function() {
+                rrv.newFeatureHigh = "New feature name high";
+                rrv.newFeatureLow = "New feature name low";
+                rrv.updateFeaturesTextDisplays(true);
+                chai.assert.equal(
+                    document.getElementById("topFeaturesDisplay").value,
+                    rrv.newFeatureHigh
+                );
+                chai.assert.equal(
+                    document.getElementById("botFeaturesDisplay").value,
+                    rrv.newFeatureLow
+                );
+                // Check it again -- ensure that the updating action overwrites the
+                // previous values
+                rrv.newFeatureHigh = "Thing 1!";
+                rrv.newFeatureLow = "Thing 2!";
+                rrv.updateFeaturesTextDisplays(true);
+                chai.assert.equal(
+                    document.getElementById("topFeaturesDisplay").value,
+                    rrv.newFeatureHigh
+                );
+                chai.assert.equal(
+                    document.getElementById("botFeaturesDisplay").value,
+                    rrv.newFeatureLow
                 );
             });
-        });
-
-        it("Computes the correct sample log ratio in multi-feature selections", function() {
-            // Standard 2-taxon / 2-taxon case
-            rrv.topFeatures = ["Taxon1", "Taxon3|Yeet|100"];
-            rrv.botFeatures = ["Taxon2", "Taxon4"];
-            chai.assert.equal(
-                Math.log(2 / 7),
-                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
-            );
-            // only one feature over another (therefore should be equal to
-            // updateBalanceSingle -- this is the same test as done above)
-            rrv.topFeatures = ["Taxon3|Yeet|100"];
-            rrv.botFeatures = ["Taxon4"];
-            chai.assert.equal(
-                Math.log(2),
-                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
-            );
-            // Test what happens when numerator and/or denominator feature
-            // lists are empty. If either or both of these feature lists are
-            // empty, we should get a NaN balance (since that corresponds to
-            // the numerator and/or denominator of the log ratio being 0).
-            // 1. Both numerator and denominator are empty
-            rrv.topFeatures = [];
-            rrv.botFeatures = [];
-            chai.assert.isNaN(
-                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
-            );
-            // 2. Just numerator is empty
-            rrv.botFeatures = ["Taxon4"];
-            chai.assert.isNaN(
-                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
-            );
-            // 3. Just denominator is empty
-            rrv.topFeatures = ["Taxon2"];
-            rrv.botFeatures = [];
-            chai.assert.isNaN(
-                rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
-            );
-            // Same as in the updateBalanceSingle test -- verify that
-            // a nonexistent sample ID causes an error
-            chai.assert.throws(function() {
-                rrv.updateBalanceMulti({ "Sample ID": "lolthisisntreal" });
+            it("Works for multi-feature selections", function() {
+                // Standard case
+                rrv.topFeatures = ["abc", "def", "ghi", "lmno pqrs", "tuv"];
+                rrv.botFeatures = ["asdf", "ghjk"];
+                var expectedTopText = "abc\ndef\nghi\nlmno pqrs\ntuv";
+                var expectedBotText = "asdf\nghjk";
+                rrv.updateFeaturesTextDisplays();
+                chai.assert.equal(
+                    document.getElementById("topFeaturesDisplay").value,
+                    expectedTopText
+                );
+                chai.assert.equal(
+                    document.getElementById("botFeaturesDisplay").value,
+                    expectedBotText
+                );
+                // Check case where there's only one feature in a list
+                // In this case, the denominator + expected bottom text are the
+                // same as before
+                rrv.topFeatures = ["onlyfeature"];
+                expectedTopText = "onlyfeature";
+                rrv.updateFeaturesTextDisplays();
+                chai.assert.equal(
+                    document.getElementById("topFeaturesDisplay").value,
+                    expectedTopText
+                );
+                chai.assert.equal(
+                    document.getElementById("botFeaturesDisplay").value,
+                    expectedBotText
+                );
+                // Check case where lists are empty
+                rrv.topFeatures = [];
+                rrv.botFeatures = [];
+                rrv.updateFeaturesTextDisplays();
+                chai.assert.isEmpty(
+                    document.getElementById("topFeaturesDisplay").value
+                );
+                chai.assert.isEmpty(
+                    document.getElementById("botFeaturesDisplay").value
+                );
             });
-        });
-
-        it('Updates "feature text" DOM elements in single-feature selections', function() {
-            rrv.newFeatureHigh = "New feature name high";
-            rrv.newFeatureLow = "New feature name low";
-            rrv.updateFeaturesTextDisplays(true);
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                rrv.newFeatureHigh
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                rrv.newFeatureLow
-            );
-            // Check it again -- ensure that the updating action overwrites the
-            // previous values
-            rrv.newFeatureHigh = "Thing 1!";
-            rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                rrv.newFeatureHigh
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                rrv.newFeatureLow
-            );
-        });
-
-        it('Updates "feature text" DOM elements in multi-feature selections', function() {
-            // Standard case
-            rrv.topFeatures = ["abc", "def", "ghi", "lmno pqrs", "tuv"];
-            rrv.botFeatures = ["asdf", "ghjk"];
-            var expectedTopText = "abc\ndef\nghi\nlmno pqrs\ntuv";
-            var expectedBotText = "asdf\nghjk";
-            rrv.updateFeaturesTextDisplays();
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                expectedTopText
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                expectedBotText
-            );
-            // Check case where there's only one feature in a list
-            // In this case, the denominator + expected bottom text are the
-            // same as before
-            rrv.topFeatures = ["onlyfeature"];
-            expectedTopText = "onlyfeature";
-            rrv.updateFeaturesTextDisplays();
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                expectedTopText
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                expectedBotText
-            );
-            // Check case where lists are empty
-            rrv.topFeatures = [];
-            rrv.botFeatures = [];
-            rrv.updateFeaturesTextDisplays();
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
-        });
-
-        it('Clears "feature text" DOM elements', function() {
-            // Populate the DOM elements
-            rrv.newFeatureHigh = "Thing 1!";
-            rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
-            // Check that clearing works
-            rrv.updateFeaturesTextDisplays(false, true);
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
-            // Repopulate the DOM elements
-            rrv.newFeatureHigh = "Thing 1!";
-            rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
-            // Check that clearing is done, even if "single" is true (the "clear" argument takes priority)
-            rrv.updateFeaturesTextDisplays(true, true);
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
+            it('Clears the "feature text" DOM elements properly', function() {
+                // Populate the DOM elements
+                rrv.newFeatureHigh = "Thing 1!";
+                rrv.newFeatureLow = "Thing 2!";
+                rrv.updateFeaturesTextDisplays(true);
+                // Check that clearing works
+                rrv.updateFeaturesTextDisplays(false, true);
+                chai.assert.isEmpty(
+                    document.getElementById("topFeaturesDisplay").value
+                );
+                chai.assert.isEmpty(
+                    document.getElementById("botFeaturesDisplay").value
+                );
+                // Repopulate the DOM elements
+                rrv.newFeatureHigh = "Thing 1!";
+                rrv.newFeatureLow = "Thing 2!";
+                rrv.updateFeaturesTextDisplays(true);
+                // Check that clearing is done, even if "single" is true (the "clear" argument takes priority)
+                rrv.updateFeaturesTextDisplays(true, true);
+                chai.assert.isEmpty(
+                    document.getElementById("topFeaturesDisplay").value
+                );
+                chai.assert.isEmpty(
+                    document.getElementById("botFeaturesDisplay").value
+                );
+            });
         });
     });
 });
