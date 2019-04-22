@@ -1,8 +1,7 @@
 # rankratioviz
-[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![Coverage Status](https://coveralls.io/repos/github/fedarko/rankratioviz/badge.svg?branch=master)](https://coveralls.io/github/fedarko/rankratioviz?branch=master) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![codecov](https://codecov.io/gh/fedarko/rankratioviz/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/rankratioviz) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-(Name subject to change. Also, note that the coveralls link only covers the
-Python side of this codebase right now.)
+(Name subject to change.)
 
 rankratioviz visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
@@ -108,10 +107,12 @@ For python testing/style checking, rankratioviz uses
 
 For JavaScript testing/style checking, rankratioviz uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
-[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome), [jshint](https://jshint.com/), and [prettier](https://prettier.io/).
+[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome),
+[nyc](https://github.com/istanbuljs/nyc), [jshint](https://jshint.com/),
+and [prettier](https://prettier.io/).
 
 rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
-[Coveralls](https://coveralls.io/).
+[Codecov](https://codecov.io/).
 
 ### Data Sources
 

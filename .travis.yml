@@ -44,7 +44,10 @@ script:
     - make stylecheck
 after_success:
     - wget -O codecov.sh https://codecov.io/bash
-    # Upload Python coverage information (see
-    # https://docs.codecov.io/docs/merging-reports)
-    - bash codecov.sh -cF python
-    - bash codecov.sh -f "js_coverage.json" -cF javascript
+    # Upload coverage information (see
+    # https://docs.codecov.io/docs/merging-reports). Fortunately, codecov's
+    # bash script detects both the python and JS code coverage by default --
+    # so it automatically merges the reports, without us needing to run
+    # codecov.sh multiple times (although that should be doable also, in case
+    # future reports aren't automatically detected).
+    - bash codecov.sh -c
