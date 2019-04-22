@@ -447,9 +447,9 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # Also note that the lengths of the JS variable names defined here
     # (rankPlotJSON and samplePlotJSON), as well as them being defined on
     # separate lines of the file, are relied on in the python tests when
-    # extracting the JSON files from generated main.js files.
-    # If you change the JS code formatting here up, it will probably cause
-    # some python integration tests to break.
+    # extracting the JSON files from generated main.js files. If you change the
+    # way these variables are written to in the JS, it may cause the python
+    # tests to fail.
     this_viz_main_js_contents = ""
     main_loc = os.path.join(support_files_loc, 'main.js')
     with open(main_loc, 'r') as main_file:
