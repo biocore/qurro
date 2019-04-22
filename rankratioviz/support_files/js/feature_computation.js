@@ -13,10 +13,15 @@ define(function() {
      * inputText is contained somewhere within their name. (This search includes
      * characters like semicolons separating the ranks of a taxon, so those can be
      * used in the inputText to control exactly what is being filtered.)
+     *
+     * In either case, if inputText is empty (i.e. its length is 0), this
+     * returns an empty array.
      */
     function filterFeatures(potentialFeatures, inputText, searchType) {
         if (searchType !== "rank" && searchType !== "text") {
             throw new Error('searchType must be either "rank" or "text"');
+        } else if (inputText.trim().length === 0) {
+            return [];
         }
         // Only used if searchType === "rank"
         var rankArray = [];

@@ -31,6 +31,29 @@ define(["feature_computation", "mocha", "chai"], function(
             );
         });
 
+        it("Doesn't find anything in either search mode if inputText is empty or contains only whitespace", function() {
+            chai.assert.isEmpty(
+                feature_computation.filterFeatures(inputFeatures, "", "text")
+            );
+            chai.assert.isEmpty(
+                feature_computation.filterFeatures(inputFeatures, "", "rank")
+            );
+            chai.assert.isEmpty(
+                feature_computation.filterFeatures(
+                    inputFeatures,
+                    " \n \t ",
+                    "text"
+                )
+            );
+            chai.assert.isEmpty(
+                feature_computation.filterFeatures(
+                    inputFeatures,
+                    " \n \t ",
+                    "rank"
+                )
+            );
+        });
+
         it('Throws an error if searchType isn\'t "rank" or "text"', function() {
             chai.assert.throws(function() {
                 feature_computation.filterFeatures(
