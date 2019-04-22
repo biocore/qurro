@@ -81,26 +81,33 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.equal(
                 7,
                 rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample1" }, [
-                    "Taxon2", "Taxon4"
+                    "Taxon2",
+                    "Taxon4"
                 ])
             );
             chai.assert.equal(
                 7,
                 rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample1" }, [
-                    "Taxon2", "Taxon4", "Taxon1"
+                    "Taxon2",
+                    "Taxon4",
+                    "Taxon1"
                 ])
             );
             // Check with another sample + an annotated feature
             chai.assert.equal(
                 8,
                 rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample2" }, [
-                    "Taxon2", "Taxon3|Yeet|100"
+                    "Taxon2",
+                    "Taxon3|Yeet|100"
                 ])
             );
             // Check 0-features case (should just return 0)
             chai.assert.equal(
                 0,
-                rrv.sumAbundancesForSampleFeatures({ "Sample ID": "Sample3" }, [])
+                rrv.sumAbundancesForSampleFeatures(
+                    { "Sample ID": "Sample3" },
+                    []
+                )
             );
         });
         it("Computes the correct sample log ratio in multi-feature selections", function() {
