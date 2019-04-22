@@ -1,7 +1,11 @@
-h3, p {
+h3,
+p {
     text-align: center;
 }
-body, input, button, select {
+body,
+input,
+button,
+select {
     font-size: large;
 }
 .plotTD {

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
@@ -7,14 +7,6 @@
         </title>
         <link rel="shortcut icon" href="icon.png" />
         <link rel="stylesheet" href="rankratioviz.css" />
-        <!-- External dependencies here: Vega, Vega-Lite, Vega-Embed.
-             All are required for Vega-Embed: see the Basic Example in
-             https://github.com/vega/vega-embed.
-        -->
-        <script src="vendor/vega.min.js"></script>
-        <script src="vendor/vega-lite.min.js"></script>
-        <script src="vendor/vega-embed.min.js"></script>
-        <script src="rankratioviz.js"></script>
     </head>
 
     <body>
@@ -32,8 +24,8 @@
                 <td class="topAlignedTD">
                     <h3>Single-Feature Selections</h3>
                     <p>
-                        Select two features from the rank plot (left) to
-                        display their log ratios for each sample in the sample
+                        Select two features from the rank plot (left) to display
+                        their log ratios for each sample in the sample
                         scatterplot (right).
                     </p>
                     <!-- Note for future reference: whitespace between the
@@ -54,8 +46,8 @@
                 <td>
                     <h3>Multi-Feature Selections</h3>
                     <p>
-                        Use the controls here to show more complex log ratios
-                        in the sample scatterplot.
+                        Use the controls here to show more complex log ratios in
+                        the sample scatterplot.
                     </p>
                     <p>
                         Filter numerator to features that
@@ -67,7 +59,7 @@
                                 contain the exact text
                             </option>
                         </select>
-                        <input type="text" id="topText" size="40"></input>
+                        <input type="text" id="topText" size="40" />
                     </p>
                     <p>
                         Filter denominator to features that
@@ -79,20 +71,24 @@
                                 contain the exact text
                             </option>
                         </select>
-                        <input type="text" id="botText" size="40"></input>
+                        <input type="text" id="botText" size="40" />
                     </p>
 
                     <p>
-                        <button onclick="ssmv.updateSamplePlotMulti();">
+                        <button id="multiFeatureButton">
                             Regenerate sample plot
                         </button>
                     </p>
+                    <!--
                     <p>
                         <label for="selectMicrobesFileSelector">
                             <strong>
                                 Upload "Select Features" List:
                             </strong>
                         </label>
+                        TODO make RRVDisplay get this input by ID
+                            and set its onchange to the RRVDisplay instance's
+                            particular select microbes or whatever function
                         <input type="file" id="selectMicrobesFileSelector"
                             onChange="ssmv.uploadSelectMicrobesFile();" />
                     </p>
@@ -106,34 +102,25 @@
                             max="1000" value="0">
                         </input>
                     </p>
+                    -->
                 </td>
+            </tr>
         </table>
-        <!-- This file will be created by the rankratioviz python script.
-             It will contain definitions for ssmv.rankPlotJSON and
-             ssmv.samplePlotJSON, and then invoke ssmv.makeRankPlot() and
-             ssmv.makeSamplePlot().
+
+        <!-- This file will be edited by the rankratioviz python script to
+             contain definitions for the rank plot and sample plot JSON,
+             and will use these to create an instance of RRVDisplay
+             (thereby starting rankratioviz).
 
              Leaving this code at the bottom of the page is sufficient to wait
              until the rest of the stuff in the page has been loaded:
              see https://stackoverflow.com/a/1861233.
 
-             We need to wait for the page to load before trying to construct
-             the Vega plots using vegaEmbed(); otherwise, plots.js' uses of
-             ssmv.makeRankPlot() and ssmv.makeSamplePlot() (which call
-             vegaEmbed()) will fail with the "ERROR: Signal bind element not
-             found: null" error described at
+             We need to wait for the page to load before calling
+             RRVDisplay.makePlots(); otherwise, we'll get (at least) the error
+             "ERROR: Signal bind element not found: null" described at
              https://github.com/vega/vega-embed/issues/64.
-
-             In the past, this "accidentally" worked because I loaded the JSON
-             files using XMLHTTPRequests, which apparently take long enough /
-             start after the page has loaded. Switching to embedding the JSON
-             directly in the JS code caused this to start failing (since
-             the make...Plot() methods were being called immediately, and the
-             #rankPlot and #samplePlot DOM elements didn't exist yet).
-             Delaying the JSON loading and make...Plot() methods being called
-             until after everything else has been loaded (as is done by loading
-             the plots.js script at the bottom of the markup) fixes this.
         -->
-        <script src="plots.js"></script>
+        <script data-main="main" src="vendor/require.js"></script>
     </body>
 </html>

@@ -1,8 +1,7 @@
 # rankratioviz
-[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![Coverage Status](https://coveralls.io/repos/github/fedarko/rankratioviz/badge.svg?branch=master)](https://coveralls.io/github/fedarko/rankratioviz?branch=master)
+[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![codecov](https://codecov.io/gh/fedarko/rankratioviz/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/rankratioviz) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-(Name subject to change. Also, note that the coveralls link only covers the
-Python side of this codebase right now.)
+(Name subject to change.)
 
 rankratioviz visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
@@ -15,9 +14,9 @@ folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
 `qiime tools view`).
-**We're
-currently focused on restructuring the tool's codebase, so please bear with us as
-we make these enhancements available.**
+
+rankratioviz should work with most modern web browsers. Firefox or Chrome are
+recommended.
 
 rankratioviz is still being developed, so backwards-incompatible changes might
 occur. If you have any questions, feel free to contact the development team at
@@ -80,13 +79,14 @@ ratios.
 
 ### Dependencies
 
-Code files for the following three projects are distributed within
+Code files for the following projects are distributed within
 `rankratioviz/support_file/vendor/`.
 See the `dependency_licenses/` directory for copies of these software projects'
 licenses (each of which includes a respective copyright notice).
 - [Vega](https://vega.github.io/vega/)
 - [Vega-Lite](https://vega.github.io/vega-lite/)
 - [Vega-Embed](https://github.com/vega/vega-embed)
+- [RequireJS](https://requirejs.org/)
 
 The following software projects are required for rankratioviz's python code
 to function, although they are not distributed with rankratioviz (and are
@@ -106,11 +106,13 @@ For python testing/style checking, rankratioviz uses
 [flake8](http://flake8.pycqa.org/en/latest/).
 
 For JavaScript testing/style checking, rankratioviz uses
-[Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), and
-[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome).
+[Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
+[mocha-headless-chrome](https://github.com/direct-adv-interfaces/mocha-headless-chrome),
+[nyc](https://github.com/istanbuljs/nyc), [jshint](https://jshint.com/),
+and [prettier](https://prettier.io/).
 
 rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
-[Coveralls](https://coveralls.io/).
+[Codecov](https://codecov.io/).
 
 ### Data Sources
 

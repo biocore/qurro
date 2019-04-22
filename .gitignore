@@ -68,3 +68,7 @@ example_notebooks/*/output/*
 tmp_files/*
 # Duplicate .coverage files
 .coverage.*
+
+rankratioviz/tests/web_tests/instrumented_js/*
+coverage.xml
+js_coverage.json
