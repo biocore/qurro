@@ -107,19 +107,18 @@
             </tr>
         </table>
 
-        <!-- This file will be created by the rankratioviz python script.
-             It will contain definitions for the rank plot and sample plot
-             JSON, and will use these to create an instance of RRVDisplay
+        <!-- This file will be edited by the rankratioviz python script to
+             contain definitions for the rank plot and sample plot JSON,
+             and will use these to create an instance of RRVDisplay
              (thereby starting rankratioviz).
 
              Leaving this code at the bottom of the page is sufficient to wait
              until the rest of the stuff in the page has been loaded:
              see https://stackoverflow.com/a/1861233.
 
-             We need to wait for the page to load before trying to construct
-             the Vega plots using vegaEmbed(); otherwise, main.js' uses of
-             vegaEmbed will fail with the "ERROR: Signal bind element not
-             found: null" error described at
+             We need to wait for the page to load before calling
+             RRVDisplay.makePlots(); otherwise, we'll get (at least) the error
+             "ERROR: Signal bind element not found: null" described at
              https://github.com/vega/vega-embed/issues/64.
         -->
         <script data-main="main" src="vendor/require.js"></script>
