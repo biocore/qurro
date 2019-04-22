@@ -21,6 +21,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.exists(rrv.rankPlotView);
             chai.assert.exists(rrv.samplePlotView);
         });
+        it("Identifies nonexistent sample IDs", function() {
+            chai.assert.doesNotThrow(function() {
+                rrv.validateSampleID("Sample2");
+            });
+            chai.assert.throws(function() {
+                rrv.validateSampleID("SuperFakeSampleName");
+            });
+        });
         it("Computes the correct sample log ratio in single-feature selections", function() {
             // Recall that .featureHighCol and .featureLowCol correspond to the
             // feature column IDs (as an example, in this case:
