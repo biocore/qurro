@@ -49,7 +49,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     "text"
                 ),
                 staphTextMatches
-            )
+            );
         });
 
         it("Finds matching features in rank searching", function() {
