@@ -341,5 +341,20 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
             });
         });
+        describe("Selecting features to update the plots", function() {
+            describe("Single-feature selections", function() {
+                // TODO refactor display callback code to make it more easily
+                // testable (won't have to rely on clicks)
+            });
+            describe("Multi-feature selections", function() {
+                // Should be able to just call .click() on multiFeatureButton
+                // (after populating search fields/types, of course)
+            });
+        });
+        describe("Modifying plot signals", function() {
+            // can use view.signal() to do this. Very feasible.
+            describe("Changing the rank used on the rank plot", function() {});
+            describe("Changing the x-axis used on the sample plot", function() {});
+        });
     });
 });
