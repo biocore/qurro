@@ -604,6 +604,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // Clear the "features text" displays
             this.updateFeaturesTextDisplays(false, true);
             document.getElementById("multiFeatureButton").onclick = undefined;
+            document.getElementById("screenshotButton").onclick = undefined;
             this.rankPlotView.finalize();
             this.samplePlotView.finalize();
             function clearDiv(divID) {
