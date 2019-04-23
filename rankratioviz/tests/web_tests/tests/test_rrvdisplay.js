@@ -21,6 +21,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.isTrue(rrv.onHigh);
             chai.assert.exists(rrv.rankPlotView);
             chai.assert.exists(rrv.samplePlotView);
+            // Check that DOM bindings were properly set
+            chai.assert.isNotEmpty(rrv.elementsWithOnClickBindings);
+            for (var i = 0; i < rrv.elementsWithOnClickBindings.length; i++) {
+                chai.assert.isFunction(
+                    document.getElementById(rrv.elementsWithOnClickBindings[i])
+                        .onclick
+                );
+            }
         });
 
         it("Identifies nonexistent sample IDs", function() {

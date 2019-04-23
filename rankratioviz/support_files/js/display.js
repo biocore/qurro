@@ -71,12 +71,25 @@ define(["./feature_computation", "vega", "vega-embed"], function(
 
             // Set up relevant DOM bindings
             var display = this;
-            document.getElementById("multiFeatureButton").onclick = function() {
-                display.updateSamplePlotMulti();
-            };
-            document.getElementById("screenshotButton").onclick = function() {
-                display.takeScreenshot();
-            };
+            this.elementsWithOnClickBindings = RRVDisplay.setUpDOMBindings({
+                multiFeatureButton: function() {
+                    display.updateSamplePlotMulti();
+                },
+                screenshotButton: function() {
+                    display.takeScreenshot();
+                }
+            });
+        }
+
+        static setUpDOMBindings(buttonID2function) {
+            var elementIDs = Object.keys(buttonID2function);
+            var currID;
+            for (var i = 0; i < elementIDs.length; i++) {
+                currID = elementIDs[i];
+                document.getElementById(currID).onclick =
+                    buttonID2function[currID];
+            }
+            return elementIDs;
         }
 
         makePlots() {
@@ -86,6 +99,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
 
         makeRankPlot() {
             this.rankOrdering = this.rankPlotJSON.datasets.rankratioviz_rank_ordering;
+            // We can use a closure to allow callback functions to access "this"
+            // (and thereby change the properties of instances of the RRVDisplay
+            // class). See https://stackoverflow.com/a/5106369/10730311.
             var parentDisplay = this;
             var embedParams = {
                 actions: false,
@@ -96,9 +112,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     );
                 }
             };
-            // We can use a closure to allow callback functions to access "this"
-            // (and thereby change the properties of instances of the RRVDisplay
-            // class). See https://stackoverflow.com/a/5106369/10730311.
             vegaEmbed("#rankPlot", this.rankPlotJSON, embedParams).then(
                 function(result) {
                     parentDisplay.rankPlotView = result.view;
@@ -603,8 +616,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         destroy() {
             // Clear the "features text" displays
             this.updateFeaturesTextDisplays(false, true);
-            document.getElementById("multiFeatureButton").onclick = undefined;
-            document.getElementById("screenshotButton").onclick = undefined;
+            // Clear the bindings of bound DOM elements
+            for (var i = 0; i < this.elementsWithOnClickBindings.length; i++) {
+                document.getElementById(
+                    this.elementsWithOnClickBindings[i]
+                ).onclick = undefined;
+            }
             this.rankPlotView.finalize();
             this.samplePlotView.finalize();
             function clearDiv(divID) {
