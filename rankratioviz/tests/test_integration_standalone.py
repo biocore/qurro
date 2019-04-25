@@ -20,3 +20,15 @@ def test_sleep_apnea():
     run_integration_test("sleep_apnea", "sleep_apnea", "ordination.txt",
                          "qiita_10422_table.biom", "qiita_10422_metadata.tsv",
                          feature_metadata_name="taxonomy.tsv")
+
+
+def test_red_sea():
+    """Tests rankratioviz' JSON generation on a dataset from a study of the Red
+       Sea.
+
+       This is really a test to make sure that rankratioviz can properly handle
+       metabolite data.
+    """
+    run_integration_test("red_sea", "red_sea", "differentials.tsv",
+                         "redsea.biom", "redsea_metadata.txt",
+                         feature_metadata_name="feature_metadata.txt")

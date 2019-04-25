@@ -16,3 +16,13 @@ def test_integration_q2_byrd():
     run_integration_test("byrd", "q2_byrd", "byrd_differentials.tsv",
                          "byrd_skin_table.biom", "byrd_metadata.txt",
                          use_q2=True, q2_ranking_tool="songbird")
+
+
+def test_integration_q2_red_sea():
+    """Tests rankratioviz on songbird output with metabolite data in the
+       context of QIIME 2.
+    """
+    run_integration_test("red_sea", "q2_red_sea", "differentials.tsv",
+                         "redsea.biom", "redsea_metadata.txt",
+                         feature_metadata_name="feature_metadata.txt",
+                         use_q2=True, q2_ranking_tool="songbird")
