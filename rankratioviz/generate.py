@@ -298,7 +298,7 @@ def gen_sample_plot(table, metadata):
     JSON describing altair.Chart for the sample plot.
     """
 
-    # Used to set x-axis and color
+    # Used to set color
     default_metadata_col = metadata.columns[0]
 
     # Since we don't bother setting a default log ratio, we set the balance for
@@ -355,7 +355,9 @@ def gen_sample_plot(table, metadata):
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
         alt.X(
-            default_metadata_col,
+            # TODO eventually set to default_metadata_col when we can support
+            # arbitrary starting x-axis fields
+            "rankratioviz_balance",
             # As with the color type, this is a temporary measure.
             type="quantitative"
         ),
