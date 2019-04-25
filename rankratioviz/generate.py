@@ -354,8 +354,16 @@ def gen_sample_plot(table, metadata):
         sample_metadata,
         title="Log Ratio of Abundances in Samples"
     ).mark_circle().encode(
-        alt.X(default_metadata_col, type="quantitative"),
-        alt.Y("rankratioviz_balance", title="log(Numerator / Denominator)"),
+        alt.X(
+            default_metadata_col,
+            # As with the color type, this is a temporary measure.
+            type="quantitative"
+        ),
+        alt.Y(
+            "rankratioviz_balance",
+            title="log(Numerator / Denominator)",
+            type="quantitative"
+        ),
         color=alt.Color(
             default_metadata_col,
             # This is a temporary measure. Eventually the type should be
