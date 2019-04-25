@@ -11,7 +11,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
      * tests even if we update samplePlotJSON.
      */
     function featureColID(featureID) {
-        return samplePlotJSON["datasets"]["rankratioviz_feature_col_ids"][featureID];
+        return samplePlotJSON.datasets.rankratioviz_feature_col_ids[featureID];
     }
     describe("Dynamic RRVDisplay class functionality", function() {
         var rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON);
