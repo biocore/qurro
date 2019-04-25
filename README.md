@@ -126,7 +126,8 @@ The test data located in `rankratioviz/tests/input/sleep_apnea/`
 is from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
 which is associated with Tripathi et al.'s 2018 study on sleep apnea [4].
 
-Lastly, the data located in `example_notebooks/songbird_red_sea/input/` was
+Lastly, the data located in `rankratioviz/tests/input/red_sea`
+(and in `example_notebooks/songbird_red_sea/input/`) was
 taken from songbird's GitHub repository in its
 [`data/redsea/`](https://github.com/biocore/songbird/tree/master/data/redsea)
 folder, and is associated with
