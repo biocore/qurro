@@ -1,0 +1,442 @@
+sampleid	Cluster	Description
+K00033	8	K00033: 6-phosphogluconate dehydrogenase
+K00082	8	K00082: 5-amino-6-(5-phosphoribosylamino)uracil reductase
+K00096	3	K00096: glycerol-1-phosphate dehydrogenase [NAD(P)]
+K00116	8	K00116: malate dehydrogenase (acceptor)
+K00150	4	K00150: glyceraldehyde-3-phosphate dehydrogenase (NAD(P))
+K00174	2	K00174: 2-oxoglutarate ferredoxin oxidoreductase subunit alpha
+K00218	8	K00218: protochlorophyllide reductase
+K00273	8	K00273: D-amino-acid oxidase
+K00313	3	K00313: electron transfer flavoprotein-quinone oxidoreductase
+K00368	1	K00368: nitrite reductase (NO-forming)
+K00383	4	K00383: glutathione reductase (NADPH)
+K00464	8	K00464: lignostilbene-alphabeta-dioxygenase
+K00483	2	K00483: 4-hydroxyphenylacetate-3-hydroxylase large chain
+K00524	8	K00524: ribonucleotide reductase class II
+K00527	3	K00527: ribonucleoside-triphosphate reductase
+K00555	3	K00555: tRNA (guanine-N2-)-methyltransferase
+K00586	3	K00586: diphthine synthase
+K00595	8	K00595: precorrin-6Y C515-methyltransferase / precorrin-8W decarboxylase
+K00610	3	K00610: aspartate carbamoyltransferase regulatory subunit
+K00621	3	K00621: glucosamine-phosphate N-acetyltransferase
+K00639	1	K00639: glycine C-acetyltransferase
+K00690	8	K00690: sucrose phosphorylase
+K00696	8	K00696: sucrose-phosphate synthase
+K00703	8	K00703: starch synthase
+K00705	8	K00705: 4-alpha-glucanotransferase
+K00754	4	K00754
+K00784	4	K00784: ribonuclease Z
+K00855	8	K00855: phosphoribulokinase
+K00872	4	K00872: homoserine kinase
+K00901	8	K00901: diacylglycerol kinase
+K00936	8	K00936
+K00952	3	K00952: nicotinamide-nucleotide adenylyltransferase
+K00958	1	K00958: sulfate adenylyltransferase
+K00965	3	K00965: UDPglucose--hexose-1-phosphate uridylyltransferase
+K00988	8	K00988: ATP adenylyltransferase
+K01046	8	K01046: triacylglycerol lipase
+K01057	8	K01057: 6-phosphogluconolactonase
+K01079	1	K01079: phosphoserine phosphatase
+K01147	8	K01147: exoribonuclease II
+K01151	2	K01151: deoxyribonuclease IV
+K01170	3	K01170: tRNA-intron endonuclease
+K01297	8	K01297: muramoyltetrapeptide carboxypeptidase
+K01299	8	K01299: carboxypeptidase Taq
+K01437	8	K01437: aspartoacylase
+K01448	8	K01448: N-acetylmuramoyl-L-alanine amidase
+K01464	2	K01464: dihydropyrimidinase
+K01486	3	K01486: adenine deaminase
+K01502	8	K01502: aliphatic nitrilase
+K01512	3	K01512: acylphosphatase
+K01582	8	K01582: lysine decarboxylase
+K01585	8	K01585: arginine decarboxylase
+K01602	8	K01602: ribulose-bisphosphate carboxylase small chain
+K01611	8	K01611: S-adenosylmethionine decarboxylase
+K01622	3	K01622
+K01641	3	K01641: hydroxymethylglutaryl-CoA synthase
+K01669	8	K01669: deoxyribodipyrimidine photo-lyase
+K01739	8	K01739: cystathionine gamma-synthase
+K01744	3	K01744: aspartate ammonia-lyase
+K01821	3	K01821: 4-oxalocrotonate tautomerase
+K01823	2	K01823: isopentenyl-diphosphate delta-isomerase
+K01848	2	K01848: methylmalonyl-CoA mutase N-terminal domain
+K01849	3	K01849: methylmalonyl-CoA mutase C-terminal domain
+K01858	2	K01858: myo-inositol-1-phosphate synthase
+K01911	8	K01911: O-succinylbenzoic acid--CoA ligase
+K01966	1	K01966: propionyl-CoA carboxylase beta chain
+K02005	8	K02005: HlyD family secretion protein
+K02016	1	K02016: iron complex transport system substrate-binding protein
+K02067	8	K02067: putative ABC transport system substrate-binding protein
+K02074	8	K02074: zinc/manganese transport system ATP-binding protein
+K02075	8	K02075: zinc/manganese transport system permease protein
+K02077	8	K02077: zinc/manganese transport system substrate-binding protein
+K02117	3	K02117: V-type H+-transporting ATPase subunit A
+K02118	3	K02118: V-type H+-transporting ATPase subunit B
+K02120	2	K02120: V-type H+-transporting ATPase subunit D
+K02123	3	K02123: V-type H+-transporting ATPase subunit I
+K02169	8	K02169: biotin synthesis protein BioC
+K02189	3	K02189: cobalamin biosynthesis protein CbiG
+K02191	3	K02191: precorrin-8W decarboxylase
+K02201	3	K02201: pantetheine-phosphate adenylyltransferase
+K02230	8	K02230: cobaltochelatase CobN
+K02231	8	K02231: adenosylcobinamide kinase / adenosylcobinamide-phosphate
+K02282	6	K02282: pilus assembly protein CpaE
+K02283	6	K02283: pilus assembly protein CpaF
+K02291	8	K02291: phytoene synthase
+K02293	8	K02293: phytoene dehydrogenase phytoene desaturase
+K02304	3	K02304: precorrin-2 dehydrogenase / sirohydrochlorin ferrochelatase
+K02319	3	K02319: DNA polymerase I
+K02471	8	K02471: putative ATP-binding cassette transporter
+K02551	8	K02551: 2-succinyl-5-enolpyruvyl-6-hydroxy-3-cyclohexene-1-carboxylate
+K02552	8	K02552: menaquinone-specific isochorismate synthase
+K02626	3	K02626: arginine decarboxylase
+K02634	8	K02634: apocytochrome f
+K02635	8	K02635: cytochrome b6
+K02636	8	K02636: cytochrome b6-f complex iron-sulfur subunit
+K02637	8	K02637: cytochrome b6-f complex subunit 4
+K02638	8	K02638: plastocyanin
+K02639	8	K02639: ferredoxin
+K02640	8	K02640: cytochrome b6-f complex subunit 5
+K02643	8	K02643: cytochrome b6-f complex subunit 7
+K02683	3	K02683: DNA primase
+K02691	8	K02691: photosystem I subunit VII
+K02692	8	K02692: photosystem I subunit II
+K02693	8	K02693: photosystem I subunit IV
+K02694	8	K02694: photosystem I subunit III
+K02696	8	K02696: photosystem I subunit VIII
+K02697	8	K02697: photosystem I subunit IX
+K02698	8	K02698: photosystem I subunit X
+K02699	8	K02699: photosystem I subunit XI
+K02700	8	K02700: photosystem I subunit XII
+K02703	8	K02703: photosystem II PsbA protein
+K02704	8	K02704: photosystem II PsbB protein
+K02705	8	K02705: photosystem II PsbC protein
+K02706	8	K02706: photosystem II PsbD protein
+K02707	8	K02707: photosystem II PsbE protein
+K02708	8	K02708: photosystem II PsbF protein
+K02709	8	K02709: photosystem II PsbH protein
+K02710	8	K02710: photosystem II PsbI protein
+K02711	8	K02711: photosystem II PsbJ protein
+K02712	8	K02712: photosystem II PsbK protein
+K02713	8	K02713: photosystem II PsbL protein
+K02714	8	K02714: photosystem II PsbM protein
+K02715	8	K02715: PsbN protein
+K02716	8	K02716: photosystem II PsbO protein
+K02718	8	K02718: photosystem II PsbT protein
+K02722	8	K02722: photosystem II PsbX protein
+K02723	8	K02723: photosystem II PsbY protein
+K02724	8	K02724: photosystem II PsbZ protein
+K02858	4	K02858: 34-dihydroxy 2-butanone 4-phosphate synthase
+K02866	3	K02866: large subunit ribosomal protein L10e
+K02877	3	K02877: large subunit ribosomal protein L15e
+K02883	3	K02883: large subunit ribosomal protein L18e
+K02885	3	K02885: large subunit ribosomal protein L19e
+K02889	3	K02889: large subunit ribosomal protein L21e
+K02896	3	K02896: large subunit ribosomal protein L24e
+K02910	5	K02910: large subunit ribosomal protein L31e
+K02912	3	K02912: large subunit ribosomal protein L32e
+K02921	3	K02921: large subunit ribosomal protein L37Ae
+K02922	3	K02922: large subunit ribosomal protein L37e
+K02924	3	K02924: large subunit ribosomal protein L39e
+K02927	3	K02927: large subunit ribosomal protein L40e
+K02929	3	K02929: large subunit ribosomal protein L44e
+K02930	3	K02930: large subunit ribosomal protein L4e
+K02936	3	K02936: large subunit ribosomal protein L7Ae
+K02962	2	K02962: small subunit ribosomal protein S17e
+K02966	3	K02966: small subunit ribosomal protein S19e
+K02976	3	K02976: small subunit ribosomal protein S26e
+K02977	3	K02977: small subunit ribosomal protein S27Ae
+K02978	3	K02978: small subunit ribosomal protein S27e
+K02979	3	K02979: small subunit ribosomal protein S28e
+K02983	3	K02983: small subunit ribosomal protein S30e
+K02984	3	K02984: small subunit ribosomal protein S3Ae
+K02987	3	K02987: small subunit ribosomal protein S4e
+K02991	3	K02991: small subunit ribosomal protein S6e
+K02995	3	K02995: small subunit ribosomal protein S8e
+K03041	3	K03041: DNA-directed RNA polymerase subunit A'
+K03047	3	K03047: DNA-directed RNA polymerase subunit D
+K03049	3	K03049: DNA-directed RNA polymerase subunit E'
+K03050	3	"K03050: DNA-directed RNA polymerase subunit E"""
+K03051	3	K03051: DNA-directed RNA polymerase subunit F
+K03053	3	K03053: DNA-directed RNA polymerase subunit H
+K03056	3	K03056: DNA-directed RNA polymerase subunit L
+K03057	3	K03057: DNA-directed RNA polymerase subunit M
+K03058	3	K03058: DNA-directed RNA polymerase subunit N
+K03059	3	K03059: DNA-directed RNA polymerase subunit P
+K03105	3	K03105: signal recognition particle subunit SRP19
+K03120	3	K03120: transcription initiation factor TFIID TATA-box-binding protein
+K03124	3	K03124: transcription initiation factor TFIIB
+K03136	3	K03136: transcription initiation factor TFIIE alpha subunit
+K03146	3	K03146: thiamine biosynthetic enzyme
+K03153	8	K03153: glycine oxidase
+K03166	3	K03166: DNA topoisomerase VI subunit A
+K03167	3	K03167: DNA topoisomerase VI subunit B
+K03182	3	K03182: 3-octaprenyl-4-hydroxybenzoate carboxy-lyase UbiD
+K03186	3	K03186: 3-octaprenyl-4-hydroxybenzoate carboxy-lyase UbiX
+K03190	8	K03190: urease accessory protein
+K03195	6	K03195: type IV secretion system protein VirB10
+K03196	6	K03196: type IV secretion system protein VirB11
+K03197	6	K03197: type IV secretion system protein VirB2
+K03198	6	K03198: type IV secretion system protein VirB3
+K03199	6	K03199: type IV secretion system protein VirB4
+K03200	6	K03200: type IV secretion system protein VirB5
+K03204	6	K03204: type IV secretion system protein VirB9
+K03231	3	K03231: elongation factor EF-1 alpha subunit
+K03232	3	K03232: elongation factor EF-1 beta subunit
+K03234	3	K03234: elongation factor EF-2
+K03236	3	K03236: translation initiation factor eIF-1A
+K03237	3	K03237: translation initiation factor eIF-2 alpha subunit
+K03238	3	K03238: translation initiation factor eIF-2 beta subunit
+K03242	3	K03242: translation initiation factor eIF-2 gamma subunit
+K03243	3	K03243: translation initiation factor IF-2 unclassified subunit
+K03263	3	K03263: translation initiation factor eIF-5A
+K03264	3	K03264: translation initiation factor eIF-6
+K03265	3	K03265: peptide chain release factor eRF subunit 1
+K03281	8	K03281: chloride channel protein CIC family
+K03282	6	K03282: large conductance mechanosensitive channel MscL family
+K03292	8	K03292: glycoside/pentoside/hexuronide:cation symporter GPH family
+K03312	8	K03312: glutamate:Na+ symporter ESS family
+K03330	3	K03330: glutamyl-tRNA(Gln) amidotransferase subunit E
+K03333	6	K03333: cholesterol oxidase
+K03399	3	K03399: precorrin-6Y C515-methyltransferase
+K03405	8	K03405: magnesium chelatase subunit ChlI
+K03428	8	K03428: magnesium-protoporphyrin O-methyltransferase
+K03432	3	K03432: proteasome alpha subunit
+K03433	3	K03433: proteasome beta subunit
+K03437	8	K03437: RNA methyltransferase TrmH family
+K03540	3	K03540: ribonuclease P subunit RPR2
+K03581	8	K03581: exodeoxyribonuclease V alpha subunit
+K03592	8	K03592: PmbA protein
+K03622	3	K03622: archaea-specific DNA-binding protein
+K03626	3	K03626: nascent polypeptide-associated complex subunit alpha
+K03679	3	K03679: exosome complex component RRP4
+K03689	8	K03689: cytochrome b6-f complex subunit 8
+K03692	8	K03692: glucosylglycerol-phosphate synthase
+K03707	8	K03707: transcriptional activator TenA
+K03709	3	K03709: DtxR family transcriptional regulator Mn-dependent transcriptional
+K03718	3	K03718: Lrp/AsnC family transcriptional regulator regulator for asnA asnC
+K03722	8	K03722: ATP-dependent DNA helicase DinG
+K03742	4	K03742: competence/damage-inducible protein CinA
+K03775	1	K03775: FKBP-type peptidyl-prolyl cis-trans isomerase SlyD
+K03800	8	K03800: lipoate-protein ligase A
+K03821	1	K03821: polyhydroxyalkanoate synthase
+K03839	8	K03839: flavodoxin I
+K03867	8	K03867: UDP-glucose:tetrahydrobiopterin glucosyltransferase
+K04028	8	K04028: ethanolamine utilization protein EutN
+K04030	5	K04030: ethanolamine utilization protein EutQ
+K04035	8	K04035: magnesium-protoporphyrin IX monomethyl ester (oxidative) cyclase
+K04037	8	K04037: light-independent protochlorophyllide reductase subunit L
+K04038	8	K04038: light-independent protochlorophyllide reductase subunit N
+K04039	8	K04039: light-independent protochlorophyllide reductase subunit B
+K04040	8	K04040: chlorophyll synthase
+K04069	3	K04069: pyruvate formate lyase activating enzyme
+K04097	6	K04097: glutathione S-transferase
+K04479	3	K04479: DNA polymerase IV (archaeal DinB-like DNA polymerase)
+K04483	3	K04483: DNA repair protein RadA
+K04719	3	K04719: cob(II)yrinic acid ac-diamide reductase
+K04720	2	K04720: threonine-phosphate decarboxylase
+K04748	3	K04748: nitric-oxide reductase NorQ protein
+K04794	3	K04794: peptidyl-tRNA hydrolase PTH2 family
+K04795	3	K04795: fibrillarin-like pre-rRNA processing protein
+K04796	3	K04796: small nuclear ribonucleoprotein
+K04798	3	K04798: prefoldin beta subunit
+K04799	3	K04799: flap endonuclease-1
+K04800	3	K04800: replication factor C large subunit
+K04801	3	K04801: replication factor C small subunit
+K04802	3	K04802: proliferating cell nuclear antigen
+K05275	1	K05275: pyridoxine 4-dehydrogenase
+K05343	8	K05343: maltose alpha-D-glucosyltransferase
+K05369	8	K05369: 1516-dihydrobiliverdin:ferredoxin oxidoreductase
+K05370	8	K05370: phycoerythrobilin:ferredoxin oxidoreductase
+K05371	8	K05371: phycocyanobilin:ferredoxin oxidoreductase
+K05377	8	K05377: phycoerythrin beta chain
+K05382	8	K05382: phycoerythrin-associated linker protein
+K05572	8	K05572: NADH dehydrogenase I subunit 1
+K05573	8	K05573: NADH dehydrogenase I subunit 2
+K05575	8	K05575: NADH dehydrogenase I subunit 4
+K05576	8	K05576: NADH dehydrogenase I subunit 4L
+K05578	4	K05578: NADH dehydrogenase I subunit 6
+K05579	8	K05579: NADH dehydrogenase I subunit 7
+K05580	8	K05580: NADH dehydrogenase I subunit I
+K05581	8	K05581: NADH dehydrogenase I subunit J
+K05582	8	K05582: NADH dehydrogenase I subunit K
+K05583	8	K05583: NADH dehydrogenase I subunit L
+K05585	8	K05585: NADH dehydrogenase I subunit N
+K05808	8	K05808: putative sigma-54 modulation protein
+K05826	3	K05826: lysine biosynthesis protein LysW
+K05827	3	K05827: lysine biosynthesis protein LysX
+K05830	3	K05830: acetylornithine/acetyl-lysine aminotransferase
+K05831	3	K05831: acetyl-lysine deacetylase
+K05895	8	K05895: precorrin-6X reductase
+K05934	3	K05934: precorrin-3B C17-methyltransferase
+K05978	8	K05978: glucosylglycerol 3-phosphatase
+K05979	8	K05979: 2-phosphosulfolactate phosphatase
+K06118	8	K06118: UDP-sulfoquinovose synthase
+K06169	8	K06169: tRNA-(ms[2]io[6]A)-hydroxylase
+K06174	3	K06174: ATP-binding cassette sub-family E member 1
+K06176	3	K06176: tRNA pseudouridine synthase D
+K06188	3	K06188: aquaporin Z
+K06208	8	K06208: chorismate mutase
+K06381	8	K06381: stage II sporulation protein D
+K06443	8	K06443: lycopene beta cyclase
+K06860	8	K06860
+K06863	3	K06863: 5-formaminoimidazole-4-carboxamide-1-(beta)-D-ribofuranosyl
+K06864	4	K06864
+K06869	3	K06869
+K06873	8	K06873
+K06876	8	K06876
+K06888	2	K06888
+K06898	4	K06898
+K06915	1	K06915
+K06932	3	K06932
+K06937	3	K06937
+K06944	3	K06944
+K06953	3	K06953
+K06955	8	K06955
+K06961	3	K06961
+K06963	2	K06963
+K06965	3	K06965
+K06981	3	K06981
+K06982	3	K06982
+K06988	3	K06988
+K06989	3	K06989: aspartate dehydrogenase
+K06990	3	K06990
+K07006	1	K07006
+K07011	3	K07011
+K07015	8	K07015
+K07019	8	K07019
+K07023	3	K07023: putative hydrolases of HD superfamily
+K07024	2	K07024
+K07026	8	K07026: mannosyl-3-phosphoglycerate phosphatase
+K07033	8	K07033
+K07037	8	K07037
+K07044	6	K07044
+K07052	8	K07052
+K07068	1	K07068
+K07079	8	K07079
+K07117	8	K07117
+K07123	8	K07123
+K07124	3	K07124
+K07142	3	K07142
+K07151	3	K07151: dolichyl-diphosphooligosaccharide--protein glycosyltransferase
+K07158	3	K07158
+K07159	3	K07159
+K07176	3	K07176: putative serine/threonine protein kinase
+K07254	3	K07254: hypothetical protein
+K07259	8	K07259: D-alanyl-D-alanine carboxypeptidase /
+K07260	8	K07260: D-alanyl-D-alanine carboxypeptidase
+K07303	1	K07303: isoquinoline 1-oxidoreductase beta subunit
+K07315	8	K07315: sigma-B regulation protein RsbU (phosphoserine phosphatase)
+K07342	5	K07342: protein transport protein SEC61 subunit gamma and related proteins
+K07398	3	K07398: conserved protein with predicted RNA binding PUA domain
+K07399	8	K07399: cytochrome c biogenesis protein
+K07442	3	K07442: tRNA (adenine-N1-)-methyltransferase
+K07444	8	K07444: putative N6-adenine-specific DNA methylase
+K07456	8	K07456: DNA mismatch repair protein MutS2
+K07463	3	K07463: archaea-specific RecJ-like exonuclease
+K07464	5	K07464: putative RecB family exonuclease
+K07466	3	K07466: replication factor A1
+K07473	6	K07473: DNA-damage-inducible protein J
+K07477	3	K07477: translin
+K07493	6	K07493: putative transposase
+K07533	3	K07533: foldase protein PrsA
+K07558	3	K07558: tRNA nucleotidyltransferase (CCA-adding enzyme) [EC:2.7.7.25
+K07561	3	K07561: diphthamide synthase subunit DPH2
+K07572	3	K07572: putative nucleotide binding protein
+K07573	3	K07573: exosome complex component CSL4
+K07575	3	K07575: PUA domain protein
+K07580	3	K07580: hypothetical protein
+K07722	3	K07722: CopG family transcriptional regulator nickel-responsive regulator
+K07732	3	K07732: riboflavin kinase archaea type
+K07739	3	K07739: elongator complex protein 3
+K07742	8	K07742: hypothetical protein
+K07769	8	K07769: two-component system OmpR family sensor histidine kinase NblS
+K07978	8	K07978: GntR family transcriptional regulator
+K08096	3	K08096: GTP cyclohydrolase IIa
+K08289	8	K08289: phosphoribosylglycinamide formyltransferase 2
+K08321	3	K08321: putative autoinducer-2 (AI-2) aldolase
+K08479	8	K08479: two-component system OmpR family clock-associated histidine kinase
+K08481	8	K08481: circadian clock protein KaiB
+K08482	8	K08482: circadian clock protein KaiC
+K08641	8	K08641: D-alanyl-D-alanine dipeptidase
+K08681	3	K08681: glutamine amidotransferase
+K08902	8	K08902: photosystem II Psb27 protein
+K08903	8	K08903: photosystem II reaction center 13kDa protein
+K08906	8	K08906: cytochrome c6
+K08921	8	K08921: chlorophyll a/b binding light-harvesting protein PcbD
+K08975	3	K08975: putative membrane protein
+K08979	3	K08979: putative membrane protein
+K08983	8	K08983: putative membrane protein
+K09011	4	K09011: D-citramalate synthase
+K09118	3	K09118: hypothetical protein
+K09120	3	K09120: hypothetical protein
+K09123	3	K09123: hypothetical protein
+K09128	3	K09128: hypothetical protein
+K09141	3	K09141: hypothetical protein
+K09143	3	K09143: hypothetical protein
+K09148	3	K09148: hypothetical protein
+K09152	3	K09152: hypothetical protein
+K09162	3	K09162: hypothetical protein
+K09482	3	K09482: glutamyl-tRNA(Gln) amidotransferase subunit D
+K09705	8	K09705: hypothetical protein
+K09716	3	K09716: hypothetical protein
+K09721	3	K09721: hypothetical protein
+K09722	3	K09722: hypothetical protein
+K09723	2	K09723: hypothetical protein
+K09726	3	K09726: hypothetical protein
+K09735	3	K09735: hypothetical protein
+K09738	3	K09738: hypothetical protein
+K09772	8	K09772: hypothetical protein
+K09775	8	K09775: hypothetical protein
+K09797	8	K09797: hypothetical protein
+K09835	8	K09835: carotenoid isomerase
+K09890	9	K09890: hypothetical protein
+K09928	8	K09928: hypothetical protein
+K09931	8	K09931: hypothetical protein
+K09942	8	K09942: hypothetical protein
+K09959	8	K09959: hypothetical protein
+K10027	8	K10027: phytoene dehydrogenase
+K10255	8	K10255: omega-6 fatty acid desaturase (delta-12 desaturase)
+K10697	8	K10697: two-component system OmpR family response regulator RpaA
+K10725	3	K10725: archaeal cell division control protein 6
+K10726	3	K10726: replicative DNA helicase Mcm
+K10896	3	K10896: fanconi anemia group M protein
+K10908	2	K10908: DNA-directed RNA polymerase mitochondrial
+K10944	2	K10944: ammonia monooxygenase subunit A
+K10946	2	K10946: ammonia monooxygenase subunit C
+K10979	6	K10979: DNA end-binding protein Ku
+K11105	3	K11105: cell volume regulation protein A
+K11145	8	K11145: ribonuclease III family protein
+K11212	3	K11212: LPPG:FO 2-phospho-L-lactate transferase
+K11600	3	K11600: exosome complex component RRP41
+K11601	8	K11601: manganese transport system substrate-binding protein
+K11603	8	K11603: manganese transport system ATP-binding protein
+K11646	3	K11646: dehydroquinate synthase II
+K11777	8	K11777: HAD superfamily phosphatase
+K11779	2	K11779: FO synthase
+K11781	3	K11781: FO synthase subunit 2
+K11784	3	K11784: de-hypoxanthine futalosine synthase
+K11785	11	K11785: 14-dihydroxy-6-naphthoate synthase
+K11960	8	K11960: urea transport system permease protein
+K12073	8	K12073: 14-dihydroxy-2-naphthoyl-CoA thioesterase
+K12510	6	K12510: tight adherence protein B
+K12511	6	K12511: tight adherence protein C
+K12589	3	K12589: exosome complex component RRP42
+K13256	8	K13256
+K13281	8	K13281
+K13525	3	K13525
+K13541	8	K13541
+K13571	1	K13571
+K13584	6	K13584
+K13693	4	K13693
+K13787	3	K13787
+K13798	3	K13798
+K13799	8	K13799
+K13953	1	K13953
+K13993	3	K13993
+K14165	3	K14165
+K14330	8	K14330
+K14331	8	K14331
+K14415	1	K14415
+K14518	8	K14518
+K14540	8	K14540
