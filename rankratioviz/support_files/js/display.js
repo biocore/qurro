@@ -77,9 +77,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 },
                 exportDataButton: function() {
                     display.exportData();
-                },
-                screenshotButton: function() {
-                    display.takeScreenshot();
                 }
             });
         }
@@ -107,7 +104,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // class). See https://stackoverflow.com/a/5106369/10730311.
             var parentDisplay = this;
             var embedParams = {
-                actions: false,
                 patch: function(vegaSpec) {
                     return RRVDisplay.addSignalsToRankPlot(
                         parentDisplay,
@@ -218,7 +214,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
             var embedParams = {
-                actions: false,
                 patch: function(vegaSpec) {
                     return RRVDisplay.addSignalsToSamplePlot(
                         parentDisplay,
@@ -602,25 +597,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 ).href = contentToDownload;
             }
             document.getElementById("downloadHelper").click();
-        }
-
-        takeScreenshot() {
-            this.rankPlotView.background("white");
-            this.samplePlotView.background("white");
-            var display = this;
-            this.rankPlotView.toImageURL("png").then(function(url) {
-                RRVDisplay.downloadDataURI("rrv_rank_plot.png", url, false);
-                // Only start sample plot image download after rank plot image
-                // has been downloaded, to prevent the URL on the
-                // downloadHelper tag from being overwritten
-                display.samplePlotView.toImageURL("png").then(function(url) {
-                    RRVDisplay.downloadDataURI(
-                        "rrv_sample_plot.png",
-                        url,
-                        false
-                    );
-                });
-            });
         }
 
         /* Calls RRVDisplay.downloadDataURI() on the result of
