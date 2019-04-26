@@ -603,7 +603,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * getSamplePlotData().
          */
         exportData() {
-            var tsv = this.getSamplePlotData();
+            var currMetadataField = this.samplePlotView.signal("xAxis");
+            var tsv = this.getSamplePlotData(currMetadataField);
             if (tsv.length > 0) {
                 RRVDisplay.downloadDataURI(
                     "rrv_sample_plot_data.tsv",
@@ -622,8 +623,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * due to either no log ratio being selected or the current log ratio
          * being NaN for all samples -- then this just returns an empty string.
          */
-        getSamplePlotData() {
-            var currMetadataField = this.samplePlotView.signal("xAxis");
+        getSamplePlotData(currMetadataField) {
             var outputTSV = "Sample ID\tLog Ratio";
             var uniqueMetadata = true;
             if (
