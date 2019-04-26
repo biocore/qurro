@@ -92,6 +92,24 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             return elementIDs;
         }
 
+        /* Extremely dumb but nonetheless very useful hack to prevent the
+         * sample plot from getting cut off. See issue #44.
+         */
+        static jigglePlot(view) {
+            var state = view.getState();
+            // Alternate between increasing and decreasing plot width by a
+            // pixel (or decreasing and increasing if the initial plot width is
+            // an odd number). Should be basically unnoticeable, unless I do
+            // something dumb like set the initial Vega-Lite plot width to 1 pixel.
+            // (the width is hardcoded to 400 currently.)
+            if (state.signals.width % 2 === 0) {
+                state.signals.width++;
+            } else {
+                state.signals.width--;
+            }
+            view.setState(state);
+        }
+
         makePlots() {
             this.makeRankPlot();
             this.makeSamplePlot();
@@ -224,6 +242,15 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             vegaEmbed("#samplePlot", this.samplePlotJSON, embedParams).then(
                 function(result) {
                     parentDisplay.samplePlotView = result.view;
+                    // Expand the plot to include the full color field name
+                    // Is this a stupid hack? Yes. Is it more useful than it
+                    // should be? Also yes.
+                    parentDisplay.samplePlotView.addSignalListener(
+                        "color",
+                        function(_, newColor) {
+                            RRVDisplay.jigglePlot(parentDisplay.samplePlotView);
+                        }
+                    );
                 }
             );
             var rfci = "rankratioviz_feature_col_ids";
@@ -296,7 +323,10 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                         }
                     )
                 )
-                .run();
+                .runAsync()
+                .then(function() {
+                    RRVDisplay.jigglePlot(parentDisplay.samplePlotView);
+                });
             // Update rank plot based on the new log ratio
             // Storing this within changeSamplePlot() is a (weak) safeguard that
             // changes to the state of the sample plot (at least enacted using the UI
