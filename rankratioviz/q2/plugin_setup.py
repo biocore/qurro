@@ -42,7 +42,7 @@ params = {'sample_metadata': Metadata, 'feature_metadata': Metadata}
 
 ranks_desc = "A {} file describing ranks produced by {}"
 table_desc = ("A BIOM table describing the abundances of the ranked features"
-              + "in samples.")
+              + " in samples.")
 
 short_desc = "Generate a rankratioviz plot from {} data"
 long_desc = ("Generates an interactive visualization of {} ranks in tandem"
