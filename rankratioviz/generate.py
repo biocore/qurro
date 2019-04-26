@@ -354,7 +354,8 @@ def gen_sample_plot(table, metadata):
     sample_chart = alt.Chart(
         sample_metadata,
         title="Log Ratio of Abundances in Samples",
-        background="#FFFFFF"
+        background="#FFFFFF",
+        autosize=alt.AutoSizeParams(resize=True)
     ).mark_circle().encode(
         alt.X(
             # TODO eventually set to default_metadata_col when we can support
