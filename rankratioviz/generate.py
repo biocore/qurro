@@ -256,7 +256,8 @@ def gen_rank_plot(V):
     rank_data.reset_index(inplace=True)
     rank_chart = alt.Chart(
         rank_data,
-        title="Feature Ranks"
+        title="Feature Ranks",
+        background="#FFFFFF"
     ).mark_bar().encode(
         # type="ordinal" needed on the scale here to make bars adjacent;
         # see https://stackoverflow.com/a/55544817/10730311. For now, we're
@@ -352,7 +353,8 @@ def gen_sample_plot(table, metadata):
     # changing the scale of the chart smoother IIRC)
     sample_chart = alt.Chart(
         sample_metadata,
-        title="Log Ratio of Abundances in Samples"
+        title="Log Ratio of Abundances in Samples",
+        background="#FFFFFF"
     ).mark_circle().encode(
         alt.X(
             # TODO eventually set to default_metadata_col when we can support
