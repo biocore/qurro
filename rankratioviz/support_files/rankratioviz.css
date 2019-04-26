@@ -1,3 +1,6 @@
+/* For debugging. Uncomment out to show the space taken up by each element.
+ * * { border: 1px solid red; }
+ */
 h3,
 p {
     text-align: center;
@@ -22,6 +25,12 @@ select {
 }
 #samplePlotTD {
     text-align: left;
+}
+#rankPlot {
+    margin-right: 1em;
+}
+#samplePlot {
+    margin-left: 1em;
 }
 textarea {
     width: 92%;
