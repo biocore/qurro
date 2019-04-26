@@ -624,13 +624,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * being NaN for all samples -- then this just returns an empty string.
          */
         getSamplePlotData(currMetadataField) {
-            var outputTSV = "Sample ID\tLog Ratio";
+            var outputTSV = "Sample_ID\tLog_Ratio";
             var uniqueMetadata = true;
             if (
                 currMetadataField !== "Sample ID" &&
                 currMetadataField !== "rankratioviz_balance"
             ) {
-                outputTSV += "\t" + currMetadataField;
+                // Enclose the metadata field in quotes, just in case it
+                // contains whitespace or something weird that might throw off
+                // a TSV file reader
+                outputTSV += '\t"' + currMetadataField + '"';
             } else {
                 uniqueMetadata = false;
             }
