@@ -27,9 +27,7 @@ before_install:
     # 3. Install songbird (needed so QIIME 2 knows how to load
     # FeatureData[Differential] artifacts).
     - git clone https://github.com/biocore/songbird.git
-    - pip install -e songbird
-    # Temporary workaround since this isn't installed with songbird anymore
-    - conda install tensorflow
+    - conda install -c conda-forge songbird
 install:
     - pip install -e .
     # Install various external testing/stylechecking packages that we use on
