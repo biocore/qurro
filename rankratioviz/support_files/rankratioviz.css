@@ -26,3 +26,6 @@ select {
 textarea {
     width: 92%;
 }
+#downloadHelper {
+    display: none;
+}
