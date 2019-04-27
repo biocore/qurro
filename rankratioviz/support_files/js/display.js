@@ -629,6 +629,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 );
             }
             // Also I guess export feature IDs somehow.
+            // TODO go through this.topFeatures and this.botFeatures; convert
+            // from two arrays to a string, where each feature is separated by
+            // a newline and the numerator feature list is followed by
+            // "DENOMINATOR FEATURES\n" and then the denominator feature list.
+            // Then I guess uh just save that to a .txt file?
         }
 
         /* Adds surrounding quotes if the string t contains any whitespace or
