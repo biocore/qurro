@@ -476,6 +476,22 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     vegaSpec.scales[s].domain.field = { signal: "color" };
                 }
             }
+            // Re: #91 on rankratioviz' GitHub. Filter what points are drawn in
+            // the sample plot based on which of those are actually valid for
+            // the current x-axis.
+            for (var d = 0; d < vegaSpec.data.length; d++) {
+                // Based on the compiled Vega that Vega-Lite generates. If they
+                // change up their internals, this'll break.
+                if (vegaSpec.data[d].name === "data_0") {
+                    // NOTE / TODO for non-numerical x-axes, we'd want to
+                    // remove the isFinite check. (Also, using isFinite
+                    // ostensibly makes the null/NaN checks on the datum's
+                    // xAxis value redundant, but better safe than sorry.)
+                    vegaSpec.data[d].transform[0].expr +=
+                        " && datum[xAxis] !== null && !isNaN(datum[xAxis]) && isFinite(datum[xAxis])";
+                    break;
+                }
+            }
             return vegaSpec;
         }
 
