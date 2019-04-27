@@ -615,6 +615,31 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // Also I guess export feature IDs somehow.
         }
 
+        /* Adds surrounding quotes if the string t contains any whitespace or
+         * contains any double-quote characters (").
+         *
+         * If surrounding quotes are added, this will also "escape" any double
+         * quote characters in t by converting each double quote to 2 double
+         * quotes. e.g. abcd"ef"g --> "abcd""ef""g"
+         *
+         * This should make t adhere to the excel-tab dialect of python's csv
+         * module, as discussed in the QIIME 2 documentation
+         * (https://docs.qiime2.org/2019.1/tutorials/metadata/#tsv-dialect-and-parser)
+         * and elaborated on in PEP 305
+         * (https://www.python.org/dev/peps/pep-0305/).
+         */
+        static quoteTSVFieldIfNeeded(t) {
+            if (typeof t === "string" && /\s|"/g.test(t)) {
+                // If the first argument of .replace() is just a string, only
+                // the first match will be changed. Using a regex with the g
+                // flag fixes this; see
+                // https://stackoverflow.com/a/10610408/10730311
+                return '"' + t.replace(/"/g, '""') + '"';
+            } else {
+                return t;
+            }
+        }
+
         /* Exports data from the sample plot to a string that can be written to
          * a .tsv file for further analysis of these data.
          *
@@ -630,10 +655,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 currMetadataField !== "Sample ID" &&
                 currMetadataField !== "rankratioviz_balance"
             ) {
-                // Enclose the metadata field in quotes, just in case it
-                // contains whitespace or something weird that might throw off
-                // a TSV file reader
-                outputTSV += '\t"' + currMetadataField + '"';
+                outputTSV +=
+                    "\t" + RRVDisplay.quoteTSVFieldIfNeeded(currMetadataField);
             } else {
                 uniqueMetadata = false;
             }
@@ -641,6 +664,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // Get all of the data available to the sample plot
             var data = this.samplePlotView.data(dataName);
             var currBalance;
+            var currSampleID;
+            var currMetadataValue;
             var atLeastOnePointDrawn = false;
             for (var i = 0; i < data.length; i++) {
                 currBalance = data[i].rankratioviz_balance;
@@ -650,10 +675,17 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     currBalance !== undefined
                 ) {
                     atLeastOnePointDrawn = true;
-                    outputTSV +=
-                        "\n" + data[i]["Sample ID"] + "\t" + currBalance;
+                    currSampleID = RRVDisplay.quoteTSVFieldIfNeeded(
+                        data[i]["Sample ID"]
+                    );
+                    // Use of regex .test() with \s per
+                    // https://stackoverflow.com/a/1731200/10730311
+                    outputTSV += "\n" + currSampleID + "\t" + currBalance;
                     if (uniqueMetadata) {
-                        outputTSV += "\t" + data[i][currMetadataField];
+                        currMetadataValue = RRVDisplay.quoteTSVFieldIfNeeded(
+                            data[i][currMetadataField]
+                        );
+                        outputTSV += "\t" + currMetadataValue;
                     }
                 }
             }
