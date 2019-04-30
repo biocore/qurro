@@ -16,6 +16,7 @@
 
 import json
 import os
+import logging
 # import re
 from shutil import copyfile, copytree
 import pandas as pd
@@ -101,15 +102,23 @@ def process_input(feature_ranks, sample_metadata, biom_table,
                   feature_metadata=None):
     """Processes the input files to rankratioviz."""
 
+    logging.debug("Starting processing input.")
     # Assert that the feature IDs and sample IDs contain only unique IDs.
     # (This doesn't check that there aren't any identical IDs between the
     # feature and sample IDs, but we shouldn't be using sample IDs to query
     # feature IDs anyway. And besides, I think that should technically be
     # allowed.)
     ensure_df_headers_unique(feature_ranks, "feature ranks")
+    logging.debug("Ensured uniqueness of feature ranks.")
     ensure_df_headers_unique(sample_metadata, "sample metadata")
+    logging.debug("Ensured uniqueness of sample metadata.")
 
+    # Old versions of BIOM accidentally produce an effectively-dense DataFrame,
+    # due to not specifying 0 as the default fill_value. TODO: explicitly
+    # convert the DataFrame to a sparse one, or use a different representation
+    # entirely.
     table = biom_table.to_dataframe().to_dense()
+    logging.debug("Converted BIOM table to DataFrame.")
     # Match features to BIOM table, and then match samples to BIOM table.
     # This should bring us to a point where every feature/sample is
     # supported in the BIOM table. (Note that the input BIOM table might
@@ -117,6 +126,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # sample_metadata, respectively -- this is totally fine. The opposite,
     # though, is a big no-no.)
     table, V = matchdf(table, feature_ranks)
+    logging.debug("Matching table with feature ranks done.")
     # Ensure that every ranked feature was present in the BIOM table. Raise an
     # error if this isn't the case.
     if V.shape[0] != feature_ranks.shape[0]:
@@ -131,6 +141,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
                              word))
 
     table, U = matchdf(table.T, sample_metadata)
+    logging.debug("Matching table with sample metadata done.")
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
     if U.shape[0] < 1:
@@ -193,6 +204,7 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     # that something isn't going horribly wrong somehow.
     ensure_df_headers_unique(labelled_feature_ranks, "labelled feature ranks")
 
+    logging.debug("Finished input processing.")
     return U, labelled_feature_ranks, table
 
 
@@ -417,9 +429,12 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
        index_path: a path to the index.html file for the output visualization.
                    This is needed when calling q2templates.render().
     """
+    logging.debug("Generating rank plot JSON.")
     rank_plot_str = json.dumps(gen_rank_plot(V))
+    logging.debug("Generating sample plot JSON.")
     sample_plot_str = json.dumps(gen_sample_plot(processed_table,
                                                  df_sample_metadata))
+    logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
     loc_ = os.path.dirname(os.path.realpath(__file__))
@@ -478,5 +493,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
 
     with open(os.path.join(output_dir, 'main.js'), 'w') as this_main_file:
         this_main_file.write(this_viz_main_js_contents)
+
+    logging.debug("Finished writing the visualization contents.")
 
     return index_path

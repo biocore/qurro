@@ -5,6 +5,7 @@
 #
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
+import logging
 import q2templates
 from rankratioviz.generate import process_input, gen_visualization
 
@@ -12,10 +13,13 @@ from rankratioviz.generate import process_input, gen_visualization
 def create_q2_visualization(output_dir, feature_ranks, table, sample_metadata,
                             feature_metadata):
 
+    logging.debug("Starting create_q2_visualization().")
     df_feature_metadata = None
     if feature_metadata is not None:
         df_feature_metadata = feature_metadata.to_dataframe()
     df_sample_metadata = sample_metadata.to_dataframe()
+    logging.debug("Converted metadata to DataFrames.")
+
     U, V, processed_table = process_input(feature_ranks, df_sample_metadata,
                                           table, df_feature_metadata)
     # We can't "subscript" Q2 Metadata types, so we have to convert this to a
