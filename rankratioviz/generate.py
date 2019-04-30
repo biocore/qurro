@@ -113,12 +113,23 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     ensure_df_headers_unique(sample_metadata, "sample metadata")
     logging.debug("Ensured uniqueness of sample metadata.")
 
-    # Old versions of BIOM accidentally produce an effectively-dense DataFrame,
-    # due to not specifying 0 as the default fill_value. TODO: explicitly
-    # convert the DataFrame to a sparse one, or use a different representation
-    # entirely.
-    table = biom_table.to_dataframe().to_dense()
-    logging.debug("Converted BIOM table to DataFrame.")
+    logging.debug("Creating a SparseDataFrame from the BIOM table.")
+
+    # Old versions of BIOM accidentally produce an effectively-dense DataFrame
+    # when using biom_table.to_dataframe() (see
+    # https://github.com/biocore/biom-format/issues/808). To get around this,
+    # we extract the scipy.sparse.csr_matrix data from the BIOM table and
+    # directly convert that to a pandas SparseDataFrame.
+    sparse_matrix_data = biom_table.matrix_data
+    table = pd.SparseDataFrame(sparse_matrix_data, default_fill_value=0.0)
+
+    # The csr_matrix doesn't include column/index IDs, so we manually add them
+    # in to the SparseDataFrame.
+    table.index = biom_table.ids(axis="observation")
+    table.columns = biom_table.ids(axis="sample")
+
+    logging.debug("Converted BIOM table to SparseDataFrame.")
+
     # Match features to BIOM table, and then match samples to BIOM table.
     # This should bring us to a point where every feature/sample is
     # supported in the BIOM table. (Note that the input BIOM table might
