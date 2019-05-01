@@ -8,22 +8,29 @@ def test_ensure_df_headers_unique():
     """Tests the ensure_df_headers_unique() function in generate.py."""
 
     # Various DFs with nonunique indices and/or columns
-    df_bad = DataFrame({'col1': [1, 2, 3], 'col2': [6, 7, 8]},
-                       index=['a', 'b', 'a'])
-    df_bad2 = DataFrame(index=['b', 'b', 'b'])
+    df_bad = DataFrame(
+        {"col1": [1, 2, 3], "col2": [6, 7, 8]}, index=["a", "b", "a"]
+    )
+    df_bad2 = DataFrame(index=["b", "b", "b"])
     df_bad3 = DataFrame(index=[1, 2, 3, 2])
 
     # We can specify nonunique columns via representing the DF as a 2-D array
     # -- see https://stackoverflow.com/a/20613532/10730311
-    df_bad4 = DataFrame([[1, 6], [2, 7], [3, 8]], columns=['col1', 'col1'],
-                        index=['a', 'b', 'c'])
-    df_bad5 = DataFrame([[1, 6], [2, 7], [3, 8]], columns=['col1', 'col1'],
-                        index=['a', 'b', 'a'])
+    df_bad4 = DataFrame(
+        [[1, 6], [2, 7], [3, 8]],
+        columns=["col1", "col1"],
+        index=["a", "b", "c"],
+    )
+    df_bad5 = DataFrame(
+        [[1, 6], [2, 7], [3, 8]],
+        columns=["col1", "col1"],
+        index=["a", "b", "a"],
+    )
 
     # Various DFs with unique indices and columns
-    df_good = DataFrame({'x': [20], 'y': [40]}, index=['a', 'b'])
-    df_good2 = DataFrame({'x': [20], 'y': [40]}, index=['x', 'y'])
-    df_good3 = DataFrame(index=['c'])
+    df_good = DataFrame({"x": [20], "y": [40]}, index=["a", "b"])
+    df_good2 = DataFrame({"x": [20], "y": [40]}, index=["x", "y"])
+    df_good3 = DataFrame(index=["c"])
 
     i = 1
     for df in (df_bad, df_bad2, df_bad3, df_bad4, df_bad5):
@@ -37,8 +44,10 @@ def test_ensure_df_headers_unique():
             # test! (It should have caused a ValueError.)
             assert False
         except ValueError as err:
-            expected_message = ("{} of the {} DataFrame are not "
-                                "unique.".format(thing_checking, df_name))
+            expected_message = (
+                "{} of the {} DataFrame are not "
+                "unique.".format(thing_checking, df_name)
+            )
             assert expected_message == err.args[0]
         i += 1
 
@@ -55,29 +64,47 @@ def test_ensure_df_headers_unique():
 def test_matchdf():
     """Tests the matchdf() function in generate.py."""
 
-    df1 = DataFrame({'col1': [1, 2, 3, 4, 5], 'col2': [6, 7, 8, 9, 10],
-                     'col3': [11, 12, 13, 14, 15]},
-                    index=['a', 'b', 'c', 'd', 'e'])
-    df2 = DataFrame({'colA': [5, 4, 3, 2, 1], 'colB': [10, 9, 8, 7, 6],
-                     'colC': [15, 14, 13, 12, 11],
-                     'colD': ['q', 'w', 'e', 'r', 't']},
-                    index=['a', 'c', 'd', 'x', 'y'])
-    df3 = DataFrame(index=['a', 'x'])
-    df4 = DataFrame(index=['x'])
+    df1 = DataFrame(
+        {
+            "col1": [1, 2, 3, 4, 5],
+            "col2": [6, 7, 8, 9, 10],
+            "col3": [11, 12, 13, 14, 15],
+        },
+        index=["a", "b", "c", "d", "e"],
+    )
+    df2 = DataFrame(
+        {
+            "colA": [5, 4, 3, 2, 1],
+            "colB": [10, 9, 8, 7, 6],
+            "colC": [15, 14, 13, 12, 11],
+            "colD": ["q", "w", "e", "r", "t"],
+        },
+        index=["a", "c", "d", "x", "y"],
+    )
+    df3 = DataFrame(index=["a", "x"])
+    df4 = DataFrame(index=["x"])
 
     # The ground truth DF from matching dfX with dfY is named dfXY
-    df12 = DataFrame({'col1': [1, 3, 4], 'col2': [6, 8, 9],
-                      'col3': [11, 13, 14]}, index=['a', 'c', 'd'])
-    df21 = DataFrame({'colA': [5, 4, 3], 'colB': [10, 9, 8],
-                     'colC': [15, 14, 13], 'colD': ['q', 'w', 'e']},
-                     index=['a', 'c', 'd'])
-    df13 = DataFrame({'col1': [1], 'col2': [6], 'col3': [11]}, index=['a'])
-    df31 = DataFrame(index=['a'])
+    df12 = DataFrame(
+        {"col1": [1, 3, 4], "col2": [6, 8, 9], "col3": [11, 13, 14]},
+        index=["a", "c", "d"],
+    )
+    df21 = DataFrame(
+        {
+            "colA": [5, 4, 3],
+            "colB": [10, 9, 8],
+            "colC": [15, 14, 13],
+            "colD": ["q", "w", "e"],
+        },
+        index=["a", "c", "d"],
+    )
+    df13 = DataFrame({"col1": [1], "col2": [6], "col3": [11]}, index=["a"])
+    df31 = DataFrame(index=["a"])
     # we need to specify a dtype of "int64" here because pandas, by default,
     # infers that df14's dtype is just "object"; however, the result of
     # matching df1 and df4 will have an "int64" dtype (since df1 already has
     # an inferred "int64" dtype).
-    df14 = DataFrame(columns=['col1', 'col2', 'col3']).astype("int64")
+    df14 = DataFrame(columns=["col1", "col2", "col3"]).astype("int64")
     df41 = DataFrame()
 
     # Basic testing: ensure that matching results match up with the ground
@@ -108,27 +135,36 @@ def test_dropping_features():
 
     # Test that dropping 1 feature produces an error
     run_integration_test(
-        "matching_test", "matching_test/dropped_feature", "differentials.tsv",
-        "dropped_feature.biom", "sample_metadata.txt",
+        "matching_test",
+        "matching_test/dropped_feature",
+        "differentials.tsv",
+        "dropped_feature.biom",
+        "sample_metadata.txt",
         feature_metadata_name="feature_metadata.txt",
-        expected_unsupported_features=1
+        expected_unsupported_features=1,
     )
     # Test that dropping 2 features produces an error
     run_integration_test(
-        "matching_test", "matching_test/dropped_features", "differentials.tsv",
-        "dropped_features.biom", "sample_metadata.txt",
+        "matching_test",
+        "matching_test/dropped_features",
+        "differentials.tsv",
+        "dropped_features.biom",
+        "sample_metadata.txt",
         feature_metadata_name="feature_metadata.txt",
-        expected_unsupported_features=2
+        expected_unsupported_features=2,
     )
 
 
 def test_dropping_all_samples():
     """Tests that rrv raises an error when all samples are unsupported."""
     run_integration_test(
-        "matching_test", "matching_test/all_samples_dropped",
-        "differentials.tsv", "all_samples_dropped.biom", "sample_metadata.txt",
+        "matching_test",
+        "matching_test/all_samples_dropped",
+        "differentials.tsv",
+        "all_samples_dropped.biom",
+        "sample_metadata.txt",
         feature_metadata_name="feature_metadata.txt",
-        expect_all_unsupported_samples=True
+        expect_all_unsupported_samples=True,
     )
 
 
@@ -141,16 +177,24 @@ def test_dropping_all_samples_and_features():
        code).
     """
     run_integration_test(
-        "matching_test", "matching_test/all_samples_and_one_feature_dropped",
-        "differentials.tsv", "all_samples_and_one_feature_dropped.biom",
-        "sample_metadata.txt", feature_metadata_name="feature_metadata.txt",
-        expect_all_unsupported_samples=True, expected_unsupported_features=1
+        "matching_test",
+        "matching_test/all_samples_and_one_feature_dropped",
+        "differentials.tsv",
+        "all_samples_and_one_feature_dropped.biom",
+        "sample_metadata.txt",
+        feature_metadata_name="feature_metadata.txt",
+        expect_all_unsupported_samples=True,
+        expected_unsupported_features=1,
     )
     run_integration_test(
-        "matching_test", "matching_test/all_samples_and_two_features_dropped",
-        "differentials.tsv", "all_samples_and_two_features_dropped.biom",
-        "sample_metadata.txt", feature_metadata_name="feature_metadata.txt",
-        expect_all_unsupported_samples=True, expected_unsupported_features=2
+        "matching_test",
+        "matching_test/all_samples_and_two_features_dropped",
+        "differentials.tsv",
+        "all_samples_and_two_features_dropped.biom",
+        "sample_metadata.txt",
+        feature_metadata_name="feature_metadata.txt",
+        expect_all_unsupported_samples=True,
+        expected_unsupported_features=2,
     )
 
 
@@ -160,9 +204,13 @@ def test_feature_metadata_and_dropped_sample():
     """
 
     rank_json, sample_json = run_integration_test(
-        "matching_test", "matching_test", "differentials.tsv", "mt.biom",
-        "sample_metadata.txt", feature_metadata_name="feature_metadata.txt",
-        expected_unsupported_samples=1
+        "matching_test",
+        "matching_test",
+        "differentials.tsv",
+        "mt.biom",
+        "sample_metadata.txt",
+        feature_metadata_name="feature_metadata.txt",
+        expected_unsupported_samples=1,
     )
     # Assert that Taxon3 has been annotated.
     data_name = rank_json["data"]["name"]

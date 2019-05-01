@@ -29,9 +29,9 @@ before_install:
     - conda install -c conda-forge songbird
 install:
     - pip install -e .
-    # Install various external testing/stylechecking packages that we use on
-    # Travis but aren't required to just use rankratioviz
-    - pip install flake8
+    # Install various external testing/stylechecking packages that we use for
+    # developing rankratioviz, but aren't required to just use rankratioviz
+    - pip install flake8 black
     - npm install -g mocha-headless-chrome
     - npm install -g jshint
     - npm install -g prettier

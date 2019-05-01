@@ -27,12 +27,13 @@ classes = """
     Operating System :: POSIX
     Operating System :: MacOS :: MacOS X
 """
-classifiers = [s.strip() for s in classes.split('\n') if s]
+classifiers = [s.strip() for s in classes.split("\n") if s]
 
-description = \
-    'Visualizes ranked taxa/metabolites and log ratios of their abundances'
+description = (
+    "Visualizes ranked taxa/metabolites and log ratios of their abundances"
+)
 
-with open('README.md') as f:
+with open("README.md") as f:
     long_description = f.read()
 
 # TODO remove this if doable to simplify this.
@@ -42,16 +43,16 @@ with open('README.md') as f:
 #
 # version parsing from __init__ pulled from Flask's setup.py
 # https://github.com/mitsuhiko/flask/blob/master/setup.py
-_version_re = re.compile(r'__version__\s+=\s+(.*)')
+_version_re = re.compile(r"__version__\s+=\s+(.*)")
 
-with open('rankratioviz/__init__.py', 'rb') as f:
-    hit = _version_re.search(f.read().decode('utf-8')).group(1)
+with open("rankratioviz/__init__.py", "rb") as f:
+    hit = _version_re.search(f.read().decode("utf-8")).group(1)
     version = str(ast.literal_eval(hit))
 
 setup(
-    name='rankratioviz',
+    name="rankratioviz",
     version=version,
-    license='BSD',
+    license="BSD",
     description=description,
     long_description=long_description,
     author="rankratioviz development team",
@@ -65,19 +66,20 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        'altair',
-        'biom-format[hdf5]',
-        'click',
-        'pandas >= 0.20.0',
-        'scikit-bio > 0.5.3',
-        'pytest >= 4.2',
-        'pytest-cov >= 2.0'],
+        "altair",
+        "biom-format[hdf5]",
+        "click",
+        "pandas >= 0.20.0",
+        "scikit-bio > 0.5.3",
+        "pytest >= 4.2",
+        "pytest-cov >= 2.0",
+    ],
     classifiers=classifiers,
     entry_points={
-        'qiime2.plugins':
-        ['q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin'],
-        'console_scripts':
-        ['rankratioviz=rankratioviz.scripts._plot:plot']
+        "qiime2.plugins": [
+            "q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin"
+        ],
+        "console_scripts": ["rankratioviz=rankratioviz.scripts._plot:plot"],
     },
-    zip_safe=False
+    zip_safe=False,
 )

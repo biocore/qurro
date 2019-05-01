@@ -17,6 +17,7 @@
 import json
 import os
 import logging
+
 # import re
 from shutil import copyfile, copytree
 import pandas as pd
@@ -28,17 +29,18 @@ def fix_id(fid):
 
     new_id = ""
     for c in fid:
-        if c == '.':
-            new_id += ':'
-        elif c == ']':
-            new_id += ')'
-        elif c == '[':
-            new_id += '('
-        elif c == "'" or c == '"' or c == '\\':
+        if c == ".":
+            new_id += ":"
+        elif c == "]":
+            new_id += ")"
+        elif c == "[":
+            new_id += "("
+        elif c == "'" or c == '"' or c == "\\":
             continue
         else:
             new_id += c
     return new_id
+
 
 # def escape_id(fid):
 #     """Escapes certain characters in an ID for a Vega/Vega-Lite spec.
@@ -90,16 +92,19 @@ def ensure_df_headers_unique(df, df_name):
            error message thrown if the DataFrame has any non-unique IDs.
     """
     if len(df.index.unique()) != df.shape[0]:
-        raise ValueError("Indices of the {} DataFrame are not"
-                         " unique.".format(df_name))
+        raise ValueError(
+            "Indices of the {} DataFrame are not" " unique.".format(df_name)
+        )
 
     if len(df.columns.unique()) != df.shape[1]:
-        raise ValueError("Columns of the {} DataFrame are not"
-                         " unique.".format(df_name))
+        raise ValueError(
+            "Columns of the {} DataFrame are not" " unique.".format(df_name)
+        )
 
 
-def process_input(feature_ranks, sample_metadata, biom_table,
-                  feature_metadata=None):
+def process_input(
+    feature_ranks, sample_metadata, biom_table, feature_metadata=None
+):
     """Processes the input files to rankratioviz."""
 
     logging.debug("Starting processing input.")
@@ -146,24 +151,30 @@ def process_input(feature_ranks, sample_metadata, biom_table,
         word = "were"
         if unsupported_feature_ct == 1:
             word = "was"
-        raise ValueError("Of the {} ranked features, {} {} not present in "
-                         "the input BIOM table.".format(
-                             feature_ranks.shape[0], unsupported_feature_ct,
-                             word))
+        raise ValueError(
+            "Of the {} ranked features, {} {} not present in "
+            "the input BIOM table.".format(
+                feature_ranks.shape[0], unsupported_feature_ct, word
+            )
+        )
 
     table, U = matchdf(table.T, sample_metadata)
     logging.debug("Matching table with sample metadata done.")
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
     if U.shape[0] < 1:
-        raise ValueError("None of the samples in the sample metadata file "
-                         "are present in the input BIOM table.")
+        raise ValueError(
+            "None of the samples in the sample metadata file "
+            "are present in the input BIOM table."
+        )
 
     dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
     if dropped_sample_ct > 0:
-        print("NOTE: {} sample(s) in the sample metadata file were not "
-              "present in the BIOM table, and have been removed from the "
-              "visualization.".format(dropped_sample_ct))
+        print(
+            "NOTE: {} sample(s) in the sample metadata file were not "
+            "present in the BIOM table, and have been removed from the "
+            "visualization.".format(dropped_sample_ct)
+        )
 
     labelled_feature_ranks = feature_ranks.copy()
     # Now that we've matched up the BIOM table with the feature ranks and
@@ -182,15 +193,16 @@ def process_input(feature_ranks, sample_metadata, biom_table,
         # if V.shape[0] != feature_ranks.shape[0]:
         #     raise ValueError("not every feature has corresponding metadata")
 
-        no_metadata_feature_ids = (set(feature_ranks.index)
-                                   - set(matched_feature_metadata.index))
+        no_metadata_feature_ids = set(feature_ranks.index) - set(
+            matched_feature_metadata.index
+        )
 
         # Create nice IDs for each feature with associated metadata.
         new_feature_ids = pd.Series(index=feature_ranks.index)
         for feature_row in matched_feature_metadata.iterrows():
             str_vals = [str(v) for v in feature_row[1].values]
-            id_prefix = feature_row[0] + '|'
-            new_feature_ids[feature_row[0]] = id_prefix + '|'.join(str_vals)
+            id_prefix = feature_row[0] + "|"
+            new_feature_ids[feature_row[0]] = id_prefix + "|".join(str_vals)
         # Features with no associated metadata just get their old IDs.
         for feature_row_id in no_metadata_feature_ids:
             new_feature_ids[feature_row_id] = feature_row_id
@@ -267,41 +279,44 @@ def gen_rank_plot(V):
 
     # Start populating the DataFrame we'll pass into Altair as the main source
     # of data for the rank plot.
-    rank_data = pd.DataFrame({'x': x, "Classification": classification})
+    rank_data = pd.DataFrame({"x": x, "Classification": classification})
 
     # Merge that DataFrame with the actual rank values. Their indices should be
     # identical, since we constructed rank_data based on rank_vals.
-    rank_data = pd.merge(rank_data, rank_vals, left_index=True,
-                         right_index=True)
+    rank_data = pd.merge(
+        rank_data, rank_vals, left_index=True, right_index=True
+    )
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
-    rank_chart = alt.Chart(
-        rank_data,
-        title="Feature Ranks",
-        background="#FFFFFF"
-    ).mark_bar().encode(
-        # type="ordinal" needed on the scale here to make bars adjacent;
-        # see https://stackoverflow.com/a/55544817/10730311. For now, we're
-        # sticking with type="quantitative" in order to allow for
-        # zooming/panning along the x-axis.
-        x=alt.X('x', title="Features", type="quantitative"),
-        y=alt.Y(default_rank_col, type="quantitative"),
-        color=alt.Color(
-            "Classification",
-            scale=alt.Scale(
-                domain=["None", "Numerator", "Denominator", "Both"],
-                range=["#e0e0e0", "#f00", "#00f", "#949"]
-            )
-        ),
-        size=alt.value(1.0),
-        tooltip=["x", "Classification", "Feature ID"]
-    ).configure_axis(
-        # Done in order to differentiate "None"-classification features from
-        # grid lines
-        gridColor="#f2f2f2"
-    ).interactive()
+    rank_chart = (
+        alt.Chart(rank_data, title="Feature Ranks", background="#FFFFFF")
+        .mark_bar()
+        .encode(
+            # type="ordinal" needed on the scale here to make bars adjacent;
+            # see https://stackoverflow.com/a/55544817/10730311. For now, we're
+            # sticking with type="quantitative" in order to allow for
+            # zooming/panning along the x-axis.
+            x=alt.X("x", title="Features", type="quantitative"),
+            y=alt.Y(default_rank_col, type="quantitative"),
+            color=alt.Color(
+                "Classification",
+                scale=alt.Scale(
+                    domain=["None", "Numerator", "Denominator", "Both"],
+                    range=["#e0e0e0", "#f00", "#00f", "#949"],
+                ),
+            ),
+            size=alt.value(1.0),
+            tooltip=["x", "Classification", "Feature ID"],
+        )
+        .configure_axis(
+            # Done in order to differentiate "None"-classification features
+            # from grid lines
+            gridColor="#f2f2f2"
+        )
+        .interactive()
+    )
 
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "rankratioviz_rank_ordering"
@@ -328,12 +343,13 @@ def gen_sample_plot(table, metadata):
     # Since we don't bother setting a default log ratio, we set the balance for
     # every sample to NaN so that Altair will filter them out (producing an
     # empty scatterplot by default, which makes sense).
-    balance = pd.Series(index=table.index).fillna(float('nan'))
-    df_balance = pd.DataFrame({'rankratioviz_balance': balance})
+    balance = pd.Series(index=table.index).fillna(float("nan"))
+    df_balance = pd.DataFrame({"rankratioviz_balance": balance})
     # At this point, "data" is a DataFrame with its index as sample IDs and
     # one column ("balance", which is solely NaNs).
-    sample_metadata = pd.merge(df_balance, metadata, left_index=True,
-                               right_index=True)
+    sample_metadata = pd.merge(
+        df_balance, metadata, left_index=True, right_index=True
+    )
     # TODO note dropped samples from this merge (by comparing data with
     # metadata and table) and report them to user (#54).
 
@@ -374,35 +390,35 @@ def gen_sample_plot(table, metadata):
     # If desired, we can make this interactive by adding .interactive() to the
     # alt.Chart declaration (but we don't do that currently since it makes
     # changing the scale of the chart smoother IIRC)
-    sample_chart = alt.Chart(
-        sample_metadata,
-        title="Log Ratio of Abundances in Samples",
-        background="#FFFFFF",
-        autosize=alt.AutoSizeParams(resize=True)
-    ).mark_circle().encode(
-        alt.X(
-            # TODO eventually set to default_metadata_col when we can support
-            # arbitrary starting x-axis fields
-            "rankratioviz_balance",
-            # As with the color type, this is a temporary measure.
-            type="quantitative"
-        ),
-        alt.Y(
-            "rankratioviz_balance",
-            title="log(Numerator / Denominator)",
-            type="quantitative"
-        ),
-        color=alt.Color(
-            default_metadata_col,
-            # This is a temporary measure. Eventually the type should be
-            # user-configurable -- some of the metadata fields might actually
-            # be nominal data, but many will likely be numeric (e.g. SCORAD for
-            # dermatitis). Exposing this to the user in the visualization
-            # interface is probably the best option, for when arbitrary amounts
-            # of metadata can be passed.
-            type="nominal"
-        ),
-        tooltip=["Sample ID"]
+    sample_chart = (
+        alt.Chart(
+            sample_metadata,
+            title="Log Ratio of Abundances in Samples",
+            background="#FFFFFF",
+            autosize=alt.AutoSizeParams(resize=True),
+        )
+        .mark_circle()
+        .encode(
+            alt.X(
+                # TODO eventually set to default_metadata_col when we can
+                # support arbitrary starting x-axis fields? Or not, I guess.
+                "rankratioviz_balance",
+                # As with the color type, this is a temporary measure.
+                type="quantitative",
+            ),
+            alt.Y(
+                "rankratioviz_balance",
+                title="log(Numerator / Denominator)",
+                type="quantitative",
+            ),
+            color=alt.Color(
+                default_metadata_col,
+                # This is a temporary measure. Eventually the type should be
+                # user-configurable.
+                type="nominal",
+            ),
+            tooltip=["Sample ID"],
+        )
     )
 
     # Save the sample plot JSON. Some notes:
@@ -443,8 +459,9 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     logging.debug("Generating rank plot JSON.")
     rank_plot_str = json.dumps(gen_rank_plot(V))
     logging.debug("Generating sample plot JSON.")
-    sample_plot_str = json.dumps(gen_sample_plot(processed_table,
-                                                 df_sample_metadata))
+    sample_plot_str = json.dumps(
+        gen_sample_plot(processed_table, df_sample_metadata)
+    )
     logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
@@ -455,10 +472,10 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # with .. and then with support_files since we had to first navigate up to
     # the directory containing generate.py and support_files/. Now, we don't
     # have to do that any more.
-    support_files_loc = os.path.join(loc_, 'support_files')
+    support_files_loc = os.path.join(loc_, "support_files")
     index_path = None
     for file_ in os.listdir(support_files_loc):
-        if file_ != '.DS_Store':
+        if file_ != ".DS_Store":
             copy_func = copyfile
             # If we hit a directory in support_files/, just copy the entire
             # directory to our destination using shutil.copytree()
@@ -466,9 +483,9 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
                 copy_func = copytree
             copy_func(
                 os.path.join(support_files_loc, file_),
-                os.path.join(output_dir, file_)
+                os.path.join(output_dir, file_),
             )
-        if file_ == 'index.html':
+        if file_ == "index.html":
             index_path = os.path.join(output_dir, file_)
 
     if index_path is None:
@@ -490,8 +507,8 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # way these variables are written to in the JS, it may cause the python
     # tests to fail.
     this_viz_main_js_contents = ""
-    main_loc = os.path.join(support_files_loc, 'main.js')
-    with open(main_loc, 'r') as main_file:
+    main_loc = os.path.join(support_files_loc, "main.js")
+    with open(main_loc, "r") as main_file:
         # read in basic main.js contents. Replace {}s in definitions of the
         # plot JSONs with the actual JSON.
         for line in main_file:
@@ -502,7 +519,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
                 output_line = output_line.replace("{}", sample_plot_str)
             this_viz_main_js_contents += output_line
 
-    with open(os.path.join(output_dir, 'main.js'), 'w') as this_main_file:
+    with open(os.path.join(output_dir, "main.js"), "w") as this_main_file:
         this_main_file.write(this_viz_main_js_contents)
 
     logging.debug("Finished writing the visualization contents.")

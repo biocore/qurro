@@ -1,5 +1,5 @@
 # rankratioviz
-[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![codecov](https://codecov.io/gh/fedarko/rankratioviz/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/rankratioviz) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Build Status](https://travis-ci.org/fedarko/rankratioviz.svg?branch=master)](https://travis-ci.org/fedarko/rankratioviz) [![codecov](https://codecov.io/gh/fedarko/rankratioviz/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/rankratioviz)
 
 (Name subject to change.)
 
@@ -102,8 +102,9 @@ instead installed alongside rankratioviz).
 
 For python testing/style checking, rankratioviz uses
 [pytest](https://docs.pytest.org/en/latest/),
-[pytest-cov](https://github.com/pytest-dev/pytest-cov), and
-[flake8](http://flake8.pycqa.org/en/latest/).
+[pytest-cov](https://github.com/pytest-dev/pytest-cov),
+[flake8](http://flake8.pycqa.org/en/latest/), and
+[black](https://github.com/ambv/black).
 
 For JavaScript testing/style checking, rankratioviz uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),

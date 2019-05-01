@@ -30,10 +30,12 @@ jstest:
 # (since that's where the .jshintrc is located).
 stylecheck:
 	flake8 rankratioviz/ setup.py
+	black --check -l 79 rankratioviz/ setup.py
 	jshint $(JSLOCS)
 	prettier --check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 
 # If we'd want to do any automatic python code formatting (e.g. with black), we
 # could do that here
 style:
+	black -l 79 rankratioviz/ setup.py
 	prettier --write --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)

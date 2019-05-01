@@ -8,13 +8,19 @@ import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_processing import rank_file_to_df
 
 
-def run_integration_test(input_dir_name, output_dir_name, ranks_name,
-                         table_name, sample_metadata_name,
-                         feature_metadata_name=None, use_q2=False,
-                         q2_ranking_tool="songbird",
-                         expected_unsupported_samples=0,
-                         expected_unsupported_features=0,
-                         expect_all_unsupported_samples=False):
+def run_integration_test(
+    input_dir_name,
+    output_dir_name,
+    ranks_name,
+    table_name,
+    sample_metadata_name,
+    feature_metadata_name=None,
+    use_q2=False,
+    q2_ranking_tool="songbird",
+    expected_unsupported_samples=0,
+    expected_unsupported_features=0,
+    expect_all_unsupported_samples=False,
+):
     """Runs rankratioviz, and validates the output somewhat."""
 
     in_dir = os.path.join("rankratioviz", "tests", "input", input_dir_name)
@@ -47,24 +53,36 @@ def run_integration_test(input_dir_name, output_dir_name, ranks_name,
             feature_metadata = Metadata.load(floc)
 
         # Now that everything's imported, try running rankratioviz
-        rrv_qzv = q2_action(ranks=rank_qza, table=table_qza,
-                            sample_metadata=sample_metadata,
-                            feature_metadata=feature_metadata)
+        rrv_qzv = q2_action(
+            ranks=rank_qza,
+            table=table_qza,
+            sample_metadata=sample_metadata,
+            feature_metadata=feature_metadata,
+        )
         # Output the contents of the visualization to out_dir.
         rrv_qzv.visualization.export_data(out_dir)
     else:
         # Run rankratioviz "standalone" -- i.e. outside of QIIME 2
         runner = CliRunner()
-        args = ["--ranks", rloc, "--table", tloc, "--sample-metadata", sloc,
-                "--output-dir", out_dir]
+        args = [
+            "--ranks",
+            rloc,
+            "--table",
+            tloc,
+            "--sample-metadata",
+            sloc,
+            "--output-dir",
+            out_dir,
+        ]
         if floc is not None:
             args += ["--feature-metadata", floc]
         result = runner.invoke(rrvp.plot, args)
         # Validate that the correct exit code and output were recorded
         validate_standalone_result(
-            result, expected_unsupported_samples=expected_unsupported_samples,
+            result,
+            expected_unsupported_samples=expected_unsupported_samples,
             expect_all_unsupported_samples=expect_all_unsupported_samples,
-            expected_unsupported_features=expected_unsupported_features
+            expected_unsupported_features=expected_unsupported_features,
         )
     # If we expected this test to fail due to invalid inputs, don't bother
     # doing any JSON validation.
@@ -78,9 +96,12 @@ def run_integration_test(input_dir_name, output_dir_name, ranks_name,
         return rank_json, sample_json
 
 
-def validate_standalone_result(result, expected_unsupported_samples=0,
-                               expect_all_unsupported_samples=False,
-                               expected_unsupported_features=0):
+def validate_standalone_result(
+    result,
+    expected_unsupported_samples=0,
+    expect_all_unsupported_samples=False,
+    expected_unsupported_features=0,
+):
     """Validates the result (exit code and output) of running rrv standalone.
 
        Parameters
@@ -114,9 +135,10 @@ def validate_standalone_result(result, expected_unsupported_samples=0,
         word = "were"
         if expected_unsupported_features == 1:
             word = "was"
-        expected_message = ("{} {} not present in the input BIOM "
-                            "table.".format(expected_unsupported_features,
-                                            word))
+        expected_message = (
+            "{} {} not present in the input BIOM "
+            "table.".format(expected_unsupported_features, word)
+        )
         # Checking .stderr didn't seem to work for me, so to check the text of
         # the ValueError we just use its .args property (which should contain
         # the message we passed when raising it)
@@ -124,16 +146,19 @@ def validate_standalone_result(result, expected_unsupported_samples=0,
     elif expect_all_unsupported_samples:
         assert result.exit_code != 0
         assert type(result.exception) == ValueError
-        expected_message = ("None of the samples in the sample metadata file "
-                            "are present in the input BIOM table.")
+        expected_message = (
+            "None of the samples in the sample metadata file "
+            "are present in the input BIOM table."
+        )
         assert expected_message == result.exc_info[1].args[0]
     else:
         # There shouldn't be any errors in the output!
         # *Maybe* a warning about unsupported samples, but we know that at
         # least one sample should be supported (so rrv can still work).
         assert result.exit_code == 0
-        validate_samples_supported_output(result.output,
-                                          expected_unsupported_samples)
+        validate_samples_supported_output(
+            result.output, expected_unsupported_samples
+        )
 
 
 def validate_main_js(out_dir, rloc, tloc, sloc):
@@ -181,7 +206,7 @@ def get_plot_jsons(main_js_loc):
     """
     rank_plot_json_str = None
     sample_plot_json_str = None
-    with open(main_js_loc, 'r') as mf:
+    with open(main_js_loc, "r") as mf:
         for line in mf:
             # Use strip() to trim off starting and trailing whitespace; use the
             # first position in the slice to ignore the
@@ -210,10 +235,13 @@ def validate_samples_supported_output(output, expected_unsupported_samples):
           If 0, expects all samples to be supported.
     """
     if expected_unsupported_samples > 0:
-        expected_msg = ("NOTE: {} sample(s) in the sample metadata file were "
-                        "not present in the BIOM table, and have been "
-                        "removed from the visualization.".format(
-                            expected_unsupported_samples))
+        expected_msg = (
+            "NOTE: {} sample(s) in the sample metadata file were "
+            "not present in the BIOM table, and have been "
+            "removed from the visualization.".format(
+                expected_unsupported_samples
+            )
+        )
         assert expected_msg in output
 
 

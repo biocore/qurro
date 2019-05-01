@@ -33,5 +33,5 @@ def ordination_to_df(ordination_file_loc):
 def differentials_to_df(differentials_loc):
     """Converts a differential rank TSV file to a DataFrame."""
 
-    differentials = pd.read_csv(differentials_loc, sep='\t', index_col=0)
+    differentials = pd.read_csv(differentials_loc, sep="\t", index_col=0)
     return differentials
