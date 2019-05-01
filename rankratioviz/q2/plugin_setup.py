@@ -50,8 +50,7 @@ params = {
 
 param_descs = {"extreme_feature_count": EXTREME_FEATURE_COUNT}
 
-# TODO use "an" if first {} starts with a vowel? lol low priority
-ranks_desc = "A {} file describing ranks produced by {}"
+ranks_desc = "A{} file describing feature rankings produced by {}."
 
 short_desc = "Generate a rankratioviz plot from {} data"
 long_desc = (
@@ -70,7 +69,7 @@ if songbird_accessible:
         parameters=params,
         parameter_descriptions=param_descs,
         input_descriptions={
-            "ranks": ranks_desc.format("differentials", "songbird"),
+            "ranks": ranks_desc.format(" differentials", "songbird"),
             "table": TABLE,
         },
         name=short_desc.format("songbird"),
@@ -86,7 +85,7 @@ plugin.visualizers.register_function(
     parameters=params,
     parameter_descriptions=param_descs,
     input_descriptions={
-        "ranks": ranks_desc.format("ordination", "DEICODE"),
+        "ranks": ranks_desc.format("n ordination", "DEICODE"),
         "table": TABLE,
     },
     name=short_desc.format("DEICODE"),
