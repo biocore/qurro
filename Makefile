@@ -38,8 +38,8 @@ stylecheck:
 # could do that here
 style:
 	black -l 79 rankratioviz/ setup.py
-	# To be extra safe, do a dry run of prettier and check that it hasn't
-	# changed the code's abstract syntax tree (AST). (Black does this sort of
-	# thing by default.)
+	@# To be extra safe, do a dry run of prettier and check that it hasn't
+	@# changed the code's abstract syntax tree (AST). (Black does this sort of
+	@# thing by default.)
 	prettier --debug-check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 	prettier --write --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
