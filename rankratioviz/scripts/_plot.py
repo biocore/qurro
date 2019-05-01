@@ -37,6 +37,20 @@ from rankratioviz._rank_processing import rank_file_to_df
     "-o", "--output-dir", required=True, help="Location of output files."
 )
 @click.option(
+    "-x",
+    "--extreme-feature-count",
+    default=None,
+    type=int,
+    help=(
+        "If specified, rankratioviz will only use this many "
+        '"extreme" features from either end of all of the rankings. '
+        "This is useful when dealing with huge datasets (e.g. with "
+        "10,000 ranked features), for which running rankratioviz "
+        "normally might take a long amount of time or crash due "
+        "to memory limits."
+    ),
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
@@ -48,6 +62,7 @@ def plot(
     sample_metadata: str,
     feature_metadata: str,
     output_dir: str,
+    extreme_feature_count: int,
     verbose: bool,
 ) -> None:
     """Generates a plot of ranked taxa/metabolites and their abundances."""
