@@ -45,7 +45,7 @@ from rankratioviz._rank_processing import rank_file_to_df
         "If specified, rankratioviz will only use this many "
         '"extreme" features from either end of all of the rankings. '
         "This is useful when dealing with huge datasets (e.g. with "
-        "10,000 ranked features), for which running rankratioviz "
+        "over 10,000 ranked features), for which running rankratioviz "
         "normally might take a long amount of time or crash due "
         "to memory limits."
     ),

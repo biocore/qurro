@@ -18,6 +18,7 @@ def supervised_rank_plot(
     table: biom.Table,
     sample_metadata: qiime2.Metadata,
     feature_metadata: qiime2.Metadata = None,
+    extreme_feature_count: int = None,
 ) -> None:
     """Generates a .qzv file of a RRV visualization from songbird data.
 
@@ -27,7 +28,12 @@ def supervised_rank_plot(
     """
 
     create_q2_visualization(
-        output_dir, ranks, table, sample_metadata, feature_metadata
+        output_dir,
+        ranks,
+        table,
+        sample_metadata,
+        feature_metadata,
+        extreme_feature_count,
     )
 
 
@@ -37,9 +43,15 @@ def unsupervised_rank_plot(
     table: biom.Table,
     sample_metadata: qiime2.Metadata,
     feature_metadata: qiime2.Metadata = None,
+    extreme_feature_count: int = None,
 ) -> None:
     """Generates a .qzv file of a RRV visualization from DEICODE data."""
 
     create_q2_visualization(
-        output_dir, ranks.features, table, sample_metadata, feature_metadata
+        output_dir,
+        ranks.features,
+        table,
+        sample_metadata,
+        feature_metadata,
+        extreme_feature_count,
     )

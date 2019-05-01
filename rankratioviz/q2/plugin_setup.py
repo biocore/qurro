@@ -11,7 +11,7 @@ import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
 from ._method import supervised_rank_plot, unsupervised_rank_plot
-from qiime2.plugin import Metadata, Properties
+from qiime2.plugin import Metadata, Properties, Int
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.feature_data import FeatureData
 from q2_types.ordination import PCoAResults
@@ -41,7 +41,22 @@ plugin = qiime2.plugin.Plugin(
 )
 
 # Shared stuff between the two plot options
-params = {"sample_metadata": Metadata, "feature_metadata": Metadata}
+params = {
+    "sample_metadata": Metadata,
+    "feature_metadata": Metadata,
+    "extreme_feature_count": Int,
+}
+
+param_descs = {
+    "extreme_feature_count": (
+        "If specified, rankratioviz will only use this many "
+        '"extreme" features from either end of all of the rankings. '
+        "This is useful when dealing with huge datasets (e.g. with "
+        "over ~10,000 ranked features), for which running rankratioviz "
+        "normally might take a long amount of time or crash due "
+        "to memory limits."
+    )
+}
 
 ranks_desc = "A {} file describing ranks produced by {}"
 table_desc = (
@@ -64,6 +79,7 @@ if songbird_accessible:
             "table": FeatureTable[Frequency],
         },
         parameters=params,
+        parameter_descriptions=param_descs,
         input_descriptions={
             "ranks": ranks_desc.format("differentials", "songbird"),
             "table": table_desc,
@@ -79,6 +95,7 @@ plugin.visualizers.register_function(
         "table": FeatureTable[Frequency],
     },
     parameters=params,
+    parameter_descriptions=param_descs,
     input_descriptions={
         "ranks": ranks_desc.format("ordination", "DEICODE"),
         "table": table_desc,

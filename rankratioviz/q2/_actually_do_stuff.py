@@ -11,7 +11,12 @@ from rankratioviz.generate import process_input, gen_visualization
 
 
 def create_q2_visualization(
-    output_dir, feature_ranks, table, sample_metadata, feature_metadata
+    output_dir,
+    feature_ranks,
+    table,
+    sample_metadata,
+    feature_metadata,
+    extreme_feature_count,
 ):
 
     logging.debug("Starting create_q2_visualization().")
