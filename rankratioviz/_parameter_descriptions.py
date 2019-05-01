@@ -6,6 +6,11 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
+TABLE = (
+    "A BIOM table describing the abundances of the ranked features in "
+    "samples."
+)
+
 EXTREME_FEATURE_COUNT = (
     "If specified, rankratioviz will only use this many "
     '"extreme" features from either end of all of the rankings. '

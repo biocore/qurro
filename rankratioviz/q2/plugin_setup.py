@@ -11,7 +11,7 @@ import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
 from ._method import supervised_rank_plot, unsupervised_rank_plot
-from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT
+from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
 from qiime2.plugin import Metadata, Properties, Int
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.feature_data import FeatureData
@@ -52,10 +52,6 @@ param_descs = {"extreme_feature_count": EXTREME_FEATURE_COUNT}
 
 # TODO use "an" if first {} starts with a vowel? lol low priority
 ranks_desc = "A {} file describing ranks produced by {}"
-table_desc = (
-    "A BIOM table describing the abundances of the ranked features"
-    + " in samples."
-)
 
 short_desc = "Generate a rankratioviz plot from {} data"
 long_desc = (
@@ -75,7 +71,7 @@ if songbird_accessible:
         parameter_descriptions=param_descs,
         input_descriptions={
             "ranks": ranks_desc.format("differentials", "songbird"),
-            "table": table_desc,
+            "table": TABLE,
         },
         name=short_desc.format("songbird"),
         description=long_desc.format("songbird"),
@@ -91,7 +87,7 @@ plugin.visualizers.register_function(
     parameter_descriptions=param_descs,
     input_descriptions={
         "ranks": ranks_desc.format("ordination", "DEICODE"),
-        "table": table_desc,
+        "table": TABLE,
     },
     name=short_desc.format("DEICODE"),
     description=long_desc.format("DEICODE"),

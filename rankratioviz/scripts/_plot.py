@@ -9,7 +9,7 @@ import logging
 from biom import load_table
 import pandas as pd
 import click
-from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT
+from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
 from rankratioviz.generate import process_input, gen_visualization
 from rankratioviz._rank_processing import rank_file_to_df
 
@@ -22,12 +22,7 @@ from rankratioviz._rank_processing import rank_file_to_df
     help="Differentials output from songbird or Ordination output"
     + " from DEICODE.",
 )
-@click.option(
-    "-t",
-    "--table",
-    required=True,
-    help="BIOM table describing taxon/metabolite sample abundances.",
-)
+@click.option("-t", "--table", required=True, help=TABLE)
 @click.option(
     "-fm", "--feature-metadata", default=None, help="Feature metadata file."
 )
