@@ -7,7 +7,6 @@
 #
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
-import logging
 import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
@@ -76,10 +75,3 @@ plugin.visualizers.register_function(
     name=short_desc.format("DEICODE"),
     description=long_desc.format("DEICODE")
 )
-
-# Kind of a hack, but it works -- since I don't think there's a way to get the
-# input verbosity level from QIIME 2, we just enable all debug messages by
-# default. If the user passes --verbose, the logs will be printed to stdout;
-# and if the user doesn't pass --verbose, the logs will be caught by QIIME 2
-# and stored in the debug info log :)
-logging.basicConfig(level=logging.DEBUG)
