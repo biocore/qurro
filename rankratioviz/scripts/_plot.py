@@ -9,6 +9,7 @@ import logging
 from biom import load_table
 import pandas as pd
 import click
+from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT
 from rankratioviz.generate import process_input, gen_visualization
 from rankratioviz._rank_processing import rank_file_to_df
 
@@ -41,14 +42,7 @@ from rankratioviz._rank_processing import rank_file_to_df
     "--extreme-feature-count",
     default=None,
     type=int,
-    help=(
-        "If specified, rankratioviz will only use this many "
-        '"extreme" features from either end of all of the rankings. '
-        "This is useful when dealing with huge datasets (e.g. with "
-        "over 10,000 ranked features), for which running rankratioviz "
-        "normally might take a long amount of time or crash due "
-        "to memory limits."
-    ),
+    help=EXTREME_FEATURE_COUNT,
 )
 @click.option(
     "-v",

@@ -11,6 +11,7 @@ import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
 from ._method import supervised_rank_plot, unsupervised_rank_plot
+from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT
 from qiime2.plugin import Metadata, Properties, Int
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.feature_data import FeatureData
@@ -47,17 +48,9 @@ params = {
     "extreme_feature_count": Int,
 }
 
-param_descs = {
-    "extreme_feature_count": (
-        "If specified, rankratioviz will only use this many "
-        '"extreme" features from either end of all of the rankings. '
-        "This is useful when dealing with huge datasets (e.g. with "
-        "over ~10,000 ranked features), for which running rankratioviz "
-        "normally might take a long amount of time or crash due "
-        "to memory limits."
-    )
-}
+param_descs = {"extreme_feature_count": EXTREME_FEATURE_COUNT}
 
+# TODO use "an" if first {} starts with a vowel? lol low priority
 ranks_desc = "A {} file describing ranks produced by {}"
 table_desc = (
     "A BIOM table describing the abundances of the ranked features"
