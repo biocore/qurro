@@ -52,11 +52,11 @@ param_descs = {"extreme_feature_count": EXTREME_FEATURE_COUNT}
 
 ranks_desc = "A{} file describing feature rankings produced by {}."
 
-short_desc = "Generate a rankratioviz plot from {} data"
+short_desc = "Generate a rankratioviz visualization from {} data"
 long_desc = (
-    "Generates an interactive visualization of {} ranks in tandem"
-    + " with a visualization of the log ratios of selected ranks'"
-    + " sample abundance."
+    "Generates an interactive visualization of {} feature rankings in tandem"
+    + " with a visualization of the log ratios of selected features'"
+    + " sample abundances."
 )
 
 if songbird_accessible:

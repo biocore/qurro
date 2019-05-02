@@ -54,7 +54,16 @@ def plot(
     extreme_feature_count: int,
     verbose: bool,
 ) -> None:
-    """Generates a plot of ranked taxa/metabolites and their abundances."""
+    """Generates a visualization of feature rankings and log ratios.
+
+       The resulting visualization contains two plots. The first plot shows
+       how features are ranked, and the second plot shows the log ratio
+       of "selected" features' abundances within samples.
+
+       The visualization is interactive, so which features are "selected" to
+       construct log ratios -- as well as various other properties of the
+       visualization -- can be changed by the user.
+    """
 
     # inspired by https://stackoverflow.com/a/14098306/10730311
     if verbose:
