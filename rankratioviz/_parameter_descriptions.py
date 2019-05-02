@@ -15,7 +15,7 @@ EXTREME_FEATURE_COUNT = (
     "If specified, rankratioviz will only use this many "
     '"extreme" features from either end of all of the rankings. '
     "This is useful when dealing with huge datasets (e.g. with "
-    "over 10,000 ranked features), for which running rankratioviz "
-    "normally might take a long amount of time or crash due "
-    "to memory limits."
+    "BIOM tables exceeding 1 million entries), for which "
+    "running rankratioviz normally might take a long amount of "
+    "time or crash due to memory limits."
 )
