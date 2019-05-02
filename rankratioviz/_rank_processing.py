@@ -7,6 +7,7 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import logging
 import biom
 import skbio
 import pandas as pd
@@ -62,7 +63,8 @@ def filter_unextreme_features(
 
        extreme_feature_count: int
             An integer representing the number of features from each "end" of
-            the feature rankings to preserve in the table.
+            the feature rankings to preserve in the table. If this is None, the
+            input table and ranks will just be returned.
 
        print_warning: bool
             If True, this will print out a warning if (extreme_feature_count *
@@ -99,8 +101,15 @@ def filter_unextreme_features(
        ranks inputs will be returned.
     """
 
+    logging.debug('Starting to filter "unextreme" features.')
+
+    if extreme_feature_count is None:
+        logging.debug("No extreme feature count specified; not filtering.")
+        return table, ranks
+
     efc2 = extreme_feature_count * 2
     if efc2 >= len(ranks):
+        logging.debug("Extreme Feature Count too large to do any filtering.")
         if print_warning:
             print(
                 "The input Extreme Feature Count was {}. {} * 2 = {}.".format(
@@ -112,8 +121,15 @@ def filter_unextreme_features(
                 "features ({}).".format(efc2, len(ranks))
             )
             print("Therefore, no feature filtering will be done now.")
-        return (table, ranks)
+        return table, ranks
 
+    logging.debug(
+        "Will perform filtering with e.f.c. of {}.".format(
+            extreme_feature_count
+        )
+    )
+    logging.debug("Input table has shape {}.".format(table.shape))
+    logging.debug("Input feature ranks have shape {}.".format(ranks.shape))
     # OK, we're actually going to do some filtering.
     filtered_table = table.copy()
     # We store these features in a set to avoid duplicates -- Python does the
@@ -137,4 +153,10 @@ def filter_unextreme_features(
     # Finally, filter now-empty samples from the BIOM table.
     filtered_table.remove_empty(axis="sample")
 
-    return (filtered_table, filtered_ranks)
+    logging.debug("Output table has shape {}.".format(filtered_table.shape))
+    logging.debug(
+        "Output feature ranks have shape {}.".format(filtered_ranks.shape)
+    )
+    logging.debug("Done with filtering.")
+
+    return filtered_table, filtered_ranks

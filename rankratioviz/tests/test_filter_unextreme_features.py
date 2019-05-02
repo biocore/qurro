@@ -99,3 +99,18 @@ def test_filtering_large_efc():
     )
     assert biom_table == filtered_table
     assert_frame_equal(ranks, filtered_ranks)
+
+
+def test_filtering_no_efc():
+    """Tests filter_unextreme_features() when the extreme feature count is None
+       (i.e. the user didn't use the -x option, and no filtering should be
+       done).
+    """
+
+    biom_table, ranks = get_test_data()
+
+    filtered_table, filtered_ranks = filter_unextreme_features(
+        biom_table, ranks, None, print_warning=False
+    )
+    assert biom_table == filtered_table
+    assert_frame_equal(ranks, filtered_ranks)
