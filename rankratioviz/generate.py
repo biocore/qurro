@@ -110,6 +110,19 @@ def process_input(feature_ranks, sample_metadata, biom_table,
     ensure_df_headers_unique(sample_metadata, "sample metadata")
 
     table = biom_table.to_dataframe().to_dense()
+
+    # another filtering step if the biom table is really too big
+    altair_max = 5000
+    if feature_ranks.shape[0] > altair_max:
+        print('WARN: Table is too big - trimming down to 5000 features.')
+        feature_cap = altair_max // (2 * feature_ranks.shape[1])
+        ids = []
+        for col in feature_ranks.columns:
+            sorted_ranks = feature_ranks.sort_values(col)
+            ids += list(sorted_ranks.index[:feature_cap])
+            ids += list(sorted_ranks.index[-feature_cap:])
+        ids = list(set(ids)) # make dem unique
+        feature_ranks = feature_ranks.loc[ids]
     # Match features to BIOM table, and then match samples to BIOM table.
     # This should bring us to a point where every feature/sample is
     # supported in the BIOM table. (Note that the input BIOM table might
