@@ -39,9 +39,12 @@ def differentials_to_df(differentials_loc):
 
 
 def filter_unextreme_features(
-    table: biom.Table, ranks_df: pd.DataFrame, extreme_feature_count: int
+    table: biom.Table,
+    ranks: pd.DataFrame,
+    extreme_feature_count: int,
+    print_warning: bool = True,
 ) -> None:
-    """Returns a copy of the input table with "unextreme" features removed.
+    """Returns copies of the table and ranks with "unextreme" features removed.
 
        Also removes samples from the table that, after removing "unextreme"
        features, don't contain any of the remaining features.
@@ -52,7 +55,7 @@ def filter_unextreme_features(
        table: biom.Table
             An ordinary BIOM table.
 
-       ranks_df: pandas.DataFrame
+       ranks: pandas.DataFrame
             A DataFrame where the index consists of ranked features' IDs, and
             the columns correspond to the various ranking(s) for which each
             feature should have a numeric value.
@@ -60,6 +63,17 @@ def filter_unextreme_features(
        extreme_feature_count: int
             An integer representing the number of features from each "end" of
             the feature rankings to preserve in the table.
+
+       print_warning: bool
+            If True, this will print out a warning if (extreme_feature_count *
+            2) >= the number of ranked features. (This can be disabled for
+            tests, etc.)
+
+       Returns
+       -------
+
+       (table, ranks): (biom.Table, pandas.DataFrame)
+            Filtered copies of the input BIOM table and ranks DataFrame.
 
        Behavior
        --------
@@ -77,8 +91,50 @@ def filter_unextreme_features(
        distinct extrema, then each of the 5 rankings will have 6 extreme
        features preserved, making a total of (3 * 2) * 5 = 30 features.
 
-       If (extreme_feature_count * 2) is less than or equal to the total number
-       of features in the ranks DataFrame, this won't do any filtering at all.
-       (It won't even filter out empty samples, in the case that the input
-       table already contained empty samples.)
+       If (extreme_feature_count * 2) is greater than or equal to the total
+       number of features in the ranks DataFrame, this won't do any filtering
+       at all. (It won't even filter out empty samples, in the case that the
+       input table already contained empty samples.) In this case, a warning
+       message will be printed from this function, and the given table and
+       ranks inputs will be returned.
     """
+
+    efc2 = extreme_feature_count * 2
+    if efc2 >= len(ranks):
+        if print_warning:
+            print(
+                "The input Extreme Feature Count was {}. {} * 2 = {}.".format(
+                    extreme_feature_count, extreme_feature_count, efc2
+                )
+            )
+            print(
+                "{} is greater than or equal to the number of ranked "
+                "features ({}).".format(efc2, len(ranks))
+            )
+            print("Therefore, no feature filtering will be done now.")
+        return (table, ranks)
+
+    # OK, we're actually going to do some filtering.
+    filtered_table = table.copy()
+    # We store these features in a set to avoid duplicates -- Python does the
+    # hard work here for us
+    features_to_preserve = set()
+    for ranking in ranks.columns:
+        upper_extrema = ranks.nlargest(extreme_feature_count, ranking).index
+        lower_extrema = ranks.nsmallest(extreme_feature_count, ranking).index
+        features_to_preserve |= set(upper_extrema)
+        features_to_preserve |= set(lower_extrema)
+
+    # Also filter ranks. Fortunately, DataFrame.filter() makes this easy.
+    filtered_ranks = ranks.filter(items=features_to_preserve, axis="index")
+
+    # Filter the BIOM table to desired features.
+    def filter_biom_table(values, feature_id, _):
+        return feature_id in features_to_preserve
+
+    filtered_table.filter(filter_biom_table, axis="observation")
+
+    # Finally, filter now-empty samples from the BIOM table.
+    filtered_table.remove_empty(axis="sample")
+
+    return (filtered_table, filtered_ranks)
