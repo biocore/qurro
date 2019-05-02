@@ -467,6 +467,10 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
        index_path: a path to the index.html file for the output visualization.
                    This is needed when calling q2templates.render().
     """
+
+    # https://altair-viz.github.io/user_guide/faq.html#disabling-maxrows
+    alt.data_transformers.enable("default", max_rows=None)
+
     logging.debug("Generating rank plot JSON.")
     rank_plot_str = json.dumps(gen_rank_plot(V))
     logging.debug("Generating sample plot JSON.")
