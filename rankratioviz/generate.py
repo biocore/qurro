@@ -22,6 +22,7 @@ import logging
 from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
+from rankratioviz._rank_processing import filter_unextreme_features
 
 
 def fix_id(fid):
@@ -103,7 +104,11 @@ def ensure_df_headers_unique(df, df_name):
 
 
 def process_input(
-    feature_ranks, sample_metadata, biom_table, feature_metadata=None
+    feature_ranks,
+    sample_metadata,
+    biom_table,
+    feature_metadata=None,
+    extreme_feature_count=None,
 ):
     """Processes the input files to rankratioviz."""
 
@@ -118,35 +123,41 @@ def process_input(
     ensure_df_headers_unique(sample_metadata, "sample metadata")
     logging.debug("Ensured uniqueness of sample metadata.")
 
+    # NOTE although we always call filter_unextreme_features(), no filtering is
+    # necessarily done (depending on the value of extreme_feature_count and the
+    # contents of the table/ranks).
+    filtered_table, filtered_ranks = filter_unextreme_features(
+        biom_table, feature_ranks, extreme_feature_count
+    )
     logging.debug("Creating a SparseDataFrame from the BIOM table.")
 
     # Old versions of BIOM accidentally produce an effectively-dense DataFrame
-    # when using biom_table.to_dataframe() (see
+    # when using biom.Table.to_dataframe() (see
     # https://github.com/biocore/biom-format/issues/808). To get around this,
     # we extract the scipy.sparse.csr_matrix data from the BIOM table and
     # directly convert that to a pandas SparseDataFrame.
-    sparse_matrix_data = biom_table.matrix_data
+    sparse_matrix_data = filtered_table.matrix_data
     table = pd.SparseDataFrame(sparse_matrix_data, default_fill_value=0.0)
 
     # The csr_matrix doesn't include column/index IDs, so we manually add them
     # in to the SparseDataFrame.
-    table.index = biom_table.ids(axis="observation")
-    table.columns = biom_table.ids(axis="sample")
+    table.index = filtered_table.ids(axis="observation")
+    table.columns = filtered_table.ids(axis="sample")
 
     logging.debug("Converted BIOM table to SparseDataFrame.")
 
     # Match features to BIOM table, and then match samples to BIOM table.
     # This should bring us to a point where every feature/sample is
     # supported in the BIOM table. (Note that the input BIOM table might
-    # contain features or samples that are not included in feature_ranks or
+    # contain features or samples that are not included in filtered_ranks or
     # sample_metadata, respectively -- this is totally fine. The opposite,
     # though, is a big no-no.)
-    table, V = matchdf(table, feature_ranks)
+    table, V = matchdf(table, filtered_ranks)
     logging.debug("Matching table with feature ranks done.")
     # Ensure that every ranked feature was present in the BIOM table. Raise an
     # error if this isn't the case.
-    if V.shape[0] != feature_ranks.shape[0]:
-        unsupported_feature_ct = feature_ranks.shape[0] - V.shape[0]
+    if V.shape[0] != filtered_ranks.shape[0]:
+        unsupported_feature_ct = filtered_ranks.shape[0] - V.shape[0]
         # making this error message as pretty as possible
         word = "were"
         if unsupported_feature_ct == 1:
@@ -154,7 +165,7 @@ def process_input(
         raise ValueError(
             "Of the {} ranked features, {} {} not present in "
             "the input BIOM table.".format(
-                feature_ranks.shape[0], unsupported_feature_ct, word
+                filtered_ranks.shape[0], unsupported_feature_ct, word
             )
         )
 
@@ -176,7 +187,7 @@ def process_input(
             "visualization.".format(dropped_sample_ct)
         )
 
-    labelled_feature_ranks = feature_ranks.copy()
+    labelled_feature_ranks = filtered_ranks.copy()
     # Now that we've matched up the BIOM table with the feature ranks and
     # sample metadata, we're pretty much done. If the user passed in feature
     # metadata corresponding to taxonomy information, then we use that to

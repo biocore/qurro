@@ -27,7 +27,11 @@ def create_q2_visualization(
     logging.debug("Converted metadata to DataFrames.")
 
     U, V, processed_table = process_input(
-        feature_ranks, df_sample_metadata, table, df_feature_metadata
+        feature_ranks,
+        df_sample_metadata,
+        table,
+        df_feature_metadata,
+        extreme_feature_count,
     )
     # We can't "subscript" Q2 Metadata types, so we have to convert this to a
     # dataframe before working with it

@@ -75,7 +75,11 @@ def plot(
     logging.debug("Read in metadata.")
 
     U, V, processed_table = process_input(
-        feature_ranks, df_sample_metadata, loaded_biom, df_feature_metadata
+        feature_ranks,
+        df_sample_metadata,
+        loaded_biom,
+        df_feature_metadata,
+        extreme_feature_count,
     )
     gen_visualization(V, processed_table, U, output_dir)
     print(
