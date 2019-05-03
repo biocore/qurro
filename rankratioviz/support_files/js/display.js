@@ -342,6 +342,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 )
                 .runAsync()
                 .then(function() {
+                    // TODO update parentDisplay.samplePlotJSON to hold the new
+                    // balances.
                     console.log(parentDisplay.samplePlotView);
                 });
             // Update rank plot based on the new log ratio
@@ -458,9 +460,20 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * type in order to make these changes take effect.
          */
         updateSamplePlotScale(vizAttribute) {
-            console.log(
-                "HEY! Updating the sample plot scale for " + vizAttribute
-            );
+            if (vizAttribute === "xAxis") {
+                this.samplePlotJSON.encoding.x.type = document.getElementById(
+                    "xAxisScale"
+                ).value;
+            } else {
+                this.samplePlotJSON.encoding.color.type = document.getElementById(
+                    "colorScale"
+                ).value;
+            }
+            // Clear out the sample plot. NOTE that I'm not sure if this is
+            // 100% necessary, but it's probs a good idea to prevent memory
+            // waste.
+            this.destroy(true);
+            this.makeSamplePlot();
         }
 
         static addSignalsToSpec(spec, signalArray) {
@@ -783,8 +796,27 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          *
          * This is mainly intended for use with tests (e.g. creating multiple
          * displays in quick succession).
+         *
+         * If justSamplePlot is truthy, this will only clear the sample plot.
          */
-        destroy() {
+        destroy(justSamplePlot) {
+            function clearDiv(divID) {
+                // From https://stackoverflow.com/a/3450726/10730311.
+                // This way is apparently faster than just using
+                // document.getElementById(divID).innerHTML = '' -- not that
+                // performance really matters in this case, but whatever.
+                var element = document.getElementById(divID);
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }
+            }
+            this.samplePlotView.finalize();
+            clearDiv("samplePlot");
+            if (justSamplePlot) {
+                return;
+            }
+            this.rankPlotView.finalize();
+            clearDiv("rankPlot");
             // Clear the "features text" displays
             this.updateFeaturesTextDisplays(false, true);
             // Clear the bindings of bound DOM elements
@@ -798,20 +830,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     this.elementsWithOnChangeBindings[j]
                 ).onchange = undefined;
             }
-            this.rankPlotView.finalize();
-            this.samplePlotView.finalize();
-            function clearDiv(divID) {
-                // From https://stackoverflow.com/a/3450726/10730311.
-                // This way is apparently faster than just using
-                // document.getElementById(divID).innerHTML = '' -- not that
-                // performance really matters in this case, but whatever.
-                var element = document.getElementById(divID);
-                while (element.firstChild) {
-                    element.removeChild(element.firstChild);
-                }
-            }
-            clearDiv("rankPlot");
-            clearDiv("samplePlot");
         }
     }
 
