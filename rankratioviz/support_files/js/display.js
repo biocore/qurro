@@ -238,6 +238,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     // Probs easiest to use the current underlying vega spec as
                     // a basis for reinstantiating the chart (since it contains
                     // signals, and I think since it contains curr balances).
+                    //
+                    // OR we can modify things where: as changes are made to
+                    // the plot (balance adjustments due to feature selections,
+                    // signal changes), update the underlying Vega-Lite spec's
+                    // default vals accordingly. If we ensure the underlying
+                    // sample plot spec matches the actual state of the
+                    // visualization, then re-calling Vega-Embed should be a
+                    // lot less of a hassle.
                 }
             );
             var rfci = "rankratioviz_feature_col_ids";
