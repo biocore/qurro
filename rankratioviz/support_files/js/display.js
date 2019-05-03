@@ -79,15 +79,37 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     display.exportData();
                 }
             });
+            this.elementsWithOnChangeBindings = RRVDisplay.setUpDOMBindings(
+                {
+                    xAxisScale: function() {
+                        display.updateSamplePlotScale("xAxis");
+                    },
+                    colorScale: function() {
+                        display.updateSamplePlotScale("color");
+                    }
+                },
+                "onchange"
+            );
         }
 
-        static setUpDOMBindings(buttonID2function) {
-            var elementIDs = Object.keys(buttonID2function);
+        /* Assigns DOM bindings to elements.
+         *
+         * If eventHandler is set to "onchange", this will update the onchange
+         * event handler for these elements. Otherwise, this will update the
+         * onclick event handler.
+         */
+        static setUpDOMBindings(elementID2function, eventHandler) {
+            var elementIDs = Object.keys(elementID2function);
             var currID;
             for (var i = 0; i < elementIDs.length; i++) {
                 currID = elementIDs[i];
-                document.getElementById(currID).onclick =
-                    buttonID2function[currID];
+                if (eventHandler === "onchange") {
+                    document.getElementById(currID).onchange =
+                        elementID2function[currID];
+                } else {
+                    document.getElementById(currID).onclick =
+                        elementID2function[currID];
+                }
             }
             return elementIDs;
         }
@@ -318,7 +340,10 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                         }
                     )
                 )
-                .run();
+                .runAsync()
+                .then(function() {
+                    console.log(parentDisplay.samplePlotView);
+                });
             // Update rank plot based on the new log ratio
             // Storing this within changeSamplePlot() is a (weak) safeguard that
             // changes to the state of the sample plot (at least enacted using the UI
@@ -425,6 +450,17 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     "botFeaturesDisplay"
                 ).value = this.botFeatures.toString().replace(/,/g, "\n");
             }
+        }
+
+        /* Changes the scale type of either the x-axis or colorization in the
+         * sample plot. This isn't doable with Vega signals -- we need to
+         * literally reload the Vega-Lite specification with the new scale
+         * type in order to make these changes take effect.
+         */
+        updateSamplePlotScale(vizAttribute) {
+            console.log(
+                "HEY! Updating the sample plot scale for " + vizAttribute
+            );
         }
 
         static addSignalsToSpec(spec, signalArray) {
@@ -756,6 +792,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 document.getElementById(
                     this.elementsWithOnClickBindings[i]
                 ).onclick = undefined;
+            }
+            for (var j = 0; j < this.elementsWithOnChangeBindings.length; j++) {
+                document.getElementById(
+                    this.elementsWithOnChangeBindings[j]
+                ).onchange = undefined;
             }
             this.rankPlotView.finalize();
             this.samplePlotView.finalize();
