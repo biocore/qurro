@@ -13,7 +13,7 @@ import skbio
 import pandas as pd
 
 
-def rank_file_to_df(file_loc):
+def read_rank_file(file_loc):
     """Converts an input file of ranks to a DataFrame."""
 
     if file_loc.endswith(".tsv"):

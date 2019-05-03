@@ -10,7 +10,7 @@ from biom import load_table
 import click
 from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
 from rankratioviz.generate import process_input, gen_visualization
-from rankratioviz._rank_utils import rank_file_to_df
+from rankratioviz._rank_utils import read_rank_file
 from rankratioviz._metadata_utils import read_metadata_file
 
 
@@ -73,7 +73,7 @@ def plot(
     loaded_biom = load_table(table)
     logging.debug("Loaded BIOM table.")
     df_sample_metadata = read_metadata_file(sample_metadata)
-    feature_ranks = rank_file_to_df(ranks)
+    feature_ranks = read_rank_file(ranks)
 
     df_feature_metadata = None
     if feature_metadata is not None:

@@ -5,7 +5,7 @@ from click.testing import CliRunner
 from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
-from rankratioviz._rank_utils import rank_file_to_df
+from rankratioviz._rank_utils import read_rank_file
 from rankratioviz._metadata_utils import read_metadata_file
 
 
@@ -258,7 +258,7 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
 
     # TODO check that feature metadata annotations were properly applied to the
     # features. Will need the feature metadata file location to be passed here
-    reference_features = rank_file_to_df(input_ranks_loc)
+    reference_features = read_rank_file(input_ranks_loc)
     # Validate some basic properties of the plot
     # (This is all handled by Altair, so these property tests aren't
     # exhaustive; they're mainly intended to verify that a general plot
