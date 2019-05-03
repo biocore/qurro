@@ -353,16 +353,17 @@ def gen_sample_plot(table, metadata):
 
     # Since we don't bother setting a default log ratio, we set the balance for
     # every sample to NaN so that Altair will filter them out (producing an
-    # empty scatterplot by default, which makes sense).
+    # empty scatterplot by default, which makes sense). I guess None would
+    # also work here.
     balance = pd.Series(index=table.index).fillna(float("nan"))
     df_balance = pd.DataFrame({"rankratioviz_balance": balance})
-    # At this point, "data" is a DataFrame with its index as sample IDs and
-    # one column ("balance", which is solely NaNs).
+    # At this point, df_balance is a DataFrame with its index as sample IDs
+    # and one column ("rankratioviz_balance", which is solely NaNs).
+    # We know that df_balance and metadata's indices should match up since we
+    # already ran matchdf() on the loaded BIOM table and metadata.
     sample_metadata = pd.merge(
         df_balance, metadata, left_index=True, right_index=True
     )
-    # TODO note dropped samples from this merge (by comparing data with
-    # metadata and table) and report them to user (#54).
 
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
     # First we rename the index "Sample ID", just on the off chance that
