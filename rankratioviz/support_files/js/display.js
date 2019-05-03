@@ -224,6 +224,20 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             vegaEmbed("#samplePlot", this.samplePlotJSON, embedParams).then(
                 function(result) {
                     parentDisplay.samplePlotView = result.view;
+                    // bind functions to the scale select inputs.
+                    // On color scale change, update v-l or vega json (preserving
+                    // state -- signal vals), but *critically* change the scale
+                    // type. I guess we'll have to call vegaEmbed again with
+                    // the modified spec, *after* destroying the chart. might
+                    // have to freeze interactions btwn rank and sample plot in
+                    // meantime.
+                    //
+                    // And I think we need to modify destroy() to only kill
+                    // the sampleplot.
+                    //
+                    // Probs easiest to use the current underlying vega spec as
+                    // a basis for reinstantiating the chart (since it contains
+                    // signals, and I think since it contains curr balances).
                 }
             );
             var rfci = "rankratioviz_feature_col_ids";
