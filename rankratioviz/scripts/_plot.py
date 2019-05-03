@@ -10,7 +10,7 @@ from biom import load_table
 import click
 from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
 from rankratioviz.generate import process_input, gen_visualization
-from rankratioviz._rank_processing import rank_file_to_df
+from rankratioviz._rank_utils import rank_file_to_df
 from rankratioviz._metadata_utils import read_metadata_file
 
 

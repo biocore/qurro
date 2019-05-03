@@ -5,7 +5,7 @@ from click.testing import CliRunner
 from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
-from rankratioviz._rank_processing import rank_file_to_df
+from rankratioviz._rank_utils import rank_file_to_df
 from rankratioviz._metadata_utils import read_metadata_file
 
 

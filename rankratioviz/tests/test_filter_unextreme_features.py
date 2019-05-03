@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_equal
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
-from rankratioviz._rank_processing import filter_unextreme_features
+from rankratioviz._rank_utils import filter_unextreme_features
 
 
 def get_test_data():

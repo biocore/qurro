@@ -22,7 +22,7 @@ import logging
 from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
-from rankratioviz._rank_processing import filter_unextreme_features
+from rankratioviz._rank_utils import filter_unextreme_features
 
 
 def fix_id(fid):
