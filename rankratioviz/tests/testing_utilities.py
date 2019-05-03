@@ -2,6 +2,7 @@ import os
 import json
 from pytest import approx
 from click.testing import CliRunner
+from biom import load_table
 from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
@@ -338,11 +339,25 @@ def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):
         # visualization is initially displayed, which is the intended behavior.
         assert sample["rankratioviz_balance"] is None
 
-    # TODO check that every entry (sample x feature) matches with the BIOM
-    # table. (If the BIOM table has, say, > 1 million entries, this might be
-    # dumb, but the test data right now is fine.)
-    # This can be done by using the rankratioviz_feature_col_ids dataset to
-    # understand what column mappings were set, and then using those column
-    # mappings to look at the rankratioviz_feature_counts.
+    # Check that every entry (sample x feature) matches with the BIOM table.
+    # If the BIOM table has, say, > 1 million entries, this might be excessive,
+    # but the test data right now is small enough that this should be fine.
+    table = load_table(biom_table_loc)
+    counts = sample_json["datasets"]["rankratioviz_feature_counts"]
+    feature_col_mappings = sample_json["datasets"][
+        "rankratioviz_feature_col_ids"
+    ]
 
-    # TODO check anything else in the sample plot JSON I'm forgetting
+    # For each (ranked) feature...
+    for feature_id in feature_col_mappings:
+        # Get its base ID (the ID it is referred to by in the input BIOM table
+        # and feature rankings file), and its column ID (the integer ID it's
+        # referred to by in the JSON count data).
+        feature_base_id = feature_id.split("|")[0]
+        feature_col_id = feature_col_mappings[feature_id]
+        # For each sample, ensure that the count value in the JSON matches with
+        # the count value in the BIOM table.
+        for sample_id in counts[feature_col_id]:
+            actual_count = counts[feature_col_id][sample_id]
+            expected_count = table.get_value_by_ids(feature_base_id, sample_id)
+            assert actual_count == expected_count
