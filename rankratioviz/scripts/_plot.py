@@ -7,11 +7,11 @@
 # ----------------------------------------------------------------------------
 import logging
 from biom import load_table
-import pandas as pd
 import click
 from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
 from rankratioviz.generate import process_input, gen_visualization
 from rankratioviz._rank_processing import rank_file_to_df
+from rankratioviz._metadata_utils import read_metadata_file
 
 
 @click.command()
@@ -69,35 +69,15 @@ def plot(
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
 
-    def read_metadata(md_file_loc):
-        """Reads in the metadata file using pandas.read_csv().
-
-           One slightly strange thing is that pandas.read_csv() interprets
-           columns containing all values of True / False as booleans. This
-           causes problems down the line, since these values are converted to
-           true / false (note the lowercase) when using them in JavaScript.
-
-           To ensure consistency with QIIME 2's metadata guidelines (which only
-           consider numeric and categorical types), we convert all values in
-           columns labelled with the bool type to strings. This preserves the
-           "case" of True / False, and should result in predictable outcomes.
-        """
-        metadata_df = pd.read_csv(md_file_loc, index_col=0, sep="\t")
-        bool_cols = metadata_df.select_dtypes(include=[bool]).columns
-        if len(bool_cols) > 0:
-            type_conv_dict = {col: str for col in bool_cols}
-            metadata_df = metadata_df.astype(type_conv_dict)
-        return metadata_df
-
     logging.debug("Starting the standalone rrv script.")
     loaded_biom = load_table(table)
     logging.debug("Loaded BIOM table.")
-    df_sample_metadata = read_metadata(sample_metadata)
+    df_sample_metadata = read_metadata_file(sample_metadata)
     feature_ranks = rank_file_to_df(ranks)
 
     df_feature_metadata = None
     if feature_metadata is not None:
-        df_feature_metadata = read_metadata(feature_metadata)
+        df_feature_metadata = read_metadata_file(feature_metadata)
     logging.debug("Read in metadata.")
 
     U, V, processed_table = process_input(

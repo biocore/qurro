@@ -1,12 +1,12 @@
 import os
 import json
 from pytest import approx
-import pandas as pd
 from click.testing import CliRunner
 from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_processing import rank_file_to_df
+from rankratioviz._metadata_utils import read_metadata_file
 
 
 def run_integration_test(
@@ -322,22 +322,16 @@ def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
-    sample_metadata = pd.read_csv(metadata_loc, index_col=0, sep="\t")
+    sample_metadata = read_metadata_file(metadata_loc)
     for sample in sample_json["datasets"][dn]:
+
         sample_id = sample["Sample ID"]
+
         for metadata_col in sample_metadata.columns:
             expected_md = sample_metadata.at[sample_id, metadata_col]
             actual_md = sample[metadata_col]
-            # There are some weird things in how boolean values are
-            # loaded/generated between the qiime2.Metadata interface,
-            # pandas.read_csv, json.loads(), and Altair, so to make our lives
-            # easier we just care about the string representation of booleans.
-            # (TLDR: pandas.read_csv() results in numpy.bool_ types being
-            # present, which makes things super fun.)
-            if str(expected_md) in ["True", "False"]:
-                assert str(expected_md) == str(actual_md)
-            else:
-                assert expected_md == actual_md
+            assert expected_md == actual_md
+
         # Not really "metadata", but just as a sanity check verify that the
         # initial rankratioviz_balance of each sample is null (aka None in
         # python) -- this ensures that no samples will show up when the
