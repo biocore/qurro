@@ -1,6 +1,7 @@
 import os
 import json
 from pytest import approx
+import pandas as pd
 from click.testing import CliRunner
 from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
@@ -255,6 +256,8 @@ def basic_vegalite_json_validation(json_obj):
 def validate_rank_plot_json(input_ranks_loc, rank_json):
     """Ensure that the rank plot JSON makes sense."""
 
+    # TODO check that feature metadata annotations were properly applied to the
+    # features. Will need the feature metadata file location to be passed here
     reference_features = rank_file_to_df(input_ranks_loc)
     # Validate some basic properties of the plot
     # (This is all handled by Altair, so these property tests aren't
@@ -315,8 +318,37 @@ def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):
     assert sample_json["mark"] == "circle"
     assert sample_json["title"] == "Log Ratio of Abundances in Samples"
     basic_vegalite_json_validation(sample_json)
-    # dn = sample_json["data"]["name"]
-    # TODO check that all metadata samples are accounted for in BIOM table
-    # TODO check that every log ratio is correct? I guess that'll make us
-    # load the rank plots file, but it's worth it (tm)
+    dn = sample_json["data"]["name"]
+
+    # Check that each sample's metadata in the sample plot JSON matches with
+    # its actual metadata.
+    sample_metadata = pd.read_csv(metadata_loc, index_col=0, sep="\t")
+    for sample in sample_json["datasets"][dn]:
+        sample_id = sample["Sample ID"]
+        for metadata_col in sample_metadata.columns:
+            expected_md = sample_metadata.at[sample_id, metadata_col]
+            actual_md = sample[metadata_col]
+            # There are some weird things in how boolean values are
+            # loaded/generated between the qiime2.Metadata interface,
+            # pandas.read_csv, json.loads(), and Altair, so to make our lives
+            # easier we just care about the string representation of booleans.
+            # (TLDR: pandas.read_csv() results in numpy.bool_ types being
+            # present, which makes things super fun.)
+            if str(expected_md) in ["True", "False"]:
+                assert str(expected_md) == str(actual_md)
+            else:
+                assert expected_md == actual_md
+        # Not really "metadata", but just as a sanity check verify that the
+        # initial rankratioviz_balance of each sample is null (aka None in
+        # python) -- this ensures that no samples will show up when the
+        # visualization is initially displayed, which is the intended behavior.
+        assert sample["rankratioviz_balance"] is None
+
+    # TODO check that every entry (sample x feature) matches with the BIOM
+    # table. (If the BIOM table has, say, > 1 million entries, this might be
+    # dumb, but the test data right now is fine.)
+    # This can be done by using the rankratioviz_feature_col_ids dataset to
+    # understand what column mappings were set, and then using those column
+    # mappings to look at the rankratioviz_feature_counts.
+
     # TODO check anything else in the sample plot JSON I'm forgetting

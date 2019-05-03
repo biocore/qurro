@@ -70,7 +70,24 @@ def plot(
         logging.basicConfig(level=logging.DEBUG)
 
     def read_metadata(md_file_loc):
-        return pd.read_csv(md_file_loc, index_col=0, sep="\t")
+        """Reads in the metadata file using pandas.read_csv().
+
+           One slightly strange thing is that pandas.read_csv() interprets
+           columns containing all values of True / False as booleans. This
+           causes problems down the line, since these values are converted to
+           true / false (note the lowercase) when using them in JavaScript.
+
+           To ensure consistency with QIIME 2's metadata guidelines (which only
+           consider numeric and categorical types), we convert all values in
+           columns labelled with the bool type to strings. This preserves the
+           "case" of True / False, and should result in predictable outcomes.
+        """
+        metadata_df = pd.read_csv(md_file_loc, index_col=0, sep="\t")
+        bool_cols = metadata_df.select_dtypes(include=[bool]).columns
+        if len(bool_cols) > 0:
+            type_conv_dict = {col: str for col in bool_cols}
+            metadata_df = metadata_df.astype(type_conv_dict)
+        return metadata_df
 
     logging.debug("Starting the standalone rrv script.")
     loaded_biom = load_table(table)
