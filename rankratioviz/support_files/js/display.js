@@ -228,10 +228,27 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             });
         }
 
-        makeSamplePlot() {
-            this.metadataCols = RRVDisplay.identifyMetadataColumns(
-                this.samplePlotJSON
-            );
+        /* Calls vegaEmbed() on this.samplePlotJSON.
+         *
+         * If notFirstTime is falsy, this will initialize some important
+         * properties of this RRVDisplay object related to the sample plot
+         * (e.g. the metadata columns and feature count information).
+         *
+         * If you're just calling this function to remake the sample plot with
+         * one thing changed (e.g. to change a scale), then it's best to set
+         * notFirstTime to true -- in which case this won't do that extra work.
+         */
+        makeSamplePlot(notFirstTime) {
+            if (!notFirstTime) {
+                this.metadataCols = RRVDisplay.identifyMetadataColumns(
+                    this.samplePlotJSON
+                );
+                var rfci = "rankratioviz_feature_col_ids";
+                var rfct = "rankratioviz_feature_counts";
+                this.feature_col_ids = this.samplePlotJSON.datasets[rfci];
+                this.feature_ids = Object.keys(this.feature_col_ids);
+                this.feature_cts = this.samplePlotJSON.datasets[rfct];
+            }
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
@@ -270,11 +287,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     // lot less of a hassle.
                 }
             );
-            var rfci = "rankratioviz_feature_col_ids";
-            var rfct = "rankratioviz_feature_counts";
-            this.feature_col_ids = this.samplePlotJSON.datasets[rfci];
-            this.feature_ids = Object.keys(this.feature_col_ids);
-            this.feature_cts = this.samplePlotJSON.datasets[rfct];
         }
 
         // Given a "row" of data about a rank, return its new classification depending
@@ -473,7 +485,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // 100% necessary, but it's probs a good idea to prevent memory
             // waste.
             this.destroy(true);
-            this.makeSamplePlot();
+            this.makeSamplePlot(true);
         }
 
         static addSignalsToSpec(spec, signalArray) {
