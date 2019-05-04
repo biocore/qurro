@@ -568,12 +568,19 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 // Based on the compiled Vega that Vega-Lite generates. If they
                 // change up their internals, this'll break.
                 if (vegaSpec.data[d].name === "data_0") {
-                    // NOTE / TODO for non-numerical x-axes, we'd want to
-                    // remove the isFinite check. (Also, using isFinite
-                    // ostensibly makes the null/NaN checks on the datum's
-                    // xAxis value redundant, but better safe than sorry.)
-                    vegaSpec.data[d].transform[0].expr +=
-                        " && datum[xAxis] !== null && !isNaN(datum[xAxis]) && isFinite(datum[xAxis])";
+                    // Using isFinite ostensibly makes the null/NaN checks
+                    // on the datum's xAxis value redundant, but better safe
+                    // than sorry.)
+                    if (
+                        document.getElementById("xAxisScale").value ===
+                        "quantitative"
+                    ) {
+                        vegaSpec.data[d].transform[0].expr +=
+                            " && datum[xAxis] !== null && !isNaN(datum[xAxis]) && isFinite(datum[xAxis])";
+                    } else {
+                        vegaSpec.data[d].transform[0].expr +=
+                            " && datum[xAxis] !== null";
+                    }
                     break;
                 }
             }
