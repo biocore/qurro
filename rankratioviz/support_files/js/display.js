@@ -352,12 +352,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                         }
                     )
                 )
-                .runAsync()
-                .then(function() {
-                    // TODO update parentDisplay.samplePlotJSON to hold the new
-                    // balances.
-                    console.log(parentDisplay.samplePlotView);
-                });
+                .run();
             // Update rank plot based on the new log ratio
             // Storing this within changeSamplePlot() is a (weak) safeguard that
             // changes to the state of the sample plot (at least enacted using the UI
@@ -481,6 +476,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     "colorScale"
                 ).value;
             }
+            // Set sample plot JSON defaults to match current signals.
+            this.samplePlotJSON.encoding.x.field = this.samplePlotView.signal(
+                "xAxis"
+            );
+            this.samplePlotJSON.encoding.color.field = this.samplePlotView.signal(
+                "color"
+            );
             // Clear out the sample plot. NOTE that I'm not sure if this is
             // 100% necessary, but it's probs a good idea to prevent memory
             // waste.
