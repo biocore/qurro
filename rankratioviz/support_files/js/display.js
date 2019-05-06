@@ -260,6 +260,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                             .appendChild(optionEle);
                     }
                 }
+                // Set default metadata fields based on whatever the JSON has
+                // as the defaults.
                 document
                     .getElementById("xAxisField")
                     .querySelector(
