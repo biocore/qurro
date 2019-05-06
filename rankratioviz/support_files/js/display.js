@@ -81,6 +81,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             });
             this.elementsWithOnChangeBindings = RRVDisplay.setUpDOMBindings(
                 {
+                    xAxisField: function() {
+                        display.updateSamplePlotField("xAxis");
+                    },
+                    colorField: function() {
+                        display.updateSamplePlotField("color");
+                    },
                     xAxisScale: function() {
                         display.updateSamplePlotScale("xAxis");
                     },
@@ -243,6 +249,31 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 this.metadataCols = RRVDisplay.identifyMetadataColumns(
                     this.samplePlotJSON
                 );
+                var optionEle;
+                var fieldSelects = ["xAxisField", "colorField"];
+                for (var f = 0; f < fieldSelects.length; f++) {
+                    for (var m = 0; m < this.metadataCols.length; m++) {
+                        optionEle = document.createElement("option");
+                        optionEle.value = optionEle.text = this.metadataCols[m];
+                        document
+                            .getElementById(fieldSelects[f])
+                            .appendChild(optionEle);
+                    }
+                }
+                document
+                    .getElementById("xAxisField")
+                    .querySelector(
+                        "option[value = " +
+                            this.samplePlotJSON.encoding.x.field +
+                            "]"
+                    ).selected = true;
+                document
+                    .getElementById("colorField")
+                    .querySelector(
+                        "option[value = " +
+                            this.samplePlotJSON.encoding.color.field +
+                            "]"
+                    ).selected = true;
                 var rfci = "rankratioviz_feature_col_ids";
                 var rfct = "rankratioviz_feature_counts";
                 this.feature_col_ids = this.samplePlotJSON.datasets[rfci];
@@ -252,41 +283,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
-            var embedParams = {
-                patch: function(vegaSpec) {
-                    return RRVDisplay.addSignalsToSamplePlot(
-                        parentDisplay,
-                        vegaSpec
-                    );
-                }
-            };
-            vegaEmbed("#samplePlot", this.samplePlotJSON, embedParams).then(
-                function(result) {
-                    parentDisplay.samplePlotView = result.view;
-                    // bind functions to the scale select inputs.
-                    // On color scale change, update v-l or vega json (preserving
-                    // state -- signal vals), but *critically* change the scale
-                    // type. I guess we'll have to call vegaEmbed again with
-                    // the modified spec, *after* destroying the chart. might
-                    // have to freeze interactions btwn rank and sample plot in
-                    // meantime.
-                    //
-                    // And I think we need to modify destroy() to only kill
-                    // the sampleplot.
-                    //
-                    // Probs easiest to use the current underlying vega spec as
-                    // a basis for reinstantiating the chart (since it contains
-                    // signals, and I think since it contains curr balances).
-                    //
-                    // OR we can modify things where: as changes are made to
-                    // the plot (balance adjustments due to feature selections,
-                    // signal changes), update the underlying Vega-Lite spec's
-                    // default vals accordingly. If we ensure the underlying
-                    // sample plot spec matches the actual state of the
-                    // visualization, then re-calling Vega-Embed should be a
-                    // lot less of a hassle.
-                }
-            );
+            vegaEmbed("#samplePlot", this.samplePlotJSON).then(function(
+                result
+            ) {
+                parentDisplay.samplePlotView = result.view;
+            });
         }
 
         // Given a "row" of data about a rank, return its new classification depending
@@ -461,6 +462,27 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        updateSamplePlotField(vizAttribute) {
+            if (vizAttribute === "xAxis") {
+                this.samplePlotJSON.encoding.x.field = document.getElementById(
+                    "xAxisField"
+                ).value;
+            } else {
+                this.samplePlotJSON.encoding.color.field = document.getElementById(
+                    "colorField"
+                ).value;
+            }
+            this.remakeSamplePlot();
+        }
+
+        remakeSamplePlot() {
+            // Clear out the sample plot. NOTE that I'm not sure if this is
+            // 100% necessary, but it's probs a good idea to prevent memory
+            // waste.
+            this.destroy(true);
+            this.makeSamplePlot(true);
+        }
+
         /* Changes the scale type of either the x-axis or colorization in the
          * sample plot. This isn't doable with Vega signals -- we need to
          * literally reload the Vega-Lite specification with the new scale
@@ -476,18 +498,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     "colorScale"
                 ).value;
             }
-            // Set sample plot JSON defaults to match current signals.
-            this.samplePlotJSON.encoding.x.field = this.samplePlotView.signal(
-                "xAxis"
-            );
-            this.samplePlotJSON.encoding.color.field = this.samplePlotView.signal(
-                "color"
-            );
-            // Clear out the sample plot. NOTE that I'm not sure if this is
-            // 100% necessary, but it's probs a good idea to prevent memory
-            // waste.
-            this.destroy(true);
-            this.makeSamplePlot(true);
+            this.remakeSamplePlot();
         }
 
         static addSignalsToSpec(spec, signalArray) {
@@ -502,89 +513,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     spec.signals.push(signalArray[s]);
                 }
             }
-        }
-
-        static addSignalsToSamplePlot(display, vegaSpec) {
-            // NOTE: Based on
-            // https://vega.github.io/vega/examples/scatter-plot-null-values/
-            // and https://beta.observablehq.com/@domoritz/rotating-earth.
-            //
-            // NOTE that we use the existing x-axis (and color) fields, which are set
-            // in the python script to whatever the first sample metadata column is.
-            var xSignal = {
-                name: "xAxis",
-                value: vegaSpec.marks[0].encode.update.x.field,
-                bind: {
-                    input: "select",
-                    options: display.metadataCols
-                }
-            };
-            var colorSignal = {
-                name: "color",
-                value: vegaSpec.marks[0].encode.update.fill.field,
-                bind: {
-                    input: "select",
-                    options: display.metadataCols
-                }
-            };
-            // Update the actual encodings
-            // (this assumes that there will only be one set of marks in the sample
-            // plot JSON)
-            RRVDisplay.addSignalsToSpec(vegaSpec, [xSignal, colorSignal]);
-            vegaSpec.marks[0].encode.update.x.field = { signal: "xAxis" };
-            vegaSpec.marks[0].encode.update.fill.field = { signal: "color" };
-            // Update the x-axis / color labels
-            // Note that at least with the example Vega plot I'm working with, there
-            // are two axes with an "x" scale. We change the one that already has a
-            // "title" attribute.
-            for (var a = 0; a < vegaSpec.axes.length; a++) {
-                if (vegaSpec.axes[a].scale === "x") {
-                    if (vegaSpec.axes[a].title !== undefined) {
-                        vegaSpec.axes[a].title = { signal: "xAxis" };
-                        break;
-                    }
-                }
-            }
-            // Searching in a for loop this way prevents accidentally overwriting other
-            // legends for other attributes.
-            for (var c = 0; c < vegaSpec.legends.length; c++) {
-                if (vegaSpec.legends[c].fill === "color") {
-                    vegaSpec.legends[c].title = { signal: "color" };
-                    break;
-                }
-            }
-            // Update scales
-            for (var s = 0; s < vegaSpec.scales.length; s++) {
-                if (vegaSpec.scales[s].name === "x") {
-                    vegaSpec.scales[s].domain.field = { signal: "xAxis" };
-                } else if (vegaSpec.scales[s].name === "color") {
-                    vegaSpec.scales[s].domain.field = { signal: "color" };
-                }
-            }
-            // Re: #91 on rankratioviz' GitHub. Filter what points are drawn in
-            // the sample plot based on which of those are actually valid for
-            // the current x-axis.
-            for (var d = 0; d < vegaSpec.data.length; d++) {
-                // Based on the compiled Vega that Vega-Lite generates. If they
-                // change up their internals, this'll break.
-                if (vegaSpec.data[d].name === "data_0") {
-                    // Using isFinite ostensibly makes the null/NaN checks
-                    // on the datum's xAxis value redundant, but better safe
-                    // than sorry.)
-                    if (
-                        document.getElementById("xAxisScale").value ===
-                        "quantitative"
-                    ) {
-                        vegaSpec.data[d].transform[0].expr +=
-                            " && datum[xAxis] !== null && !isNaN(datum[xAxis]) && isFinite(datum[xAxis])";
-                    } else {
-                        vegaSpec.data[d].transform[0].expr +=
-                            " && datum[xAxis] !== null";
-                    }
-                    break;
-                }
-            }
-            return vegaSpec;
         }
 
         static addSignalsToRankPlot(display, vegaSpec) {
