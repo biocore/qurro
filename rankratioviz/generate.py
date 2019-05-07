@@ -319,7 +319,13 @@ def gen_rank_plot(V):
                 ),
             ),
             size=alt.value(1.0),
-            tooltip=["x", "Classification", "Feature ID"],
+            tooltip=[
+                alt.Tooltip(
+                    field="x", title="Current Ranking", type="quantitative"
+                ),
+                "Classification",
+                "Feature ID",
+            ],
         )
         .configure_axis(
             # Done in order to differentiate "None"-classification features
@@ -429,7 +435,7 @@ def gen_sample_plot(table, metadata):
                 # user-configurable.
                 type="nominal",
             ),
-            tooltip=["Sample ID"],
+            tooltip=["Sample ID", "rankratioviz_balance"],
         )
     )
 
