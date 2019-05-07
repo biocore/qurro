@@ -302,7 +302,12 @@ def gen_rank_plot(V):
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
     rank_chart = (
-        alt.Chart(rank_data, title="Feature Ranks", background="#FFFFFF")
+        alt.Chart(
+            rank_data,
+            title="Feature Ranks",
+            background="#FFFFFF",
+            autosize=alt.AutoSizeParams(resize=True),
+        )
         .mark_bar()
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
