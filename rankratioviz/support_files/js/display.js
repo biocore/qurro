@@ -641,7 +641,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * getSamplePlotData().
          */
         exportData() {
-            var currMetadataField = this.samplePlotView.signal("xAxis");
+            var currMetadataField = this.samplePlotJSON.encoding.x.field;
             var tsv = this.getSamplePlotData(currMetadataField);
             if (tsv.length > 0) {
                 RRVDisplay.downloadDataURI(
