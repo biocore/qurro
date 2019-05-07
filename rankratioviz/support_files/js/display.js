@@ -470,7 +470,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // so long as you don't change the field titles displayed.
             this.samplePlotJSON.encoding.tooltip = [
                 { type: "nominal", field: "Sample ID" },
-                { type: "nominal", field: "rankratioviz_balance" },
+                { type: "quantitative", field: "rankratioviz_balance" },
                 {
                     type: this.samplePlotJSON.encoding.x.type,
                     field: this.samplePlotJSON.encoding.x.field
