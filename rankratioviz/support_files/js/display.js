@@ -282,6 +282,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 this.feature_ids = Object.keys(this.feature_col_ids);
                 this.feature_cts = this.samplePlotJSON.datasets[rfct];
             }
+            this.updateSamplePlotTooltips();
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
@@ -462,6 +463,23 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     "botFeaturesDisplay"
                 ).value = this.botFeatures.toString().replace(/,/g, "\n");
             }
+        }
+
+        updateSamplePlotTooltips() {
+            // NOTE: this should be safe from duplicate entries within tooltips
+            // so long as you don't change the field titles displayed.
+            this.samplePlotJSON.encoding.tooltip = [
+                { type: "nominal", field: "Sample ID" },
+                { type: "nominal", field: "rankratioviz_balance" },
+                {
+                    type: this.samplePlotJSON.encoding.x.type,
+                    field: this.samplePlotJSON.encoding.x.field
+                },
+                {
+                    type: this.samplePlotJSON.encoding.color.type,
+                    field: this.samplePlotJSON.encoding.color.field
+                }
+            ];
         }
 
         updateSamplePlotField(vizAttribute) {
