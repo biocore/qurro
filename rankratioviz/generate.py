@@ -302,7 +302,12 @@ def gen_rank_plot(V):
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
     rank_chart = (
-        alt.Chart(rank_data, title="Feature Ranks", background="#FFFFFF")
+        alt.Chart(
+            rank_data,
+            title="Feature Ranks",
+            background="#FFFFFF",
+            autosize=alt.AutoSizeParams(resize=True),
+        )
         .mark_bar()
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
@@ -319,7 +324,13 @@ def gen_rank_plot(V):
                 ),
             ),
             size=alt.value(1.0),
-            tooltip=["x", "Classification", "Feature ID"],
+            tooltip=[
+                alt.Tooltip(
+                    field="x", title="Current Ranking", type="quantitative"
+                ),
+                "Classification",
+                "Feature ID",
+            ],
         )
         .configure_axis(
             # Done in order to differentiate "None"-classification features
@@ -429,7 +440,7 @@ def gen_sample_plot(table, metadata):
                 # user-configurable.
                 type="nominal",
             ),
-            tooltip=["Sample ID"],
+            tooltip=["Sample ID", "rankratioviz_balance"],
         )
     )
 

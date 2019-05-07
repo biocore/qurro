@@ -18,6 +18,29 @@
                 </td>
                 <td class="plotTD" id="samplePlotTD">
                     <div id="samplePlot"></div>
+                    <br />
+                    <!-- NOTE that the scale/field select values below will be
+                         literally used in the JSON.
+                         Also, the first-listed one is the default. Since the
+                         default x-axis is the balance (quant.) and the default
+                         color is the sample ID (nom.), we adjust the default
+                         scale types accordingly.
+                    -->
+                    <label for="xAxisField">x-axis field</label>
+                    <select id="xAxisField"> </select>
+                    <label for="xAxisScale">x-axis scale type</label>
+                    <select id="xAxisScale">
+                        <option value="quantitative">Quantitative</option>
+                        <option value="nominal">Categorical</option>
+                    </select>
+                    <br />
+                    <label for="colorField">color field</label>
+                    <select id="colorField"> </select>
+                    <label for="colorScale">color scale type</label>
+                    <select id="colorScale">
+                        <option value="nominal">Categorical</option>
+                        <option value="quantitative">Quantitative</option>
+                    </select>
                 </td>
             </tr>
             <tr>
