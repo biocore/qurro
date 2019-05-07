@@ -238,13 +238,11 @@ def test_feature_metadata_and_dropped_sample():
     for sample in sample_json["datasets"][data_name]:
         assert sample["Sample ID"] != "Sample4"
 
-    # Assert that Sample4 was also dropped from the counts data in the JSON
     cts_data = sample_json["datasets"]["rankratioviz_feature_counts"]
-    for txcolid in cts_data:
-        assert "Sample4" not in cts_data[txcolid]
-
-    # Assert that Taxon3's annotation carried over to the sample plot.
-    for txid in sample_json["datasets"]["rankratioviz_feature_col_ids"]:
+    for txid in cts_data:
+        # Assert that Sample4 was also dropped from the counts data in the JSON
+        assert "Sample4" not in cts_data[txid]
+        # Assert that Taxon3's annotation carried over to the sample plot
         if txid.startswith("Taxon3"):
             for fm in relevant_feature_metadata:
                 assert fm in txid

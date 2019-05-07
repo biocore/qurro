@@ -386,29 +386,6 @@ def gen_sample_plot(table, metadata):
     sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
     sample_metadata.reset_index(inplace=True)
 
-    # Make note of the column IDs in the "table" DataFrame.
-    # This constructs a dictionary mapping the feature (column) IDs to their
-    # integer indices (just the range of [0, f), where f is the number of
-    # features in the BIOM table).
-    # We'll preserve this mapping in the sample plot JSON.
-    sample_features = table.copy()
-    feature_ids = sample_features.columns
-    feature_cn2si = {}
-    feature_columns_range = range(len(feature_ids))
-    feature_columns_str_range = [str(i) for i in feature_columns_range]
-    for j in feature_columns_range:
-        # (Altair doesn't seem to like accepting ints as column IDs.)
-        feature_cn2si[feature_ids[j]] = feature_columns_str_range[j]
-
-    # Now, we replace column IDs (which could include thousands of feature
-    # IDs) with just the integer indices from before.
-    #
-    # This can save *a lot* of space in the JSON file for the sample plot,
-    # since each column name is referenced once for each sample (and
-    # 50 samples * (~3000 annotated feature IDs) * (~50 characters per ID)
-    # comes out to 7.5 MB, which is an underestimate).
-    sample_features.columns = feature_columns_str_range
-
     # Create sample plot in Altair.
     # If desired, we can make this interactive by adding .interactive() to the
     # alt.Chart declaration (but we don't do that currently since it makes
@@ -463,10 +440,8 @@ def gen_sample_plot(table, metadata):
     #  the user (and link features on the rank plot with feature counts in
     #  the sample plot) in the JS code.
     sample_chart_json = sample_chart.to_dict()
-    col_ids_ds = "rankratioviz_feature_col_ids"
     features_ds = "rankratioviz_feature_counts"
-    sample_chart_json["datasets"][col_ids_ds] = feature_cn2si
-    sample_chart_json["datasets"][features_ds] = sample_features.to_dict()
+    sample_chart_json["datasets"][features_ds] = table.to_dict()
     return sample_chart_json
 
 

@@ -39,19 +39,15 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.newFeatureHigh = undefined;
             this.oldFeatureLow = undefined;
             this.oldFeatureHigh = undefined;
-            this.featureLowCol = undefined;
-            this.featureHighCol = undefined;
 
             // For selections of potentially many features (not via the rank plot)
             this.topFeatures = undefined;
             this.botFeatures = undefined;
 
             // Used when looking up a feature's count.
-            this.feature_col_ids = undefined;
             this.feature_cts = undefined;
 
-            // Used when searching through features. This will be created from
-            // this.feature_col_ids.
+            // Used when searching through features.
             this.feature_ids = undefined;
 
             // Set when the sample plot JSON is loaded. Used to populate possible sample
@@ -276,11 +272,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                             this.samplePlotJSON.encoding.color.field +
                             "]"
                     ).selected = true;
-                var rfci = "rankratioviz_feature_col_ids";
-                var rfct = "rankratioviz_feature_counts";
-                this.feature_col_ids = this.samplePlotJSON.datasets[rfci];
-                this.feature_ids = Object.keys(this.feature_col_ids);
-                this.feature_cts = this.samplePlotJSON.datasets[rfct];
+                // TODO don't store this in memory at all? since it's redundant
+                // with the sample plot JSON, albeit a bit more inconvenient to
+                // type out to access there.
+                this.feature_cts = this.samplePlotJSON.datasets.rankratioviz_feature_counts;
+                this.feature_ids = Object.keys(this.feature_cts);
             }
             this.updateSamplePlotTooltips();
             // NOTE: Use of "patch" based on
@@ -421,12 +417,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     if (lowsDiffer || highsDiffer) {
                         // Time to update the sample scatterplot regarding new
                         // microbes.
-                        this.featureLowCol = this.feature_col_ids[
-                            this.newFeatureLow
-                        ];
-                        this.featureHighCol = this.feature_col_ids[
-                            this.newFeatureHigh
-                        ];
                         this.changeSamplePlot(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
@@ -582,8 +572,19 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        /* Checks if a sample ID is actually supported by the count data we
+         * have. We do this by just looking at all the samples with count data
+         * for a feature ID, and checking to make sure that the sample ID is
+         * one of those.
+         *
+         * (This function makes the assumption that each feature will have the
+         * same number of samples associated with it -- this is why we only
+         * bother checking a single feature here. This is a safe assumption,
+         * since we construct the feature count JSON from a BIOM table on the
+         * python side of things.)
+         */
         validateSampleID(sampleID) {
-            if (this.feature_cts[0][sampleID] === undefined) {
+            if (this.feature_cts[this.feature_ids[0]][sampleID] === undefined) {
                 throw new Error("Invalid sample ID: " + sampleID);
             }
         }
@@ -597,8 +598,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.validateSampleID(sampleID);
             var abundance = 0;
             for (var t = 0; t < features.length; t++) {
-                var colIndex = this.feature_col_ids[features[t]];
-                abundance += this.feature_cts[colIndex][sampleID];
+                abundance += this.feature_cts[features[t]][sampleID];
             }
             return abundance;
         }
@@ -612,8 +612,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
             this.validateSampleID(sampleID);
-            var topCt = this.feature_cts[this.featureHighCol][sampleID];
-            var botCt = this.feature_cts[this.featureLowCol][sampleID];
+            var topCt = this.feature_cts[this.newFeatureHigh][sampleID];
+            var botCt = this.feature_cts[this.newFeatureLow][sampleID];
             return feature_computation.computeBalance(topCt, botCt);
         }
 

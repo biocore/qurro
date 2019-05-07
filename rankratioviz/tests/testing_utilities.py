@@ -344,20 +344,16 @@ def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):
     # but the test data right now is small enough that this should be fine.
     table = load_table(biom_table_loc)
     counts = sample_json["datasets"]["rankratioviz_feature_counts"]
-    feature_col_mappings = sample_json["datasets"][
-        "rankratioviz_feature_col_ids"
-    ]
 
     # For each (ranked) feature...
-    for feature_id in feature_col_mappings:
+    for feature_id in counts:
         # Get its base ID (the ID it is referred to by in the input BIOM table
         # and feature rankings file), and its column ID (the integer ID it's
         # referred to by in the JSON count data).
         feature_base_id = feature_id.split("|")[0]
-        feature_col_id = feature_col_mappings[feature_id]
         # For each sample, ensure that the count value in the JSON matches with
         # the count value in the BIOM table.
-        for sample_id in counts[feature_col_id]:
-            actual_count = counts[feature_col_id][sample_id]
+        for sample_id in counts[feature_id]:
+            actual_count = counts[feature_id][sample_id]
             expected_count = table.get_value_by_ids(feature_base_id, sample_id)
             assert actual_count == expected_count
