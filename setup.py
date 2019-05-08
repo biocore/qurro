@@ -66,7 +66,7 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        "altair",
+        "altair >= 3.0",
         "biom-format[hdf5]",
         "click",
         "pandas >= 0.20.0",

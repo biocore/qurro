@@ -1,4 +1,4 @@
-altair -c conda-forge
+altair -c conda-forge >= 3.0
 biom-format
 click
 pandas >= 0.20.0
