@@ -309,10 +309,10 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
         if feature[rank_ordering[0]] != approx(prev_rank_0_val):
             assert feature[rank_ordering[0]] >= prev_rank_0_val
         # Check that x values are also in order
-        assert feature["x"] == prev_x_val + 1
+        assert feature["rankratioviz_x"] == prev_x_val + 1
         # Update prev_ things for the next iteration of the loop
         prev_rank_0_val = feature[rank_ordering[0]]
-        prev_x_val = feature["x"]
+        prev_x_val = feature["rankratioviz_x"]
 
 
 def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):

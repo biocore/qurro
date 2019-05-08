@@ -280,7 +280,7 @@ def gen_rank_plot(V):
 
     # "x" keeps track of the sorted order of the ranks. It's just a range of
     # [0, F), where F = the number of ranked features.
-    x = range(rank_vals.shape[0])
+    rankratioviz_x = range(rank_vals.shape[0])
 
     # Set default classification of every feature to "None"
     # (This value will be updated when a feature is selected in the rank plot
@@ -290,7 +290,9 @@ def gen_rank_plot(V):
 
     # Start populating the DataFrame we'll pass into Altair as the main source
     # of data for the rank plot.
-    rank_data = pd.DataFrame({"x": x, "Classification": classification})
+    rank_data = pd.DataFrame(
+        {"rankratioviz_x": rankratioviz_x, "Classification": classification}
+    )
 
     # Merge that DataFrame with the actual rank values. Their indices should be
     # identical, since we constructed rank_data based on rank_vals.
@@ -314,7 +316,7 @@ def gen_rank_plot(V):
             # see https://stackoverflow.com/a/55544817/10730311. For now, we're
             # sticking with type="quantitative" in order to allow for
             # zooming/panning along the x-axis.
-            x=alt.X("x", title="Features", type="quantitative"),
+            x=alt.X("rankratioviz_x", title="Features", type="quantitative"),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "Classification",
@@ -326,7 +328,9 @@ def gen_rank_plot(V):
             size=alt.value(1.0),
             tooltip=[
                 alt.Tooltip(
-                    field="x", title="Current Ranking", type="quantitative"
+                    field="rankratioviz_x",
+                    title="Current Ranking",
+                    type="quantitative",
                 ),
                 "Classification",
                 "Feature ID",

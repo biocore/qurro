@@ -169,7 +169,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             });
         }
 
-        // Change each feature's "x" value in order to resort them based on
+        // Change each feature's "rankratioviz_x" value in order to resort them based on
         // their new rank value.
         addRankSortingToRankPlotView(display) {
             // TODO: it would be simpler to just bind some sort of vega/vega-lite
@@ -181,8 +181,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             ) {
                 // Determine active rank, then sort all features by their
                 // corresponding ranking. This is done as a procedural change to
-                // the "x" value of each feature, analogous to how the balance of
-                // each sample is updated in display.changeSamplePlot().
+                // the "rankratioviz_x" value of each feature, analogous to how
+                // the balance of each sample is updated in
+                // display.changeSamplePlot().
                 var dataName = display.rankPlotJSON.data.name;
 
                 // Get a copy of all the feature data in the rank plot. Sort it by
@@ -198,12 +199,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     return 0;
                 });
                 // Use the sorted feature data (featureDataCopy) to make a mapping
-                // from feature IDs to their new "x" value -- which is just an
-                // integer in the range of [0, number of ranked features) -- which
-                // we'll use as the basis for setting each feature's new "x" value.
+                // from feature IDs to their new "rankratioviz_x" value --
+                // which is just an integer in the range of
+                // [0, number of ranked features) -- which
+                // we'll use as the basis for setting each feature's new
+                // "rankratioviz_x" value.
                 // (We can't guarantee the order of traversal during modify()
-                // below, which is why we define this as a mapping from the feature
-                // ID to its new x value.)
+                // below, which is why we define this as a mapping from the
+                // feature ID to its new rankratioviz_x value.)
                 var featureIDToNewX = {};
                 for (var x = 0; x < featureDataCopy.length; x++) {
                     featureIDToNewX[featureDataCopy[x]["Feature ID"]] = x;
@@ -215,7 +218,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                         dataName,
                         vega
                             .changeset()
-                            .modify(vega.truthy, "x", function(rankRow) {
+                            .modify(vega.truthy, "rankratioviz_x", function(
+                                rankRow
+                            ) {
                                 return featureIDToNewX[rankRow["Feature ID"]];
                             })
                     );
