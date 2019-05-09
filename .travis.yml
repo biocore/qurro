@@ -28,10 +28,9 @@ before_install:
     # FeatureData[Differential] artifacts).
     - conda install -c conda-forge songbird
 install:
-    - pip install -e .
-    # Install various external testing/stylechecking packages that we use for
+    - pip install -e .[dev]
+    # Install various JS testing/stylechecking packages that we use for
     # developing rankratioviz, but aren't required to just use rankratioviz
-    - pip install flake8 black
     - npm install -g mocha-headless-chrome
     - npm install -g jshint
     - npm install -g prettier
