@@ -391,8 +391,9 @@ def gen_sample_plot(table, metadata):
     sample_metadata.reset_index(inplace=True)
 
     # Very minor thing -- sort the samples by their IDs. This should ensure
-    # that the sample plot output is deterministic -- and, therefore,
-    # rankratioviz._plot_utils.plot_jsons_equal() should be True
+    # that the sample plot output is deterministic -- and, therefore, when
+    # running rankratioviz._plot_utils to see if we need to update the specs in
+    # the JS, rankratioviz._plot_utils.plot_jsons_equal() should be True
     # unless we actually change something in the actual spec details.
     sample_metadata.sort_values(by=["Sample ID"], inplace=True)
 
