@@ -22,15 +22,26 @@ def test_plot_jsons_equal():
         {"a": "b", "data": {"name": "asdf"}}, {"a": "b"}
     )
     # The dataset name should be explicitly ignored by plot_jsons_equal().
-    assert plot_jsons_equal(
-        {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
-        {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
-    )
-    assert plot_jsons_equal(
-        {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
-        {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {1: 2}}},
-    )
+    # Of course, if the actual data is different, the specs aren't equal.
     assert not plot_jsons_equal(
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
         {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {2: 1}}},
     )
+    # Sanity test -- check that a spec is equal to itself
+    assert plot_jsons_equal(
+        {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
+        {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
+    )
+    # Check that ignoring the dataset name works. These two specs are
+    # identical, except for how they have different dataset names ("asdf" and
+    # "diff", respectively).
+    a = {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}}
+    b = {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {1: 2}}}
+    assert plot_jsons_equal(a, b)
+    # And, while we're at it, check that this function doesn't overwrite its
+    # inputs when standardizing data names. The distinct data names should be
+    # preserved.
+    assert a["data"]["name"] == "asdf"
+    assert "asdf" in a["datasets"]
+    assert b["data"]["name"] == "diff"
+    assert "diff" in b["datasets"]
