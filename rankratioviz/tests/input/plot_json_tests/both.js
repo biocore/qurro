@@ -1,0 +1,2 @@
+var rankPlotJSON = {};
+var samplePlotJSON = {};
