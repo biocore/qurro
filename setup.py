@@ -17,11 +17,11 @@ from setuptools import find_packages, setup
 classes = """
     Development Status :: 3 - Alpha
     License :: OSI Approved :: BSD License
-    Topic :: Software Development :: Libraries
     Topic :: Scientific/Engineering
     Topic :: Scientific/Engineering :: Bio-Informatics
     Topic :: Scientific/Engineering :: Visualization
-    Programming Language :: Python :: 3
+    Programming Language :: Python :: 3.5
+    Programming Language :: Python :: 3.6
     Programming Language :: Python :: 3 :: Only
     Operating System :: Unix
     Operating System :: POSIX
