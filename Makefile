@@ -2,8 +2,10 @@
 # created (via something like "source activate rrv") before using this.
 #
 # These "commands" assume some packages in addition to what's installed with
-# setup.py have been installed -- that is, mocha-headless-chrome, jshint, and
-# flake8. See the Travis-CI configuration file (.travis.yml) for examples of
+# setup.py have been installed -- that is, mocha-headless-chrome, nyc, jshint,
+# and prettier. These also assume that the dev requirements have been
+# installed.
+# See the Travis-CI configuration file (.travis.yml) for examples of
 # how to install these extra utilities.
 
 .PHONY: test pytest jstest stylecheck style
