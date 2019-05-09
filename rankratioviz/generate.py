@@ -510,7 +510,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     exit_code = replace_js_plot_json_definitions(
         main_loc, rank_plot_json, sample_plot_json, output_file_loc=output_loc
     )
-    if exit_code == 1:
+    if exit_code != 0:
         raise ValueError("Wasn't able to replace JSONs and write to main.js.")
 
     logging.debug("Finished writing the visualization contents.")
