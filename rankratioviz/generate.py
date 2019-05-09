@@ -14,7 +14,6 @@
 # https://github.com/knightlab-analyses/reference-frames.
 # ----------------------------------------------------------------------------
 
-import json
 import os
 import logging
 
@@ -23,7 +22,7 @@ from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
 from rankratioviz._rank_utils import filter_unextreme_features
-from rankratioviz._spec_updating_utils import replace_js_plot_json_definitions
+from rankratioviz._plot_utils import replace_js_plot_json_definitions
 
 
 def fix_id(fid):
@@ -391,6 +390,12 @@ def gen_sample_plot(table, metadata):
     sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
     sample_metadata.reset_index(inplace=True)
 
+    # Very minor thing -- sort the samples by their IDs. This should ensure
+    # that the sample plot output is deterministic -- and, therefore,
+    # rankratioviz._plot_utils.plot_jsons_equal() should be True
+    # unless we actually change something in the actual spec details.
+    sample_metadata.sort_values(by=["Sample ID"], inplace=True)
+
     # Create sample plot in Altair.
     # If desired, we can make this interactive by adding .interactive() to the
     # alt.Chart declaration (but we don't do that currently since it makes
@@ -464,11 +469,9 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
-    rank_plot_str = json.dumps(gen_rank_plot(V))
+    rank_plot_json = gen_rank_plot(V)
     logging.debug("Generating sample plot JSON.")
-    sample_plot_str = json.dumps(
-        gen_sample_plot(processed_table, df_sample_metadata)
-    )
+    sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata)
     logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
@@ -504,9 +507,11 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     # create JS code that loads these JSON files in main.js
     main_loc = os.path.join(support_files_loc, "main.js")
     output_loc = os.path.join(output_dir, "main.js")
-    replace_js_plot_json_definitions(
-        main_loc, rank_plot_str, sample_plot_str, output_file_loc=output_loc
+    exit_code = replace_js_plot_json_definitions(
+        main_loc, rank_plot_json, sample_plot_json, output_file_loc=output_loc
     )
+    if exit_code == 1:
+        raise ValueError("Wasn't able to replace JSONs and write to main.js.")
 
     logging.debug("Finished writing the visualization contents.")
 

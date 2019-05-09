@@ -23,6 +23,8 @@ pytest:
 	python3 -B -m pytest rankratioviz/tests -s --cov rankratioviz
 
 jstest:
+	@# Re-update specs for JS tests
+	python3 rankratioviz/_plot_utils.py
 	nyc instrument rankratioviz/support_files/js/ rankratioviz/tests/web_tests/instrumented_js/
 	mocha-headless-chrome -f rankratioviz/tests/web_tests/index.html -c js_coverage.json
 

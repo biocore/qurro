@@ -7,7 +7,7 @@ from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_utils import read_rank_file
 from rankratioviz._metadata_utils import read_metadata_file
-from rankratioviz._spec_updating_utils import get_plot_jsons
+from rankratioviz._plot_utils import get_plot_jsons
 
 
 def run_integration_test(
