@@ -6,8 +6,8 @@
 rankratioviz visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
 [DEICODE](https://github.com/biocore/DEICODE). It facilitates viewing
-a __"ranked"__ plot of features (generally taxa or metabolites) alongside
-a scatterplot showing the __log ratios__ of selected feature counts within samples.
+a plot of __feature rankings__  alongside a plot showing the
+__log ratios__ of selected features' abundances within samples.
 
 rankratioviz can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
@@ -38,6 +38,8 @@ The following command will install the most up-to-date version of rankratioviz:
 pip install git+https://github.com/fedarko/rankratioviz.git
 ```
 
+A python version of at least 3.5 is required to use rankratioviz.
+
 ### Temporary Caveat
 
 **Please make sure that your sample metadata fields do not contain any period or
@@ -56,24 +58,24 @@ available in rankratioviz' example Jupyter notebooks, which are located
 - [**`songbird_example.ipynb`**](https://github.com/fedarko/rankratioviz/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   demonstrates using [songbird](https://github.com/biocore/songbird) and then using rankratioviz to visualize songbird's output.
 
-## Linked visualizations
-These two visualizations (the rank plot and sample scatterplot) are linked [1]:
-selections in the rank plot modify the scatterplot of samples, and
-modifications of the sample scatterplot that weren't made through the rank plot
-trigger an according update in the rank plot.
+### Interacting with a rankratioviz visualization
+The two plots (one of feature rankings, and one of samples' log ratios)
+in a rankratioviz visualization are linked [1]: when a change is made to the
+selected features in a log ratio, both the rank plot and sample plot are
+accordingly modified.
 
-To elaborate on that: clicking on two taxa in the rank plot sets a new
-numerator taxon (determined from the first-clicked taxon) and a new denominator
-taxon (determined from the second-clicked taxon) for the abundance log ratios
-in the scatterplot of samples.
+To elaborate on that: clicking on two features in the rank plot sets a new
+numerator feature (determined from the first-clicked feature) and a
+new denominator feature (determined from the second-clicked feature) for the
+abundance log ratios in the sample plot.
 
-You can also run textual queries over the various taxa definitions, in order to
-create more complicated log ratios
-(e.g. "the log ratio of the combined abundances of all
-taxa with rank X over the combined abundances of all taxa with rank Y").
-Although this method doesn't require you to manually select taxa on the rank
-plot, the rank plot is still updated to indicate the taxa used in the log
-ratios.
+You can also run textual queries over the various feature IDs in order to
+construct more complicated log ratios (e.g. "the log ratio of the combined
+abundances of all features that contain the text 'X' over the combined
+abundances of all features that contain the text 'Y'").
+Although this method doesn't require you to manually select features on the
+rank plot, the rank plot is still updated to indicate the features used in the
+log ratios.
 
 ## Acknowledgements
 
@@ -91,7 +93,6 @@ licenses (each of which includes a respective copyright notice).
 The following software projects are required for rankratioviz's python code
 to function, although they are not distributed with rankratioviz (and are
 instead installed alongside rankratioviz).
-- [Python 3](https://www.python.org/) (a version of at least 3.5 is required)
 - [Altair](https://altair-viz.github.io/)
 - [biom-format](http://biom-format.org/)
 - [click](https://palletsprojects.com/p/click/)
