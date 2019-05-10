@@ -37,7 +37,7 @@ def test_red_sea():
        Sea.
 
        This is really a test to make sure that rankratioviz can properly handle
-       metabolite data.
+       non-strictly-16S data.
     """
     run_integration_test(
         "red_sea",

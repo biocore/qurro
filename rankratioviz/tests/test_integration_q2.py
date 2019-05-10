@@ -31,7 +31,7 @@ def test_integration_q2_sleep_apnea():
 
 
 def test_integration_q2_red_sea():
-    """Tests rankratioviz on songbird output with metabolite data in the
+    """Tests rankratioviz on songbird output with non-strictly-16S data in the
        context of QIIME 2.
     """
     run_integration_test(
