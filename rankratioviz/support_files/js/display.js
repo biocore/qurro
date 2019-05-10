@@ -505,9 +505,17 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          */
         updateSamplePlotScale(vizAttribute) {
             if (vizAttribute === "xAxis") {
-                this.samplePlotJSON.encoding.x.type = document.getElementById(
-                    "xAxisScale"
-                ).value;
+                var newScale = document.getElementById("xAxisScale").value;
+                this.samplePlotJSON.encoding.x.type = newScale;
+                // This assumes that the x-axis specification only has the
+                // labelAngle parameter.
+                if (newScale === "nominal") {
+                    this.samplePlotJSON.encoding.x.axis = { labelAngle: -45 };
+                } else {
+                    // This should work even if the axis property is undefined
+                    // -- it just won't do anything in that case.
+                    delete this.samplePlotJSON.encoding.x.axis;
+                }
             } else {
                 this.samplePlotJSON.encoding.color.type = document.getElementById(
                     "colorScale"
