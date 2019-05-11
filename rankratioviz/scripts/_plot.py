@@ -15,7 +15,10 @@ from rankratioviz._parameter_descriptions import (
 )
 from rankratioviz.generate import process_input, gen_visualization
 from rankratioviz._rank_utils import read_rank_file
-from rankratioviz._metadata_utils import read_metadata_file
+from rankratioviz._metadata_utils import (
+    read_metadata_file,
+    read_gnps_feature_metadata_file,
+)
 
 
 @click.command()
@@ -88,7 +91,21 @@ def plot(
 
     df_feature_metadata = None
     if feature_metadata is not None:
-        df_feature_metadata = read_metadata_file(feature_metadata)
+        if assume_gnps_feature_metadata:
+            # TODO easiest thing here is to pass the feature ranks to
+            # read_gnps_feature_metadata_file(). Detect the precision of the
+            # numbers there (or assume it -- that's fine for now), and create a
+            # dict mapping each long ID (in the ranks) to a truncated ID,
+            # then replace the GNPS metadata DF index with the long IDs. THEN
+            # we can proceed as normal.
+            # TODO (Also, do the same tiny conditional here in the Q2 code
+            # as well? Or just temporarily remove Q2 support for GNPS feature
+            # metadata, since it flouts Q2 metadata standards.)
+            df_feature_metadata = read_gnps_feature_metadata_file(
+                feature_metadata
+            )
+        else:
+            df_feature_metadata = read_metadata_file(feature_metadata)
     logging.debug("Read in metadata.")
 
     U, V, processed_table = process_input(
