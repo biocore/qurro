@@ -17,6 +17,7 @@ def create_q2_visualization(
     sample_metadata,
     feature_metadata,
     extreme_feature_count,
+    assume_gnps_feature_metadata,
 ):
 
     logging.debug("Starting create_q2_visualization().")
