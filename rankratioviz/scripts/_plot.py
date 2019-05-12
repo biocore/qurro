@@ -92,17 +92,8 @@ def plot(
     df_feature_metadata = None
     if feature_metadata is not None:
         if assume_gnps_feature_metadata:
-            # TODO easiest thing here is to pass the feature ranks to
-            # read_gnps_feature_metadata_file(). Detect the precision of the
-            # numbers there (or assume it -- that's fine for now), and create a
-            # dict mapping each long ID (in the ranks) to a truncated ID,
-            # then replace the GNPS metadata DF index with the long IDs. THEN
-            # we can proceed as normal.
-            # TODO (Also, do the same tiny conditional here in the Q2 code
-            # as well? Or just temporarily remove Q2 support for GNPS feature
-            # metadata, since it flouts Q2 metadata standards.)
             df_feature_metadata = read_gnps_feature_metadata_file(
-                feature_metadata
+                feature_metadata, feature_ranks
             )
         else:
             df_feature_metadata = read_metadata_file(feature_metadata)
