@@ -46,9 +46,13 @@ params = {
     "sample_metadata": Metadata,
     "feature_metadata": Metadata,
     "extreme_feature_count": Int,
+    # "assume_gnps_feature_metadata": Bool,
 }
 
-param_descs = {"extreme_feature_count": EXTREME_FEATURE_COUNT}
+param_descs = {
+    "extreme_feature_count": EXTREME_FEATURE_COUNT,
+    # "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
+}
 
 ranks_desc = "A{} file describing feature rankings produced by {}."
 

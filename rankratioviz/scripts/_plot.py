@@ -8,10 +8,17 @@
 import logging
 from biom import load_table
 import click
-from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
+from rankratioviz._parameter_descriptions import (
+    EXTREME_FEATURE_COUNT,
+    TABLE,
+    ASSUME_GNPS_FEATURE_METADATA,
+)
 from rankratioviz.generate import process_input, gen_visualization
 from rankratioviz._rank_utils import read_rank_file
-from rankratioviz._metadata_utils import read_metadata_file
+from rankratioviz._metadata_utils import (
+    read_metadata_file,
+    read_gnps_feature_metadata_file,
+)
 
 
 @click.command()
@@ -40,6 +47,12 @@ from rankratioviz._metadata_utils import read_metadata_file
     help=EXTREME_FEATURE_COUNT,
 )
 @click.option(
+    "-gnps",
+    "--assume-gnps-feature-metadata",
+    is_flag=True,
+    help=ASSUME_GNPS_FEATURE_METADATA,
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
@@ -52,6 +65,7 @@ def plot(
     feature_metadata: str,
     output_dir: str,
     extreme_feature_count: int,
+    assume_gnps_feature_metadata: bool,
     verbose: bool,
 ) -> None:
     """Generates a visualization of feature rankings and log ratios.
@@ -77,7 +91,12 @@ def plot(
 
     df_feature_metadata = None
     if feature_metadata is not None:
-        df_feature_metadata = read_metadata_file(feature_metadata)
+        if assume_gnps_feature_metadata:
+            df_feature_metadata = read_gnps_feature_metadata_file(
+                feature_metadata, feature_ranks
+            )
+        else:
+            df_feature_metadata = read_metadata_file(feature_metadata)
     logging.debug("Read in metadata.")
 
     U, V, processed_table = process_input(

@@ -48,6 +48,15 @@ of these characters. (Eventually rankratioviz should be able to handle this
 accordingly, but in the meantime this is a necessary fix.) See
 [this issue](https://github.com/fedarko/rankratioviz/issues/66) for context.
 
+### Integration with metabolomics feature metadata
+
+If you have a GNPS feature metadata file (where each row in the file has a
+`parent mass` and `RTConsensus` column), you can pass in the `-gnps`
+(`--assume-gnps-feature-metadata`) command-line argument to rankratioviz'
+standalone script to make rankratioviz understand the metadata file. **Please
+note that this functionality is experimental**; furthermore, it is not yet
+available in the QIIME 2 plugin version of rankratioviz.
+
 ### Tutorials
 
 Examples of using rankratioviz (both inside and outside of QIIME 2) are
