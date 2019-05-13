@@ -11,12 +11,8 @@ import qiime2.plugin
 import qiime2.sdk
 from rankratioviz import __version__
 from ._method import supervised_rank_plot, unsupervised_rank_plot
-from rankratioviz._parameter_descriptions import (
-    EXTREME_FEATURE_COUNT,
-    TABLE,
-    ASSUME_GNPS_FEATURE_METADATA,
-)
-from qiime2.plugin import Metadata, Properties, Int, Bool
+from rankratioviz._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
+from qiime2.plugin import Metadata, Properties, Int
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.feature_data import FeatureData
 from q2_types.ordination import PCoAResults
@@ -50,12 +46,12 @@ params = {
     "sample_metadata": Metadata,
     "feature_metadata": Metadata,
     "extreme_feature_count": Int,
-    "assume_gnps_feature_metadata": Bool,
+    # "assume_gnps_feature_metadata": Bool,
 }
 
 param_descs = {
     "extreme_feature_count": EXTREME_FEATURE_COUNT,
-    "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
+    # "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
 }
 
 ranks_desc = "A{} file describing feature rankings produced by {}."
