@@ -37,8 +37,9 @@ def read_metadata_file(md_file_loc):
 def get_truncated_feature_id(full_feature_id):
     """Computes a truncated GNPS feature ID from a full GNPS feature ID.
 
-       This function wasn't written by me -- it was taken from a Jupyter
-       Notebook provided to me by J. Gauglitz.
+       This function was originally contained in a Jupyter Notebook for
+       processing this sort of data written by Jamie Morton and
+       Julia Gauglitz.
     """
     mz, rt = list(map(float, full_feature_id.split(";")))
     return "{:.4f};{:.4f}".format(mz, rt)
