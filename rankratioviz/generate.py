@@ -432,28 +432,11 @@ def gen_sample_plot(table, metadata):
         )
     )
 
-    # Save the sample plot JSON. Some notes:
-    # -From Altair (and Vega)'s perspective, the only "dataset" that directly
-    #  connects to the chart is sample_metadata. This dataset contains the
-    #  "Sample ID" and "rankratioviz_balance" columns, in addition to all of
-    #  the sample metadata columns provided in the input sample metadata.
-    # -All of the feature counts for each sample (that is, taxon/metabolite
-    #  abundances) are located in the features_ds dataset. These feature counts
-    #  can be drawn on in the JS application when computing log ratios, and
-    #  this lets us search through all available feature IDs/etc. without
-    #  having to worry about accidentally mixing up metadata and feature
-    #  counts.
-    # -Since feature IDs can be really long (e.g. in the case where the feature
-    #  ID is an entire taxonomy), we convert each feature ID to a string
-    #  integer and refer to that feature by its string integer ID. We store a
-    #  mapping relating actual feature IDs to their string integer IDs under
-    #  the col_ids_ds dataset, which is how we'll determine what to show to
-    #  the user (and link features on the rank plot with feature counts in
-    #  the sample plot) in the JS code.
-    sample_chart_json = sample_chart.to_dict()
-    features_ds = "rankratioviz_feature_counts"
-    sample_chart_json["datasets"][features_ds] = table.to_dict()
-    return sample_chart_json
+    # Return the JSONs as dicts for 1) the sample plot JSON (which only
+    # contains sample metadata), and 2) the feature counts per sample (which
+    # will be stored separately from the sample plot JSON in order to not hit
+    # performance too terribly).
+    return sample_chart.to_dict(), table.to_dict()
 
 
 def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
@@ -472,7 +455,9 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V)
     logging.debug("Generating sample plot JSON.")
-    sample_plot_json = gen_sample_plot(processed_table, df_sample_metadata)
+    sample_plot_json, count_json = gen_sample_plot(
+        processed_table, df_sample_metadata
+    )
     logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
@@ -509,7 +494,11 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     main_loc = os.path.join(support_files_loc, "main.js")
     output_loc = os.path.join(output_dir, "main.js")
     exit_code = replace_js_plot_json_definitions(
-        main_loc, rank_plot_json, sample_plot_json, output_file_loc=output_loc
+        main_loc,
+        rank_plot_json,
+        sample_plot_json,
+        count_json,
+        output_file_loc=output_loc,
     )
     if exit_code != 0:
         raise ValueError("Wasn't able to replace JSONs and write to main.js.")

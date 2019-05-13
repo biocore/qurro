@@ -203,7 +203,7 @@ def test_feature_metadata_and_dropped_sample():
        ranks, and the BIOM table together.
     """
 
-    rank_json, sample_json = run_integration_test(
+    rank_json, sample_json, count_json = run_integration_test(
         "matching_test",
         "matching_test",
         "differentials.tsv",
@@ -238,10 +238,9 @@ def test_feature_metadata_and_dropped_sample():
     for sample in sample_json["datasets"][data_name]:
         assert sample["Sample ID"] != "Sample4"
 
-    cts_data = sample_json["datasets"]["rankratioviz_feature_counts"]
-    for txid in cts_data:
+    for txid in count_json:
         # Assert that Sample4 was also dropped from the counts data in the JSON
-        assert "Sample4" not in cts_data[txid]
+        assert "Sample4" not in count_json[txid]
         # Assert that Taxon3's annotation carried over to the sample plot
         if txid.startswith("Taxon3"):
             for fm in relevant_feature_metadata:

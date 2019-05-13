@@ -31,7 +31,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * think that would be super useful unless you want to embed
          * rankratioviz' web interface in a bunch of other environments.)
          */
-        constructor(rankPlotJSON, samplePlotJSON) {
+        constructor(rankPlotJSON, samplePlotJSON, countJSON) {
             // Used for selections of log ratios between single features (via
             // the rank plot)
             this.onHigh = true;
@@ -45,13 +45,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.botFeatures = undefined;
 
             // Used when looking up a feature's count.
-            this.feature_cts = undefined;
-
+            this.feature_cts = countJSON;
             // Used when searching through features.
-            this.feature_ids = undefined;
+            this.feature_ids = Object.keys(this.feature_cts);
 
-            // Set when the sample plot JSON is loaded. Used to populate possible sample
-            // plot x-axis/colorization options.
+            // Set when the sample plot JSON is loaded. Used to populate
+            // possible sample plot x-axis/colorization options.
             this.metadataCols = undefined;
 
             // Ordered list of all ranks
@@ -277,11 +276,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                             this.samplePlotJSON.encoding.color.field +
                             "]"
                     ).selected = true;
-                // TODO don't store this in memory at all? since it's redundant
-                // with the sample plot JSON, albeit a bit more inconvenient to
-                // type out to access there.
-                this.feature_cts = this.samplePlotJSON.datasets.rankratioviz_feature_counts;
-                this.feature_ids = Object.keys(this.feature_cts);
             }
             this.updateSamplePlotTooltips();
             // NOTE: Use of "patch" based on
