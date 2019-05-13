@@ -14,7 +14,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             countJSON
         );
         after(function() {
-            rrv.destroy();
+            rrv.destroy(true, true, true);
         });
 
         it("Initializes an RRVDisplay object", function() {

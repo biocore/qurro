@@ -87,6 +87,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     },
                     colorScale: function() {
                         display.updateSamplePlotScale("color");
+                    },
+                    rankField: function() {
+                        display.updateRankPlotField();
                     }
                 },
                 "onchange"
@@ -120,27 +123,37 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.makeSamplePlot();
         }
 
-        makeRankPlot() {
-            this.rankOrdering = this.rankPlotJSON.datasets.rankratioviz_rank_ordering;
+        makeRankPlot(notFirstTime) {
+            if (!notFirstTime) {
+                this.rankOrdering = this.rankPlotJSON.datasets.rankratioviz_rank_ordering;
+                // just an abbreviated version of the code to add metadata
+                // fields to the x-axis / color field selects in
+                // makeSamplePlot()
+                var optionEle;
+                for (var r = 0; r < this.rankOrdering.length; r++) {
+                    optionEle = document.createElement("option");
+                    optionEle.value = optionEle.text = this.rankOrdering[r];
+                    document.getElementById("rankField").appendChild(optionEle);
+                }
+                // Set default ranking based on whatever the JSON has as
+                // the default. Same general stuff as in makeSamplePlot().
+                document
+                    .getElementById("rankField")
+                    .querySelector(
+                        "option[value = " +
+                            this.rankPlotJSON.encoding.y.field +
+                            "]"
+                    ).selected = true;
+            }
             // We can use a closure to allow callback functions to access "this"
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.
             var parentDisplay = this;
-            var embedParams = {
-                patch: function(vegaSpec) {
-                    return RRVDisplay.addSignalsToRankPlot(
-                        parentDisplay,
-                        vegaSpec
-                    );
-                }
-            };
-            vegaEmbed("#rankPlot", this.rankPlotJSON, embedParams).then(
-                function(result) {
-                    parentDisplay.rankPlotView = result.view;
-                    parentDisplay.addClickEventToRankPlotView(parentDisplay);
-                    parentDisplay.addRankSortingToRankPlotView(parentDisplay);
-                }
-            );
+            vegaEmbed("#rankPlot", this.rankPlotJSON).then(function(result) {
+                parentDisplay.rankPlotView = result.view;
+                parentDisplay.addClickEventToRankPlotView(parentDisplay);
+                //parentDisplay.addRankSortingToRankPlotView(parentDisplay);
+            });
         }
 
         addClickEventToRankPlotView(display) {
@@ -165,72 +178,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                         display.onHigh = !display.onHigh;
                     }
                 }
-            });
-        }
-
-        // Change each feature's "rankratioviz_x" value in order to resort them based on
-        // their new rank value.
-        addRankSortingToRankPlotView(display) {
-            // TODO: it would be simpler to just bind some sort of vega/vega-lite
-            // esque sort operation to be done on the rank signal for each
-            // feature's x value, rather than doing it manually.
-            display.rankPlotView.addSignalListener("rank", function(
-                _,
-                newRank
-            ) {
-                // Determine active rank, then sort all features by their
-                // corresponding ranking. This is done as a procedural change to
-                // the "rankratioviz_x" value of each feature, analogous to how
-                // the balance of each sample is updated in
-                // display.changeSamplePlot().
-                var dataName = display.rankPlotJSON.data.name;
-
-                // Get a copy of all the feature data in the rank plot. Sort it by
-                // each feature's newRank value.
-                var featureDataCopy = display.rankPlotJSON.datasets[
-                    dataName
-                ].slice();
-                featureDataCopy.sort(function(f1, f2) {
-                    if (parseFloat(f1[newRank]) > parseFloat(f2[newRank]))
-                        return 1;
-                    else if (parseFloat(f1[newRank]) < parseFloat(f2[newRank]))
-                        return -1;
-                    return 0;
-                });
-                // Use the sorted feature data (featureDataCopy) to make a mapping
-                // from feature IDs to their new "rankratioviz_x" value --
-                // which is just an integer in the range of
-                // [0, number of ranked features) -- which
-                // we'll use as the basis for setting each feature's new
-                // "rankratioviz_x" value.
-                // (We can't guarantee the order of traversal during modify()
-                // below, which is why we define this as a mapping from the
-                // feature ID to its new rankratioviz_x value.)
-                var featureIDToNewX = {};
-                for (var x = 0; x < featureDataCopy.length; x++) {
-                    featureIDToNewX[featureDataCopy[x]["Feature ID"]] = x;
-                }
-                // Now, we can just iterate through the rank plot and change each
-                // feature accordingly.
-                var sortFunc = function() {
-                    display.rankPlotView.change(
-                        dataName,
-                        vega
-                            .changeset()
-                            .modify(vega.truthy, "rankratioviz_x", function(
-                                rankRow
-                            ) {
-                                return featureIDToNewX[rankRow["Feature ID"]];
-                            })
-                    );
-                };
-                // NOTE that we use runAfter() instead of run() because, since this
-                // is being run from within a signal listener, we're still in the
-                // middle of that "dataflow." If we use run() here as well, we get
-                // an error about "Dataflow invoked recursively". The docs say to
-                // use runAsync() to resolve this, but I can't get that working
-                // here. So we're doing display.
-                display.samplePlotView.runAfter(sortFunc);
             });
         }
 
@@ -484,11 +431,19 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.remakeSamplePlot();
         }
 
+        updateRankPlotField() {
+            this.rankPlotJSON.encoding.y.field = document.getElementById(
+                "rankField"
+            ).value;
+            this.destroy(false, true, false);
+            this.makeRankPlot(true);
+        }
+
         remakeSamplePlot() {
             // Clear out the sample plot. NOTE that I'm not sure if this is
             // 100% necessary, but it's probs a good idea to prevent memory
             // waste.
-            this.destroy(true);
+            this.destroy(true, false, false);
             this.makeSamplePlot(true);
         }
 
@@ -530,36 +485,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     spec.signals.push(signalArray[s]);
                 }
             }
-        }
-
-        static addSignalsToRankPlot(display, vegaSpec) {
-            var rankSignal = {
-                name: "rank",
-                value: display.rankOrdering[0],
-                bind: {
-                    input: "select",
-                    options: display.rankOrdering
-                }
-            };
-            RRVDisplay.addSignalsToSpec(vegaSpec, [rankSignal]);
-            vegaSpec.marks[0].encode.update.y.field = { signal: "rank" };
-            // Update y-axis label
-            for (var a = 0; a < vegaSpec.axes.length; a++) {
-                if (vegaSpec.axes[a].scale === "y") {
-                    if (vegaSpec.axes[a].title !== undefined) {
-                        vegaSpec.axes[a].title = { signal: "rank" };
-                        break;
-                    }
-                }
-            }
-            // Update y-axis scale
-            for (var s = 0; s < vegaSpec.scales.length; s++) {
-                if (vegaSpec.scales[s].name === "y") {
-                    vegaSpec.scales[s].domain.field = { signal: "rank" };
-                    break;
-                }
-            }
-            return vegaSpec;
         }
 
         static identifyMetadataColumns(samplePlotSpec) {
@@ -763,6 +688,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             return outputTSV;
         }
 
+        static clearDiv(divID) {
+            // From https://stackoverflow.com/a/3450726/10730311.
+            // This way is apparently faster than just using
+            // document.getElementById(divID).innerHTML = ''.
+            var element = document.getElementById(divID);
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
         /* Clears the effects of this rrv instance on the DOM, including
          * clearing the HTML inside the rank and sample plot <div> elements.
          *
@@ -770,41 +705,41 @@ define(["./feature_computation", "vega", "vega-embed"], function(
          * should make it feasible to create new RRVDisplay instances
          * afterwards without refreshing the page.
          *
-         * This is mainly intended for use with tests (e.g. creating multiple
-         * displays in quick succession).
-         *
-         * If justSamplePlot is truthy, this will only clear the sample plot.
+         * This was mainly intended for use with tests (e.g. creating multiple
+         * displays in quick succession), but can also be used when remaking
+         * the rank or sample plot to update something.
          */
-        destroy(justSamplePlot) {
-            function clearDiv(divID) {
-                // From https://stackoverflow.com/a/3450726/10730311.
-                // This way is apparently faster than just using
-                // document.getElementById(divID).innerHTML = '' -- not that
-                // performance really matters in this case, but whatever.
-                var element = document.getElementById(divID);
-                while (element.firstChild) {
-                    element.removeChild(element.firstChild);
+        destroy(samplePlot, rankPlot, otherStuff) {
+            if (samplePlot) {
+                this.samplePlotView.finalize();
+                RRVDisplay.clearDiv("samplePlot");
+            }
+            if (rankPlot) {
+                this.rankPlotView.finalize();
+                RRVDisplay.clearDiv("rankPlot");
+            }
+            if (otherStuff) {
+                // Clear the "features text" displays
+                this.updateFeaturesTextDisplays(false, true);
+                // Clear the bindings of bound DOM elements
+                for (
+                    var i = 0;
+                    i < this.elementsWithOnClickBindings.length;
+                    i++
+                ) {
+                    document.getElementById(
+                        this.elementsWithOnClickBindings[i]
+                    ).onclick = undefined;
                 }
-            }
-            this.samplePlotView.finalize();
-            clearDiv("samplePlot");
-            if (justSamplePlot) {
-                return;
-            }
-            this.rankPlotView.finalize();
-            clearDiv("rankPlot");
-            // Clear the "features text" displays
-            this.updateFeaturesTextDisplays(false, true);
-            // Clear the bindings of bound DOM elements
-            for (var i = 0; i < this.elementsWithOnClickBindings.length; i++) {
-                document.getElementById(
-                    this.elementsWithOnClickBindings[i]
-                ).onclick = undefined;
-            }
-            for (var j = 0; j < this.elementsWithOnChangeBindings.length; j++) {
-                document.getElementById(
-                    this.elementsWithOnChangeBindings[j]
-                ).onchange = undefined;
+                for (
+                    var j = 0;
+                    j < this.elementsWithOnChangeBindings.length;
+                    j++
+                ) {
+                    document.getElementById(
+                        this.elementsWithOnChangeBindings[j]
+                    ).onchange = undefined;
+                }
             }
         }
     }
