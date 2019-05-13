@@ -7,7 +7,7 @@ from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_utils import read_rank_file
 from rankratioviz._metadata_utils import read_metadata_file
-from rankratioviz._plot_utils import get_plot_jsons
+from rankratioviz._plot_utils import get_jsons
 
 
 def run_integration_test(
@@ -94,8 +94,10 @@ def run_integration_test(
     if expect_all_unsupported_samples or expected_unsupported_features > 0:
         return None, None
     else:
-        rank_json, sample_json = validate_main_js(out_dir, rloc, tloc, sloc)
-        return rank_json, sample_json
+        rank_json, sample_json, count_json = validate_main_js(
+            out_dir, rloc, tloc, sloc
+        )
+        return rank_json, sample_json, count_json
 
 
 def validate_standalone_result(
@@ -178,13 +180,13 @@ def validate_main_js(out_dir, rloc, tloc, sloc):
     """
 
     main_loc = os.path.join(out_dir, "main.js")
-    rank_json, sample_json = get_plot_jsons(main_loc)
+    rank_json, sample_json, count_json = get_jsons(main_loc)
 
     # Validate plot JSONs
     validate_rank_plot_json(rloc, rank_json)
-    validate_sample_plot_json(tloc, sloc, sample_json)
+    validate_sample_plot_json(tloc, sloc, sample_json, count_json)
 
-    return rank_json, sample_json
+    return rank_json, sample_json, count_json
 
 
 def validate_samples_supported_output(output, expected_unsupported_samples):
@@ -280,7 +282,9 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
         prev_x_val = feature["rankratioviz_x"]
 
 
-def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):
+def validate_sample_plot_json(
+    biom_table_loc, metadata_loc, sample_json, count_json
+):
     assert sample_json["mark"] == "circle"
     assert sample_json["title"] == "Log Ratio of Abundances in Samples"
     basic_vegalite_json_validation(sample_json)
@@ -308,17 +312,16 @@ def validate_sample_plot_json(biom_table_loc, metadata_loc, sample_json):
     # If the BIOM table has, say, > 1 million entries, this might be excessive,
     # but the test data right now is small enough that this should be fine.
     table = load_table(biom_table_loc)
-    counts = sample_json["datasets"]["rankratioviz_feature_counts"]
 
     # For each (ranked) feature...
-    for feature_id in counts:
+    for feature_id in count_json:
         # Get its base ID (the ID it is referred to by in the input BIOM table
         # and feature rankings file), and its column ID (the integer ID it's
         # referred to by in the JSON count data).
         feature_base_id = feature_id.split("|")[0]
         # For each sample, ensure that the count value in the JSON matches with
         # the count value in the BIOM table.
-        for sample_id in counts[feature_id]:
-            actual_count = counts[feature_id][sample_id]
+        for sample_id in count_json[feature_id]:
+            actual_count = count_json[feature_id][sample_id]
             expected_count = table.get_value_by_ids(feature_base_id, sample_id)
             assert actual_count == expected_count
