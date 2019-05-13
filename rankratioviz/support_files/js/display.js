@@ -64,6 +64,10 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.samplePlotJSON = samplePlotJSON;
             this.makePlots();
 
+            // We store this so that we can reuse it after temporarily deleting
+            // it to add a boxplot
+            this.oldColorSpec = undefined;
+
             // Set up relevant DOM bindings
             var display = this;
             this.elementsWithOnClickBindings = RRVDisplay.setUpDOMBindings({
@@ -87,6 +91,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     },
                     colorScale: function() {
                         display.updateSamplePlotScale("color");
+                    },
+                    boxplotCheckbox: function() {
+                        display.updateSamplePlotBoxplot(
+                            document.getElementById("boxplotCheckbox").checked
+                        );
                     }
                 },
                 "onchange"
@@ -277,7 +286,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                             "]"
                     ).selected = true;
             }
-            this.updateSamplePlotTooltips();
+            if (this.samplePlotJSON.mark !== "boxplot") {
+                this.updateSamplePlotTooltips();
+            }
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
@@ -492,6 +503,30 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.makeSamplePlot(true);
         }
 
+        updateSamplePlotBoxplot(switchingToBoxplot) {
+            if (switchingToBoxplot) {
+                // If the x-axis isn't currently nominal, don't do anything
+                // (until we actually switch the scale to nominal)
+                if (this.samplePlotJSON.encoding.x.type === "nominal") {
+                    this.samplePlotJSON.mark = "boxplot";
+                    // Horrible hack to let us save a deep copy of the
+                    // old color spec so we can reuse it later
+                    this.oldColorSpec = JSON.parse(
+                        JSON.stringify(this.samplePlotJSON.encoding.color)
+                    );
+                    delete this.samplePlotJSON.encoding.color;
+                    delete this.samplePlotJSON.encoding.tooltip;
+                }
+            } else {
+                if (this.oldColorSpec !== undefined) {
+                    this.samplePlotJSON.mark = "circle";
+                    this.samplePlotJSON.encoding.color = this.oldColorSpec;
+                    this.oldColorSpec = undefined;
+                }
+            }
+            this.remakeSamplePlot();
+        }
+
         /* Changes the scale type of either the x-axis or colorization in the
          * sample plot. This isn't doable with Vega signals -- we need to
          * literally reload the Vega-Lite specification with the new scale
@@ -505,10 +540,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 // labelAngle parameter.
                 if (newScale === "nominal") {
                     this.samplePlotJSON.encoding.x.axis = { labelAngle: -45 };
+                    if (document.getElementById("boxplotCheckbox").checked) {
+                        this.updateSamplePlotBoxplot(true);
+                    }
                 } else {
                     // This should work even if the axis property is undefined
                     // -- it just won't do anything in that case.
                     delete this.samplePlotJSON.encoding.x.axis;
+                    if (this.samplePlotJSON.mark === "boxplot") {
+                        this.updateSamplePlotBoxplot(false);
+                    }
                 }
             } else {
                 this.samplePlotJSON.encoding.color.type = document.getElementById(
