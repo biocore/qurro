@@ -1,6 +1,3 @@
-/* * {
-    border: 1px solid red;
-} */
 h3,
 p {
     text-align: center;
@@ -11,11 +8,12 @@ button,
 select {
     font-size: large;
 }
-.plotDiv {
-    width: 50%;
+.twoColumnRow {
+    display: grid;
+    grid-template-columns: 50% 50%;
 }
-.topAlignedDiv {
-    vertical-align: top;
+.plotControlBlock {
+    display: block;
 }
 #rankPlotDiv {
     text-align: right;
@@ -24,19 +22,32 @@ select {
     text-align: left;
 }
 #rankPlot {
-    margin-right: 1em;
+    margin-right: 2em;
 }
 #samplePlot {
-    margin-left: 1em;
+    margin-left: 2em;
 }
+/* The reason for max-width: 90% is to leave room for the Vega-Embed "actions"
+ * circle thing. Might be worth addressing this later, but for now this is a
+ * reasonable hack.
+ * Also, max-height can be decreased once we remove the rank signal (it's
+ * included within the rankPlot, which is why the height is as large as it is).
+ */
 #rankPlot,
 #samplePlot {
-    overflow: scroll;
-    height: 450px;
-    border: 1px solid #ccc;
+    overflow: auto;
+    max-height: 420px;
+    max-width: 90%;
 }
 textarea {
     width: 92%;
+    border: 1px solid;
+}
+#topFeaturesDisplay {
+    border-color: red;
+}
+#botFeaturesDisplay {
+    border-color: blue;
 }
 #downloadHelper {
     display: none;
