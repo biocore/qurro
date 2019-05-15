@@ -10,136 +10,128 @@
     </head>
 
     <body>
-        <table id="rrvTable">
-            <!-- Show the actual plots -->
-            <tr>
-                <td class="plotTD" id="rankPlotTD">
-                    <div id="rankPlot"></div>
-                </td>
-                <td class="plotTD" id="samplePlotTD">
-                    <div id="samplePlot"></div>
-                    <br />
-                    <!-- NOTE that the scale/field select values below will be
-                         literally used in the JSON.
-                         Also, the first-listed one is the default. Since the
-                         default x-axis is the balance (quant.) and the default
-                         color is the sample ID (nom.), we adjust the default
-                         scale types accordingly.
-                    -->
-                    <label for="xAxisField">x-axis field</label>
-                    <select id="xAxisField"> </select>
-                    <label for="xAxisScale">x-axis scale type</label>
-                    <select id="xAxisScale">
-                        <option value="quantitative">Quantitative</option>
-                        <option value="nominal">Categorical</option>
-                    </select>
-                    <br />
-                    <label for="colorField">color field</label>
-                    <select id="colorField"> </select>
-                    <label for="colorScale">color scale type</label>
-                    <select id="colorScale">
-                        <option value="nominal">Categorical</option>
-                        <option value="quantitative">Quantitative</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="topAlignedTD">
-                    <h3>Single-Feature Selections</h3>
-                    <p>
-                        Select two features from the rank plot (left) to display
-                        their log ratios for each sample in the sample
-                        scatterplot (right).
-                    </p>
-                    <!-- Note for future reference: whitespace between the
-                        start and end tag of a textarea is apparently
-                        interpreted as just that, and preserved in the textarea
-                        on the page.
-                        (So that's why the textarea declarations below are on
-                        long lines.)
-                    -->
-                    <p>
-                        <textarea id="topFeaturesDisplay" rows="6"></textarea>
-                    </p>
-                    <hr />
-                    <p>
-                        <textarea id="botFeaturesDisplay" rows="6"></textarea>
-                    </p>
-                </td>
-                <td>
-                    <h3>Multi-Feature Selections</h3>
-                    <p>
-                        Use the controls here to show more complex log ratios in
-                        the sample scatterplot.
-                    </p>
-                    <p>
-                        Filter numerator to features that
-                        <select id="topSearch">
-                            <option value="text">
-                                contain the exact text
-                            </option>
-                            <option value="rank">
-                                contain the exact taxonomic rank(s)
-                            </option>
-                        </select>
-                        <input type="text" id="topText" size="40" />
-                    </p>
-                    <p>
-                        Filter denominator to features that
-                        <select id="botSearch">
-                            <option value="text">
-                                contain the exact text
-                            </option>
-                            <option value="rank">
-                                contain the exact taxonomic rank(s)
-                            </option>
-                        </select>
-                        <input type="text" id="botText" size="40" />
-                    </p>
+        <div class="visualizationDiv">
+            <div class="plotDiv" id="rankPlotDiv">
+                <div id="rankPlot"></div>
+                <br />
+                <label for="rankField">ranking</label>
+                <select id="rankField"> </select>
+            </div>
+            <div class="plotDiv" id="samplePlotDiv">
+                <div id="samplePlot"></div>
+                <br />
+                <!-- NOTE that the scale/field select values below will be
+                     literally used in the JSON.
+                     Also, the first-listed one is the default. Since the
+                     default x-axis is the balance (quant.) and the default
+                     color is the sample ID (nom.), we adjust the default
+                     scale types accordingly.
+                -->
+                <label for="xAxisField">x-axis field</label>
+                <select id="xAxisField"> </select>
+                <label for="xAxisScale">x-axis scale type</label>
+                <select id="xAxisScale">
+                    <option value="quantitative">Quantitative</option>
+                    <option value="nominal">Categorical</option>
+                </select>
+                <br />
+                <label for="colorField">color field</label>
+                <select id="colorField"> </select>
+                <label for="colorScale">color scale type</label>
+                <select id="colorScale">
+                    <option value="nominal">Categorical</option>
+                    <option value="quantitative">Quantitative</option>
+                </select>
+            </div>
+        </div>
+        <h3>Single-Feature Selections</h3>
+        <p>
+            Select two features from the rank plot (left) to display their log
+            ratios for each sample in the sample scatterplot (right).
+        </p>
+        <!-- Note for future reference: whitespace between the
+            start and end tag of a textarea is apparently
+            interpreted as just that, and preserved in the textarea
+            on the page.
+            (So that's why the textarea declarations below are on
+            long lines.)
+        -->
+        <p>
+            <textarea id="topFeaturesDisplay" rows="6"></textarea>
+        </p>
+        <hr />
+        <p>
+            <textarea id="botFeaturesDisplay" rows="6"></textarea>
+        </p>
+        <h3>Multi-Feature Selections</h3>
+        <p>
+            Use the controls here to show more complex log ratios in the sample
+            scatterplot.
+        </p>
+        <p>
+            Filter numerator to features that
+            <select id="topSearch">
+                <option value="text">
+                    contain the exact text
+                </option>
+                <option value="rank">
+                    contain the exact taxonomic rank(s)
+                </option>
+            </select>
+            <input type="text" id="topText" size="40" />
+        </p>
+        <p>
+            Filter denominator to features that
+            <select id="botSearch">
+                <option value="text">
+                    contain the exact text
+                </option>
+                <option value="rank">
+                    contain the exact taxonomic rank(s)
+                </option>
+            </select>
+            <input type="text" id="botText" size="40" />
+        </p>
 
-                    <!-- Invisible <a> used for downloading data URIs.
-                         Based on #downloadHelper in MetagenomeScope's viewer
-                         interface.
-                    -->
-                    <a id="downloadHelper"></a>
-                    <p>
-                        <button id="multiFeatureButton">
-                            Regenerate sample plot
-                        </button>
-                    </p>
-                    <p>
-                        <button id="exportDataButton">
-                            Export currently used data
-                        </button>
-                    </p>
-                    <!--
-                    <p>
-                        <label for="selectMicrobesFileSelector">
-                            <strong>
-                                Upload "Select Features" List:
-                            </strong>
-                        </label>
-                        TODO make RRVDisplay get this input by ID
-                            and set its onchange to the RRVDisplay instance's
-                            particular select microbes or whatever function
-                        <input type="file" id="selectMicrobesFileSelector"
-                            onChange="ssmv.uploadSelectMicrobesFile();" />
-                    </p>
-                    <p>
-                        <label for="zeroFillInput">
-                            <strong>
-                                Value to fill in for zero-abundance features:
-                            </strong>
-                        </label>
-                        <input type="number" id="zeroFillInput" min="0"
-                            max="1000" value="0">
-                        </input>
-                    </p>
-                    -->
-                </td>
-            </tr>
-        </table>
-
+        <!-- Invisible <a> used for downloading data URIs.
+             Based on #downloadHelper in MetagenomeScope's viewer
+             interface.
+        -->
+        <a id="downloadHelper"></a>
+        <p>
+            <button id="multiFeatureButton">
+                Regenerate sample plot
+            </button>
+        </p>
+        <p>
+            <button id="exportDataButton">
+                Export currently used data
+            </button>
+        </p>
+        <!--
+        <p>
+            <label for="selectMicrobesFileSelector">
+                <strong>
+                    Upload "Select Features" List:
+                </strong>
+            </label>
+            TODO make RRVDisplay get this input by ID
+                and set its onchange to the RRVDisplay instance's
+                particular select microbes or whatever function
+            <input type="file" id="selectMicrobesFileSelector"
+                onChange="ssmv.uploadSelectMicrobesFile();" />
+        </p>
+        <p>
+            <label for="zeroFillInput">
+                <strong>
+                    Value to fill in for zero-abundance features:
+                </strong>
+            </label>
+            <input type="number" id="zeroFillInput" min="0"
+                max="1000" value="0">
+            </input>
+        </p>
+        -->
         <!-- This file will be edited by the rankratioviz python script to
              contain definitions for the rank plot and sample plot JSON,
              and will use these to create an instance of RRVDisplay

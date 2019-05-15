@@ -1,6 +1,6 @@
-/* For debugging. Uncomment out to show the space taken up by each element.
- * * { border: 1px solid red; }
- */
+/* * {
+    border: 1px solid red;
+} */
 h3,
 p {
     text-align: center;
@@ -11,19 +11,16 @@ button,
 select {
     font-size: large;
 }
-.plotTD {
+.plotDiv {
     width: 50%;
 }
-.topAlignedTD {
+.topAlignedDiv {
     vertical-align: top;
 }
-#rrvTable {
-    width: 100%;
-}
-#rankPlotTD {
+#rankPlotDiv {
     text-align: right;
 }
-#samplePlotTD {
+#samplePlotDiv {
     text-align: left;
 }
 #rankPlot {
@@ -31,6 +28,12 @@ select {
 }
 #samplePlot {
     margin-left: 1em;
+}
+#rankPlot,
+#samplePlot {
+    overflow: scroll;
+    height: 450px;
+    border: 1px solid #ccc;
 }
 textarea {
     width: 92%;
