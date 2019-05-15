@@ -47,7 +47,7 @@ textarea {
 }
 .fancyBorder {
     border: 1px solid;
-    border-radius: 3%;
+    border-radius: 3px;
 }
 .num {
     border-color: #f00;
