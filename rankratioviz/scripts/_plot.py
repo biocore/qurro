@@ -18,6 +18,7 @@ from rankratioviz._rank_utils import read_rank_file
 from rankratioviz._metadata_utils import (
     read_metadata_file,
     read_gnps_feature_metadata_file,
+    escape_columns,
 )
 
 
@@ -86,7 +87,7 @@ def plot(
     logging.debug("Starting the standalone rrv script.")
     loaded_biom = load_table(table)
     logging.debug("Loaded BIOM table.")
-    df_sample_metadata = read_metadata_file(sample_metadata)
+    df_sample_metadata = escape_columns(read_metadata_file(sample_metadata))
     feature_ranks = read_rank_file(ranks)
 
     df_feature_metadata = None
