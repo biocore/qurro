@@ -17,18 +17,15 @@ select {
 }
 .plotControlBlock {
     display: block;
-}
-#rankPlotDiv {
-    text-align: right;
-}
-#samplePlotDiv {
-    text-align: left;
+    text-align: center;
 }
 #rankPlot {
     margin-right: 2em;
+    text-align: right;
 }
 #samplePlot {
     margin-left: 2em;
+    text-align: left;
 }
 /* The reason for max-width: 90% is to leave room for the Vega-Embed "actions"
  * circle thing. Might be worth addressing this later, but for now this is a
