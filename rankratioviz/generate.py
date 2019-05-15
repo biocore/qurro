@@ -339,7 +339,8 @@ def gen_rank_plot(V):
         .configure_axis(
             # Done in order to differentiate "None"-classification features
             # from grid lines
-            gridColor="#f2f2f2"
+            gridColor="#f2f2f2",
+            labelBound=True,
         )
         .interactive()
     )

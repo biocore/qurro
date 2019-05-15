@@ -1,6 +1,6 @@
-/* For debugging. Uncomment out to show the space taken up by each element.
- * * { border: 1px solid red; }
- */
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
 h3,
 p {
     text-align: center;
@@ -11,29 +11,65 @@ button,
 select {
     font-size: large;
 }
-.plotTD {
-    width: 50%;
+.twoColumnRow {
+    display: grid;
+    grid-template-columns: 50% 50%;
 }
-.topAlignedTD {
-    vertical-align: top;
+.plotControlBlock {
+    display: block;
 }
-#rrvTable {
-    width: 100%;
-}
-#rankPlotTD {
+#rankPlotDiv {
     text-align: right;
 }
-#samplePlotTD {
+#samplePlotDiv {
     text-align: left;
 }
 #rankPlot {
-    margin-right: 1em;
+    margin-right: 2em;
 }
 #samplePlot {
-    margin-left: 1em;
+    margin-left: 2em;
+}
+/* The reason for max-width: 90% is to leave room for the Vega-Embed "actions"
+ * circle thing. Might be worth addressing this later, but for now this is a
+ * reasonable hack.
+ * Also, max-height can be decreased once we remove the rank signal (it's
+ * included within the rankPlot, which is why the height is as large as it is).
+ */
+#rankPlot,
+#samplePlot {
+    overflow: auto;
+    max-height: 420px;
+    max-width: 90%;
 }
 textarea {
     width: 92%;
+}
+.fancyBorder {
+    border: 1px solid;
+    border-radius: 3%;
+}
+.num {
+    border-color: #f00;
+}
+.den {
+    border-color: #00f;
+}
+/* Don't completely overwrite the outline imposed by the browser on selection;
+ * instead of using the default color for the outlines, use a special darker
+ * color based on the element's border color. These colors should adhere to
+ * accessibility guidelines for contrast; see
+ * https://www.w3.org/WAI/WCAG21/Understanding/non-text-contrast.html and see
+ * https://www.w3.org/WAI/WCAG21/Techniques/general/G145#procedure for a
+ * description of how to verify this (tldr: you just calculate the relative
+ * luminance of both colors and look at the ratio after adding 0.05 to both
+ * parts of the ratio).
+ */
+.num:focus {
+    outline-color: #800;
+}
+.den:focus {
+    outline-color: #009;
 }
 #downloadHelper {
     display: none;
