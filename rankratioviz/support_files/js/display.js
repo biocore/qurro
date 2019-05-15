@@ -265,16 +265,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 document
                     .getElementById("xAxisField")
                     .querySelector(
-                        "option[value = " +
+                        'option[value = "' +
                             this.samplePlotJSON.encoding.x.field +
-                            "]"
+                            '"]'
                     ).selected = true;
                 document
                     .getElementById("colorField")
                     .querySelector(
-                        "option[value = " +
+                        'option[value = "' +
                             this.samplePlotJSON.encoding.color.field +
-                            "]"
+                            '"]'
                     ).selected = true;
             }
             this.updateSamplePlotTooltips();
