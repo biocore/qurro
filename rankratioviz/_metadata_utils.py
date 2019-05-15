@@ -31,6 +31,10 @@ def read_metadata_file(md_file_loc):
         type_conv_dict = {col: str for col in bool_cols}
         metadata_df = metadata_df.astype(type_conv_dict)
 
+    # Ensure that the first column in the metadata file is treated as a string.
+    # This is needed to ensure that matching sample/feature IDs works.
+    metadata_df.index = metadata_df.index.astype(str)
+
     return metadata_df
 
 
