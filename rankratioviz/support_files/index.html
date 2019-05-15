@@ -61,11 +61,19 @@
                     long lines.)
                 -->
                 <p>
-                    <textarea id="topFeaturesDisplay" rows="6"></textarea>
+                    <textarea
+                        id="topFeaturesDisplay"
+                        class="fancyBorder num"
+                        rows="6"
+                    ></textarea>
                 </p>
                 <hr />
                 <p>
-                    <textarea id="botFeaturesDisplay" rows="6"></textarea>
+                    <textarea
+                        id="botFeaturesDisplay"
+                        class="fancyBorder den"
+                        rows="6"
+                    ></textarea>
                 </p>
             </div>
             <div id="selectionControls">
@@ -77,7 +85,7 @@
                 </p>
                 <p>
                     Filter numerator to features that
-                    <select id="topSearch">
+                    <select class="fancyBorder num" id="topSearch">
                         <option value="text">
                             contain the exact text
                         </option>
@@ -85,11 +93,16 @@
                             contain the exact taxonomic rank(s)
                         </option>
                     </select>
-                    <input type="text" id="topText" size="30" />
+                    <input
+                        type="text"
+                        class="fancyBorder num"
+                        id="topText"
+                        size="30"
+                    />
                 </p>
                 <p>
                     Filter denominator to features that
-                    <select id="botSearch">
+                    <select class="fancyBorder den" id="botSearch">
                         <option value="text">
                             contain the exact text
                         </option>
@@ -97,7 +110,12 @@
                             contain the exact taxonomic rank(s)
                         </option>
                     </select>
-                    <input type="text" id="botText" size="30" />
+                    <input
+                        type="text"
+                        class="fancyBorder den"
+                        id="botText"
+                        size="30"
+                    />
                 </p>
 
                 <!-- Invisible <a> used for downloading data URIs.
