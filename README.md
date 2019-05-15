@@ -153,7 +153,7 @@ The design of rankratioviz was strongly inspired by
 Yoshiki Vázquez-Baeza for his help in planning this project, as well as to
 Cameron Martino for a ton of work on getting the code in a distributable state
 (and making it work with QIIME 2). Thanks also to Jamie Morton, who wrote the
-original code for producing rank plots from which this is derived.
+original code for producing rank and sample plots from which this is derived.
 
 ## References
 
