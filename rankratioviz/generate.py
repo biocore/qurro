@@ -311,12 +311,19 @@ def gen_rank_plot(V):
             autosize=alt.AutoSizeParams(resize=True),
         )
         .mark_bar()
+        .transform_window(
+            sort=[alt.SortField(field=default_rank_col, order="ascending")],
+            # We don't use an alt.WindowFieldDef here because python gets
+            # confused when you use "as" as an actual argument name. So we just
+            # use this syntax.
+            window=[{"op": "rank", "as": "rrv_x"}],
+        )
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
             # see https://stackoverflow.com/a/55544817/10730311. For now, we're
             # sticking with type="quantitative" in order to allow for
             # zooming/panning along the x-axis.
-            x=alt.X("rankratioviz_x", title="Features", type="quantitative"),
+            x=alt.X("rrv_x", title="Features", type="quantitative"),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "Classification",
@@ -328,9 +335,7 @@ def gen_rank_plot(V):
             size=alt.value(1.0),
             tooltip=[
                 alt.Tooltip(
-                    field="rankratioviz_x",
-                    title="Current Ranking",
-                    type="quantitative",
+                    field="rrv_x", title="Current Ranking", type="quantitative"
                 ),
                 "Classification",
                 "Feature ID",
