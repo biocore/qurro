@@ -251,58 +251,44 @@ def gen_rank_plot(V):
 
     Returns:
 
-    JSON describing altair.Chart for the rank plot.
+    JSON describing a Vega-Lite specification for the rank plot.
     """
 
-    # TODO make a copy of V first, just to be extra safe
+    rank_data = V.copy()
     # Get stuff ready for the rank plot
     # First off, convert all rank column IDs to strings (since Altair gets
     # angry if you pass in ints as column IDs). This is a problem with
     # OrdinationResults files, since just getting the raw column IDs gives int
     # values (0 for the first column, 1 for the second column, etc.)
-    V.columns = [fix_id(str(c)) for c in V.columns]
+    rank_data.columns = [fix_id(str(c)) for c in rank_data.columns]
+
+    # We'll store this in the rank plot JSON -- helps with testing and with
+    # setting up the visualization rankField <select>
+    just_the_ranking_ids = rank_data.columns
 
     # NOTE that until this point we've treated the actual rank values as just
     # "objects", as far as pandas is concerned. However, if we continue to
     # treat them as objects when sorting them, we'll get a list of feature
     # ranks in lexicographic order... which is not what we want. So we just
     # ensure that all of the columns contain numeric data.
-    for col in V.columns:
-        V[col] = pd.to_numeric(V[col])
+    for col in rank_data.columns:
+        rank_data[col] = pd.to_numeric(rank_data[col])
 
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
-    default_rank_col = V.columns[0]
-
-    # Sort the ranked features in ascending order by their first rank. Since
-    # all the columns in V are now numeric, this should work ok.
-    rank_vals = V.sort_values(by=[default_rank_col])
-
-    # "x" keeps track of the sorted order of the ranks. It's just a range of
-    # [0, F), where F = the number of ranked features.
-    rankratioviz_x = range(rank_vals.shape[0])
+    default_rank_col = rank_data.columns[0]
 
     # Set default classification of every feature to "None"
     # (This value will be updated when a feature is selected in the rank plot
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
-    classification = pd.Series(index=rank_vals.index).fillna("None")
-
-    # Start populating the DataFrame we'll pass into Altair as the main source
-    # of data for the rank plot.
-    rank_data = pd.DataFrame(
-        {"rankratioviz_x": rankratioviz_x, "Classification": classification}
-    )
-
-    # Merge that DataFrame with the actual rank values. Their indices should be
-    # identical, since we constructed rank_data based on rank_vals.
-    rank_data = pd.merge(
-        rank_data, rank_vals, left_index=True, right_index=True
-    )
+    rank_data["Classification"] = "None"
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
+
+    # Now, we can actually create the rank plot.
     rank_chart = (
         alt.Chart(
             rank_data,
@@ -316,14 +302,14 @@ def gen_rank_plot(V):
             # We don't use an alt.WindowFieldDef here because python gets
             # confused when you use "as" as an actual argument name. So we just
             # use this syntax.
-            window=[{"op": "rank", "as": "rrv_x"}],
+            window=[{"op": "rank", "as": "rankratioviz_x"}],
         )
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
             # see https://stackoverflow.com/a/55544817/10730311. For now, we're
             # sticking with type="quantitative" in order to allow for
             # zooming/panning along the x-axis.
-            x=alt.X("rrv_x", title="Features", type="quantitative"),
+            x=alt.X("rankratioviz_x", title="Features", type="quantitative"),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "Classification",
@@ -335,7 +321,9 @@ def gen_rank_plot(V):
             size=alt.value(1.0),
             tooltip=[
                 alt.Tooltip(
-                    field="rrv_x", title="Current Ranking", type="quantitative"
+                    field="rankratioviz_x",
+                    title="Current Ranking",
+                    type="quantitative",
                 ),
                 "Classification",
                 "Feature ID",
@@ -352,7 +340,11 @@ def gen_rank_plot(V):
 
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "rankratioviz_rank_ordering"
-    rank_chart_json["datasets"][rank_ordering] = list(V.columns)
+    # Note we don't use rank_data.columns for setting the rank ordering. This
+    # is because rank_data's columns now include both the ranking IDs and the
+    # "Feature ID" and "Classification" columns (and maybe more, if I add in
+    # columns for each feature in the future for some reason).
+    rank_chart_json["datasets"][rank_ordering] = list(just_the_ranking_ids)
     return rank_chart_json
 
 
