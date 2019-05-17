@@ -302,7 +302,7 @@ def gen_rank_plot(V):
             # We don't use an alt.WindowFieldDef here because python gets
             # confused when you use "as" as an actual argument name. So we just
             # use this syntax.
-            window=[{"op": "rank", "as": "rankratioviz_x"}],
+            window=[{"op": "row_number", "as": "rankratioviz_x"}],
         )
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
