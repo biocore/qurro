@@ -32,12 +32,15 @@ select {
  * reasonable hack.
  * Also, max-height can be decreased once we remove the rank signal (it's
  * included within the rankPlot, which is why the height is as large as it is).
+ * width: 100% is needed to let the plot divs cover their entire horizontal
+ * space.
  */
 #rankPlot,
 #samplePlot {
     overflow: auto;
     max-height: 420px;
     max-width: 90%;
+    width: 100%;
 }
 textarea {
     width: 92%;
