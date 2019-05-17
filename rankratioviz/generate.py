@@ -306,10 +306,14 @@ def gen_rank_plot(V):
         )
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
-            # see https://stackoverflow.com/a/55544817/10730311. For now, we're
-            # sticking with type="quantitative" in order to allow for
-            # zooming/panning along the x-axis.
-            x=alt.X("rankratioviz_x", title="Features", type="quantitative"),
+            # see https://stackoverflow.com/a/55544817/10730311.
+            x=alt.X(
+                "rankratioviz_x",
+                title="Features",
+                type="ordinal",
+                scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
+                axis=alt.Axis(ticks=False, labelAngle=-45),
+            ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "Classification",
@@ -318,7 +322,6 @@ def gen_rank_plot(V):
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
                 ),
             ),
-            size=alt.value(1.0),
             tooltip=[
                 alt.Tooltip(
                     field="rankratioviz_x",
