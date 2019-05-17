@@ -398,10 +398,7 @@ def gen_sample_plot(table, metadata):
     # unless we actually change something in the actual spec details.
     sample_metadata.sort_values(by=["Sample ID"], inplace=True)
 
-    # Create sample plot in Altair.
-    # If desired, we can make this interactive by adding .interactive() to the
-    # alt.Chart declaration (but we don't do that currently since it makes
-    # changing the scale of the chart smoother IIRC)
+    # Create sample plot chart Vega-Lite spec using Altair.
     sample_chart = (
         alt.Chart(
             sample_metadata,
@@ -411,26 +408,17 @@ def gen_sample_plot(table, metadata):
         )
         .mark_circle()
         .encode(
-            alt.X(
-                # TODO eventually set to default_metadata_col when we can
-                # support arbitrary starting x-axis fields? Or not, I guess.
-                "rankratioviz_balance",
-                # As with the color type, this is a temporary measure.
-                type="quantitative",
-            ),
+            alt.X("rankratioviz_balance", type="quantitative"),
             alt.Y(
                 "rankratioviz_balance",
                 title="log(Numerator / Denominator)",
                 type="quantitative",
             ),
-            color=alt.Color(
-                default_metadata_col,
-                # This is a temporary measure. Eventually the type should be
-                # user-configurable.
-                type="nominal",
-            ),
+            color=alt.Color(default_metadata_col, type="nominal"),
             tooltip=["Sample ID", "rankratioviz_balance"],
         )
+        .configure_axis(labelBound=True)
+        .interactive()
     )
 
     # Return the JSONs as dicts for 1) the sample plot JSON (which only
