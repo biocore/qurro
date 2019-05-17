@@ -212,26 +212,27 @@ def test_feature_metadata_and_dropped_sample():
         feature_metadata_name="feature_metadata.txt",
         expected_unsupported_samples=1,
     )
-    # Assert that Taxon3 has been annotated.
+
     data_name = rank_json["data"]["name"]
-    # Hardcoded based on the one populated row in floc. This shouldn't
+    # Hardcoded based on Taxon3's specification in floc. This shouldn't
     # change in the future, so hardcoding it here is fine.
     relevant_feature_metadata = ["Taxon3", "Yeet", "100"]
-    # We know Taxon3 will be in the 1th position because the feature should
-    # be sorted by their first rank (in this case, Intercept)
-    t3id = rank_json["datasets"][data_name][1]["Feature ID"]
-    # We don't care how the feature metadata annotation is done; we just
-    # want to make sure that all the metadata is in the feature ID somehow
-    for fm in relevant_feature_metadata:
-        assert fm in t3id
-    # Check that the other taxa haven't been annotated with this data
-    # (Obviously, if the feature metadata is somehow present in a taxon
-    # name -- e.g. we have a taxon called "Taxon100" -- then this would
-    # fail, but for this simple test with five taxa it shouldn't matter.)
-    for x in [0, 2, 3, 4]:
-        txid = rank_json["datasets"][data_name][x]["Feature ID"]
-        for fm in relevant_feature_metadata:
-            assert fm not in txid
+
+    for feature in rank_json["datasets"][data_name]:
+        txid = feature["Feature ID"]
+        if feature["Feature ID"].startswith("Taxon3"):
+            # Check that Taxon3 has been annotated.
+            # We don't care how the feature metadata annotation is done; we
+            # just want to make sure that all the metadata is in the feature
+            # ID somehow
+            for fm in relevant_feature_metadata:
+                assert fm in txid
+        else:
+            # Check that the other taxa haven't been annotated with Taxon3's
+            # metadata. (Obviously will fail if, e.g., "100" is in another
+            # taxon's ID, but for this simple test case this should be ok.)
+            for fm in relevant_feature_metadata:
+                assert fm not in txid
 
     # Assert that Sample4 was dropped from the "main" dataset of the plot
     data_name = sample_json["data"]["name"]
