@@ -268,7 +268,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // being used, and that it's a "rank" window transform. (This is a
             // reasonable assumption, since we generate the rank plot.)
             this.rankPlotJSON.transform[0].sort[0].field = newRank;
-            //this.makeRankPlot(true);
+            this.remakeRankPlot();
+        }
+
+        remakeRankPlot() {
+            this.destroy(true, false, false);
+            this.makeRankPlot(true);
         }
 
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
@@ -433,7 +438,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // Clear out the sample plot. NOTE that I'm not sure if this is
             // 100% necessary, but it's probs a good idea to prevent memory
             // waste.
-            this.destroy(true);
+            this.destroy(false, true, false);
             this.makeSamplePlot(true);
         }
 
@@ -675,38 +680,45 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
-        /* Clears the effects of this rrv instance on the DOM, including
-         * clearing the HTML inside the rank and sample plot <div> elements.
+        /* Selectively clears the effects of this rrv instance on the DOM.
          *
-         * Doesn't really "delete" the current RRVDisplay instance, but this
-         * should make it feasible to create new RRVDisplay instances
-         * afterwards without refreshing the page.
-         *
-         * This is mainly intended for use with tests (e.g. creating multiple
-         * displays in quick succession).
-         *
-         * If justSamplePlot is truthy, this will only clear the sample plot.
+         * You should only call this with clearOtherStuff set to a truthy value
+         * when you want to get rid of the entire current display. This won't
+         * really "delete" the current RRVDisplay instance, but this should
+         * make it feasible to create new RRVDisplay instances afterwards
+         * without refreshing the page.
          */
-        destroy(justSamplePlot) {
-            this.samplePlotView.finalize();
-            RRVDisplay.clearDiv("samplePlot");
-            if (justSamplePlot) {
-                return;
+        destroy(clearRankPlot, clearSamplePlot, clearOtherStuff) {
+            if (clearRankPlot) {
+                this.rankPlotView.finalize();
+                RRVDisplay.clearDiv("rankPlot");
             }
-            this.rankPlotView.finalize();
-            RRVDisplay.clearDiv("rankPlot");
-            // Clear the "features text" displays
-            this.updateFeaturesTextDisplays(false, true);
-            // Clear the bindings of bound DOM elements
-            for (var i = 0; i < this.elementsWithOnClickBindings.length; i++) {
-                document.getElementById(
-                    this.elementsWithOnClickBindings[i]
-                ).onclick = undefined;
+            if (clearSamplePlot) {
+                this.samplePlotView.finalize();
+                RRVDisplay.clearDiv("samplePlot");
             }
-            for (var j = 0; j < this.elementsWithOnChangeBindings.length; j++) {
-                document.getElementById(
-                    this.elementsWithOnChangeBindings[j]
-                ).onchange = undefined;
+            if (clearOtherStuff) {
+                // Clear the "features text" displays
+                this.updateFeaturesTextDisplays(false, true);
+                // Clear the bindings of bound DOM elements
+                for (
+                    var i = 0;
+                    i < this.elementsWithOnClickBindings.length;
+                    i++
+                ) {
+                    document.getElementById(
+                        this.elementsWithOnClickBindings[i]
+                    ).onclick = undefined;
+                }
+                for (
+                    var j = 0;
+                    j < this.elementsWithOnChangeBindings.length;
+                    j++
+                ) {
+                    document.getElementById(
+                        this.elementsWithOnChangeBindings[j]
+                    ).onchange = undefined;
+                }
             }
         }
     }
