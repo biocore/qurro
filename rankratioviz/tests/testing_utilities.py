@@ -245,7 +245,7 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
     # apply(), or something.
     rank_ordering = rank_json["datasets"]["rankratioviz_rank_ordering"]
     for feature in rank_json["datasets"][dn]:
-        feature_id = feature["Feature ID"].split("|")[0]
+        feature_id = feature["Feature ID"].split(" | ")[0]
         # Identify corresponding "reference" feature in the original data.
         #
         # We already should have asserted in the generation code that the
@@ -304,7 +304,7 @@ def validate_sample_plot_json(
         # Get its base ID (the ID it is referred to by in the input BIOM table
         # and feature rankings file), and its column ID (the integer ID it's
         # referred to by in the JSON count data).
-        feature_base_id = feature_id.split("|")[0]
+        feature_base_id = feature_id.split(" | ")[0]
         # For each sample, ensure that the count value in the JSON matches with
         # the count value in the BIOM table.
         for sample_id in count_json[feature_id]:

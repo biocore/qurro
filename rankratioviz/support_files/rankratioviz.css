@@ -74,14 +74,17 @@ textarea {
 #downloadHelper {
     display: none;
 }
-/* Adjust the styling of the contents of Vega tooltips. All we really care
- * about is making them large enough to show big blocks of text (e.g.
- * taxonomy).
+/* Adjust the styling of the contents of Vega tooltips (the contents of which
+ * are stored in HTML tables). All we really care about is making them large
+ * enough to show big blocks of text (e.g. feature taxonomy).
+ *
+ * Based on the customization described in the vega-tooltip docs here:
+ * https://github.com/vega/vega-tooltip/blob/master/docs/customizing_your_tooltip.md
  *
  * Sidenote: worth making a PR to vega-tooltip that makes it clear that this is
  * how you do this? Might be nice. (TODO?)
  */
-#vg-tooltip-element.vg-tooltip.custom-theme * {
+#vg-tooltip-element.vg-tooltip.custom-theme td {
     max-width: 700px;
     max-height: 300px;
 }

@@ -212,8 +212,8 @@ def process_input(
         new_feature_ids = pd.Series(index=feature_ranks.index)
         for feature_row in matched_feature_metadata.iterrows():
             str_vals = [str(v) for v in feature_row[1].values]
-            id_prefix = feature_row[0] + "|"
-            new_feature_ids[feature_row[0]] = id_prefix + "|".join(str_vals)
+            id_prefix = feature_row[0] + " | "
+            new_feature_ids[feature_row[0]] = id_prefix + " | ".join(str_vals)
         # Features with no associated metadata just get their old IDs.
         for feature_row_id in no_metadata_feature_ids:
             new_feature_ids[feature_row_id] = feature_row_id
