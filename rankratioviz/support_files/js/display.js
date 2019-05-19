@@ -136,7 +136,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.
             var parentDisplay = this;
-            vegaEmbed("#rankPlot", this.rankPlotJSON).then(function(result) {
+            // We specify a "custom" theme which matches with the
+            // "custom"-theme tooltip CSS.
+            vegaEmbed("#rankPlot", this.rankPlotJSON, {
+                tooltip: { theme: "custom" }
+            }).then(function(result) {
                 parentDisplay.rankPlotView = result.view;
                 parentDisplay.addClickEventToRankPlotView(parentDisplay);
             });
