@@ -312,7 +312,7 @@ def gen_rank_plot(V):
                 title="Sorted Features",
                 type="ordinal",
                 scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
-                axis=alt.Axis(ticks=False, labelAngle=-45),
+                axis=alt.Axis(ticks=False, labelAngle=0),
             ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
