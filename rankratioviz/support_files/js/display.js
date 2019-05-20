@@ -90,6 +90,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     },
                     rankField: function() {
                         display.updateRankField();
+                    },
+                    barSize: function() {
+                        display.updateRankPlotBarSize();
                     }
                 },
                 "onchange"
@@ -282,6 +285,28 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         remakeRankPlot() {
             this.destroy(true, false, false);
             this.makeRankPlot(true);
+        }
+
+        updateRankPlotBarSize() {
+            var newSizeType = document.getElementById("barSize").value;
+            var newBarSize = 1;
+            if (newSizeType === "fit") {
+                // Not 100% sure this is optimal.
+                newBarSize =
+                    this.rankPlotJSON.config.view.width /
+                    this.feature_ids.length;
+            }
+            this.rankPlotJSON.encoding.x.scale.rangeStep = newBarSize;
+            if (newBarSize < 1) {
+                document
+                    .getElementById("barSizeWarning")
+                    .classList.remove("invisible");
+            } else {
+                document
+                    .getElementById("barSizeWarning")
+                    .classList.add("invisible");
+            }
+            this.remakeRankPlot();
         }
 
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {

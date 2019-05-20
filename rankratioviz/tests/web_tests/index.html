@@ -17,6 +17,11 @@
         <div id="rankPlot"></div>
         <div id="samplePlot"></div>
         <select id="rankField"> </select>
+        <select id="barSize">
+            <option value="1px"></option>
+            <option value="fit"></option>
+        </select>
+        <p id="barSizeWarning" class="warning plotControlBlock invisible"></p>
         <select id="xAxisField"> </select>
         <select id="colorField"> </select>
         <select id="xAxisScale">
@@ -47,6 +52,7 @@
         <textarea id="topFeaturesDisplay"></textarea>
         <textarea id="botFeaturesDisplay"></textarea>
     </body>
+
     <script
         data-main="setup"
         src="../../support_files/vendor/require.js"

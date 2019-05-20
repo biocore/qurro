@@ -17,6 +17,26 @@
                     <label for="rankField">Ranking</label>
                     <select id="rankField"> </select>
                 </div>
+                <div class="plotControlBlock">
+                    <label for="barSize">Bar width</label>
+                    <select id="barSize">
+                        <option value="1px"
+                            >Set each bar width to 1 pixel</option
+                        >
+                        <option value="fit"
+                            >Match bar width to display width</option
+                        >
+                    </select>
+                    <p
+                        id="barSizeWarning"
+                        class="warning plotControlBlock invisible"
+                    >
+                        <strong>Note:</strong> The rank plot is currently using
+                        a bar width of less than one pixel per bar. This means
+                        that the image shown isn't necessarily going to be an
+                        accurate representation of the rank plot.
+                    </p>
+                </div>
             </div>
             <div>
                 <div id="samplePlot"></div>
@@ -120,7 +140,7 @@
                      Based on #downloadHelper in MetagenomeScope's viewer
                      interface.
                 -->
-                <a id="downloadHelper"></a>
+                <a id="downloadHelper" class="invisible"></a>
                 <p>
                     <button id="multiFeatureButton">
                         Regenerate sample plot
