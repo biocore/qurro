@@ -309,7 +309,7 @@ def gen_rank_plot(V):
             # see https://stackoverflow.com/a/55544817/10730311.
             x=alt.X(
                 "rankratioviz_x",
-                title="Features",
+                title="Sorted Features",
                 type="ordinal",
                 scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
                 axis=alt.Axis(ticks=False, labelAngle=-45),
