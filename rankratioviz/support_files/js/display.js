@@ -420,6 +420,15 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        updateFeatureHeaderCounts(topCt, botCt) {
+            document.getElementById("numHeader").innerHTML =
+                "Numerator Features (" + topCt.toLocaleString() + " selected)";
+            document.getElementById("denHeader").innerHTML =
+                "Denominator Features (" +
+                botCt.toLocaleString() +
+                " selected)";
+        }
+
         /* Updates the textareas that list the selected features.
          *
          * This defaults to updating based on the "multiple" selections' values. If you
@@ -438,6 +447,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 document.getElementById(
                     "botFeaturesDisplay"
                 ).value = this.newFeatureLow;
+                this.updateFeatureHeaderCounts(1, 1);
             } else {
                 document.getElementById(
                     "topFeaturesDisplay"
@@ -445,6 +455,10 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 document.getElementById(
                     "botFeaturesDisplay"
                 ).value = this.botFeatures.toString().replace(/,/g, "\n");
+                this.updateFeatureHeaderCounts(
+                    this.topFeatures.length,
+                    this.botFeatures.length
+                );
             }
         }
 
