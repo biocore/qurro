@@ -9,6 +9,7 @@
 
 import logging
 import pandas as pd
+from rankratioviz.generate import fix_id, ensure_df_headers_unique
 
 
 def read_metadata_file(md_file_loc):
@@ -31,7 +32,22 @@ def read_metadata_file(md_file_loc):
         type_conv_dict = {col: str for col in bool_cols}
         metadata_df = metadata_df.astype(type_conv_dict)
 
+    # Ensure that the first column in the metadata file is treated as a string.
+    # This is needed to ensure that matching sample/feature IDs works.
+    metadata_df.index = metadata_df.index.astype(str)
+
     return metadata_df
+
+
+def escape_columns(df):
+    """Calls fix_id() on each of the column names of the DF."""
+    new_cols = []
+    for col in df.columns:
+        new_cols.append(fix_id(col))
+    df.columns = new_cols
+    # Ensure that this didn't make the column names non-unique
+    ensure_df_headers_unique(df, "escape_columns() DataFrame")
+    return df
 
 
 def get_truncated_feature_id(full_feature_id):

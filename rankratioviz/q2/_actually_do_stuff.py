@@ -8,6 +8,7 @@
 import logging
 import q2templates
 from rankratioviz.generate import process_input, gen_visualization
+from rankratioviz._metadata_utils import escape_columns
 
 
 def create_q2_visualization(
@@ -23,7 +24,7 @@ def create_q2_visualization(
     df_feature_metadata = None
     if feature_metadata is not None:
         df_feature_metadata = feature_metadata.to_dataframe()
-    df_sample_metadata = sample_metadata.to_dataframe()
+    df_sample_metadata = escape_columns(sample_metadata.to_dataframe())
     logging.debug("Converted metadata to DataFrames.")
 
     U, V, processed_table = process_input(
