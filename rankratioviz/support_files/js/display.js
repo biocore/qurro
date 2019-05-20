@@ -516,7 +516,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 // labelAngle parameter.
                 if (newScale === "nominal") {
                     this.samplePlotJSON.encoding.x.axis = { labelAngle: -45 };
+                    if (document.getElementById("boxplotCheckbox").checked) {
+                        this.changeSamplePlotToBoxplot(false);
+                    }
                 } else {
+                    this.changeSamplePlotFromBoxplot(false);
                     // This should work even if the axis property is undefined
                     // -- it just won't do anything in that case.
                     delete this.samplePlotJSON.encoding.x.axis;
@@ -530,10 +534,28 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotBoxplot() {
-            if (document.getElementById("boxplotCheckbox").checked) {
-                console.log("Boxplot mode enabled");
-            } else {
-                console.log("Boxplot mode disabled");
+            // We only bother changing up anything if the sample plot x-axis
+            // is currently categorical.
+            if (this.samplePlotJSON.encoding.x.type === "nominal") {
+                if (document.getElementById("boxplotCheckbox").checked) {
+                    this.changeSamplePlotToBoxplot(true);
+                } else {
+                    this.changeSamplePlotFromBoxplot(true);
+                }
+            }
+        }
+
+        changeSamplePlotToBoxplot(callRemakeSamplePlot) {
+            console.log("Changing sample plot to boxplot.");
+            if (callRemakeSamplePlot) {
+                console.log("calling remakeSamplePlot().");
+            }
+        }
+
+        changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
+            console.log("Changing sample plot FROM boxplot.");
+            if (callRemakeSamplePlot) {
+                console.log("calling remakeSamplePlot().");
             }
         }
 
