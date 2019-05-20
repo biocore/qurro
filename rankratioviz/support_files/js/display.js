@@ -93,6 +93,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     },
                     barSize: function() {
                         display.updateRankPlotBarSize(true);
+                    },
+                    boxplotCheckbox: function() {
+                        display.updateSamplePlotBoxplot();
                     }
                 },
                 "onchange"
@@ -524,6 +527,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 ).value;
             }
             this.remakeSamplePlot();
+        }
+
+        updateSamplePlotBoxplot() {
+            if (document.getElementById("boxplotCheckbox").checked) {
+                console.log("Boxplot mode enabled");
+            } else {
+                console.log("Boxplot mode disabled");
+            }
         }
 
         static identifyMetadataColumns(samplePlotSpec) {
