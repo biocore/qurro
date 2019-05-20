@@ -132,6 +132,10 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     this.rankOrdering[0]
                 );
             }
+            // Set the y-axis to say "Rank: [rank title]" instead of just
+            // "[rank title]". Makes things a bit clearer.
+            this.rankPlotJSON.encoding.y.title =
+                "Rank: " + this.rankPlotJSON.encoding.y.field;
             // We can use a closure to allow callback functions to access "this"
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.
