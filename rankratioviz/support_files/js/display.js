@@ -92,7 +92,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                         display.updateRankField();
                     },
                     barSize: function() {
-                        display.updateRankPlotBarSize();
+                        display.updateRankPlotBarSize(true);
                     }
                 },
                 "onchange"
@@ -134,6 +134,15 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     this.rankOrdering,
                     this.rankOrdering[0]
                 );
+                // Figure out which bar size type to default to
+                // We determine this based on how many features there are
+                if (
+                    this.feature_ids.length <=
+                    this.rankPlotJSON.config.view.width
+                ) {
+                    document.getElementById("barSize").value = "fit";
+                    this.updateRankPlotBarSize(false);
+                }
             }
             // Set the y-axis to say "Rank: [rank title]" instead of just
             // "[rank title]". Makes things a bit clearer.
@@ -287,7 +296,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.makeRankPlot(true);
         }
 
-        updateRankPlotBarSize() {
+        updateRankPlotBarSize(callRemakeRankPlot) {
             var newSizeType = document.getElementById("barSize").value;
             var newBarSize = 1;
             if (newSizeType === "fit") {
@@ -306,7 +315,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     .getElementById("barSizeWarning")
                     .classList.add("invisible");
             }
-            this.remakeRankPlot();
+            if (callRemakeRankPlot) {
+                this.remakeRankPlot();
+            }
         }
 
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
