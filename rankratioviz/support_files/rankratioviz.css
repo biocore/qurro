@@ -1,21 +1,34 @@
 * {
     font-family: Helvetica, Arial, sans-serif;
 }
-h3,
 p {
     text-align: center;
 }
 /* Override user agents that automatically add vertical margins, which makes the layout
  * look kinda strange
  */
-#selectionControls h3 {
+h3 {
     margin: 0;
+    text-align: center;
 }
 body,
 input,
 button,
 select {
     font-size: large;
+}
+/* info and warning are inspired by the similarly-named elements in
+ * Bootstrap.
+ */
+.info {
+    font-size: small;
+    background-color: #cfffff;
+    color: #1f4c73;
+    border-radius: 5px;
+    border: 2px solid #cfcfff;
+}
+.info strong {
+    color: #0a2a3b;
 }
 .warning {
     font-size: small;
