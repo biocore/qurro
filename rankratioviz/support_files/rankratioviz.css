@@ -4,11 +4,12 @@
 p {
     text-align: center;
 }
-/* Override user agents that automatically add vertical margins, which makes the layout
- * look kinda strange
+/* Override user agents that automatically add vertical margins, which can make
+ * the layout look kinda strange
  */
-h3 {
-    margin: 0;
+.centeredHeader {
+    margin-top: 1em;
+    margin-bottom: 0;
     text-align: center;
 }
 body,
@@ -44,7 +45,7 @@ select {
     display: grid;
     grid-template-columns: 50% 50%;
 }
-.plotControlBlock {
+.centeredBlock {
     display: block;
     text-align: center;
 }

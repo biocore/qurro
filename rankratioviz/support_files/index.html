@@ -13,11 +13,11 @@
         <div class="twoColumnRow">
             <div>
                 <div id="rankPlot"></div>
-                <div class="plotControlBlock">
+                <div class="centeredBlock">
                     <label for="rankField">Ranking</label>
                     <select id="rankField"> </select>
                 </div>
-                <div class="plotControlBlock">
+                <div class="centeredBlock">
                     <label for="barSize">Bar width</label>
                     <select id="barSize">
                         <option value="1px"
@@ -29,7 +29,7 @@
                     </select>
                     <p
                         id="barSizeWarning"
-                        class="warning plotControlBlock invisible"
+                        class="warning centeredBlock invisible"
                     >
                         <strong>Note:</strong> The rank plot is currently using
                         a bar width of less than one pixel per bar. This means
@@ -40,7 +40,7 @@
             </div>
             <div>
                 <div id="samplePlot"></div>
-                <div class="plotControlBlock">
+                <div class="centeredBlock">
                     <!-- NOTE that the scale/field select values below will be
                          literally used in the JSON.
                          Also, the first-listed one is the default. Since the
@@ -48,7 +48,7 @@
                          color is the sample ID (nom.), we adjust the default
                          scale types accordingly.
                     -->
-                    <div class="plotControlBlock">
+                    <div class="centeredBlock">
                         <label for="xAxisField">x-axis field</label>
                         <select id="xAxisField"> </select>
                         <label for="xAxisScale">x-axis scale type</label>
@@ -57,7 +57,7 @@
                             <option value="nominal">Categorical</option>
                         </select>
                     </div>
-                    <div class="plotControlBlock">
+                    <div class="centeredBlock">
                         <label for="colorField">Color field</label>
                         <select id="colorField"> </select>
                         <label for="colorScale">Color scale type</label>
@@ -78,25 +78,31 @@
                     (So that's why the textarea declarations below are on
                     long lines.)
                 -->
-                <p>
+                <div class="centeredBlock">
+                    <h4 id="numHeader" class="centeredHeader">
+                        Numerator Features (0 selected)
+                    </h4>
                     <textarea
                         id="topFeaturesDisplay"
                         class="fancyBorder num"
                         rows="6"
                     ></textarea>
-                </p>
+                </div>
                 <hr />
-                <p>
+                <div class="centeredBlock">
+                    <h4 id="denHeader" class="centeredHeader">
+                        Denominator Features (0 selected)
+                    </h4>
                     <textarea
                         id="botFeaturesDisplay"
                         class="fancyBorder den"
                         rows="6"
                     ></textarea>
-                </p>
+                </div>
             </div>
             <div id="selectionControls">
-                <h3>Selecting Features</h3>
-                <p class="info plotControlBlock">
+                <h3 class="centeredHeader">Selecting Features</h3>
+                <p class="info centeredBlock">
                     To construct a log ratio, select feature(s) by clicking on
                     the plot of feature ranks on the left or by searching using
                     the controls below.
