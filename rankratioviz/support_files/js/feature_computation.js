@@ -81,7 +81,7 @@ define(function() {
                 // that. (If there is no | in the taxon name, then this will
                 // just search the entire string:
                 // "abcdefg".split("|")[0] === "abcdefg")
-                taxonomyPart = potentialFeatures[ti].split("|")[0];
+                taxonomyPart = potentialFeatures[ti].split(" | ")[0];
                 ranksOfTaxon = taxonomyPart.split(";");
                 // Loop over ranks
                 for (var ri2 = 0; ri2 < rankArray.length; ri2++) {

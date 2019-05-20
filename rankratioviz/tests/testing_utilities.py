@@ -240,12 +240,12 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
     # generation process -- there's an assertion in the code that checks
     # for this, actually)
     assert len(rank_json["datasets"][dn]) == len(reference_features)
-    # Loop over every rank included in this JSON file:
+    # Loop over every rank included in this JSON file.
+    # TODO could probably make this more efficient with vectorized operations,
+    # apply(), or something.
     rank_ordering = rank_json["datasets"]["rankratioviz_rank_ordering"]
-    prev_rank_0_val = float("-inf")
-    prev_x_val = -1
     for feature in rank_json["datasets"][dn]:
-        feature_id = feature["Feature ID"].split("|")[0]
+        feature_id = feature["Feature ID"].split(" | ")[0]
         # Identify corresponding "reference" feature in the original data.
         #
         # We already should have asserted in the generation code that the
@@ -266,20 +266,6 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
         for r in range(len(rank_ordering)):
             actual_rank_val = reference_feature_series[r]
             assert actual_rank_val == approx(feature[rank_ordering[r]])
-
-        # Check that the initial ranks of the JSON features are in order
-        # (i.e. the first rank of each feature should be monotonically
-        # increasing)
-        # (If this rank is approximately equal to the previous rank, then
-        # don't bother with the comparison -- but still update
-        # prev_rank_0_val.)
-        if feature[rank_ordering[0]] != approx(prev_rank_0_val):
-            assert feature[rank_ordering[0]] >= prev_rank_0_val
-        # Check that x values are also in order
-        assert feature["rankratioviz_x"] == prev_x_val + 1
-        # Update prev_ things for the next iteration of the loop
-        prev_rank_0_val = feature[rank_ordering[0]]
-        prev_x_val = feature["rankratioviz_x"]
 
 
 def validate_sample_plot_json(
@@ -318,7 +304,7 @@ def validate_sample_plot_json(
         # Get its base ID (the ID it is referred to by in the input BIOM table
         # and feature rankings file), and its column ID (the integer ID it's
         # referred to by in the JSON count data).
-        feature_base_id = feature_id.split("|")[0]
+        feature_base_id = feature_id.split(" | ")[0]
         # For each sample, ensure that the count value in the JSON matches with
         # the count value in the BIOM table.
         for sample_id in count_json[feature_id]:

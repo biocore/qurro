@@ -212,8 +212,8 @@ def process_input(
         new_feature_ids = pd.Series(index=feature_ranks.index)
         for feature_row in matched_feature_metadata.iterrows():
             str_vals = [str(v) for v in feature_row[1].values]
-            id_prefix = feature_row[0] + "|"
-            new_feature_ids[feature_row[0]] = id_prefix + "|".join(str_vals)
+            id_prefix = feature_row[0] + " | "
+            new_feature_ids[feature_row[0]] = id_prefix + " | ".join(str_vals)
         # Features with no associated metadata just get their old IDs.
         for feature_row_id in no_metadata_feature_ids:
             new_feature_ids[feature_row_id] = feature_row_id
@@ -251,58 +251,44 @@ def gen_rank_plot(V):
 
     Returns:
 
-    JSON describing altair.Chart for the rank plot.
+    JSON describing a Vega-Lite specification for the rank plot.
     """
 
-    # TODO make a copy of V first, just to be extra safe
+    rank_data = V.copy()
     # Get stuff ready for the rank plot
     # First off, convert all rank column IDs to strings (since Altair gets
     # angry if you pass in ints as column IDs). This is a problem with
     # OrdinationResults files, since just getting the raw column IDs gives int
     # values (0 for the first column, 1 for the second column, etc.)
-    V.columns = [fix_id(str(c)) for c in V.columns]
+    rank_data.columns = [fix_id(str(c)) for c in rank_data.columns]
+
+    # We'll store this in the rank plot JSON -- helps with testing and with
+    # setting up the visualization rankField <select>
+    just_the_ranking_ids = rank_data.columns
 
     # NOTE that until this point we've treated the actual rank values as just
     # "objects", as far as pandas is concerned. However, if we continue to
     # treat them as objects when sorting them, we'll get a list of feature
     # ranks in lexicographic order... which is not what we want. So we just
     # ensure that all of the columns contain numeric data.
-    for col in V.columns:
-        V[col] = pd.to_numeric(V[col])
+    for col in rank_data.columns:
+        rank_data[col] = pd.to_numeric(rank_data[col])
 
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
-    default_rank_col = V.columns[0]
-
-    # Sort the ranked features in ascending order by their first rank. Since
-    # all the columns in V are now numeric, this should work ok.
-    rank_vals = V.sort_values(by=[default_rank_col])
-
-    # "x" keeps track of the sorted order of the ranks. It's just a range of
-    # [0, F), where F = the number of ranked features.
-    rankratioviz_x = range(rank_vals.shape[0])
+    default_rank_col = rank_data.columns[0]
 
     # Set default classification of every feature to "None"
     # (This value will be updated when a feature is selected in the rank plot
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
-    classification = pd.Series(index=rank_vals.index).fillna("None")
-
-    # Start populating the DataFrame we'll pass into Altair as the main source
-    # of data for the rank plot.
-    rank_data = pd.DataFrame(
-        {"rankratioviz_x": rankratioviz_x, "Classification": classification}
-    )
-
-    # Merge that DataFrame with the actual rank values. Their indices should be
-    # identical, since we constructed rank_data based on rank_vals.
-    rank_data = pd.merge(
-        rank_data, rank_vals, left_index=True, right_index=True
-    )
+    rank_data["Classification"] = "None"
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
     rank_data.reset_index(inplace=True)
+
+    # Now, we can actually create the rank plot.
     rank_chart = (
         alt.Chart(
             rank_data,
@@ -311,12 +297,23 @@ def gen_rank_plot(V):
             autosize=alt.AutoSizeParams(resize=True),
         )
         .mark_bar()
+        .transform_window(
+            sort=[alt.SortField(field=default_rank_col, order="ascending")],
+            # We don't use an alt.WindowFieldDef here because python gets
+            # confused when you use "as" as an actual argument name. So we just
+            # use this syntax.
+            window=[{"op": "row_number", "as": "rankratioviz_x"}],
+        )
         .encode(
             # type="ordinal" needed on the scale here to make bars adjacent;
-            # see https://stackoverflow.com/a/55544817/10730311. For now, we're
-            # sticking with type="quantitative" in order to allow for
-            # zooming/panning along the x-axis.
-            x=alt.X("rankratioviz_x", title="Features", type="quantitative"),
+            # see https://stackoverflow.com/a/55544817/10730311.
+            x=alt.X(
+                "rankratioviz_x",
+                title="Features",
+                type="ordinal",
+                scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
+                axis=alt.Axis(ticks=False, labelAngle=-45),
+            ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "Classification",
@@ -325,7 +322,6 @@ def gen_rank_plot(V):
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
                 ),
             ),
-            size=alt.value(1.0),
             tooltip=[
                 alt.Tooltip(
                     field="rankratioviz_x",
@@ -347,7 +343,11 @@ def gen_rank_plot(V):
 
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "rankratioviz_rank_ordering"
-    rank_chart_json["datasets"][rank_ordering] = list(V.columns)
+    # Note we don't use rank_data.columns for setting the rank ordering. This
+    # is because rank_data's columns now include both the ranking IDs and the
+    # "Feature ID" and "Classification" columns (and maybe more, if I add in
+    # columns for each feature in the future for some reason).
+    rank_chart_json["datasets"][rank_ordering] = list(just_the_ranking_ids)
     return rank_chart_json
 
 
@@ -398,10 +398,7 @@ def gen_sample_plot(table, metadata):
     # unless we actually change something in the actual spec details.
     sample_metadata.sort_values(by=["Sample ID"], inplace=True)
 
-    # Create sample plot in Altair.
-    # If desired, we can make this interactive by adding .interactive() to the
-    # alt.Chart declaration (but we don't do that currently since it makes
-    # changing the scale of the chart smoother IIRC)
+    # Create sample plot chart Vega-Lite spec using Altair.
     sample_chart = (
         alt.Chart(
             sample_metadata,
@@ -411,26 +408,17 @@ def gen_sample_plot(table, metadata):
         )
         .mark_circle()
         .encode(
-            alt.X(
-                # TODO eventually set to default_metadata_col when we can
-                # support arbitrary starting x-axis fields? Or not, I guess.
-                "rankratioviz_balance",
-                # As with the color type, this is a temporary measure.
-                type="quantitative",
-            ),
+            alt.X("rankratioviz_balance", type="quantitative"),
             alt.Y(
                 "rankratioviz_balance",
                 title="log(Numerator / Denominator)",
                 type="quantitative",
             ),
-            color=alt.Color(
-                default_metadata_col,
-                # This is a temporary measure. Eventually the type should be
-                # user-configurable.
-                type="nominal",
-            ),
+            color=alt.Color(default_metadata_col, type="nominal"),
             tooltip=["Sample ID", "rankratioviz_balance"],
         )
+        .configure_axis(labelBound=True)
+        .interactive()
     )
 
     # Return the JSONs as dicts for 1) the sample plot JSON (which only

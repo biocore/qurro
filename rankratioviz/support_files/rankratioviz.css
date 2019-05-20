@@ -5,11 +5,27 @@ h3,
 p {
     text-align: center;
 }
+/* Override user agents that automatically add vertical margins, which makes the layout
+ * look kinda strange
+ */
+#selectionControls h3 {
+    margin: 0;
+}
 body,
 input,
 button,
 select {
     font-size: large;
+}
+.warning {
+    font-size: small;
+    background-color: #ffffcc;
+    color: #734d15;
+    border-radius: 8px;
+    border: 2px dotted #ffcfcc;
+}
+.warning strong {
+    color: #3b270a;
 }
 .twoColumnRow {
     display: grid;
@@ -17,30 +33,30 @@ select {
 }
 .plotControlBlock {
     display: block;
-}
-#rankPlotDiv {
-    text-align: right;
-}
-#samplePlotDiv {
-    text-align: left;
+    text-align: center;
 }
 #rankPlot {
     margin-right: 2em;
+    text-align: right;
 }
 #samplePlot {
     margin-left: 2em;
+    text-align: left;
 }
 /* The reason for max-width: 90% is to leave room for the Vega-Embed "actions"
  * circle thing. Might be worth addressing this later, but for now this is a
  * reasonable hack.
  * Also, max-height can be decreased once we remove the rank signal (it's
  * included within the rankPlot, which is why the height is as large as it is).
+ * width: 100% is needed to let the plot divs cover their entire horizontal
+ * space.
  */
 #rankPlot,
 #samplePlot {
     overflow: auto;
     max-height: 420px;
     max-width: 90%;
+    width: 100%;
 }
 textarea {
     width: 92%;
@@ -71,6 +87,20 @@ textarea {
 .den:focus {
     outline-color: #009;
 }
-#downloadHelper {
+.invisible {
     display: none;
+}
+/* Adjust the styling of the contents of Vega tooltips (the contents of which
+ * are stored in HTML tables). All we really care about is making them large
+ * enough to show big blocks of text (e.g. feature taxonomy).
+ *
+ * Based on the customization described in the vega-tooltip docs here:
+ * https://github.com/vega/vega-tooltip/blob/master/docs/customizing_your_tooltip.md
+ *
+ * Sidenote: worth making a PR to vega-tooltip that makes it clear that this is
+ * how you do this? Might be nice. (TODO?)
+ */
+#vg-tooltip-element.vg-tooltip.custom-theme td {
+    max-width: 700px;
+    max-height: 300px;
 }

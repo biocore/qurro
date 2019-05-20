@@ -11,16 +11,34 @@
 
     <body>
         <div class="twoColumnRow">
-            <div id="rankPlotDiv">
+            <div>
                 <div id="rankPlot"></div>
-                <!--
                 <div class="plotControlBlock">
-                    <label for="rankField">ranking</label>
+                    <label for="rankField">Ranking</label>
                     <select id="rankField"> </select>
                 </div>
-                -->
+                <div class="plotControlBlock">
+                    <label for="barSize">Bar width</label>
+                    <select id="barSize">
+                        <option value="1px"
+                            >Set each bar width to 1 pixel</option
+                        >
+                        <option value="fit"
+                            >Match bar width to display width</option
+                        >
+                    </select>
+                    <p
+                        id="barSizeWarning"
+                        class="warning plotControlBlock invisible"
+                    >
+                        <strong>Note:</strong> The rank plot is currently using
+                        a bar width of less than one pixel per bar. This means
+                        that the image shown isn't necessarily going to be an
+                        accurate representation of the rank plot.
+                    </p>
+                </div>
             </div>
-            <div id="samplePlotDiv">
+            <div>
                 <div id="samplePlot"></div>
                 <div class="plotControlBlock">
                     <!-- NOTE that the scale/field select values below will be
@@ -40,9 +58,9 @@
                         </select>
                     </div>
                     <div class="plotControlBlock">
-                        <label for="colorField">color field</label>
+                        <label for="colorField">Color field</label>
                         <select id="colorField"> </select>
-                        <label for="colorScale">color scale type</label>
+                        <label for="colorScale">Color scale type</label>
                         <select id="colorScale">
                             <option value="nominal">Categorical</option>
                             <option value="quantitative">Quantitative</option>
@@ -122,7 +140,7 @@
                      Based on #downloadHelper in MetagenomeScope's viewer
                      interface.
                 -->
-                <a id="downloadHelper"></a>
+                <a id="downloadHelper" class="invisible"></a>
                 <p>
                     <button id="multiFeatureButton">
                         Regenerate sample plot
