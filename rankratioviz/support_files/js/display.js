@@ -558,7 +558,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
-        static changeColorElementVisibility(makeVisible) {
+        static changeColorElementEnabled(enable) {
             // List of DOM elements that have to do with the color controls. We
             // disable these when in "boxplot mode" because Vega-Lite gets
             // grumpy when you try to apply colors to a boxplot that have
@@ -571,17 +571,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 "colorScale"
             ];
             var e;
-            if (makeVisible) {
+            if (enable) {
                 for (e = 0; e < colorEles.length; e++) {
-                    document
-                        .getElementById(colorEles[e])
-                        .classList.remove("invisible");
+                    document.getElementById(colorEles[e]).disabled = false;
                 }
             } else {
                 for (e = 0; e < colorEles.length; e++) {
-                    document
-                        .getElementById(colorEles[e])
-                        .classList.add("invisible");
+                    document.getElementById(colorEles[e]).disabled = true;
                 }
             }
         }
@@ -592,7 +588,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // which only one sample is available show up on the white
             // background and light-gray axis.
             this.samplePlotJSON.mark.median = { color: "#000000" };
-            RRVDisplay.changeColorElementVisibility(false);
+            RRVDisplay.changeColorElementEnabled(false);
             this.samplePlotJSON.encoding.color.type = "nominal";
             this.samplePlotJSON.encoding.color.field = this.samplePlotJSON.encoding.x.field;
             delete this.samplePlotJSON.encoding.tooltip;
@@ -605,7 +601,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
-            RRVDisplay.changeColorElementVisibility(true);
+            RRVDisplay.changeColorElementEnabled(true);
             // TODO make the new colors in the scatterplot match what the color
             // elements say. OR store the old color stuff in a variable. OR
             // just apply the colors from the boxplot to the scatterplot.
