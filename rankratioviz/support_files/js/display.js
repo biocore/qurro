@@ -585,6 +585,21 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        /* Changes the sample plot JSON and DOM elements to get ready for
+         * switching to "boxplot mode." If callRemakeSamplePlot is truthy, this
+         * will actually call this.remakeSamplePlot(); otherwise, this won't do
+         * anything.
+         *
+         * callRemakeSamplePlot should be false if this is called in the
+         * middle of remaking the sample plot, anyway -- e.g. if the user
+         * switched the x-axis scale type from quantitative to categorical, and
+         * the "use boxplots" checkbox was already checked.
+         *
+         * callRemakeSamplePlot should be true if this is called as the only
+         * update to the sample plot that's going to be made -- i.e. the user
+         * was already using a categorical x-axis scale, and they just clicked
+         * the "use boxplots" checkbox.
+         */
         changeSamplePlotToBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "boxplot";
             // Make the middle tick of the boxplot black. This makes boxes for
@@ -599,6 +614,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        /* Like changeSamplePlotToBoxplot(), but the other way around. This is
+         * a bit simpler, since (as of writing) we have to do less to go back
+         * to a normal circle mark from the boxplot mark.
+         *
+         * callRemakeSamplePlot works the same way as in
+         * changeSamplePlotToBoxplot().
+         */
         changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
