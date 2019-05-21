@@ -137,8 +137,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     this.rankOrdering,
                     this.rankOrdering[0]
                 );
-                // Figure out which bar size type to default to
-                // We determine this based on how many features there are
+                // Figure out which bar size type to default to.
+                // We determine this based on how many features there are.
+                // This is intended to address cases where there are only a few
+                // ranked features (e.g. the matching test) -- in these cases,
+                // fitting actually increases the bar sizes to be reasonable to
+                // view/select.
                 if (
                     this.feature_ids.length <=
                     this.rankPlotJSON.config.view.width
@@ -301,12 +305,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
 
         updateRankPlotBarSize(callRemakeRankPlot) {
             var newSizeType = document.getElementById("barSize").value;
-            var newBarSize = 1;
+            var newBarSize;
             if (newSizeType === "fit") {
                 // Not 100% sure this is optimal.
                 newBarSize =
                     this.rankPlotJSON.config.view.width /
                     this.feature_ids.length;
+            } else {
+                newBarSize = parseInt(newSizeType);
             }
             this.rankPlotJSON.encoding.x.scale.rangeStep = newBarSize;
             if (newBarSize < 1) {
