@@ -494,10 +494,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     document.getElementById("boxplotCheckbox").checked &&
                     this.samplePlotJSON.encoding.x.type === "nominal"
                 ) {
-                    // TODO handle better somehow
-                    this.samplePlotJSON.encoding.color.field = document.getElementById(
-                        "xAxisField"
-                    ).value;
+                    var category = this.samplePlotJSON.encoding.x.field;
+                    // Update color so that color encoding matches the x-axis
+                    // encoding (due to how box plots work in Vega-Lite)
+                    this.samplePlotJSON.encoding.color.field = category;
+                    // And, to be clear, update the color field <select> to
+                    // show the user what's going on.
+                    document.getElementById("colorField").value = category;
+                    document.getElementById("colorScale").value = "nominal";
                     this.samplePlotJSON.encoding.color.type = "nominal";
                 }
             } else {
@@ -584,8 +588,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // background and light-gray axis.
             this.samplePlotJSON.mark.median = { color: "#000000" };
             RRVDisplay.changeColorElementEnabled(false);
+            // TODO consolidate reused code
             this.samplePlotJSON.encoding.color.type = "nominal";
             this.samplePlotJSON.encoding.color.field = this.samplePlotJSON.encoding.x.field;
+            document.getElementById("colorScale").value = "nominal";
+            document.getElementById(
+                "colorField"
+            ).value = this.samplePlotJSON.encoding.color.field;
             delete this.samplePlotJSON.encoding.tooltip;
 
             if (callRemakeSamplePlot) {
