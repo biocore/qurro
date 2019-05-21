@@ -127,27 +127,27 @@ rankratioviz also uses [Travis-CI](https://travis-ci.org/) and
 
 ### Data Sources
 
-The test data located in `rankratioviz/tests/input/byrd/` is from
+The test data located in `rankratioviz/tests/input/byrd/` are from
 [this repository](https://github.com/knightlab-analyses/reference-frames).
-This data, in turn, originates from Byrd et al.'s 2017 study on atopic
+These data, in turn, originate from Byrd et al.'s 2017 study on atopic
 dermatitis [2].
 
 The test data located in `rankratioviz/tests/input/sleep_apnea/`
 (and in `example_notebooks/DEICODE_sleep_apnea/input/`)
-is from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
+are from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
 which is associated with Tripathi et al.'s 2018 study on sleep apnea [4].
 
 The test data located in `rankratioviz/tests/input/moving_pictures/`
 are from [the QIIME 2 moving pictures tutorial](https://docs.qiime2.org/2019.1/tutorials/moving-pictures/).
 The `ordination.qza` file in this folder was computed based on the
 [DEICODE moving pictures tutorial](https://library.qiime2.org/plugins/deicode/19/).
-These samples are associated with Caporaso et al. 2011 [5].
+These data (sans the DEICODE ordination) are associated with Caporaso et al. 2011 [5].
 
 Lastly, the data located in `rankratioviz/tests/input/red_sea`
 (and in `example_notebooks/songbird_red_sea/input/`, and shown in the
-screenshot above) was taken from songbird's GitHub repository in its
+screenshot above) were taken from songbird's GitHub repository in its
 [`data/redsea/`](https://github.com/biocore/songbird/tree/master/data/redsea)
-folder, and is associated with
+folder, and are associated with
 [this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/) [3].
 
 ### Special Thanks
