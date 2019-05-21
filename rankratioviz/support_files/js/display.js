@@ -93,6 +93,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     },
                     barSize: function() {
                         display.updateRankPlotBarSize(true);
+                    },
+                    boxplotCheckbox: function() {
+                        display.updateSamplePlotBoxplot();
                     }
                 },
                 "onchange"
@@ -463,20 +466,35 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotTooltips() {
-            // NOTE: this should be safe from duplicate entries within tooltips
-            // so long as you don't change the field titles displayed.
-            this.samplePlotJSON.encoding.tooltip = [
-                { type: "nominal", field: "Sample ID" },
-                { type: "quantitative", field: "rankratioviz_balance" },
-                {
-                    type: this.samplePlotJSON.encoding.x.type,
-                    field: this.samplePlotJSON.encoding.x.field
-                },
-                {
-                    type: this.samplePlotJSON.encoding.color.type,
-                    field: this.samplePlotJSON.encoding.color.field
-                }
-            ];
+            if (!document.getElementById("boxplotCheckbox").checked) {
+                // NOTE: this should be safe from duplicate entries within
+                // tooltips so long as you don't change the field titles
+                // displayed.
+                this.samplePlotJSON.encoding.tooltip = [
+                    { type: "nominal", field: "Sample ID" },
+                    { type: "quantitative", field: "rankratioviz_balance" },
+                    {
+                        type: this.samplePlotJSON.encoding.x.type,
+                        field: this.samplePlotJSON.encoding.x.field
+                    },
+                    {
+                        type: this.samplePlotJSON.encoding.color.type,
+                        field: this.samplePlotJSON.encoding.color.field
+                    }
+                ];
+            }
+        }
+
+        /* Update color so that color encoding matches the x-axis encoding
+         * (due to how box plots work in Vega-Lite). To be clear, we also
+         * update the color field <select> to show the user what's going on.
+         */
+        setColorForBoxplot() {
+            var category = this.samplePlotJSON.encoding.x.field;
+            this.samplePlotJSON.encoding.color.field = category;
+            document.getElementById("colorField").value = category;
+            document.getElementById("colorScale").value = "nominal";
+            this.samplePlotJSON.encoding.color.type = "nominal";
         }
 
         updateSamplePlotField(vizAttribute) {
@@ -484,6 +502,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 this.samplePlotJSON.encoding.x.field = document.getElementById(
                     "xAxisField"
                 ).value;
+                if (
+                    document.getElementById("boxplotCheckbox").checked &&
+                    this.samplePlotJSON.encoding.x.type === "nominal"
+                ) {
+                    this.setColorForBoxplot();
+                }
             } else {
                 this.samplePlotJSON.encoding.color.field = document.getElementById(
                     "colorField"
@@ -513,7 +537,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 // labelAngle parameter.
                 if (newScale === "nominal") {
                     this.samplePlotJSON.encoding.x.axis = { labelAngle: -45 };
+                    if (document.getElementById("boxplotCheckbox").checked) {
+                        this.changeSamplePlotToBoxplot(false);
+                    }
                 } else {
+                    this.changeSamplePlotFromBoxplot(false);
                     // This should work even if the axis property is undefined
                     // -- it just won't do anything in that case.
                     delete this.samplePlotJSON.encoding.x.axis;
@@ -524,6 +552,88 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 ).value;
             }
             this.remakeSamplePlot();
+        }
+
+        updateSamplePlotBoxplot() {
+            // We only bother changing up anything if the sample plot x-axis
+            // is currently categorical.
+            if (this.samplePlotJSON.encoding.x.type === "nominal") {
+                if (document.getElementById("boxplotCheckbox").checked) {
+                    this.changeSamplePlotToBoxplot(true);
+                } else {
+                    this.changeSamplePlotFromBoxplot(true);
+                }
+            }
+        }
+
+        static changeColorElementEnabled(enable) {
+            // List of DOM elements that have to do with the color controls. We
+            // disable these when in "boxplot mode" because Vega-Lite gets
+            // grumpy when you try to apply colors to a boxplot that have
+            // different granularity than the boxplot's current x-axis.
+            // (It does the same thing with tooltips.)
+            var colorEles = ["colorField", "colorScale"];
+            var e;
+            if (enable) {
+                for (e = 0; e < colorEles.length; e++) {
+                    document.getElementById(colorEles[e]).disabled = false;
+                }
+            } else {
+                for (e = 0; e < colorEles.length; e++) {
+                    document.getElementById(colorEles[e]).disabled = true;
+                }
+            }
+        }
+
+        /* Changes the sample plot JSON and DOM elements to get ready for
+         * switching to "boxplot mode." If callRemakeSamplePlot is truthy, this
+         * will actually call this.remakeSamplePlot(); otherwise, this won't do
+         * anything.
+         *
+         * callRemakeSamplePlot should be false if this is called in the
+         * middle of remaking the sample plot, anyway -- e.g. if the user
+         * switched the x-axis scale type from quantitative to categorical, and
+         * the "use boxplots" checkbox was already checked.
+         *
+         * callRemakeSamplePlot should be true if this is called as the only
+         * update to the sample plot that's going to be made -- i.e. the user
+         * was already using a categorical x-axis scale, and they just clicked
+         * the "use boxplots" checkbox.
+         */
+        changeSamplePlotToBoxplot(callRemakeSamplePlot) {
+            this.samplePlotJSON.mark.type = "boxplot";
+            // Make the middle tick of the boxplot black. This makes boxes for
+            // which only one sample is available show up on the white
+            // background and light-gray axis.
+            this.samplePlotJSON.mark.median = { color: "#000000" };
+            RRVDisplay.changeColorElementEnabled(false);
+            this.setColorForBoxplot();
+            delete this.samplePlotJSON.encoding.tooltip;
+            if (callRemakeSamplePlot) {
+                this.remakeSamplePlot();
+            }
+        }
+
+        /* Like changeSamplePlotToBoxplot(), but the other way around. This is
+         * a bit simpler, since (as of writing) we have to do less to go back
+         * to a normal circle mark from the boxplot mark.
+         *
+         * callRemakeSamplePlot works the same way as in
+         * changeSamplePlotToBoxplot().
+         */
+        changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
+            this.samplePlotJSON.mark.type = "circle";
+            delete this.samplePlotJSON.mark.median;
+            RRVDisplay.changeColorElementEnabled(true);
+            // No need to explicitly adjust color or tooltips here; tooltips
+            // will be auto-added in updateSamplePlotTooltips() (since it will
+            // detect that boxplot mode is off, and therefore try to add
+            // tooltips), and color should have been kept up-to-date every time
+            // the field was changed while boxplot mode was going on (as well
+            // as at the start of boxplot mode), in setColorForBoxplot().
+            if (callRemakeSamplePlot) {
+                this.remakeSamplePlot();
+            }
         }
 
         static identifyMetadataColumns(samplePlotSpec) {

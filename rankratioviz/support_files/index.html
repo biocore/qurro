@@ -58,13 +58,24 @@
                         </select>
                     </div>
                     <div class="centeredBlock">
-                        <label for="colorField">Color field</label>
+                        <label id="colorFieldLabel" for="colorField"
+                            >Color field</label
+                        >
                         <select id="colorField"> </select>
-                        <label for="colorScale">Color scale type</label>
+                        <label id="colorScaleLabel" for="colorScale"
+                            >Color scale type</label
+                        >
                         <select id="colorScale">
                             <option value="nominal">Categorical</option>
                             <option value="quantitative">Quantitative</option>
                         </select>
+                    </div>
+                    <div class="centeredBlock">
+                        <label for="boxplotCheckbox"
+                            >(Experimental) Use boxplots for categorical
+                            data?</label
+                        >
+                        <input type="checkbox" id="boxplotCheckbox" />
                     </div>
                 </div>
             </div>

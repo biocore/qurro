@@ -421,11 +421,17 @@ def gen_sample_plot(table, metadata):
         .interactive()
     )
 
+    # Replace the "mark": "circle" definition with a more explicit one. This
+    # will be useful when adding attributes to the boxplot mark in the
+    # visualization. (We have to resort to this hack because I haven't been
+    # able to successfully use alt.MarkDef in the alt.Chart definition above.)
+    sample_chart_dict = sample_chart.to_dict()
+    sample_chart_dict["mark"] = {"type": "circle"}
     # Return the JSONs as dicts for 1) the sample plot JSON (which only
     # contains sample metadata), and 2) the feature counts per sample (which
     # will be stored separately from the sample plot JSON in order to not hit
     # performance too terribly).
-    return sample_chart.to_dict(), table.to_dict()
+    return sample_chart_dict, table.to_dict()
 
 
 def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
