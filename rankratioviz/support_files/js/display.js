@@ -466,20 +466,23 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotTooltips() {
-            // NOTE: this should be safe from duplicate entries within tooltips
-            // so long as you don't change the field titles displayed.
-            this.samplePlotJSON.encoding.tooltip = [
-                { type: "nominal", field: "Sample ID" },
-                { type: "quantitative", field: "rankratioviz_balance" },
-                {
-                    type: this.samplePlotJSON.encoding.x.type,
-                    field: this.samplePlotJSON.encoding.x.field
-                },
-                {
-                    type: this.samplePlotJSON.encoding.color.type,
-                    field: this.samplePlotJSON.encoding.color.field
-                }
-            ];
+            if (!document.getElementById("boxplotCheckbox").checked) {
+                // NOTE: this should be safe from duplicate entries within
+                // tooltips so long as you don't change the field titles
+                // displayed.
+                this.samplePlotJSON.encoding.tooltip = [
+                    { type: "nominal", field: "Sample ID" },
+                    { type: "quantitative", field: "rankratioviz_balance" },
+                    {
+                        type: this.samplePlotJSON.encoding.x.type,
+                        field: this.samplePlotJSON.encoding.x.field
+                    },
+                    {
+                        type: this.samplePlotJSON.encoding.color.type,
+                        field: this.samplePlotJSON.encoding.color.field
+                    }
+                ];
+            }
         }
 
         updateSamplePlotField(vizAttribute) {
@@ -487,6 +490,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 this.samplePlotJSON.encoding.x.field = document.getElementById(
                     "xAxisField"
                 ).value;
+                if (
+                    document.getElementById("boxplotCheckbox").checked &&
+                    this.samplePlotJSON.encoding.x.type === "nominal"
+                ) {
+                    // TODO handle better somehow
+                    this.samplePlotJSON.encoding.color.field = document.getElementById(
+                        "xAxisField"
+                    ).value;
+                    this.samplePlotJSON.encoding.color.type = "nominal";
+                }
             } else {
                 this.samplePlotJSON.encoding.color.field = document.getElementById(
                     "colorField"
@@ -545,17 +558,60 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        static changeColorElementVisibility(makeVisible) {
+            // List of DOM elements that have to do with the color controls. We
+            // disable these when in "boxplot mode" because Vega-Lite gets
+            // grumpy when you try to apply colors to a boxplot that have
+            // different granularity than the boxplot's current x-axis.
+            // (It does the same thing with tooltips.)
+            var colorEles = [
+                "colorFieldLabel",
+                "colorField",
+                "colorScaleLabel",
+                "colorScale"
+            ];
+            var e;
+            if (makeVisible) {
+                for (e = 0; e < colorEles.length; e++) {
+                    document
+                        .getElementById(colorEles[e])
+                        .classList.remove("invisible");
+                }
+            } else {
+                for (e = 0; e < colorEles.length; e++) {
+                    document
+                        .getElementById(colorEles[e])
+                        .classList.add("invisible");
+                }
+            }
+        }
+
         changeSamplePlotToBoxplot(callRemakeSamplePlot) {
-            console.log("Changing sample plot to boxplot.");
+            this.samplePlotJSON.mark.type = "boxplot";
+            // Make the middle tick of the boxplot black. This makes boxes for
+            // which only one sample is available show up on the white
+            // background and light-gray axis.
+            this.samplePlotJSON.mark.median = { color: "#000000" };
+            RRVDisplay.changeColorElementVisibility(false);
+            this.samplePlotJSON.encoding.color.type = "nominal";
+            this.samplePlotJSON.encoding.color.field = this.samplePlotJSON.encoding.x.field;
+            delete this.samplePlotJSON.encoding.tooltip;
+
             if (callRemakeSamplePlot) {
-                console.log("calling remakeSamplePlot().");
+                this.remakeSamplePlot();
             }
         }
 
         changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
-            console.log("Changing sample plot FROM boxplot.");
+            this.samplePlotJSON.mark.type = "circle";
+            delete this.samplePlotJSON.mark.median;
+            RRVDisplay.changeColorElementVisibility(true);
+            // TODO make the new colors in the scatterplot match what the color
+            // elements say. OR store the old color stuff in a variable. OR
+            // just apply the colors from the boxplot to the scatterplot.
+
             if (callRemakeSamplePlot) {
-                console.log("calling remakeSamplePlot().");
+                this.remakeSamplePlot();
             }
         }
 
