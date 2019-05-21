@@ -564,12 +564,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // grumpy when you try to apply colors to a boxplot that have
             // different granularity than the boxplot's current x-axis.
             // (It does the same thing with tooltips.)
-            var colorEles = [
-                "colorFieldLabel",
-                "colorField",
-                "colorScaleLabel",
-                "colorScale"
-            ];
+            var colorEles = ["colorField", "colorScale"];
             var e;
             if (enable) {
                 for (e = 0; e < colorEles.length; e++) {
