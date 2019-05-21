@@ -137,6 +137,12 @@ The test data located in `rankratioviz/tests/input/sleep_apnea/`
 is from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
 which is associated with Tripathi et al.'s 2018 study on sleep apnea [4].
 
+The test data located in `rankratioviz/tests/input/moving_pictures/`
+are from [the QIIME 2 moving pictures tutorial](https://docs.qiime2.org/2019.1/tutorials/moving-pictures/).
+The `ordination.qza` file in this folder was computed based on the
+[DEICODE moving pictures tutorial](https://library.qiime2.org/plugins/deicode/19/).
+These samples are associated with Caporaso et al. 2011 [5].
+
 Lastly, the data located in `rankratioviz/tests/input/red_sea`
 (and in `example_notebooks/songbird_red_sea/input/`, and shown in the
 screenshot above) was taken from songbird's GitHub repository in its
@@ -166,6 +172,8 @@ Shorenstein, J., ... & Stingl, U. (2017). Metagenomic covariation along densely
 sampled environmental gradients in the Red Sea. _The ISME journal, 11_(1), 138.
 
 [4] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
+
+[5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome biology, 12_(5), R50.
 
 ## License
 
