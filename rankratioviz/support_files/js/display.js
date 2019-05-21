@@ -485,6 +485,18 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
+        /* Update color so that color encoding matches the x-axis encoding
+         * (due to how box plots work in Vega-Lite). To be clear, we also
+         * update the color field <select> to show the user what's going on.
+         */
+        setColorForBoxplot() {
+            var category = this.samplePlotJSON.encoding.x.field;
+            this.samplePlotJSON.encoding.color.field = category;
+            document.getElementById("colorField").value = category;
+            document.getElementById("colorScale").value = "nominal";
+            this.samplePlotJSON.encoding.color.type = "nominal";
+        }
+
         updateSamplePlotField(vizAttribute) {
             if (vizAttribute === "xAxis") {
                 this.samplePlotJSON.encoding.x.field = document.getElementById(
@@ -494,15 +506,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     document.getElementById("boxplotCheckbox").checked &&
                     this.samplePlotJSON.encoding.x.type === "nominal"
                 ) {
-                    var category = this.samplePlotJSON.encoding.x.field;
-                    // Update color so that color encoding matches the x-axis
-                    // encoding (due to how box plots work in Vega-Lite)
-                    this.samplePlotJSON.encoding.color.field = category;
-                    // And, to be clear, update the color field <select> to
-                    // show the user what's going on.
-                    document.getElementById("colorField").value = category;
-                    document.getElementById("colorScale").value = "nominal";
-                    this.samplePlotJSON.encoding.color.type = "nominal";
+                    this.setColorForBoxplot();
                 }
             } else {
                 this.samplePlotJSON.encoding.color.field = document.getElementById(
@@ -588,15 +592,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // background and light-gray axis.
             this.samplePlotJSON.mark.median = { color: "#000000" };
             RRVDisplay.changeColorElementEnabled(false);
-            // TODO consolidate reused code
-            this.samplePlotJSON.encoding.color.type = "nominal";
-            this.samplePlotJSON.encoding.color.field = this.samplePlotJSON.encoding.x.field;
-            document.getElementById("colorScale").value = "nominal";
-            document.getElementById(
-                "colorField"
-            ).value = this.samplePlotJSON.encoding.color.field;
+            this.setColorForBoxplot();
             delete this.samplePlotJSON.encoding.tooltip;
-
             if (callRemakeSamplePlot) {
                 this.remakeSamplePlot();
             }
@@ -606,10 +603,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
             RRVDisplay.changeColorElementEnabled(true);
-            // TODO make the new colors in the scatterplot match what the color
-            // elements say. OR store the old color stuff in a variable. OR
-            // just apply the colors from the boxplot to the scatterplot.
-
+            // No need to explicitly adjust color or tooltips here; tooltips
+            // will be auto-added in updateSamplePlotTooltips() (since it will
+            // detect that boxplot mode is off, and therefore try to add
+            // tooltips), and color should have been kept up-to-date every time
+            // the field was changed while boxplot mode was going on (as well
+            // as at the start of boxplot mode), in setColorForBoxplot().
             if (callRemakeSamplePlot) {
                 this.remakeSamplePlot();
             }
