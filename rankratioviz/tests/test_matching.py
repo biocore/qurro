@@ -214,25 +214,21 @@ def test_feature_metadata_and_dropped_sample():
     )
 
     data_name = rank_json["data"]["name"]
-    # Hardcoded based on Taxon3's specification in floc. This shouldn't
-    # change in the future, so hardcoding it here is fine.
-    relevant_feature_metadata = ["Taxon3", "Yeet", "100"]
 
     for feature in rank_json["datasets"][data_name]:
         txid = feature["Feature ID"]
-        if feature["Feature ID"].startswith("Taxon3"):
-            # Check that Taxon3 has been annotated.
-            # We don't care how the feature metadata annotation is done; we
-            # just want to make sure that all the metadata is in the feature
-            # ID somehow
-            for fm in relevant_feature_metadata:
-                assert fm in txid
+        if feature["Feature ID"] == "Taxon3":
+            # Check that Taxon3's feature metadata was kept.
+            # This is hardcoded based on Taxon3's specification in floc.
+            # This shouldn't change in the future, so hardcoding it here
+            # is fine.
+            assert feature["FeatureMetadata1"] == "Yeet"
+            assert feature["FeatureMetadata2"] == 100
         else:
             # Check that the other taxa haven't been annotated with Taxon3's
-            # metadata. (Obviously will fail if, e.g., "100" is in another
-            # taxon's ID, but for this simple test case this should be ok.)
-            for fm in relevant_feature_metadata:
-                assert fm not in txid
+            # metadata.
+            assert feature["FeatureMetadata1"] is None
+            assert feature["FeatureMetadata2"] is None
 
     # Assert that Sample4 was dropped from the "main" dataset of the plot
     data_name = sample_json["data"]["name"]
@@ -242,7 +238,3 @@ def test_feature_metadata_and_dropped_sample():
     for txid in count_json:
         # Assert that Sample4 was also dropped from the counts data in the JSON
         assert "Sample4" not in count_json[txid]
-        # Assert that Taxon3's annotation carried over to the sample plot
-        if txid.startswith("Taxon3"):
-            for fm in relevant_feature_metadata:
-                assert fm in txid

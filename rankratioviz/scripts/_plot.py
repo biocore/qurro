@@ -97,17 +97,19 @@ def plot(
                 feature_metadata, feature_ranks
             )
         else:
-            df_feature_metadata = read_metadata_file(feature_metadata)
+            df_feature_metadata = escape_columns(
+                read_metadata_file(feature_metadata)
+            )
     logging.debug("Read in metadata.")
 
-    U, V, processed_table = process_input(
+    U, V, ranking_ids, processed_table = process_input(
         feature_ranks,
         df_sample_metadata,
         loaded_biom,
         df_feature_metadata,
         extreme_feature_count,
     )
-    gen_visualization(V, processed_table, U, output_dir)
+    gen_visualization(V, ranking_ids, processed_table, U, output_dir)
     print(
         "Successfully generated a visualization in the folder {}.".format(
             output_dir
