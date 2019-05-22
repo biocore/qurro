@@ -13,7 +13,7 @@ from rankratioviz._parameter_descriptions import (
     TABLE,
     ASSUME_GNPS_FEATURE_METADATA,
 )
-from rankratioviz.generate import process_input, gen_visualization
+from rankratioviz.generate import process_and_generate
 from rankratioviz._rank_utils import read_rank_file
 from rankratioviz._metadata_utils import (
     read_metadata_file,
@@ -102,14 +102,14 @@ def plot(
             )
     logging.debug("Read in metadata.")
 
-    U, V, ranking_ids, processed_table = process_input(
+    process_and_generate(
         feature_ranks,
         df_sample_metadata,
         loaded_biom,
+        output_dir,
         df_feature_metadata,
         extreme_feature_count,
     )
-    gen_visualization(V, ranking_ids, processed_table, U, output_dir)
     print(
         "Successfully generated a visualization in the folder {}.".format(
             output_dir

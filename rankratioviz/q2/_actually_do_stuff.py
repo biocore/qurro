@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 import logging
 import q2templates
-from rankratioviz.generate import process_input, gen_visualization
+from rankratioviz.generate import process_and_generate
 from rankratioviz._metadata_utils import escape_columns
 
 
@@ -27,17 +27,13 @@ def create_q2_visualization(
     df_sample_metadata = escape_columns(sample_metadata.to_dataframe())
     logging.debug("Converted metadata to DataFrames.")
 
-    U, V, ranking_ids, processed_table = process_input(
+    index_path = process_and_generate(
         feature_ranks,
         df_sample_metadata,
         table,
+        output_dir,
         df_feature_metadata,
         extreme_feature_count,
-    )
-    # We can't "subscript" Q2 Metadata types, so we have to convert this to a
-    # dataframe before working with it
-    index_path = gen_visualization(
-        V, ranking_ids, processed_table, U, output_dir
     )
     # render the visualization using q2templates.render().
     # TODO: do we need to specify plot_name in the context in this way? I'm not

@@ -103,6 +103,25 @@ def ensure_df_headers_unique(df, df_name):
         )
 
 
+def process_and_generate(
+    feature_ranks,
+    sample_metadata,
+    biom_table,
+    output_dir,
+    feature_metadata=None,
+    extreme_feature_count=None,
+):
+    """Just calls process_input() and gen_visualization()."""
+    U, V, ranking_ids, processed_table = process_input(
+        feature_ranks,
+        sample_metadata,
+        biom_table,
+        feature_metadata,
+        extreme_feature_count,
+    )
+    return gen_visualization(V, ranking_ids, processed_table, U, output_dir)
+
+
 def process_input(
     feature_ranks,
     sample_metadata,
