@@ -112,14 +112,16 @@ def process_and_generate(
     extreme_feature_count=None,
 ):
     """Just calls process_input() and gen_visualization()."""
-    U, V, ranking_ids, processed_table = process_input(
+    U, V, ranking_ids, feature_metadata_cols, processed_table = process_input(
         feature_ranks,
         sample_metadata,
         biom_table,
         feature_metadata,
         extreme_feature_count,
     )
-    return gen_visualization(V, ranking_ids, processed_table, U, output_dir)
+    return gen_visualization(
+        V, ranking_ids, feature_metadata_cols, processed_table, U, output_dir
+    )
 
 
 def process_input(
@@ -215,6 +217,7 @@ def process_input(
     filtered_ranks.columns = [fix_id(str(c)) for c in filtered_ranks.columns]
     ranking_ids = filtered_ranks.columns
 
+    feature_metadata_cols = []
     # If the user passed in feature metadata corresponding to taxonomy
     # information, then we use that to update the feature data to include
     # that metadata. Feature metadata will be represented as additional fields
@@ -222,6 +225,7 @@ def process_input(
     # part of the visualization, but it isn't necessary.)
     if feature_metadata is not None:
         try:
+            feature_metadata_cols = feature_metadata.columns
             # Use of suffixes=(False, False) ensures that columns are unique
             # between feature metadata and feature ranks.
             filtered_ranks = filtered_ranks.merge(
@@ -244,17 +248,24 @@ def process_input(
             raise
 
     logging.debug("Finished input processing.")
-    return U, filtered_ranks, ranking_ids, table
+    return U, filtered_ranks, ranking_ids, feature_metadata_cols, table
 
 
-def gen_rank_plot(V, ranking_ids):
+def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     """Generates altair.Chart object describing the rank plot.
 
     Arguments:
 
-    V: feature ranks
-    ranking_ids: IDs of the actual "ranking" columns in V (since V can include
-                 feature metadata)
+    V: pd.DataFrame
+        feature ranks
+
+    ranking_ids: pd.Index
+        IDs of the actual "ranking" columns in V (since V can include
+        feature metadata)
+
+    feature_metadata_cols: pd.Index or list
+        IDs of the feature metadata columns in V (if no such IDs present, an
+        empty list should be passed)
 
     Returns:
 
@@ -327,6 +338,7 @@ def gen_rank_plot(V, ranking_ids):
                 ),
                 "Classification",
                 "Feature ID",
+                *feature_metadata_cols,
             ],
         )
         .configure_axis(
@@ -340,11 +352,13 @@ def gen_rank_plot(V, ranking_ids):
 
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "rankratioviz_rank_ordering"
+    fm_col_ordering = "rankratioviz_feature_metadata_ordering"
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
     # "Feature ID" and "Classification" columns (as well as any feature
     # metadata the user saw fit to pass in).
     rank_chart_json["datasets"][rank_ordering] = list(ranking_ids)
+    rank_chart_json["datasets"][fm_col_ordering] = list(feature_metadata_cols)
     return rank_chart_json
 
 
@@ -439,7 +453,12 @@ def gen_sample_plot(table, metadata):
 
 
 def gen_visualization(
-    V, ranking_ids, processed_table, df_sample_metadata, output_dir
+    V,
+    ranking_ids,
+    feature_metadata_cols,
+    processed_table,
+    df_sample_metadata,
+    output_dir,
 ):
     """Creates a rankratioviz visualization. This function should be callable
        from both the QIIME 2 and standalone rankratioviz scripts.
@@ -454,7 +473,7 @@ def gen_visualization(
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
-    rank_plot_json = gen_rank_plot(V, ranking_ids)
+    rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
     logging.debug("Generating sample plot JSON.")
     sample_plot_json, count_json = gen_sample_plot(
         processed_table, df_sample_metadata
