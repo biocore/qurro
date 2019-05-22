@@ -115,6 +115,6 @@ textarea {
  * how you do this? Might be nice. (TODO?)
  */
 #vg-tooltip-element.vg-tooltip.custom-theme td {
-    max-width: 700px;
+    max-width: 550px;
     max-height: 300px;
 }
