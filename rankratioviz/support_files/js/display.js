@@ -55,6 +55,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
 
             // Ordered list of all ranks
             this.rankOrdering = undefined;
+            // Ordered list of all feature metadata fields
+            this.featureMetadataFields = undefined;
 
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
@@ -136,6 +138,22 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     "rankField",
                     this.rankOrdering,
                     this.rankOrdering[0]
+                );
+                this.featureMetadataFields = this.rankPlotJSON.datasets.rankratioviz_feature_metadata_ordering;
+                // Just so that we have something to search by, even if no
+                // actual feature metadata was passed.
+                // Note that in JS, .unshift() adds to the beginning (not end)
+                // of an array.
+                this.featureMetadataFields.unshift("Feature ID");
+                RRVDisplay.populateSelectDOM(
+                    "topSearch",
+                    this.featureMetadataFields,
+                    "Feature ID"
+                );
+                RRVDisplay.populateSelectDOM(
+                    "botSearch",
+                    this.featureMetadataFields,
+                    "Feature ID"
                 );
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
