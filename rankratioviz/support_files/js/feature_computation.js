@@ -1,5 +1,6 @@
 define(function() {
-    /* Returns list of feature IDs based on a match of a given metadata field
+    /* Returns list of feature data objects (in the rank plot JSON) based
+     * on a match of a given feature metadata field (including Feature ID)
      * with the input text.
      *
      * If inputText is empty (i.e. its length is 0), this returns an empty
