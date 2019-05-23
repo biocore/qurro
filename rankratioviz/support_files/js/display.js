@@ -356,10 +356,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     vega.changeset().modify(
                         /* Calculate the new balance for each sample.
                          *
-                         * For reference, the use of modify() here is based on this comment:
+                         * For reference, the use of modify() here is based on
                          * https://github.com/vega/vega/issues/1028#issuecomment-334295328
-                         * (This is where I learned that vega.changeset().modify() existed.)
-                         * Also, vega.truthy is a utility function: it just returns true.
+                         * (This is where I learned that
+                         * vega.changeset().modify() existed.)
+                         * Also, vega.truthy is a utility function: it just
+                         * returns true.
                          */
                         vega.truthy,
                         "rankratioviz_balance",
@@ -397,22 +399,20 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotMulti() {
-            // Determine how we're going to use the input for searching through
-            // features
-            var topType = document.getElementById("topSearch").value;
-            var botType = document.getElementById("botSearch").value;
+            // Determine which feature metadata field(s) to look at
+            var topField = document.getElementById("topSearch").value;
+            var botField = document.getElementById("botSearch").value;
             var topEnteredText = document.getElementById("topText").value;
             var botEnteredText = document.getElementById("botText").value;
-            // Now use these "types" to filter features for both parts of the log ratio
             this.topFeatures = feature_computation.filterFeatures(
-                this.feature_ids,
+                this.rankPlotJSON,
                 topEnteredText,
-                topType
+                topField
             );
             this.botFeatures = feature_computation.filterFeatures(
-                this.feature_ids,
+                this.rankPlotJSON,
                 botEnteredText,
-                botType
+                botField
             );
             this.changeSamplePlot(
                 this.updateBalanceMulti,
