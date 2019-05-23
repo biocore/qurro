@@ -85,6 +85,7 @@ select {
 textarea {
     width: 92%;
     max-width: 100%;
+    min-width: 30%;
 }
 .fancyBorder {
     border: 1px solid;
