@@ -27,7 +27,7 @@ define(function() {
             // contain the text "Staphylococcus").
             currVal = potentialFeatures[ti][featureMetadataField];
             if (typeof currVal === "string" && currVal.includes(inputText)) {
-                filteredFeatures.push(potentialFeatures[ti]["Feature ID"]);
+                filteredFeatures.push(potentialFeatures[ti]);
             }
         }
         return filteredFeatures;
