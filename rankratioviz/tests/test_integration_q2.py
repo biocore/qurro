@@ -33,6 +33,9 @@ def test_integration_q2_sleep_apnea():
 def test_integration_q2_red_sea():
     """Tests rankratioviz on songbird output with non-strictly-16S data in the
        context of QIIME 2.
+
+       (Technically the Byrd data is also from a metagenomic study, but the
+       features here are named pretty differently.)
     """
     run_integration_test(
         "red_sea",
@@ -43,4 +46,18 @@ def test_integration_q2_red_sea():
         feature_metadata_name="feature_metadata.txt",
         use_q2=True,
         q2_ranking_tool="songbird",
+    )
+
+
+def test_moving_pictures():
+    """Tests rankratioviz' JSON generation on the "Moving Pictures of the Human
+       Microbiome" dataset.
+    """
+    run_integration_test(
+        "moving_pictures",
+        "q2_moving_pictures",
+        "ordination.txt",
+        "feature-table.biom",
+        "sample-metadata.tsv",
+        feature_metadata_name="taxonomy.tsv",
     )
