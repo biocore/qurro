@@ -37,7 +37,7 @@ def test_red_sea():
        Sea.
 
        This is really a test to make sure that rankratioviz can properly handle
-       non-strictly-16S data.
+       this sort of unconventionally-named-feature data.
     """
     run_integration_test(
         "red_sea",
