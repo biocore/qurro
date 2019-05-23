@@ -194,13 +194,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     if (i.mark.marktype === "rect") {
                         if (display.onHigh) {
                             display.oldFeatureHigh = display.newFeatureHigh;
-                            display.newFeatureHigh = i.datum["Feature ID"];
+                            display.newFeatureHigh = i.datum;
                             console.log(
                                 "Set newFeatureHigh: " + display.newFeatureHigh
                             );
                         } else {
                             display.oldFeatureLow = display.newFeatureLow;
-                            display.newFeatureLow = i.datum["Feature ID"];
+                            display.newFeatureLow = i.datum;
                             console.log(
                                 "Set newFeatureLow: " + display.newFeatureLow
                             );
@@ -271,13 +271,17 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         // Given a "row" of data about a rank, return its new classification depending
         // on the new selection that just got made.
         updateRankColorSingle(rankRow) {
-            if (rankRow["Feature ID"] === this.newFeatureHigh) {
-                if (rankRow["Feature ID"] === this.newFeatureLow) {
+            if (rankRow["Feature ID"] === this.newFeatureHigh["Feature ID"]) {
+                if (
+                    rankRow["Feature ID"] === this.newFeatureLow["Feature ID"]
+                ) {
                     return "Both";
                 } else {
                     return "Numerator";
                 }
-            } else if (rankRow["Feature ID"] === this.newFeatureLow) {
+            } else if (
+                rankRow["Feature ID"] === this.newFeatureLow["Feature ID"]
+            ) {
                 return "Denominator";
             } else {
                 return "None";
@@ -287,11 +291,21 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         updateRankColorMulti(rankRow) {
             var inTop = false;
             var inBot = false;
-            if (this.topFeatures.indexOf(rankRow["Feature ID"]) >= 0) {
-                inTop = true;
+            for (var i = 0; i < this.topFeatures.length; i++) {
+                if (
+                    this.topFeatures[i]["Feature ID"] === rankRow["Feature ID"]
+                ) {
+                    inTop = true;
+                    break;
+                }
             }
-            if (this.botFeatures.indexOf(rankRow["Feature ID"]) >= 0) {
-                inBot = true;
+            for (var j = 0; j < this.botFeatures.length; j++) {
+                if (
+                    this.botFeatures[j]["Feature ID"] === rankRow["Feature ID"]
+                ) {
+                    inBot = true;
+                    break;
+                }
             }
             if (inTop) {
                 if (inBot) {
@@ -456,6 +470,52 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 " selected)";
         }
 
+        /* Converts a list of feature "rows" from the rank plot JSON to a
+         * human-readable string that will be used to populate a <textarea>
+         * in rankratioviz' output.
+         *
+         * Basically, this goes through each feature and creates a
+         * representation that looks something like
+         * Feature ID / FeatMetadataField1Value / FeatMetadataField2Value ...,
+         * where each feature metadata value is separated by a " / ".
+         *
+         * The output text returned by this function is just a string
+         * containing all of these representations, which are themselves
+         * separated by newline characters.
+         */
+        featureRowListToText(featureRowList) {
+            if (featureRowList.length <= 0) {
+                return "";
+            }
+            var outputText = "";
+            var currVal, anotherFieldLeft;
+            for (var i = 0; i < featureRowList.length; i++) {
+                if (i > 0) {
+                    outputText += "\n";
+                }
+                // Note that "Feature ID" is included in
+                // this.featureMetadataFields, since we added it in
+                // makeRankPlot() above
+                for (var c = 0; c < this.featureMetadataFields.length; c++) {
+                    currVal = featureRowList[i][this.featureMetadataFields[c]];
+                    // If currVal *is* null or undefined, this will look like
+                    // / / in the output for this metadata field -- which is
+                    // fine.
+                    anotherFieldLeft =
+                        c + 1 < this.featureMetadataFields.length;
+                    if (currVal !== null && currVal !== undefined) {
+                        outputText += currVal;
+                        if (anotherFieldLeft) {
+                            outputText += " / ";
+                        }
+                    } else if (anotherFieldLeft) {
+                        outputText += "/ ";
+                    }
+                }
+            }
+            return outputText;
+        }
+
         /* Updates the textareas that list the selected features.
          *
          * This defaults to updating based on the "multiple" selections' values. If you
@@ -470,18 +530,18 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             } else if (single) {
                 document.getElementById(
                     "topFeaturesDisplay"
-                ).value = this.newFeatureHigh;
+                ).value = this.featureRowListToText([this.newFeatureHigh]);
                 document.getElementById(
                     "botFeaturesDisplay"
-                ).value = this.newFeatureLow;
+                ).value = this.featureRowListToText([this.newFeatureLow]);
                 this.updateFeatureHeaderCounts(1, 1);
             } else {
                 document.getElementById(
                     "topFeaturesDisplay"
-                ).value = this.topFeatures.toString().replace(/,/g, "\n");
+                ).value = this.featureRowListToText(this.topFeatures);
                 document.getElementById(
                     "botFeaturesDisplay"
-                ).value = this.botFeatures.toString().replace(/,/g, "\n");
+                ).value = this.featureRowListToText(this.botFeatures);
                 this.updateFeatureHeaderCounts(
                     this.topFeatures.length,
                     this.botFeatures.length
@@ -703,7 +763,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.validateSampleID(sampleID);
             var abundance = 0;
             for (var t = 0; t < features.length; t++) {
-                abundance += this.feature_cts[features[t]][sampleID];
+                abundance += this.feature_cts[features[t]["Feature ID"]][
+                    sampleID
+                ];
             }
             return abundance;
         }
@@ -717,8 +779,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
             this.validateSampleID(sampleID);
-            var topCt = this.feature_cts[this.newFeatureHigh][sampleID];
-            var botCt = this.feature_cts[this.newFeatureLow][sampleID];
+            var topCt = this.feature_cts[this.newFeatureHigh["Feature ID"]][
+                sampleID
+            ];
+            var botCt = this.feature_cts[this.newFeatureLow["Feature ID"]][
+                sampleID
+            ];
             return feature_computation.computeBalance(topCt, botCt);
         }
 
