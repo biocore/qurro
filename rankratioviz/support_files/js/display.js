@@ -4,8 +4,9 @@
  * RRVDisplay.makeRankPlot() and RRVDisplay.makeSamplePlot() were based on the
  * Basic Example in https://github.com/vega/vega-embed/.
  */
-define(["./feature_computation", "vega", "vega-embed"], function(
+define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
     feature_computation,
+    dom_utils,
     vega,
     vegaEmbed
 ) {
@@ -66,9 +67,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.samplePlotJSON = samplePlotJSON;
             this.makePlots();
 
+            // All DOM elements that we disable/enable when switching to/from
+            // "boxplot mode."
+            this.colorEles = ["colorField", "colorScale"];
             // Set up relevant DOM bindings
             var display = this;
-            this.elementsWithOnClickBindings = RRVDisplay.setUpDOMBindings({
+            this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
                 multiFeatureButton: function() {
                     display.updateSamplePlotMulti();
                 },
@@ -76,7 +80,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     display.exportData();
                 }
             });
-            this.elementsWithOnChangeBindings = RRVDisplay.setUpDOMBindings(
+            this.elementsWithOnChangeBindings = dom_utils.setUpDOMBindings(
                 {
                     xAxisField: function() {
                         display.updateSamplePlotField("xAxis");
@@ -104,28 +108,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             );
         }
 
-        /* Assigns DOM bindings to elements.
-         *
-         * If eventHandler is set to "onchange", this will update the onchange
-         * event handler for these elements. Otherwise, this will update the
-         * onclick event handler.
-         */
-        static setUpDOMBindings(elementID2function, eventHandler) {
-            var elementIDs = Object.keys(elementID2function);
-            var currID;
-            for (var i = 0; i < elementIDs.length; i++) {
-                currID = elementIDs[i];
-                if (eventHandler === "onchange") {
-                    document.getElementById(currID).onchange =
-                        elementID2function[currID];
-                } else {
-                    document.getElementById(currID).onclick =
-                        elementID2function[currID];
-                }
-            }
-            return elementIDs;
-        }
-
         makePlots() {
             this.makeRankPlot();
             this.makeSamplePlot();
@@ -134,7 +116,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         makeRankPlot(notFirstTime) {
             if (!notFirstTime) {
                 this.rankOrdering = this.rankPlotJSON.datasets.rankratioviz_rank_ordering;
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "rankField",
                     this.rankOrdering,
                     this.rankOrdering[0]
@@ -145,12 +127,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 // Note that in JS, .unshift() adds to the beginning (not end)
                 // of an array.
                 this.featureMetadataFields.unshift("Feature ID");
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "topSearch",
                     this.featureMetadataFields,
                     "Feature ID"
                 );
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "botSearch",
                     this.featureMetadataFields,
                     "Feature ID"
@@ -212,23 +194,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             });
         }
 
-        /* Populates a <select> DOM element with a list of options. */
-        static populateSelectDOM(selectID, optionList, defaultVal) {
-            var optionEle;
-            var selectEle = document.getElementById(selectID);
-            for (var m = 0; m < optionList.length; m++) {
-                optionEle = document.createElement("option");
-                optionEle.value = optionEle.text = optionList[m];
-                selectEle.appendChild(optionEle);
-            }
-            // Set the default value of the <select>. Note that we escape this
-            // value in quotes, just in case it contains a period or some other
-            // character(s) that would mess up the querySelector.
-            selectEle.querySelector(
-                'option[value = "' + defaultVal + '"]'
-            ).selected = true;
-        }
-
         /* Calls vegaEmbed() on this.samplePlotJSON.
          *
          * If notFirstTime is falsy, this will initialize some important
@@ -246,12 +211,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 );
                 // Note that we set the default metadata fields based on whatever
                 // the JSON has as the defaults.
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "xAxisField",
                     this.metadataCols,
                     this.samplePlotJSON.encoding.x.field
                 );
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "colorField",
                     this.metadataCols,
                     this.samplePlotJSON.encoding.color.field
@@ -650,25 +615,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
-        static changeColorElementEnabled(enable) {
-            // List of DOM elements that have to do with the color controls. We
-            // disable these when in "boxplot mode" because Vega-Lite gets
-            // grumpy when you try to apply colors to a boxplot that have
-            // different granularity than the boxplot's current x-axis.
-            // (It does the same thing with tooltips.)
-            var colorEles = ["colorField", "colorScale"];
-            var e;
-            if (enable) {
-                for (e = 0; e < colorEles.length; e++) {
-                    document.getElementById(colorEles[e]).disabled = false;
-                }
-            } else {
-                for (e = 0; e < colorEles.length; e++) {
-                    document.getElementById(colorEles[e]).disabled = true;
-                }
-            }
-        }
-
         /* Changes the sample plot JSON and DOM elements to get ready for
          * switching to "boxplot mode." If callRemakeSamplePlot is truthy, this
          * will actually call this.remakeSamplePlot(); otherwise, this won't do
@@ -690,7 +636,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // which only one sample is available show up on the white
             // background and light-gray axis.
             this.samplePlotJSON.mark.median = { color: "#000000" };
-            RRVDisplay.changeColorElementEnabled(false);
+            dom_utils.changeElementsEnabled(this.colorEles, false);
             this.setColorForBoxplot();
             delete this.samplePlotJSON.encoding.tooltip;
             if (callRemakeSamplePlot) {
@@ -708,7 +654,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
-            RRVDisplay.changeColorElementEnabled(true);
+            dom_utils.changeElementsEnabled(this.colorEles, true);
             // No need to explicitly adjust color or tooltips here; tooltips
             // will be auto-added in updateSamplePlotTooltips() (since it will
             // detect that boxplot mode is off, and therefore try to add
@@ -808,32 +754,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             return feature_computation.computeBalance(topCt, botCt);
         }
 
-        /* From downloadDataURI() in the MetagenomeScope viewer interface
-         * source code.
-         */
-        static downloadDataURI(filename, contentToDownload, isPlainText) {
-            document.getElementById("downloadHelper").download = filename;
-            if (isPlainText) {
-                var data =
-                    "data:text/plain;charset=utf-8;base64," +
-                    window.btoa(contentToDownload);
-                document.getElementById("downloadHelper").href = data;
-            } else {
-                document.getElementById(
-                    "downloadHelper"
-                ).href = contentToDownload;
-            }
-            document.getElementById("downloadHelper").click();
-        }
-
-        /* Calls RRVDisplay.downloadDataURI() on the result of
+        /* Calls dom_utils.downloadDataURI() on the result of
          * getSamplePlotData().
          */
         exportData() {
             var currMetadataField = this.samplePlotJSON.encoding.x.field;
             var tsv = this.getSamplePlotData(currMetadataField);
             if (tsv.length > 0) {
-                RRVDisplay.downloadDataURI(
+                dom_utils.downloadDataURI(
                     "rrv_sample_plot_data.tsv",
                     tsv,
                     true
@@ -927,17 +855,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             return outputTSV;
         }
 
-        static clearDiv(divID) {
-            // From https://stackoverflow.com/a/3450726/10730311.
-            // This way is apparently faster than just using
-            // document.getElementById(divID).innerHTML = '' -- not that
-            // performance really matters a ton here, but whatever.
-            var element = document.getElementById(divID);
-            while (element.firstChild) {
-                element.removeChild(element.firstChild);
-            }
-        }
-
         /* Selectively clears the effects of this rrv instance on the DOM.
          *
          * You should only call this with clearOtherStuff set to a truthy value
@@ -949,11 +866,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         destroy(clearRankPlot, clearSamplePlot, clearOtherStuff) {
             if (clearRankPlot) {
                 this.rankPlotView.finalize();
-                RRVDisplay.clearDiv("rankPlot");
+                dom_utils.clearDiv("rankPlot");
             }
             if (clearSamplePlot) {
                 this.samplePlotView.finalize();
-                RRVDisplay.clearDiv("samplePlot");
+                dom_utils.clearDiv("samplePlot");
             }
             if (clearOtherStuff) {
                 // Clear the "features text" displays

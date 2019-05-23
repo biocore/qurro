@@ -1,6 +1,7 @@
 requirejs.config({
     paths: {
         display: "instrumented_js/display",
+        dom_utils: "instrumented_js/dom_utils",
         feature_computation: "instrumented_js/feature_computation",
         vega: "../../support_files/vendor/vega.min",
         "vega-lite": "../../support_files/vendor/vega-lite.min",
@@ -32,6 +33,7 @@ requirejs.config({
 requirejs(
     [
         "display",
+        "dom_utils",
         "feature_computation",
         "vega",
         "vega-lite",
@@ -46,6 +48,7 @@ requirejs(
     ],
     function(
         display,
+        dom_utils,
         feature_computation,
         vega,
         vegaLite,
