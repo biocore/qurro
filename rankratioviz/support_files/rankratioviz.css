@@ -27,6 +27,11 @@ select {
     color: #1f4c73;
     border-radius: 5px;
     border: 2px solid #cfcfff;
+    width: 85%;
+    padding: 0.5em;
+    /* Horizontally centers this element */
+    margin-right: auto;
+    margin-left: auto;
 }
 .info strong {
     color: #0a2a3b;
@@ -37,6 +42,11 @@ select {
     color: #734d15;
     border-radius: 8px;
     border: 2px dotted #ffcfcc;
+    width: 85%;
+    padding: 0.5em;
+    /* Horizontally centers this element */
+    margin-right: auto;
+    margin-left: auto;
 }
 .warning strong {
     color: #3b270a;
@@ -74,6 +84,7 @@ select {
 }
 textarea {
     width: 92%;
+    max-width: 100%;
 }
 .fancyBorder {
     border: 1px solid;
@@ -100,6 +111,9 @@ textarea {
 }
 .den:focus {
     outline-color: #009;
+}
+.searchInput {
+    width: 80%;
 }
 .invisible {
     display: none;

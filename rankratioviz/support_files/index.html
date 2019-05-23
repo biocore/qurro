@@ -37,10 +37,10 @@
                         id="barSizeWarning"
                         class="warning centeredBlock invisible"
                     >
-                        <strong>Note:</strong> The rank plot is currently using
-                        a bar width of less than one pixel per bar. This means
-                        that the image shown isn't necessarily going to be an
-                        accurate representation of the rank plot.
+                        <strong>Warning:</strong> The rank plot is currently
+                        using a bar width of less than one pixel per bar. This
+                        means that the image shown isn't necessarily going to be
+                        an accurate representation of the rank plot.
                     </p>
                 </div>
             </div>
@@ -124,28 +124,28 @@
                     the plot of feature ranks on the left or by searching using
                     the controls below.
                 </p>
-                <p>
-                    Filter numerator to features where
+                <h4 class="centeredHeader">Numerator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
                     <select class="fancyBorder num" id="topSearch"> </select>
                     contains the text
                     <input
                         type="text"
-                        class="fancyBorder num"
+                        class="fancyBorder num searchInput"
                         id="topText"
-                        size="30"
                     />
-                </p>
-                <p>
-                    Filter denominator to features where
+                </div>
+                <h4 class="centeredHeader">Denominator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
                     <select class="fancyBorder den" id="botSearch"> </select>
                     contains the text
                     <input
                         type="text"
-                        class="fancyBorder den"
+                        class="fancyBorder den searchInput"
                         id="botText"
-                        size="30"
                     />
-                </p>
+                </div>
 
                 <!-- Invisible <a> used for downloading data URIs.
                      Based on #downloadHelper in MetagenomeScope's viewer
