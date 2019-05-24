@@ -39,12 +39,20 @@
         <button id="exportDataButton"></button>
         <a id="downloadHelper"></a>
         <select id="topSearch"> </select>
+        <select id="topSearchType">
+            <option value="text"></option>
+            <option value="rank"></option>
+        </select>
         <!-- TODO instead of querying the DOM in the plot update functions,
              just make the search types and strings arguments (will make testing
              a lot easier)
         -->
         <input type="text" id="topText" />
         <select id="botSearch"> </select>
+        <select id="botSearchType">
+            <option value="text"></option>
+            <option value="rank"></option>
+        </select>
         <input type="text" id="botText" />
 
         <h4 id="numHeader">Numerator Features (0 selected)</h4>
