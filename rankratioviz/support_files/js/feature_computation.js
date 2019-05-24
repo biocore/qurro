@@ -45,16 +45,21 @@ define(function() {
     /* Converts a feature's taxonomy to an array of ranks.
      * Differs from inputTextToRankArray() in that this doesn't split on commas
      * or spaces -- it just splits on semicolons and trims every element in the
-     * resulting list.
+     * resulting list, and filters out empty strings.
      *
      * This is obviously a pretty minimal function. If the feature has a
      * taxonomy string that doesn't use semicolons as delimiters, this will
      * fail. (That'll be time for us to update this function, then.)
      */
     function taxonomyToRankArray(taxonomy) {
-        return taxonomy.split(";").map(function(rank) {
-            return rank.trim();
-        });
+        return taxonomy
+            .split(";")
+            .map(function(rank) {
+                return rank.trim();
+            })
+            .filter(function(rank) {
+                return rank.length > 0;
+            });
     }
 
     /* Given a list of feature "rows", a string of input "ranks," and a feature
@@ -78,12 +83,19 @@ define(function() {
         featureMetadataField
     ) {
         var rankArray = inputTextToRankArray(inputText);
+        if (rankArray.length <= 0) {
+            return [];
+        }
         var ranksOfFeature;
         var filteredFeatures = [];
         for (var ti = 0; ti < featureRowList.length; ti++) {
             ranksOfFeature = taxonomyToRankArray(
                 featureRowList[ti][featureMetadataField]
             );
+            // Don't bother checking if ranksOfFeature is empty
+            if (ranksOfFeature.length <= 0) {
+                continue;
+            }
             // Loop over the input rank array, and then loop over the "ranks"
             // within the current feature's specified feature metadata field.
             // If any of them match the rank array, we'll include the current
