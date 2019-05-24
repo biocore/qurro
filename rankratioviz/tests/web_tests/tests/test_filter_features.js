@@ -229,6 +229,41 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
             });
         });
+        describe("existsIntersection()", function() {
+            it("Returns true if an intersection exists", function() {
+                chai.assert.isTrue(
+                    feature_computation.existsIntersection(
+                        ["a", "b", "c"],
+                        ["d", "e", "b"]
+                    )
+                );
+                chai.assert.isTrue(
+                    feature_computation.existsIntersection(["a"], ["a"])
+                );
+            });
+            it("Returns false if no intersection exists", function() {
+                chai.assert.isFalse(
+                    feature_computation.existsIntersection(
+                        ["a", "b", "c"],
+                        ["d", "e", "f"]
+                    )
+                );
+                chai.assert.isFalse(
+                    feature_computation.existsIntersection(["a"], ["b"])
+                );
+            });
+            it("Returns false when >= 1 input array is empty", function() {
+                chai.assert.isFalse(
+                    feature_computation.existsIntersection([], [])
+                );
+                chai.assert.isFalse(
+                    feature_computation.existsIntersection([1], [])
+                );
+                chai.assert.isFalse(
+                    feature_computation.existsIntersection([], [2])
+                );
+            });
+        });
         describe("taxonomyToRankArray()", function() {
             it("Works with basic, simple taxonomy strings", function() {
                 chai.assert.sameOrderedMembers(
