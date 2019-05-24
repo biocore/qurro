@@ -129,7 +129,12 @@
                 <div class="centeredBlock">
                     Filter to features where
                     <select class="fancyBorder num" id="topSearch"> </select>
-                    contains the text
+                    <select class="fancyBorder num" id="topSearchType">
+                        <option value="text">contains the text</option>
+                        <option value="rank"
+                            >contains the exact taxonomic rank(s)</option
+                        >
+                    </select>
                     <input
                         type="text"
                         class="fancyBorder num searchInput"
@@ -140,7 +145,12 @@
                 <div class="centeredBlock">
                     Filter to features where
                     <select class="fancyBorder den" id="botSearch"> </select>
-                    contains the text
+                    <select class="fancyBorder den" id="botSearchType">
+                        <option value="text">contains the text</option>
+                        <option value="rank"
+                            >contains the exact taxonomic rank(s)</option
+                        >
+                    </select>
                     <input
                         type="text"
                         class="fancyBorder den searchInput"
