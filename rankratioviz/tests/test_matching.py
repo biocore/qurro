@@ -215,17 +215,20 @@ def test_feature_metadata_and_dropped_sample():
 
     data_name = rank_json["data"]["name"]
 
+    # Check that feature metadata annotations were done correctly
     for feature in rank_json["datasets"][data_name]:
         txid = feature["Feature ID"]
         if feature["Feature ID"] == "Taxon3":
-            # Check that Taxon3's feature metadata was kept.
-            # This is hardcoded based on Taxon3's specification in floc.
-            # This shouldn't change in the future, so hardcoding it here
-            # is fine.
             assert feature["FeatureMetadata1"] == "Yeet"
-            assert feature["FeatureMetadata2"] == 100
+            # this should be interpreted this as a string, since "lol" is in
+            # the same column
+            assert feature["FeatureMetadata2"] == "100"
+        elif feature["Feature ID"] == "Taxon5":
+            # This should be interpeted as a string, also
+            assert feature["FeatureMetadata1"] == "null"
+            assert feature["FeatureMetadata2"] == "lol"
         else:
-            # Check that the other taxa haven't been annotated with Taxon3's
+            # Check that the other taxa haven't been annotated with any
             # metadata.
             assert feature["FeatureMetadata1"] is None
             assert feature["FeatureMetadata2"] is None
