@@ -114,5 +114,56 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                 chai.assert.isEmpty(ele.children);
             });
         });
+
+        describe("Setting onchange and onclick element bindings", function() {
+            // Silly little test functions
+            function give4() {
+                return 4;
+            }
+            function give8() {
+                return 8;
+            }
+            it("Properly sets the onchange attribute", function() {
+                var eleList = dom_utils.setUpDOMBindings(
+                    { qurro_bindingtest1: give4 },
+                    "onchange"
+                );
+                // Apparently you can just sorta call onchange() directly. See
+                // https://stackoverflow.com/a/2856602/10730311.
+                chai.assert.equal(
+                    document.getElementById(eleList[0]).onchange(),
+                    4
+                );
+            });
+            it("Properly sets the onclick attribute", function() {
+                var eleList = dom_utils.setUpDOMBindings(
+                    { qurro_bindingtest2: give4 },
+                    "onclick"
+                );
+                chai.assert.equal(
+                    document.getElementById(eleList[0]).onclick(),
+                    4
+                );
+            });
+            it("Works with multiple elements at once", function() {
+                var eleList = dom_utils.setUpDOMBindings(
+                    { qurro_bindingtest1: give8, qurro_bindingtest3: give4 },
+                    "onchange"
+                );
+                for (var i = 0; i < eleList.length; i++) {
+                    if (eleList[i] === "qurro_bindingtest1") {
+                        chai.assert.equal(
+                            document.getElementById(eleList[i]).onchange(),
+                            8
+                        );
+                    } else {
+                        chai.assert.equal(
+                            document.getElementById(eleList[i]).onchange(),
+                            4
+                        );
+                    }
+                }
+            });
+        });
     });
 });
