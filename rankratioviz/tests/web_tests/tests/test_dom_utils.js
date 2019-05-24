@@ -75,6 +75,33 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
     });
 
     describe("Clearing children of an element", function() {
-        it("Works properly");
+        it("Works properly on nested elements", function() {
+            var currID = "qurro_cleardiv_test";
+            dom_utils.clearDiv(currID);
+            chai.assert.isEmpty(document.getElementById(currID).children);
+            var descendantIDs = [
+                "child",
+                "grandchild",
+                "child2",
+                "grandchild2",
+                "greatgrandchild"
+            ];
+            for (var c = 0; c < descendantIDs.length; c++) {
+                chai.assert.notExists(
+                    document.getElementById(descendantIDs[c])
+                );
+            }
+        });
+        it("Doesn't do anything on empty elements", function() {
+            var currID = "qurro_cleardiv_emptyelement";
+            dom_utils.clearDiv(currID);
+            var ele = document.getElementById(currID);
+            chai.assert.exists(ele);
+            // Check that it didn't delete the top-level attributes of the
+            // element
+            chai.assert.equal(ele.getAttribute("sillyparam"), "hi!");
+            // And it shouldn't *add* stuff to the div...
+            chai.assert.isEmpty(ele.children);
+        });
     });
 });
