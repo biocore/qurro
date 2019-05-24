@@ -385,17 +385,21 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Determine which feature metadata field(s) to look at
             var topField = document.getElementById("topSearch").value;
             var botField = document.getElementById("botSearch").value;
+            var topSearchType = document.getElementById("topSearchType").value;
+            var botSearchType = document.getElementById("botSearchType").value;
             var topEnteredText = document.getElementById("topText").value;
             var botEnteredText = document.getElementById("botText").value;
             this.topFeatures = feature_computation.filterFeatures(
                 this.rankPlotJSON,
                 topEnteredText,
-                topField
+                topField,
+                topSearchType
             );
             this.botFeatures = feature_computation.filterFeatures(
                 this.rankPlotJSON,
                 botEnteredText,
-                botField
+                botField,
+                botSearchType
             );
             this.changeSamplePlot(
                 this.updateBalanceMulti,

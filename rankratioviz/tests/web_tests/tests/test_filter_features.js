@@ -66,7 +66,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "lol",
-                        "Feature ID"
+                        "Feature ID",
+                        "text"
                     )
                 ),
                 lolMatches
@@ -76,7 +77,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "Feature",
-                        "Feature ID"
+                        "Feature ID",
+                        "text"
                     )
                 ),
                 inputFeatures
@@ -90,7 +92,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON2,
                         "Staphylococcus",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 ),
                 staphTextMatches
@@ -100,7 +103,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON2,
                         "Bacteria",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 ),
                 bacteriaMatches
@@ -110,7 +114,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON2,
                         "Caudovirales",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 ),
                 caudoviralesMatches
@@ -121,7 +126,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON2,
                         ";Staphylococcus;",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 ),
                 bacteriaMatches
@@ -134,7 +140,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "I'm the input text!",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 );
             });
@@ -144,7 +151,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "I'm the input text!",
-                        "feature id"
+                        "feature id",
+                        "text"
                     )
                 );
             });
@@ -154,7 +162,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "I'm the input text!",
-                        "FeatureID"
+                        "FeatureID",
+                        "text"
                     )
                 );
             });
@@ -166,7 +175,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON2,
                         "staphylococcus",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 )
             );
@@ -175,7 +185,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "feature",
-                        "Feature ID"
+                        "Feature ID",
+                        "text"
                     )
                 )
             );
@@ -187,13 +198,19 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "",
-                        "Feature ID"
+                        "Feature ID",
+                        "text"
                     )
                 )
             );
             chai.assert.isEmpty(
                 getFeatureIDsFromObjectArray(
-                    feature_computation.filterFeatures(rpJSON2, "", "Taxonomy")
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "",
+                        "Taxonomy",
+                        "text"
+                    )
                 )
             );
             chai.assert.isEmpty(
@@ -201,7 +218,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         " \n \t ",
-                        "Feature ID"
+                        "Feature ID",
+                        "text"
                     )
                 )
             );
@@ -210,7 +228,8 @@ define(["feature_computation", "mocha", "chai"], function(
                     feature_computation.filterFeatures(
                         rpJSON2,
                         " \n \t ",
-                        "Taxonomy"
+                        "Taxonomy",
+                        "text"
                     )
                 )
             );
