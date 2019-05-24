@@ -292,9 +292,14 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
                 chai.assert.sameOrderedMembers(
                     feature_computation.inputTextToRankArray(
-                        "c__Bacilli,o__Bacillales  \t  f__Staphylococcaceae"
+                        "\n c__Bacilli,o__Bacillales  \t  f__Staphylococcaceae \n lol"
                     ),
-                    ["c__Bacilli", "o__Bacillales", "f__Staphylococcaceae"]
+                    [
+                        "c__Bacilli",
+                        "o__Bacillales",
+                        "f__Staphylococcaceae",
+                        "lol"
+                    ]
                 );
             });
         });
