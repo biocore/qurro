@@ -62,6 +62,25 @@ define(function() {
             });
     }
 
+    /* Returns true if arrayA and arrayB share at least one element.
+     *
+     * The check is done via === ("strict equality" in JS).
+     *
+     * Since this returns as soon as a match is found, this should be pretty
+     * efficient.
+     */
+    function existsIntersection(arrayA, arrayB) {
+        for (var a = 0; a < arrayA.length; a++) {
+            for (var b = 0; b < arrayB.length; b++) {
+                if (arrayA[a] === arrayB[b]) {
+                    // If we found a match, no need to keep checking.
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /* Given a list of feature "rows", a string of input "ranks," and a feature
      * metadata field, returns a list of all features that contain a taxonomic
      * rank that matches a rank in the input.
@@ -82,8 +101,8 @@ define(function() {
         inputText,
         featureMetadataField
     ) {
-        var rankArray = inputTextToRankArray(inputText);
-        if (rankArray.length <= 0) {
+        var inputRankArray = inputTextToRankArray(inputText);
+        if (inputRankArray.length <= 0) {
             return [];
         }
         var ranksOfFeature;
@@ -92,30 +111,8 @@ define(function() {
             ranksOfFeature = taxonomyToRankArray(
                 featureRowList[ti][featureMetadataField]
             );
-            // Don't bother checking if ranksOfFeature is empty
-            if (ranksOfFeature.length <= 0) {
-                continue;
-            }
-            // Loop over the input rank array, and then loop over the "ranks"
-            // within the current feature's specified feature metadata field.
-            // If any of them match the rank array, we'll include the current
-            // feature in the output.
-            var foundSomething = false;
-            for (var ri = 0; ri < rankArray.length; ri++) {
-                for (var fi = 0; fi < ranksOfFeature.length; fi++) {
-                    if (ranksOfFeature[fi] === rankArray[ri]) {
-                        filteredFeatures.push(featureRowList[ti]);
-                        // If we found a match, no need to keep checking. That
-                        // could lead to multiple rank matches on the same feature,
-                        // which in turn could lead to weird stuff. (TODO: this is
-                        // a good test case to add in.)
-                        foundSomething = true;
-                        break;
-                    }
-                }
-                if (foundSomething) {
-                    break;
-                }
+            if (existsIntersection(ranksOfFeature, inputRankArray)) {
+                filteredFeatures.push(featureRowList[ti]);
             }
         }
         return filteredFeatures;
@@ -190,6 +187,7 @@ define(function() {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,
         inputTextToRankArray: inputTextToRankArray,
-        taxonomyToRankArray: taxonomyToRankArray
+        taxonomyToRankArray: taxonomyToRankArray,
+        existsIntersection: existsIntersection
     };
 });
