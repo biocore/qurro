@@ -278,10 +278,17 @@ define(["feature_computation", "mocha", "chai"], function(
             });
             it('Ignores "empty" taxonomic ranks', function() {
                 chai.assert.sameOrderedMembers(
+                    // Currently, we don't treat __ specially, so it'll get
+                    // treated as a taxonomic rank. (See
+                    // https://forum.qiime2.org/t/unassigned-reads-k-bacteria-only-in-one-sample-type-murine-samples/4536
+                    // for an example of where this has apparently come up in
+                    // practice.) If it'd be desirable to specifically exclude
+                    // ranks that consist only of underscores, we can add that
+                    // functionality to taxonomyToRankArray() later on.
                     feature_computation.taxonomyToRankArray(
-                        "D_0__Bacteria;; ; ;D_4__Whatever"
+                        "D_0__Bacteria;; ;__;D_4__Whatever"
                     ),
-                    ["D_0__Bacteria", "D_4__Whatever"]
+                    ["D_0__Bacteria", "__", "D_4__Whatever"]
                 );
                 chai.assert.sameOrderedMembers(
                     feature_computation.taxonomyToRankArray(
