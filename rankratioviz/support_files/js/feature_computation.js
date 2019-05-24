@@ -37,6 +37,7 @@ define(function() {
         // Filter out ""s caused by repeated commas or whitespace in the input.
         // Why we need this: "a b   c".split(" ") produces
         // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
+        var rankArray = [];
         var r;
         for (var ri = 0; ri < initialRankArray.length; ri++) {
             r = initialRankArray[ri];
@@ -71,20 +72,27 @@ define(function() {
         var ranksOfFeature;
         var filteredFeatures = [];
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            ranksOfFeature = potentialFeatures[ti][featureMetadataField].split(
+            ranksOfFeature = featureRowList[ti][featureMetadataField].split(
                 ";"
             );
-            // Loop over this feature's "ranks" within the specified feature
-            // metadata field. If any of them match the rank array (based on
-            // what the user searched for), we'll include this feature in the
-            // output.
+            // Loop over the input rank array, and then loop over the "ranks"
+            // within the current feature's specified feature metadata field.
+            // If any of them match the rank array, we'll include the current
+            // feature in the output.
+            var foundSomething = false;
             for (var ri = 0; ri < rankArray.length; ri++) {
-                if (ranksOfFeature.trim().includes(rankArray[ri])) {
-                    filteredFeatures.push(potentialFeatures[ti]);
-                    // If we found a match, no need to keep checking. That
-                    // could lead to multiple rank matches on the same feature,
-                    // which in turn could lead to weird stuff. (TODO: this is
-                    // a good test case to add in.)
+                for (var fi = 0; fi < ranksOfFeature.length; fi++) {
+                    if (ranksOfFeature[fi].trim() === rankArray[ri]) {
+                        filteredFeatures.push(featureRowList[ti]);
+                        // If we found a match, no need to keep checking. That
+                        // could lead to multiple rank matches on the same feature,
+                        // which in turn could lead to weird stuff. (TODO: this is
+                        // a good test case to add in.)
+                        foundSomething = true;
+                        break;
+                    }
+                }
+                if (foundSomething) {
                     break;
                 }
             }
