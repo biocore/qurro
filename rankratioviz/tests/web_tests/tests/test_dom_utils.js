@@ -43,4 +43,36 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
             });
         });
     });
+
+    var assertEnabled = function(selectID, isEnabled) {
+        var ele = document.getElementById(selectID);
+        if (!isEnabled) {
+            chai.assert.isTrue(ele.disabled);
+        } else {
+            chai.assert.isFalse(ele.disabled);
+        }
+    };
+
+    describe("Changing the enabled status of an element", function() {
+        it("Properly disables elements", function() {
+            dom_utils.changeElementsEnabled(
+                ["qurro_enabled_test", "qurro_enabled_test2"],
+                false
+            );
+            assertEnabled("qurro_enabled_test", false);
+            assertEnabled("qurro_enabled_test2", false);
+        });
+        it("Properly enables elements", function() {
+            dom_utils.changeElementsEnabled(
+                ["qurro_enabled_test", "qurro_enabled_test2"],
+                true
+            );
+            assertEnabled("qurro_enabled_test", true);
+            assertEnabled("qurro_enabled_test2", true);
+        });
+    });
+
+    describe("Clearing children of an element", function() {
+        it("Works properly");
+    });
 });
