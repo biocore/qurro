@@ -291,6 +291,10 @@ define(["feature_computation", "mocha", "chai"], function(
                     ["a", "b", "c", "d", "e", "f", "g"]
                 );
                 chai.assert.sameOrderedMembers(
+                    feature_computation.inputTextToRankArray("a\tb\nc\td\n\ne"),
+                    ["a", "b", "c", "d", "e"]
+                );
+                chai.assert.sameOrderedMembers(
                     feature_computation.inputTextToRankArray(
                         "\n c__Bacilli,o__Bacillales  \t  f__Staphylococcaceae \n lol"
                     ),
