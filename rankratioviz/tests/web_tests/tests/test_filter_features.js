@@ -229,6 +229,79 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
             });
         });
+        describe("taxonomyToRankArray()", function() {
+            it("Works with basic, simple taxonomy strings", function() {
+                chai.assert.sameOrderedMembers(
+                    feature_computation.taxonomyToRankArray(
+                        "Viruses;Caudovirales;Myoviridae;Twortlikevirus;Staphylococcus_phage_Twort"
+                    ),
+                    [
+                        "Viruses",
+                        "Caudovirales",
+                        "Myoviridae",
+                        "Twortlikevirus",
+                        "Staphylococcus_phage_Twort"
+                    ]
+                );
+            });
+            it("Works with Greengenes-style taxonomy strings", function() {
+                chai.assert.sameOrderedMembers(
+                    feature_computation.taxonomyToRankArray(
+                        "k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Bacteroidaceae; g__Bacteroides; s__"
+                    ),
+                    [
+                        "k__Bacteria",
+                        "p__Bacteroidetes",
+                        "c__Bacteroidia",
+                        "o__Bacteroidales",
+                        "f__Bacteroidaceae",
+                        "g__Bacteroides",
+                        "s__"
+                    ]
+                );
+            });
+            it("Works with SILVA-style taxonomy strings", function() {
+                chai.assert.sameOrderedMembers(
+                    feature_computation.taxonomyToRankArray(
+                        // Thanks to Justin for the example data
+                        "D_0__Bacteria;D_1__Bacteroidetes;D_2__Bacteroidia;D_3__Bacteroidales;D_4__Bacteroidaceae;D_5__Bacteroides"
+                    ),
+                    [
+                        "D_0__Bacteria",
+                        "D_1__Bacteroidetes",
+                        "D_2__Bacteroidia",
+                        "D_3__Bacteroidales",
+                        "D_4__Bacteroidaceae",
+                        "D_5__Bacteroides"
+                    ]
+                );
+            });
+            it('Ignores "empty" taxonomic ranks', function() {
+                chai.assert.sameOrderedMembers(
+                    feature_computation.taxonomyToRankArray(
+                        "D_0__Bacteria;; ; ;D_4__Whatever"
+                    ),
+                    ["D_0__Bacteria", "D_4__Whatever"]
+                );
+                chai.assert.sameOrderedMembers(
+                    feature_computation.taxonomyToRankArray(
+                        "Viruses;;Caudovirales;lol; "
+                    ),
+                    ["Viruses", "Caudovirales", "lol"]
+                );
+            });
+            it("Returns [] when strings without actual text are passed in", function() {
+                chai.assert.isEmpty(
+                    feature_computation.taxonomyToRankArray("")
+                );
+                chai.assert.isEmpty(
+                    feature_computation.taxonomyToRankArray("  \n \t  ")
+                );
+                chai.assert.isEmpty(
+                    feature_computation.taxonomyToRankArray("   ;   ")
+                );
+            });
+        });
         describe("inputTextToRankArray()", function() {
             it("Behaves as expected when passed a comma-separated list", function() {
                 chai.assert.sameOrderedMembers(
