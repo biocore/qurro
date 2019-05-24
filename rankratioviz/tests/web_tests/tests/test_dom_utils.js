@@ -26,6 +26,8 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
             assertSelected(selectID, "asdf");
         });
         it("Clears the option list when called on an already-populated <select>", function() {
+            // We shouldn't see stuff from the previous test (e.g. "Thing 1",
+            // "asdf") in the select's options
             var vals = ["Thing 3", "Thing 2"];
             dom_utils.populateSelect(selectID, vals, "Thing 2");
             chai.assert.sameMembers(getChildValuesFromSelect(selectID), vals);
