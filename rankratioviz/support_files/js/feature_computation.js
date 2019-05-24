@@ -37,15 +37,9 @@ define(function() {
         // Filter out ""s caused by repeated commas or whitespace in the input.
         // Why we need this: "a b   c".split(" ") produces
         // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
-        var rankArray = [];
-        var r;
-        for (var ri = 0; ri < initialRankArray.length; ri++) {
-            r = initialRankArray[ri];
-            if (r !== "") {
-                rankArray.push(r);
-            }
-        }
-        return rankArray;
+        return initialRankArray.filter(function(r) {
+            return r !== "";
+        });
     }
 
     /* Given a list of feature "rows", a string of input "ranks," and a feature
