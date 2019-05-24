@@ -280,7 +280,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     ["a", "b", "c", "d", "e", "f", "g"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray("a\tb\nc\td\n\ne"),
+                    feature_computation.inputTextToRankArray("a\tb\nc\rd\n\ne"),
                     ["a", "b", "c", "d", "e"]
                 );
                 chai.assert.sameOrderedMembers(
