@@ -25,7 +25,7 @@ define(function() {
 
     /* Prepares an input array of ranks to use for searching. This is because,
      * in rank searching, users can search for multiple ranks at once if they
-     * separate them with a comma or a semicolon.
+     * separate them with a comma, a semicolon, or a space.
      * If a given feature contains any of these ranks, we'll include it in the
      * output of rankFilterFeatures().
      */
