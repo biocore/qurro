@@ -32,7 +32,7 @@ define(function() {
     function inputTextToRankArray(inputText) {
         var initialRankArray = inputText
             .trim()
-            .replace(/[,;]/g, " ")
+            .replace(/[,;\s]/g, " ")
             .split(" ");
         // Filter out ""s caused by repeated commas or whitespace in the input.
         // Why we need this: "a b   c".split(" ") produces
