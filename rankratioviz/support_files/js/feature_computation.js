@@ -165,5 +165,9 @@ define(function() {
         }
         return Math.log(topValue) - Math.log(botValue);
     }
-    return { filterFeatures: filterFeatures, computeBalance: computeBalance };
+    return {
+        filterFeatures: filterFeatures,
+        computeBalance: computeBalance,
+        inputTextToRankArray: inputTextToRankArray
+    };
 });
