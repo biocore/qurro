@@ -75,8 +75,13 @@ define(function() {
         }
     }
 
-    /* From downloadDataURI() in the MetagenomeScope viewer interface
-     * source code.
+    /* Downloads a string (either plain text or already a data URI) defining
+     * the contents of a file.
+     *
+     * This is done by using a "downloadHelper" <a> tag.
+     *
+     * This function was based on downloadDataURI() in the MetagenomeScope
+     * viewer interface source code.
      */
     function downloadDataURI(filename, contentToDownload, isPlainText) {
         document.getElementById("downloadHelper").download = filename;
