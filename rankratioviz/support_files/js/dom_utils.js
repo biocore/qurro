@@ -24,10 +24,18 @@ define(function() {
         return elementIDs;
     }
 
-    /* Populates a <select> DOM element with a list of options. */
+    /* Populates a <select> DOM element with a list of options.
+     *
+     * This will remove any options already present in the <select> first.
+     */
     function populateSelect(selectID, optionList, defaultVal) {
+        if (optionList.length <= 0) {
+            throw new Error("optionList must have at least one value");
+        }
         var optionEle;
         var selectEle = document.getElementById(selectID);
+        // Remove any options already present in the <select>
+        selectEle.innerHTML = "";
         for (var m = 0; m < optionList.length; m++) {
             optionEle = document.createElement("option");
             optionEle.value = optionEle.text = optionList[m];
