@@ -86,7 +86,7 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
             });
 
-            it("Correctly searches through feature metadta fields", function() {
+            it("Correctly searches through feature metadata fields", function() {
                 // Default text search ignores taxonomic ranks (i.e. semicolons)
                 chai.assert.sameOrderedMembers(
                     getFeatureIDsFromObjectArray(
@@ -133,41 +133,6 @@ define(["feature_computation", "mocha", "chai"], function(
                     ),
                     bacteriaMatches
                 );
-            });
-
-            it("Throws an error when nonexistent feature metadata field passed", function() {
-                chai.assert.throws(function() {
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON1,
-                            "I'm the input text!",
-                            "Taxonomy",
-                            "text"
-                        )
-                    );
-                });
-                // test that feature metadata field names are case-sensitive
-                chai.assert.throws(function() {
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON1,
-                            "I'm the input text!",
-                            "feature id",
-                            "text"
-                        )
-                    );
-                });
-                // test that feature metadata field names "preserve" whitespace
-                chai.assert.throws(function() {
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON1,
-                            "I'm the input text!",
-                            "FeatureID",
-                            "text"
-                        )
-                    );
-                });
             });
 
             it("Searching is case sensitive", function() {
@@ -237,8 +202,32 @@ define(["feature_computation", "mocha", "chai"], function(
             });
         });
         describe('"Rank"-mode searching', function() {
-            it("Finds matching features based on taxonomic rank");
-            it("Only filters based on full, exact (i.e. not partial) matches");
+            it("Finds matching features based on full, exact taxonomic rank", function() {
+                chai.assert.sameOrderedMembers(
+                    getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Staphylococcus",
+                            "Taxonomy",
+                            "rank"
+                        )
+                    ),
+                    // output shouldn't include the Staphylococcus_phage, since
+                    // rank searching is exact
+                    ["Feature 2", "Feature 3"]
+                );
+                chai.assert.sameOrderedMembers(
+                    getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Bacilli",
+                            "Taxonomy",
+                            "rank"
+                        )
+                    ),
+                    ["Feature 2", "Feature 3"]
+                );
+            });
         });
         describe("inputTextToRankArray()", function() {
             it("Behaves as expected when passed a comma-separated list", function() {
@@ -304,6 +293,75 @@ define(["feature_computation", "mocha", "chai"], function(
                         "f__Staphylococcaceae",
                         "lol"
                     ]
+                );
+            });
+        });
+        describe("Various filterFeatures() logistics", function() {
+            it("Throws an error when nonexistent feature metadata field passed", function() {
+                chai.assert.throws(function() {
+                    getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "I'm the input text!",
+                            "Taxonomy",
+                            "text"
+                        )
+                    );
+                });
+                // test that feature metadata field names are case-sensitive
+                chai.assert.throws(function() {
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "I'm the input text!",
+                        "feature id",
+                        "text"
+                    );
+                });
+                // test that feature metadata field names "preserve" whitespace
+                chai.assert.throws(function() {
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "I'm the input text!",
+                        "FeatureID",
+                        "text"
+                    );
+                });
+            });
+            it("Throws an error when nonexistent search type passed", function() {
+                chai.assert.throws(function() {
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "I'm irrelevant!",
+                        "Feature ID",
+                        "asdfasdfasdf"
+                    );
+                });
+                // test that search type names are case-sensitive
+                chai.assert.throws(function() {
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "I'm the input text!",
+                        "Taxonomy",
+                        "Rank"
+                    );
+                });
+            });
+            it("Returns [] when inputText.trim().length is 0", function() {
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "",
+                        "Feature ID",
+                        "text"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "  \r            \t \n     ",
+                        "Taxonomy",
+                        "rank"
+                    )
                 );
             });
         });
