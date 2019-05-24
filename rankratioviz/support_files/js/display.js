@@ -68,7 +68,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.makePlots();
 
             // All DOM elements that we disable/enable when switching to/from
-            // "boxplot mode."
+            // "boxplot mode." We disable these when in "boxplot mode" because
+            // Vega-Lite gets grumpy when you try to apply colors to a boxplot
+            // when the colors have different granularity than the boxplot's
+            // current x-axis. (It does the same thing with tooltips, which is
+            // why we delete tooltips also when switching to boxplots.)
             this.colorEles = ["colorField", "colorScale"];
             // Set up relevant DOM bindings
             var display = this;

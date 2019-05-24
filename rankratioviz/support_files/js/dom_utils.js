@@ -49,21 +49,15 @@ define(function() {
         ).selected = true;
     }
 
+    /* Given a list of element IDs and a boolean, changes the elements'
+     * "disabled" attribute to false (if enable is true) and changes the
+     * attribute to true if enable is false.
+     *
+     * ...So this just sets the disabled attribute to !enable.
+     */
     function changeElementsEnabled(elements, enable) {
-        // List of DOM elements that have to do with the color controls. We
-        // disable these when in "boxplot mode" because Vega-Lite gets
-        // grumpy when you try to apply colors to a boxplot that have
-        // different granularity than the boxplot's current x-axis.
-        // (It does the same thing with tooltips.)
-        var e;
-        if (enable) {
-            for (e = 0; e < elements.length; e++) {
-                document.getElementById(elements[e]).disabled = false;
-            }
-        } else {
-            for (e = 0; e < elements.length; e++) {
-                document.getElementById(elements[e]).disabled = true;
-            }
+        for (var e = 0; e < elements.length; e++) {
+            document.getElementById(elements[e]).disabled = !enable;
         }
     }
 
