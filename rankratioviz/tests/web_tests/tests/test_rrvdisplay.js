@@ -222,6 +222,21 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
         });
 
+        function checkHeaders(expTopCt, expBotCt) {
+            chai.assert.equal(
+                document.getElementById("numHeader").innerHTML,
+                "Numerator Features (" +
+                    expTopCt.toLocaleString() +
+                    " selected)"
+            );
+            chai.assert.equal(
+                document.getElementById("denHeader").innerHTML,
+                "Denominator Features (" +
+                    expBotCt.toLocaleString() +
+                    " selected)"
+            );
+        }
+
         describe('Updating "feature text" DOM elements', function() {
             it("Works for single-feature selections", function() {
                 rrv.newFeatureHigh = {
@@ -243,6 +258,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     document.getElementById("botFeaturesDisplay").value,
                     "New feature name low / 10 / 3"
                 );
+                checkHeaders(1, 1);
                 // Check it again -- ensure that the updating action overwrites the
                 // previous values
                 rrv.newFeatureHigh = {
@@ -259,6 +275,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     document.getElementById("botFeaturesDisplay").value,
                     "Thing 2! / / "
                 );
+                checkHeaders(1, 1);
             });
             it("Works for multi-feature selections", function() {
                 // Standard case
@@ -287,6 +304,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     document.getElementById("botFeaturesDisplay").value,
                     expectedBotText
                 );
+                checkHeaders(5, 2);
                 // Check case where there's only one feature in a list
                 // In this case, the denominator + expected bottom text are the
                 // same as before
@@ -301,7 +319,10 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     document.getElementById("botFeaturesDisplay").value,
                     expectedBotText
                 );
+                checkHeaders(1, 2);
                 // Check case where lists are empty
+                // This could happen if, e.g., both of the user's text queries
+                // don't have any results.
                 rrv.topFeatures = [];
                 rrv.botFeatures = [];
                 rrv.updateFeaturesTextDisplays();
@@ -311,12 +332,16 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
+                checkHeaders(0, 0);
             });
             it('Clears the "feature text" DOM elements properly', function() {
                 // Populate the DOM elements
                 rrv.newFeatureHigh = "Thing 1!";
                 rrv.newFeatureLow = "Thing 2!";
                 rrv.updateFeaturesTextDisplays(true);
+                // Just to be super sure, check that the headers were updated
+                // correctly
+                checkHeaders(1, 1);
                 // Check that clearing works
                 rrv.updateFeaturesTextDisplays(false, true);
                 chai.assert.isEmpty(
@@ -325,11 +350,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
+                checkHeaders(0, 0);
                 // Repopulate the DOM elements
                 rrv.newFeatureHigh = "Thing 1!";
                 rrv.newFeatureLow = "Thing 2!";
                 rrv.updateFeaturesTextDisplays(true);
-                // Check that clearing is done, even if "single" is true (the "clear" argument takes priority)
+                checkHeaders(1, 1);
+                // Check that clearing is done, even if "single" is true
+                // (the "clear" argument takes priority)
                 rrv.updateFeaturesTextDisplays(true, true);
                 chai.assert.isEmpty(
                     document.getElementById("topFeaturesDisplay").value
@@ -337,6 +365,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
+                checkHeaders(0, 0);
             });
         });
         describe("Updating feature rank colors", function() {

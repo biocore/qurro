@@ -485,17 +485,21 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             return outputText;
         }
 
-        /* Updates the textareas that list the selected features.
+        /* Updates the textareas that list the selected features, as well as
+         * the corresponding header elements that indicate the numbers of
+         * selected features.
          *
-         * This defaults to updating based on the "multiple" selections' values. If you
-         * pass in a truthy value for the clear argument, this will instead clear these
-         * text areas; if you pass in a truthy value for the single argument (and clear
-         * is falsy), this will instead update based on the single selection values.
+         * This defaults to updating based on the "multiple" selections'
+         * values. If you pass in a truthy value for the clear argument,
+         * this will instead clear these text areas; if you pass in a truthy
+         * value for the single argument (and clear is falsy), this will
+         * instead update based on the single selection values.
          */
         updateFeaturesTextDisplays(single, clear) {
             if (clear) {
                 document.getElementById("topFeaturesDisplay").value = "";
                 document.getElementById("botFeaturesDisplay").value = "";
+                this.updateFeatureHeaderCounts(0, 0);
             } else if (single) {
                 document.getElementById(
                     "topFeaturesDisplay"
