@@ -42,6 +42,21 @@ define(function() {
         });
     }
 
+    /* Converts a feature's taxonomy to an array of ranks.
+     * Differs from inputTextToRankArray() in that this doesn't split on commas
+     * or spaces -- it just splits on semicolons and trims every element in the
+     * resulting list.
+     *
+     * This is obviously a pretty minimal function. If the feature has a
+     * taxonomy string that doesn't use semicolons as delimiters, this will
+     * fail. (That'll be time for us to update this function, then.)
+     */
+    function taxonomyToRankArray(taxonomy) {
+        return taxonomy.split(";").map(function(rank) {
+            return rank.trim();
+        });
+    }
+
     /* Given a list of feature "rows", a string of input "ranks," and a feature
      * metadata field, returns a list of all features that contain a taxonomic
      * rank that matches a rank in the input.
@@ -66,8 +81,8 @@ define(function() {
         var ranksOfFeature;
         var filteredFeatures = [];
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            ranksOfFeature = featureRowList[ti][featureMetadataField].split(
-                ";"
+            ranksOfFeature = taxonomyToRankArray(
+                featureRowList[ti][featureMetadataField]
             );
             // Loop over the input rank array, and then loop over the "ranks"
             // within the current feature's specified feature metadata field.
@@ -76,7 +91,7 @@ define(function() {
             var foundSomething = false;
             for (var ri = 0; ri < rankArray.length; ri++) {
                 for (var fi = 0; fi < ranksOfFeature.length; fi++) {
-                    if (ranksOfFeature[fi].trim() === rankArray[ri]) {
+                    if (ranksOfFeature[fi] === rankArray[ri]) {
                         filteredFeatures.push(featureRowList[ti]);
                         // If we found a match, no need to keep checking. That
                         // could lead to multiple rank matches on the same feature,
@@ -162,6 +177,7 @@ define(function() {
     return {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,
-        inputTextToRankArray: inputTextToRankArray
+        inputTextToRankArray: inputTextToRankArray,
+        taxonomyToRankArray: taxonomyToRankArray
     };
 });
