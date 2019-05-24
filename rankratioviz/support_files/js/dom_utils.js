@@ -35,7 +35,7 @@ define(function() {
         var optionEle;
         var selectEle = document.getElementById(selectID);
         // Remove any options already present in the <select>
-        selectEle.innerHTML = "";
+        clearDiv(selectID);
         for (var m = 0; m < optionList.length; m++) {
             optionEle = document.createElement("option");
             optionEle.value = optionEle.text = optionList[m];
@@ -61,11 +61,14 @@ define(function() {
         }
     }
 
+    /* Removes all of the child elements of an element.
+     *
+     * This function is based on
+     * https://stackoverflow.com/a/3450726/10730311.
+     * This way is apparently faster than just using
+     * document.getElementById(divID).innerHTML = "".
+     */
     function clearDiv(divID) {
-        // From https://stackoverflow.com/a/3450726/10730311.
-        // This way is apparently faster than just using
-        // document.getElementById(divID).innerHTML = '' -- not that
-        // performance really matters a ton here, but whatever.
         var element = document.getElementById(divID);
         while (element.firstChild) {
             element.removeChild(element.firstChild);
