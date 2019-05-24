@@ -6,6 +6,7 @@
             rankratioviz
         </title>
         <link rel="shortcut icon" href="icon.png" />
+        <link rel="stylesheet" href="vendor/reset.css" />
         <link rel="stylesheet" href="rankratioviz.css" />
     </head>
 
@@ -105,7 +106,7 @@
                         rows="6"
                     ></textarea>
                 </div>
-                <hr />
+                <div id="divide" class="centeredBlock"></div>
                 <div class="centeredBlock">
                     <h4 id="denHeader" class="centeredHeader">
                         Denominator Features (0 selected)
@@ -152,16 +153,14 @@
                      interface.
                 -->
                 <a id="downloadHelper" class="invisible"></a>
-                <p>
+                <div class="centeredBlock marginOnTop">
                     <button id="multiFeatureButton">
                         Regenerate sample plot
                     </button>
-                </p>
-                <p>
                     <button id="exportDataButton">
                         Export currently used data
                     </button>
-                </p>
+                </div>
             </div>
         </div>
         <!--
