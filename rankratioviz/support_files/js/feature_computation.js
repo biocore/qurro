@@ -50,8 +50,15 @@ define(function() {
      * This is obviously a pretty minimal function. If the feature has a
      * taxonomy string that doesn't use semicolons as delimiters, this will
      * fail. (That'll be time for us to update this function, then.)
+     *
+     * If the input taxonomy isn't a string (i.e. null, undefined, a number,
+     * ...), we don't bother trying to find taxonomic ranks in it and just
+     * return an empty array.
      */
     function taxonomyToRankArray(taxonomy) {
+        if (typeof taxonomy !== "string") {
+            return [];
+        }
         return taxonomy
             .split(";")
             .map(function(rank) {
@@ -105,13 +112,13 @@ define(function() {
         if (inputRankArray.length <= 0) {
             return [];
         }
-        var ranksOfFeature;
+        var ranksOfFeatureMetadata;
         var filteredFeatures = [];
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            ranksOfFeature = taxonomyToRankArray(
+            ranksOfFeatureMetadata = taxonomyToRankArray(
                 featureRowList[ti][featureMetadataField]
             );
-            if (existsIntersection(ranksOfFeature, inputRankArray)) {
+            if (existsIntersection(ranksOfFeatureMetadata, inputRankArray)) {
                 filteredFeatures.push(featureRowList[ti]);
             }
         }
