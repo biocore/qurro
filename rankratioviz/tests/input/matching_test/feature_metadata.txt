@@ -1,3 +1,3 @@
-Feature_ID	FeatureMetadata1	FeatureMetadata2
+Feature-ID	FeatureMetadata1	FeatureMetadata2
 Taxon3	Yeet	100
 Taxon5	null	lol
