@@ -118,7 +118,9 @@ For python testing/style checking, rankratioviz uses
 [pytest](https://docs.pytest.org/en/latest/),
 [pytest-cov](https://github.com/pytest-dev/pytest-cov),
 [flake8](http://flake8.pycqa.org/en/latest/), and
-[black](https://github.com/ambv/black).
+[black](https://github.com/ambv/black). You'll also need to have QIIME 2
+installed to run most of the python tests (the exact QIIME 2 version shouldn't
+matter too much).
 
 For JavaScript testing/style checking, rankratioviz uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
