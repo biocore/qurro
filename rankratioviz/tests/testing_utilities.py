@@ -6,7 +6,6 @@ from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_utils import read_rank_file
-from rankratioviz._metadata_utils import read_metadata_file
 from rankratioviz._plot_utils import get_jsons
 
 
@@ -278,7 +277,7 @@ def validate_sample_plot_json(
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
-    sample_metadata = read_metadata_file(metadata_loc)
+    sample_metadata = Metadata.load(metadata_loc).to_dataframe()
     for sample in sample_json["datasets"][dn]:
 
         sample_id = sample["Sample ID"]
