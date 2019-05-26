@@ -1,4 +1,25 @@
 define(function() {
+    /* Converts a feature metadata field to a text-searchable type, if
+     * possible.
+     *
+     * If the input is a string, returns the input unchanged.
+     * If the input is a number, returns the input as a string.
+     *     (This is useful if users want to search numbers as text -- when we
+     *     add more sophisticated search methods in the future, this
+     *     functionality should probably be removed.)
+     * If the input is neither of those types, returns null to indicate that we
+     * can't "search" the input.
+     */
+    function trySearchable(fmVal) {
+        if (typeof fmVal === "string") {
+            return fmVal;
+        } else if (typeof fmVal === "number") {
+            return String(fmVal);
+        } else {
+            return null;
+        }
+    }
+
     /* Given a list of feature "rows", a string of input text, and a feature
      * metadata field, returns a list of all features that contain that text in
      * the specified feature metadata field.
@@ -15,8 +36,10 @@ define(function() {
         var filteredFeatures = [];
         var currVal;
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            currVal = featureRowList[ti][featureMetadataField];
-            if (typeof currVal === "string" && currVal.includes(inputText)) {
+            currVal = trySearchable(featureRowList[ti][featureMetadataField]);
+            if (currVal === null) {
+                continue;
+            } else if (currVal.includes(inputText)) {
                 filteredFeatures.push(featureRowList[ti]);
             }
         }
@@ -49,14 +72,16 @@ define(function() {
      *
      * This is obviously a pretty minimal function. If the feature has a
      * taxonomy string that doesn't use semicolons as delimiters, this will
-     * fail. (That'll be time for us to update this function, then.)
+     * fail -- or, at least, it'll do something like treat the entire string as
+     * a single taxonomic rank. (That'll be time for us to update this
+     * function accordingly regarding the new input type.)
      *
-     * If the input taxonomy isn't a string (i.e. null, undefined, a number,
-     * ...), we don't bother trying to find taxonomic ranks in it and just
-     * return an empty array.
+     * If the input taxonomy is null, returns an empty array.
+     * It's expected that the input taxonomy should have been passed through
+     * trySearchable(), so it should be either a string or null.
      */
     function taxonomyToRankArray(taxonomy) {
-        if (typeof taxonomy !== "string") {
+        if (taxonomy === null) {
             return [];
         }
         return taxonomy
@@ -115,8 +140,12 @@ define(function() {
         var ranksOfFeatureMetadata;
         var filteredFeatures = [];
         for (var ti = 0; ti < featureRowList.length; ti++) {
+            // If the current feature metadata value is null / otherwise not
+            // text-searchable, trySearchable() returns null (which will cause
+            // taxonomyToRankArray() to return [], which will cause
+            // existsIntersection() to return false quickly.
             ranksOfFeatureMetadata = taxonomyToRankArray(
-                featureRowList[ti][featureMetadataField]
+                trySearchable(featureRowList[ti][featureMetadataField])
             );
             if (existsIntersection(ranksOfFeatureMetadata, inputRankArray)) {
                 filteredFeatures.push(featureRowList[ti]);
