@@ -285,7 +285,16 @@ def validate_sample_plot_json(
         for metadata_col in sample_metadata.columns:
             expected_md = sample_metadata.at[sample_id, metadata_col]
             actual_md = sample[metadata_col]
-            assert expected_md == actual_md
+            try:
+                assert expected_md == actual_md
+            except AssertionError:
+                # quick and dirty hack to actually give useful information when
+                # something goes wrong
+                print("PROBLEMATIC METADATA VALUE HERE")
+                print(
+                    expected_md, actual_md, type(expected_md), type(actual_md)
+                )
+                raise
 
         # Not really "metadata", but just as a sanity check verify that the
         # initial rankratioviz_balance of each sample is null (aka None in
