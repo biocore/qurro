@@ -12,6 +12,41 @@ import pandas as pd
 from rankratioviz.generate import fix_id, ensure_df_headers_unique
 
 
+def get_q2_comment_lines(md_file_loc):
+    """Returns a list of line numbers in the file that start with "#q2:".
+
+       These lines should be skipped when parsing the file outside of Q2 (i.e.
+       in pandas). I guess we could also ostensibly use these lines' types here
+       eventually, but for now we just skip them.
+
+       Notes:
+        -The line numbers are 0-indexed (so they can easily be thrown in to
+         pandas.read_csv() as the skiprows parameter)
+        -This doesn't check check the first line of the file (assumed to be the
+         header)
+        -This stops checking lines once it gets to the first non-header line
+         that doesn't start with "#q2:". Currently, "#q2:types" is the only Q2
+         "comment directive" available, but ostensibly this could detect future
+         Q2 comment directives.
+    """
+    q2_lines = []
+    with open(md_file_loc, "r") as md_file_obj:
+        line_num = 0
+        for line in md_file_obj:
+            # Don't check for a #q2: comment on the first line of the file,
+            # since the first line (should) define the file header.
+            if line_num > 0:
+                if line.startswith("#q2:"):
+                    q2_lines.append(line_num)
+                else:
+                    # We assume that all #q2: lines will occur at the start of
+                    # the file. Once we've reached a line that doesn't start
+                    # with "#q2:", we stop checking.
+                    break
+            line_num += 1
+    return q2_lines
+
+
 def read_metadata_file(md_file_loc):
     """Reads in a metadata file using pandas.read_csv().
 
@@ -25,8 +60,9 @@ def read_metadata_file(md_file_loc):
        columns labelled with the bool type to strings. This preserves the
        "case" of True / False, and should result in predictable outcomes.
     """
+    q2_lines = get_q2_comment_lines(md_file_loc)
     metadata_df = pd.read_csv(
-        md_file_loc, index_col=0, sep="\t", na_filter=False
+        md_file_loc, index_col=0, sep="\t", na_filter=False, skiprows=q2_lines
     )
 
     bool_cols = metadata_df.select_dtypes(include=[bool]).columns
@@ -76,7 +112,10 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
     # ("parent mass", "RTConsensus", and "LibraryID"), as far as I know, don't
     # have a set position. So we'll just use the basic RangeIndex that pandas
     # defaults to.
-    metadata_df = pd.read_csv(md_file_loc, sep="\t")
+    q2_lines = get_q2_comment_lines(md_file_loc)
+    metadata_df = pd.read_csv(
+        md_file_loc, sep="\t", na_filter=False, skiprows=q2_lines
+    )
 
     # Create a feature ID column from the parent mass and RTConsensus cols.
     # Use of .map() here is derived from
