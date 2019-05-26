@@ -2,7 +2,7 @@ language: python
 python:
     - "3.6"
 before_install:
-    # Here, we install the stuff needed to test the q2-rankratioviz plugin.
+    # Here, we install the stuff needed to test the q2-qurro plugin.
     # This will cause tests to take a while, but that's an ok price to pay.
     #
     # 1. Install conda (commands from
@@ -19,7 +19,7 @@ before_install:
     #
     # With QIIME 2 2018.11, I get a version conflict with tensorflow (needed
     # for songbird) and Q2's required numpy versions. We could probably get
-    # around that, but I'm ok with q2-rankratioviz only officially supporting
+    # around that, but I'm ok with q2-qurro only officially supporting
     # QIIME 2 2019.4 or later.
     - wget https://data.qiime2.org/distro/core/qiime2-2019.4-py36-linux-conda.yml
     - travis_retry conda env create -n qiime2-2019.4 --file qiime2-2019.4-py36-linux-conda.yml
@@ -30,7 +30,7 @@ before_install:
 install:
     - pip install -e .[dev]
     # Install various JS testing/stylechecking packages that we use for
-    # developing rankratioviz, but aren't required to just use rankratioviz
+    # developing qurro, but aren't required to just use qurro
     - npm install -g mocha-headless-chrome
     - npm install -g jshint
     - npm install -g prettier
