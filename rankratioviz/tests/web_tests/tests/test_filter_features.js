@@ -439,6 +439,52 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
             });
         });
+        describe("trySearchable()", function() {
+            it("Doesn't modify strings", function() {
+                chai.assert.equal(
+                    feature_computation.trySearchable("abc"),
+                    "abc"
+                );
+                chai.assert.equal(
+                    feature_computation.trySearchable("   Viruses   "),
+                    "   Viruses   "
+                );
+                chai.assert.equal(
+                    feature_computation.trySearchable(
+                        "   Viruses;Caudovirales;some third thing goes here   "
+                    ),
+                    "   Viruses;Caudovirales;some third thing goes here   "
+                );
+                chai.assert.equal(
+                    feature_computation.trySearchable("null"),
+                    "null"
+                );
+            });
+            it("Converts numbers to strings", function() {
+                chai.assert.equal(
+                    feature_computation.trySearchable(3.14),
+                    "3.14"
+                );
+                chai.assert.equal(feature_computation.trySearchable(5), "5");
+            });
+            it("Returns null when a non-string + non-number passed in", function() {
+                chai.assert.isNull(feature_computation.trySearchable([3]));
+                chai.assert.isNull(
+                    feature_computation.trySearchable([3, 4, 5])
+                );
+                chai.assert.isNull(
+                    feature_computation.trySearchable(["a", "b", "c"])
+                );
+                chai.assert.isNull(feature_computation.trySearchable(["a"]));
+                chai.assert.isNull(
+                    feature_computation.trySearchable({ abc: "def" })
+                );
+                chai.assert.isNull(feature_computation.trySearchable(null));
+                chai.assert.isNull(
+                    feature_computation.trySearchable(undefined)
+                );
+            });
+        });
         describe("Various filterFeatures() logistics", function() {
             it("Throws an error when nonexistent feature metadata field passed", function() {
                 chai.assert.throws(function() {
