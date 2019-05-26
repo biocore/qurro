@@ -53,6 +53,14 @@ define(["feature_computation", "mocha", "chai"], function(
             "Feature ID": "Feature 5",
             Taxonomy: "Viruses;Caudovirales;Xanthomonas_phage_Xp15"
         });
+        rpJSON2.datasets.dataName.push({
+            "Feature ID": "Feature 6",
+            Taxonomy: "null"
+        });
+        rpJSON2.datasets.dataName.push({
+            "Feature ID": "Feature 7",
+            Taxonomy: null
+        });
         rpJSON2.datasets.rankratioviz_feature_metadata_ordering.push(
             "Taxonomy"
         );
@@ -121,7 +129,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     ),
                     caudoviralesMatches
                 );
-                // Rank search should respect taxonomic ranks
+                // Only respects taxonomic ranks if the user forces it
                 chai.assert.sameOrderedMembers(
                     getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -137,67 +145,72 @@ define(["feature_computation", "mocha", "chai"], function(
 
             it("Searching is case sensitive", function() {
                 chai.assert.isEmpty(
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON2,
-                            "staphylococcus",
-                            "Taxonomy",
-                            "text"
-                        )
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "staphylococcus",
+                        "Taxonomy",
+                        "text"
                     )
                 );
                 chai.assert.isEmpty(
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON1,
-                            "feature",
-                            "Feature ID",
-                            "text"
-                        )
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "feature",
+                        "Feature ID",
+                        "text"
                     )
                 );
             });
 
             it("Doesn't find anything if inputText is empty or contains only whitespace", function() {
                 chai.assert.isEmpty(
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON1,
-                            "",
-                            "Feature ID",
-                            "text"
-                        )
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "",
+                        "Feature ID",
+                        "text"
                     )
                 );
                 chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "",
+                        "Taxonomy",
+                        "text"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        " \n \t ",
+                        "Feature ID",
+                        "text"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        " \n \t ",
+                        "Taxonomy",
+                        "text"
+                    )
+                );
+            });
+            it("Ignores actual null values", function() {
+                // Feature 6's Taxonomy value is "null", while Feature 7's
+                // Taxonomy value is null (literally a null value). So
+                // searching methods shouldn't look at Feature 7's Taxonomy
+                // value.
+                chai.assert.sameMembers(
                     getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
-                            "",
+                            "null",
                             "Taxonomy",
                             "text"
                         )
-                    )
-                );
-                chai.assert.isEmpty(
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON1,
-                            " \n \t ",
-                            "Feature ID",
-                            "text"
-                        )
-                    )
-                );
-                chai.assert.isEmpty(
-                    getFeatureIDsFromObjectArray(
-                        feature_computation.filterFeatures(
-                            rpJSON2,
-                            " \n \t ",
-                            "Taxonomy",
-                            "text"
-                        )
-                    )
+                    ),
+                    ["Feature 6"]
                 );
             });
         });
@@ -226,6 +239,21 @@ define(["feature_computation", "mocha", "chai"], function(
                         )
                     ),
                     ["Feature 2", "Feature 3"]
+                );
+            });
+            it("Ignores actual null values", function() {
+                // same as the identically-named test in the text-mode
+                // searching block, but this uses rank searching
+                chai.assert.sameMembers(
+                    getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "null",
+                            "Taxonomy",
+                            "rank"
+                        )
+                    ),
+                    ["Feature 6"]
                 );
             });
         });
