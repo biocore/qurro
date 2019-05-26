@@ -241,9 +241,64 @@ define(["feature_computation", "mocha", "chai"], function(
                     ["Feature 2", "Feature 3"]
                 );
             });
+            // The case sensitivity, inputText-empty, and null value tests were
+            // just copied from above with the searchType changed. A possible
+            // TODO here is reducing the redunancy in these tests, but it's
+            // not like efficiency in the JS testing process is a super huge
+            // priority for us right now.
+            it("Searching is (still) case sensitive", function() {
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "staphylococcus",
+                        "Taxonomy",
+                        "rank"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "feature",
+                        "Feature ID",
+                        "rank"
+                    )
+                );
+            });
+            it("Doesn't find anything if inputText is empty or contains only whitespace", function() {
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "",
+                        "Feature ID",
+                        "rank"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "",
+                        "Taxonomy",
+                        "rank"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        " \n \t ",
+                        "Feature ID",
+                        "rank"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        " \n \t ",
+                        "Taxonomy",
+                        "rank"
+                    )
+                );
+            });
             it("Ignores actual null values", function() {
-                // same as the identically-named test in the text-mode
-                // searching block, but this uses rank searching
                 chai.assert.sameMembers(
                     getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
