@@ -224,6 +224,7 @@ define(function() {
         computeBalance: computeBalance,
         inputTextToRankArray: inputTextToRankArray,
         taxonomyToRankArray: taxonomyToRankArray,
-        existsIntersection: existsIntersection
+        existsIntersection: existsIntersection,
+        trySearchable: trySearchable
     };
 });
