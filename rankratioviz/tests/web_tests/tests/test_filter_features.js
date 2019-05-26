@@ -383,28 +383,29 @@ define(["feature_computation", "mocha", "chai"], function(
                     ["Viruses"]
                 );
             });
-            it("Behaves as expected when passed a semicolon-separated list", function() {
-                chai.assert.sameOrderedMembers(
-                    feature_computation.textToRankArray("Viruses; Bacteria"),
-                    ["Viruses", "Bacteria"]
-                );
-                chai.assert.sameOrderedMembers(
-                    feature_computation.textToRankArray("Viruses;Bacteria"),
-                    ["Viruses", "Bacteria"]
-                );
+            it("Separates on spaces, in addition to semicolons and commas", function() {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
-                        "Viruses;Bacteria;Caudovirales;asdf"
+                        "Abc def ghi ;,; j[k]l m(nop) , qrs;tuv wxy|z"
                     ),
-                    ["Viruses", "Bacteria", "Caudovirales", "asdf"]
+                    [
+                        "Abc",
+                        "def",
+                        "ghi",
+                        "j[k]l",
+                        "m(nop)",
+                        "qrs",
+                        "tuv",
+                        "wxy|z"
+                    ]
                 );
             });
             it("Works with oddly formatted input lists", function() {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
-                        "Viruses;Bacteria , Stuff ; lol,5"
+                        "Viruses;Bacteria , Stuff 2; lol,5"
                     ),
-                    ["Viruses", "Bacteria", "Stuff", "lol", "5"]
+                    ["Viruses", "Bacteria", "Stuff", "2", "lol", "5"]
                 );
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray("a b c d e f g"),
