@@ -46,14 +46,23 @@ define(function() {
         return filteredFeatures;
     }
 
-    /* Prepares an input array of ranks to use for searching. This is because,
-     * in rank searching, users can search for multiple ranks at once if they
-     * separate them with a comma, a semicolon, or a space.
-     * If a given feature contains any of these ranks, we'll include it in the
-     * output of rankFilterFeatures().
+    /* Prepares an array of ranks, either from the input text or from a feature
+     * metadata field.
+     *
+     * In rank searching, users can search for multiple ranks at once if they
+     * separate them with a comma, a semicolon, or a space; and we rely on
+     * these characters not being present within a taxonomic rank (as far as I
+     * can tell, all standard formats use semicolons or commas as separators).
+     *
+     * The choice to consider spaces as a "separator" within taxonomic ranks
+     * might be a bit idiosyncratic. We can change this in the future if
+     * needed.
      */
-    function inputTextToRankArray(inputText) {
-        var initialRankArray = inputText
+    function textToRankArray(text) {
+        if (typeof text !== "string") {
+            return [];
+        }
+        var initialRankArray = text
             .trim()
             .replace(/[,;\s]/g, " ")
             .split(" ");
@@ -63,35 +72,6 @@ define(function() {
         return initialRankArray.filter(function(r) {
             return r !== "";
         });
-    }
-
-    /* Converts a feature's taxonomy to an array of ranks.
-     * Differs from inputTextToRankArray() in that this doesn't split on commas
-     * or spaces -- it just splits on semicolons and trims every element in the
-     * resulting list, and filters out empty strings.
-     *
-     * This is obviously a pretty minimal function. If the feature has a
-     * taxonomy string that doesn't use semicolons as delimiters, this will
-     * fail -- or, at least, it'll do something like treat the entire string as
-     * a single taxonomic rank. (That'll be time for us to update this
-     * function accordingly regarding the new input type.)
-     *
-     * If the input taxonomy is null, returns an empty array.
-     * It's expected that the input taxonomy should have been passed through
-     * trySearchable(), so it should be either a string or null.
-     */
-    function taxonomyToRankArray(taxonomy) {
-        if (taxonomy === null) {
-            return [];
-        }
-        return taxonomy
-            .split(";")
-            .map(function(rank) {
-                return rank.trim();
-            })
-            .filter(function(rank) {
-                return rank.length > 0;
-            });
     }
 
     /* Returns true if arrayA and arrayB share at least one element.
@@ -117,7 +97,7 @@ define(function() {
      * metadata field, returns a list of all features that contain a taxonomic
      * rank that matches a rank in the input.
      *
-     * First, we throw the input text through inputTextToRankArray() above to
+     * First, we throw the input text through textToRankArray() above to
      * get a list of taxonomic ranks in the input.
      *
      * Next, we go through the features one-by-one. Each feature's value for
@@ -133,7 +113,7 @@ define(function() {
         inputText,
         featureMetadataField
     ) {
-        var inputRankArray = inputTextToRankArray(inputText);
+        var inputRankArray = textToRankArray(inputText);
         if (inputRankArray.length <= 0) {
             return [];
         }
@@ -142,9 +122,9 @@ define(function() {
         for (var ti = 0; ti < featureRowList.length; ti++) {
             // If the current feature metadata value is null / otherwise not
             // text-searchable, trySearchable() returns null (which will cause
-            // taxonomyToRankArray() to return [], which will cause
+            // textToRankArray() to return [], which will cause
             // existsIntersection() to return false quickly.
-            ranksOfFeatureMetadata = taxonomyToRankArray(
+            ranksOfFeatureMetadata = textToRankArray(
                 trySearchable(featureRowList[ti][featureMetadataField])
             );
             if (existsIntersection(ranksOfFeatureMetadata, inputRankArray)) {
@@ -222,8 +202,7 @@ define(function() {
     return {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,
-        inputTextToRankArray: inputTextToRankArray,
-        taxonomyToRankArray: taxonomyToRankArray,
+        textToRankArray: textToRankArray,
         existsIntersection: existsIntersection,
         trySearchable: trySearchable
     };

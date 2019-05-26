@@ -292,10 +292,10 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
             });
         });
-        describe("taxonomyToRankArray()", function() {
+        describe("textToRankArray()", function() {
             it("Works with basic, simple taxonomy strings", function() {
                 chai.assert.sameOrderedMembers(
-                    feature_computation.taxonomyToRankArray(
+                    feature_computation.textToRankArray(
                         "Viruses;Caudovirales;Myoviridae;Twortlikevirus;Staphylococcus_phage_Twort"
                     ),
                     [
@@ -309,7 +309,7 @@ define(["feature_computation", "mocha", "chai"], function(
             });
             it("Works with Greengenes-style taxonomy strings", function() {
                 chai.assert.sameOrderedMembers(
-                    feature_computation.taxonomyToRankArray(
+                    feature_computation.textToRankArray(
                         "k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Bacteroidaceae; g__Bacteroides; s__"
                     ),
                     [
@@ -325,7 +325,7 @@ define(["feature_computation", "mocha", "chai"], function(
             });
             it("Works with SILVA-style taxonomy strings", function() {
                 chai.assert.sameOrderedMembers(
-                    feature_computation.taxonomyToRankArray(
+                    feature_computation.textToRankArray(
                         // Thanks to Justin for the example data
                         "D_0__Bacteria;D_1__Bacteroidetes;D_2__Bacteroidia;D_3__Bacteroidales;D_4__Bacteroidaceae;D_5__Bacteroides"
                     ),
@@ -348,64 +348,52 @@ define(["feature_computation", "mocha", "chai"], function(
                     // practice.) If it'd be desirable to specifically exclude
                     // ranks that consist only of underscores, we can add that
                     // functionality to taxonomyToRankArray() later on.
-                    feature_computation.taxonomyToRankArray(
+                    feature_computation.textToRankArray(
                         "D_0__Bacteria;; ;__;D_4__Whatever"
                     ),
                     ["D_0__Bacteria", "__", "D_4__Whatever"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.taxonomyToRankArray(
+                    feature_computation.textToRankArray(
                         "Viruses;;Caudovirales;lol; "
                     ),
                     ["Viruses", "Caudovirales", "lol"]
                 );
             });
             it("Returns [] when strings without actual text are passed in", function() {
+                chai.assert.isEmpty(feature_computation.textToRankArray(""));
                 chai.assert.isEmpty(
-                    feature_computation.taxonomyToRankArray("")
+                    feature_computation.textToRankArray("  \n \t  ")
                 );
                 chai.assert.isEmpty(
-                    feature_computation.taxonomyToRankArray("  \n \t  ")
-                );
-                chai.assert.isEmpty(
-                    feature_computation.taxonomyToRankArray("   ;   ")
+                    feature_computation.textToRankArray("   ;   ")
                 );
             });
-        });
-        describe("inputTextToRankArray()", function() {
             it("Behaves as expected when passed a comma-separated list", function() {
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
-                        "Viruses, Bacteria"
-                    ),
+                    feature_computation.textToRankArray("Viruses, Bacteria"),
                     ["Viruses", "Bacteria"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
-                        "Viruses,Bacteria"
-                    ),
+                    feature_computation.textToRankArray("Viruses,Bacteria"),
                     ["Viruses", "Bacteria"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray("Viruses"),
+                    feature_computation.textToRankArray("Viruses"),
                     ["Viruses"]
                 );
             });
             it("Behaves as expected when passed a semicolon-separated list", function() {
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
-                        "Viruses; Bacteria"
-                    ),
+                    feature_computation.textToRankArray("Viruses; Bacteria"),
                     ["Viruses", "Bacteria"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
-                        "Viruses;Bacteria"
-                    ),
+                    feature_computation.textToRankArray("Viruses;Bacteria"),
                     ["Viruses", "Bacteria"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
+                    feature_computation.textToRankArray(
                         "Viruses;Bacteria;Caudovirales;asdf"
                     ),
                     ["Viruses", "Bacteria", "Caudovirales", "asdf"]
@@ -413,21 +401,21 @@ define(["feature_computation", "mocha", "chai"], function(
             });
             it("Works with oddly formatted input lists", function() {
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
+                    feature_computation.textToRankArray(
                         "Viruses;Bacteria , Stuff ; lol,5"
                     ),
                     ["Viruses", "Bacteria", "Stuff", "lol", "5"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray("a b c d e f g"),
+                    feature_computation.textToRankArray("a b c d e f g"),
                     ["a", "b", "c", "d", "e", "f", "g"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray("a\tb\nc\rd\n\ne"),
+                    feature_computation.textToRankArray("a\tb\nc\rd\n\ne"),
                     ["a", "b", "c", "d", "e"]
                 );
                 chai.assert.sameOrderedMembers(
-                    feature_computation.inputTextToRankArray(
+                    feature_computation.textToRankArray(
                         "\n c__Bacilli,o__Bacillales  \t  f__Staphylococcaceae \n lol"
                     ),
                     [
