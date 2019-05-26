@@ -25,7 +25,9 @@ def read_metadata_file(md_file_loc):
        columns labelled with the bool type to strings. This preserves the
        "case" of True / False, and should result in predictable outcomes.
     """
-    metadata_df = pd.read_csv(md_file_loc, index_col=0, sep="\t")
+    metadata_df = pd.read_csv(
+        md_file_loc, index_col=0, sep="\t", na_filter=False
+    )
 
     bool_cols = metadata_df.select_dtypes(include=[bool]).columns
     if len(bool_cols) > 0:
