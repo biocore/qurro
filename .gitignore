@@ -59,8 +59,8 @@ doc/source/generated
 # IPython checkpoints
 .ipynb_checkpoints
 
-# rankratioviz test outputs
-rankratioviz/tests/output/*
+# qurro test outputs
+qurro/tests/output/*
 # example jupyter notebook outputs
 example_notebooks/*/output/*
 
@@ -69,6 +69,6 @@ tmp_files/*
 # Duplicate .coverage files
 .coverage.*
 
-rankratioviz/tests/web_tests/instrumented_js/*
+qurro/tests/web_tests/instrumented_js/*
 coverage.xml
 js_coverage.json

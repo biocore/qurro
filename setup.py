@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # ----------------------------------------------------------------------------
-# Copyright (c) 2018--, rankratioviz development team.
+# Copyright (c) 2018--, Qurro development team.
 #
 # NOTE: This file is derived from DEICODE's setup.py file.
 #
@@ -39,25 +39,25 @@ with open("README.md") as f:
 # TODO remove this if doable to simplify this.
 # See https://packaging.python.org/guides/single-sourcing-package-version/
 # -- option 6 is probably best, so long as we don't do something that would
-# require use of another dependency from rankratioviz/__init__.py.
+# require use of another dependency from qurro/__init__.py.
 #
 # version parsing from __init__ pulled from Flask's setup.py
 # https://github.com/mitsuhiko/flask/blob/master/setup.py
 _version_re = re.compile(r"__version__\s+=\s+(.*)")
 
-with open("rankratioviz/__init__.py", "rb") as f:
+with open("qurro/__init__.py", "rb") as f:
     hit = _version_re.search(f.read().decode("utf-8")).group(1)
     version = str(ast.literal_eval(hit))
 
 setup(
-    name="rankratioviz",
+    name="qurro",
     version=version,
     license="BSD",
     description=description,
     long_description=long_description,
-    author="rankratioviz development team",
+    author="Qurro development team",
     author_email="mfedarko@ucsd.edu",
-    maintainer="rankratioviz development team",
+    maintainer="Qurro development team",
     maintainer_email="mfedarko@ucsd.edu",
     packages=find_packages(),
     # Needed in order to ensure that q2/data/* and scripts/data/* are
@@ -79,10 +79,8 @@ setup(
     },
     classifiers=classifiers,
     entry_points={
-        "qiime2.plugins": [
-            "q2-rankratioviz=rankratioviz.q2.plugin_setup:plugin"
-        ],
-        "console_scripts": ["rankratioviz=rankratioviz.scripts._plot:plot"],
+        "qiime2.plugins": ["q2-qurro=qurro.q2.plugin_setup:plugin"],
+        "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
 )
