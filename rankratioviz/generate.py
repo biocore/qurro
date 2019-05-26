@@ -103,6 +103,27 @@ def ensure_df_headers_unique(df, df_name):
         )
 
 
+def process_and_generate(
+    feature_ranks,
+    sample_metadata,
+    biom_table,
+    output_dir,
+    feature_metadata=None,
+    extreme_feature_count=None,
+):
+    """Just calls process_input() and gen_visualization()."""
+    U, V, ranking_ids, feature_metadata_cols, processed_table = process_input(
+        feature_ranks,
+        sample_metadata,
+        biom_table,
+        feature_metadata,
+        extreme_feature_count,
+    )
+    return gen_visualization(
+        V, ranking_ids, feature_metadata_cols, processed_table, U, output_dir
+    )
+
+
 def process_input(
     feature_ranks,
     sample_metadata,
@@ -187,67 +208,64 @@ def process_input(
             "visualization.".format(dropped_sample_ct)
         )
 
-    labelled_feature_ranks = filtered_ranks.copy()
     # Now that we've matched up the BIOM table with the feature ranks and
-    # sample metadata, we're pretty much done. If the user passed in feature
-    # metadata corresponding to taxonomy information, then we use that to
-    # update the feature IDs to include that metadata. (This can help out in
-    # the searching part of the visualization, but it isn't necessary.)
+    # sample metadata, we're almost done.
+
+    # Before we go through feature metadata: convert all rank column IDs
+    # to strings (since Altair gets angry if you pass in ints as column IDs),
+    # and (as a temporary fix for #66) call fix_id() on these column IDs.
+    filtered_ranks.columns = [fix_id(str(c)) for c in filtered_ranks.columns]
+    ranking_ids = filtered_ranks.columns
+
+    feature_metadata_cols = []
+    # If the user passed in feature metadata corresponding to taxonomy
+    # information, then we use that to update the feature data to include
+    # that metadata. Feature metadata will be represented as additional fields
+    # for each feature in the rank plot. (This can help out in the searching
+    # part of the visualization, but it isn't necessary.)
     if feature_metadata is not None:
-        # Match features with feature metadata
-        matched_feature_metadata, _ = matchdf(feature_metadata, V)
-        # This is how we can check that every feature is present in the
-        # feature metadata. This check is disabled because it can be useful to
-        # look at features that don't have any assigned metadata. However, if
-        # we ever decide to enforce that all features must have corresponding
-        # metadata values, this is how we'd do that.
-        # if V.shape[0] != feature_ranks.shape[0]:
-        #     raise ValueError("not every feature has corresponding metadata")
-
-        no_metadata_feature_ids = set(feature_ranks.index) - set(
-            matched_feature_metadata.index
-        )
-
-        # Create nice IDs for each feature with associated metadata.
-        new_feature_ids = pd.Series(index=feature_ranks.index)
-        for feature_row in matched_feature_metadata.iterrows():
-            str_vals = [str(v) for v in feature_row[1].values]
-            id_prefix = feature_row[0] + " | "
-            new_feature_ids[feature_row[0]] = id_prefix + " | ".join(str_vals)
-        # Features with no associated metadata just get their old IDs.
-        for feature_row_id in no_metadata_feature_ids:
-            new_feature_ids[feature_row_id] = feature_row_id
-        # Now we have our nice IDs. Update labelled_feature_ranks and the
-        # table accordingly.
-        labelled_feature_ranks.index = new_feature_ids
-        # Update the table's columns (corresponding to features) to match the
-        # new feature IDs.
-        # First, we define new_feature_ids_tbl, which is just a list of the
-        # values of new_feature_ids sorted to match the order of the
-        # columns in the BIOM table.
-        new_feature_ids_tbl = [new_feature_ids[fc] for fc in table.columns]
-        # Then, we can just set the table's columns to this in order to augment
-        # existing columns' IDs with feature metadata where available.
-        table.columns = new_feature_ids_tbl
-
-    # Small sanity test: check that incorporating feature metadata didn't
-    # accidentally make some feature IDs the same.
-    #
-    # Assuming each feature ID is preserved in the new ID this should never be
-    # the case, but in case we modify the above code this will still ensure
-    # that something isn't going horribly wrong somehow.
-    ensure_df_headers_unique(labelled_feature_ranks, "labelled feature ranks")
+        try:
+            feature_metadata_cols = feature_metadata.columns
+            # Use of suffixes=(False, False) ensures that columns are unique
+            # between feature metadata and feature ranks.
+            filtered_ranks = filtered_ranks.merge(
+                feature_metadata,
+                how="left",
+                left_index=True,
+                right_index=True,
+                suffixes=(False, False),
+            )
+        except ValueError:
+            # It might be possible to figure out a way to handle this sort of
+            # situation automatically, but unless it becomes a problem I'm ok
+            # with the current solution.
+            print(
+                "Column names for the feature metadata and feature ranks "
+                "should be distinct. Try creating a copy of your feature "
+                "metadata with identical columns renamed, and use that with "
+                "rankratioviz."
+            )
+            raise
 
     logging.debug("Finished input processing.")
-    return U, labelled_feature_ranks, table
+    return U, filtered_ranks, ranking_ids, feature_metadata_cols, table
 
 
-def gen_rank_plot(V):
+def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     """Generates altair.Chart object describing the rank plot.
 
     Arguments:
 
-    V: feature ranks
+    V: pd.DataFrame
+        feature ranks
+
+    ranking_ids: pd.Index
+        IDs of the actual "ranking" columns in V (since V can include
+        feature metadata)
+
+    feature_metadata_cols: pd.Index or list
+        IDs of the feature metadata columns in V (if no such IDs present, an
+        empty list should be passed)
 
     Returns:
 
@@ -255,28 +273,18 @@ def gen_rank_plot(V):
     """
 
     rank_data = V.copy()
-    # Get stuff ready for the rank plot
-    # First off, convert all rank column IDs to strings (since Altair gets
-    # angry if you pass in ints as column IDs). This is a problem with
-    # OrdinationResults files, since just getting the raw column IDs gives int
-    # values (0 for the first column, 1 for the second column, etc.)
-    rank_data.columns = [fix_id(str(c)) for c in rank_data.columns]
-
-    # We'll store this in the rank plot JSON -- helps with testing and with
-    # setting up the visualization rankField <select>
-    just_the_ranking_ids = rank_data.columns
 
     # NOTE that until this point we've treated the actual rank values as just
     # "objects", as far as pandas is concerned. However, if we continue to
     # treat them as objects when sorting them, we'll get a list of feature
     # ranks in lexicographic order... which is not what we want. So we just
     # ensure that all of the columns contain numeric data.
-    for col in rank_data.columns:
+    for col in ranking_ids:
         rank_data[col] = pd.to_numeric(rank_data[col])
 
     # The default rank column is just whatever the first rank is. This is what
     # the rank plot will use when it's first drawn.
-    default_rank_col = rank_data.columns[0]
+    default_rank_col = ranking_ids[0]
 
     # Set default classification of every feature to "None"
     # (This value will be updated when a feature is selected in the rank plot
@@ -330,6 +338,7 @@ def gen_rank_plot(V):
                 ),
                 "Classification",
                 "Feature ID",
+                *feature_metadata_cols,
             ],
         )
         .configure_axis(
@@ -343,11 +352,13 @@ def gen_rank_plot(V):
 
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "rankratioviz_rank_ordering"
+    fm_col_ordering = "rankratioviz_feature_metadata_ordering"
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
-    # "Feature ID" and "Classification" columns (and maybe more, if I add in
-    # columns for each feature in the future for some reason).
-    rank_chart_json["datasets"][rank_ordering] = list(just_the_ranking_ids)
+    # "Feature ID" and "Classification" columns (as well as any feature
+    # metadata the user saw fit to pass in).
+    rank_chart_json["datasets"][rank_ordering] = list(ranking_ids)
+    rank_chart_json["datasets"][fm_col_ordering] = list(feature_metadata_cols)
     return rank_chart_json
 
 
@@ -371,14 +382,21 @@ def gen_sample_plot(table, metadata):
     # every sample to NaN so that Altair will filter them out (producing an
     # empty scatterplot by default, which makes sense). I guess None would
     # also work here.
+    # TODO just make a new column in a vectorized operation, no need to merge
     balance = pd.Series(index=table.index).fillna(float("nan"))
     df_balance = pd.DataFrame({"rankratioviz_balance": balance})
     # At this point, df_balance is a DataFrame with its index as sample IDs
     # and one column ("rankratioviz_balance", which is solely NaNs).
     # We know that df_balance and metadata's indices should match up since we
     # already ran matchdf() on the loaded BIOM table and metadata.
+    # (Use of (False, False) means that if metadata contains a column called
+    # rankratiovz_balance, this will throw an error.)
     sample_metadata = pd.merge(
-        df_balance, metadata, left_index=True, right_index=True
+        df_balance,
+        metadata,
+        left_index=True,
+        right_index=True,
+        suffixes=(False, False),
     )
 
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
@@ -434,7 +452,14 @@ def gen_sample_plot(table, metadata):
     return sample_chart_dict, table.to_dict()
 
 
-def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
+def gen_visualization(
+    V,
+    ranking_ids,
+    feature_metadata_cols,
+    processed_table,
+    df_sample_metadata,
+    output_dir,
+):
     """Creates a rankratioviz visualization. This function should be callable
        from both the QIIME 2 and standalone rankratioviz scripts.
 
@@ -448,7 +473,7 @@ def gen_visualization(V, processed_table, df_sample_metadata, output_dir):
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
-    rank_plot_json = gen_rank_plot(V)
+    rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
     logging.debug("Generating sample plot JSON.")
     sample_plot_json, count_json = gen_sample_plot(
         processed_table, df_sample_metadata

@@ -6,7 +6,6 @@ from qiime2 import Artifact, Metadata
 from qiime2.plugins import rankratioviz as q2rankratioviz
 import rankratioviz.scripts._plot as rrvp
 from rankratioviz._rank_utils import read_rank_file
-from rankratioviz._metadata_utils import read_metadata_file
 from rankratioviz._plot_utils import get_jsons
 
 
@@ -245,7 +244,7 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
     # apply(), or something.
     rank_ordering = rank_json["datasets"]["rankratioviz_rank_ordering"]
     for feature in rank_json["datasets"][dn]:
-        feature_id = feature["Feature ID"].split(" | ")[0]
+        feature_id = feature["Feature ID"]
         # Identify corresponding "reference" feature in the original data.
         #
         # We already should have asserted in the generation code that the
@@ -278,7 +277,7 @@ def validate_sample_plot_json(
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
-    sample_metadata = read_metadata_file(metadata_loc)
+    sample_metadata = Metadata.load(metadata_loc).to_dataframe()
     for sample in sample_json["datasets"][dn]:
 
         sample_id = sample["Sample ID"]
@@ -301,13 +300,9 @@ def validate_sample_plot_json(
 
     # For each (ranked) feature...
     for feature_id in count_json:
-        # Get its base ID (the ID it is referred to by in the input BIOM table
-        # and feature rankings file), and its column ID (the integer ID it's
-        # referred to by in the JSON count data).
-        feature_base_id = feature_id.split(" | ")[0]
         # For each sample, ensure that the count value in the JSON matches with
         # the count value in the BIOM table.
         for sample_id in count_json[feature_id]:
             actual_count = count_json[feature_id][sample_id]
-            expected_count = table.get_value_by_ids(feature_base_id, sample_id)
+            expected_count = table.get_value_by_ids(feature_id, sample_id)
             assert actual_count == expected_count

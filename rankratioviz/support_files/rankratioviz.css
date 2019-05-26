@@ -1,22 +1,33 @@
-* {
+body {
     font-family: Helvetica, Arial, sans-serif;
 }
-p {
-    text-align: center;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 1em;
+    font-weight: bold;
+}
+strong {
+    font-weight: bold;
+}
+.marginOnTop {
+    margin-top: 1em;
+}
+h3 {
+    font-size: larger;
+}
+h4 {
+    font-size: large;
 }
 /* Override user agents that automatically add vertical margins, which can make
  * the layout look kinda strange
  */
 .centeredHeader {
-    margin-top: 1em;
-    margin-bottom: 0;
+    margin-bottom: 0.25em;
     text-align: center;
-}
-body,
-input,
-button,
-select {
-    font-size: large;
 }
 /* info and warning are inspired by the similarly-named elements in
  * Bootstrap.
@@ -27,6 +38,11 @@ select {
     color: #1f4c73;
     border-radius: 5px;
     border: 2px solid #cfcfff;
+    width: 75%;
+    padding: 0.5em;
+    /* Horizontally centers this element */
+    margin-right: auto;
+    margin-left: auto;
 }
 .info strong {
     color: #0a2a3b;
@@ -37,6 +53,11 @@ select {
     color: #734d15;
     border-radius: 8px;
     border: 2px dotted #ffcfcc;
+    width: 75%;
+    padding: 0.5em;
+    /* Horizontally centers this element */
+    margin-right: auto;
+    margin-left: auto;
 }
 .warning strong {
     color: #3b270a;
@@ -48,6 +69,13 @@ select {
 .centeredBlock {
     display: block;
     text-align: center;
+}
+/* Inspired by https://stackoverflow.com/a/42227872/10730311. */
+#divide {
+    width: 98%;
+    height: 2px;
+    background-color: lightgray;
+    margin: 1em auto;
 }
 #rankPlot {
     margin-right: 2em;
@@ -68,12 +96,15 @@ select {
  */
 #rankPlot,
 #samplePlot {
+    margin-top: 0.5em;
     overflow: auto;
     max-height: 420px;
     max-width: 90%;
 }
 textarea {
     width: 92%;
+    max-width: 96%;
+    min-width: 30%;
 }
 .fancyBorder {
     border: 1px solid;
@@ -101,6 +132,9 @@ textarea {
 .den:focus {
     outline-color: #009;
 }
+.searchInput {
+    width: 80%;
+}
 .invisible {
     display: none;
 }
@@ -115,6 +149,6 @@ textarea {
  * how you do this? Might be nice. (TODO?)
  */
 #vg-tooltip-element.vg-tooltip.custom-theme td {
-    max-width: 700px;
+    max-width: 550px;
     max-height: 300px;
 }

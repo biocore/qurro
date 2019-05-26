@@ -6,6 +6,7 @@
             rankratioviz
         </title>
         <link rel="shortcut icon" href="icon.png" />
+        <link rel="stylesheet" href="vendor/reset.css" />
         <link rel="stylesheet" href="rankratioviz.css" />
     </head>
 
@@ -35,12 +36,12 @@
                     </select>
                     <p
                         id="barSizeWarning"
-                        class="warning centeredBlock invisible"
+                        class="warning centeredBlock invisible marginOnTop"
                     >
-                        <strong>Note:</strong> The rank plot is currently using
-                        a bar width of less than one pixel per bar. This means
-                        that the image shown isn't necessarily going to be an
-                        accurate representation of the rank plot.
+                        <strong>Warning:</strong> The rank plot is currently
+                        using a bar width of less than one pixel per bar. This
+                        means that the image shown isn't necessarily going to be
+                        an accurate representation of the rank plot.
                     </p>
                 </div>
             </div>
@@ -105,7 +106,7 @@
                         rows="6"
                     ></textarea>
                 </div>
-                <hr />
+                <div id="divide" class="centeredBlock"></div>
                 <div class="centeredBlock">
                     <h4 id="denHeader" class="centeredHeader">
                         Denominator Features (0 selected)
@@ -119,61 +120,57 @@
             </div>
             <div id="selectionControls">
                 <h3 class="centeredHeader">Selecting Features</h3>
-                <p class="info centeredBlock">
+                <p class="info centeredBlock marginOnTop">
                     To construct a log ratio, select feature(s) by clicking on
                     the plot of feature ranks on the left or by searching using
                     the controls below.
                 </p>
-                <p>
-                    Filter numerator to features that
-                    <select class="fancyBorder num" id="topSearch">
-                        <option value="text">
-                            contain the exact text
-                        </option>
-                        <option value="rank">
-                            contain the exact taxonomic rank(s)
-                        </option>
+                <h4 class="centeredHeader">Numerator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
+                    <select class="fancyBorder num" id="topSearch"> </select>
+                    <select class="fancyBorder num" id="topSearchType">
+                        <option value="text">contains the text</option>
+                        <option value="rank"
+                            >contains the exact taxonomic rank(s)</option
+                        >
                     </select>
                     <input
                         type="text"
-                        class="fancyBorder num"
+                        class="fancyBorder num searchInput"
                         id="topText"
-                        size="30"
                     />
-                </p>
-                <p>
-                    Filter denominator to features that
-                    <select class="fancyBorder den" id="botSearch">
-                        <option value="text">
-                            contain the exact text
-                        </option>
-                        <option value="rank">
-                            contain the exact taxonomic rank(s)
-                        </option>
+                </div>
+                <h4 class="centeredHeader">Denominator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
+                    <select class="fancyBorder den" id="botSearch"> </select>
+                    <select class="fancyBorder den" id="botSearchType">
+                        <option value="text">contains the text</option>
+                        <option value="rank"
+                            >contains the exact taxonomic rank(s)</option
+                        >
                     </select>
                     <input
                         type="text"
-                        class="fancyBorder den"
+                        class="fancyBorder den searchInput"
                         id="botText"
-                        size="30"
                     />
-                </p>
+                </div>
 
                 <!-- Invisible <a> used for downloading data URIs.
                      Based on #downloadHelper in MetagenomeScope's viewer
                      interface.
                 -->
                 <a id="downloadHelper" class="invisible"></a>
-                <p>
+                <div class="centeredBlock marginOnTop">
                     <button id="multiFeatureButton">
                         Regenerate sample plot
                     </button>
-                </p>
-                <p>
                     <button id="exportDataButton">
                         Export currently used data
                     </button>
-                </p>
+                </div>
             </div>
         </div>
         <!--

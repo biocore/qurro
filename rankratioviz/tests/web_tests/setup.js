@@ -1,6 +1,7 @@
 requirejs.config({
     paths: {
         display: "instrumented_js/display",
+        dom_utils: "instrumented_js/dom_utils",
         feature_computation: "instrumented_js/feature_computation",
         vega: "../../support_files/vendor/vega.min",
         "vega-lite": "../../support_files/vendor/vega-lite.min",
@@ -8,6 +9,7 @@ requirejs.config({
         mocha: "vendor/mocha",
         chai: "vendor/chai",
         test_compute_balance: "tests/test_compute_balance",
+        test_dom_utils: "tests/test_dom_utils",
         test_filter_features: "tests/test_filter_features",
         test_identify_metadata_columns: "tests/test_identify_metadata_columns",
         test_data_export: "tests/test_data_export",
@@ -32,6 +34,7 @@ requirejs.config({
 requirejs(
     [
         "display",
+        "dom_utils",
         "feature_computation",
         "vega",
         "vega-lite",
@@ -39,6 +42,7 @@ requirejs(
         "mocha",
         "chai",
         "test_compute_balance",
+        "test_dom_utils",
         "test_filter_features",
         "test_identify_metadata_columns",
         "test_data_export",
@@ -46,6 +50,7 @@ requirejs(
     ],
     function(
         display,
+        dom_utils,
         feature_computation,
         vega,
         vegaLite,
@@ -53,6 +58,7 @@ requirejs(
         mocha,
         chai,
         test_compute_balance,
+        test_dom_utils,
         test_filter_features,
         test_identify_metadata_columns,
         test_data_export,

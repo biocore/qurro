@@ -4,8 +4,9 @@
  * RRVDisplay.makeRankPlot() and RRVDisplay.makeSamplePlot() were based on the
  * Basic Example in https://github.com/vega/vega-embed/.
  */
-define(["./feature_computation", "vega", "vega-embed"], function(
+define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
     feature_computation,
+    dom_utils,
     vega,
     vegaEmbed
 ) {
@@ -55,6 +56,8 @@ define(["./feature_computation", "vega", "vega-embed"], function(
 
             // Ordered list of all ranks
             this.rankOrdering = undefined;
+            // Ordered list of all feature metadata fields
+            this.featureMetadataFields = undefined;
 
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
@@ -64,9 +67,16 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.samplePlotJSON = samplePlotJSON;
             this.makePlots();
 
+            // All DOM elements that we disable/enable when switching to/from
+            // "boxplot mode." We disable these when in "boxplot mode" because
+            // Vega-Lite gets grumpy when you try to apply colors to a boxplot
+            // when the colors have different granularity than the boxplot's
+            // current x-axis. (It does the same thing with tooltips, which is
+            // why we delete tooltips also when switching to boxplots.)
+            this.colorEles = ["colorField", "colorScale"];
             // Set up relevant DOM bindings
             var display = this;
-            this.elementsWithOnClickBindings = RRVDisplay.setUpDOMBindings({
+            this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
                 multiFeatureButton: function() {
                     display.updateSamplePlotMulti();
                 },
@@ -74,7 +84,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     display.exportData();
                 }
             });
-            this.elementsWithOnChangeBindings = RRVDisplay.setUpDOMBindings(
+            this.elementsWithOnChangeBindings = dom_utils.setUpDOMBindings(
                 {
                     xAxisField: function() {
                         display.updateSamplePlotField("xAxis");
@@ -102,28 +112,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             );
         }
 
-        /* Assigns DOM bindings to elements.
-         *
-         * If eventHandler is set to "onchange", this will update the onchange
-         * event handler for these elements. Otherwise, this will update the
-         * onclick event handler.
-         */
-        static setUpDOMBindings(elementID2function, eventHandler) {
-            var elementIDs = Object.keys(elementID2function);
-            var currID;
-            for (var i = 0; i < elementIDs.length; i++) {
-                currID = elementIDs[i];
-                if (eventHandler === "onchange") {
-                    document.getElementById(currID).onchange =
-                        elementID2function[currID];
-                } else {
-                    document.getElementById(currID).onclick =
-                        elementID2function[currID];
-                }
-            }
-            return elementIDs;
-        }
-
         makePlots() {
             this.makeRankPlot();
             this.makeSamplePlot();
@@ -132,10 +120,26 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         makeRankPlot(notFirstTime) {
             if (!notFirstTime) {
                 this.rankOrdering = this.rankPlotJSON.datasets.rankratioviz_rank_ordering;
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "rankField",
                     this.rankOrdering,
                     this.rankOrdering[0]
+                );
+                this.featureMetadataFields = this.rankPlotJSON.datasets.rankratioviz_feature_metadata_ordering;
+                // Just so that we have something to search by, even if no
+                // actual feature metadata was passed.
+                // Note that in JS, .unshift() adds to the beginning (not end)
+                // of an array.
+                this.featureMetadataFields.unshift("Feature ID");
+                dom_utils.populateSelect(
+                    "topSearch",
+                    this.featureMetadataFields,
+                    "Feature ID"
+                );
+                dom_utils.populateSelect(
+                    "botSearch",
+                    this.featureMetadataFields,
+                    "Feature ID"
                 );
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
@@ -176,13 +180,13 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     if (i.mark.marktype === "rect") {
                         if (display.onHigh) {
                             display.oldFeatureHigh = display.newFeatureHigh;
-                            display.newFeatureHigh = i.datum["Feature ID"];
+                            display.newFeatureHigh = i.datum;
                             console.log(
                                 "Set newFeatureHigh: " + display.newFeatureHigh
                             );
                         } else {
                             display.oldFeatureLow = display.newFeatureLow;
-                            display.newFeatureLow = i.datum["Feature ID"];
+                            display.newFeatureLow = i.datum;
                             console.log(
                                 "Set newFeatureLow: " + display.newFeatureLow
                             );
@@ -192,23 +196,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     }
                 }
             });
-        }
-
-        /* Populates a <select> DOM element with a list of options. */
-        static populateSelectDOM(selectID, optionList, defaultVal) {
-            var optionEle;
-            var selectEle = document.getElementById(selectID);
-            for (var m = 0; m < optionList.length; m++) {
-                optionEle = document.createElement("option");
-                optionEle.value = optionEle.text = optionList[m];
-                selectEle.appendChild(optionEle);
-            }
-            // Set the default value of the <select>. Note that we escape this
-            // value in quotes, just in case it contains a period or some other
-            // character(s) that would mess up the querySelector.
-            selectEle.querySelector(
-                'option[value = "' + defaultVal + '"]'
-            ).selected = true;
         }
 
         /* Calls vegaEmbed() on this.samplePlotJSON.
@@ -228,12 +215,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 );
                 // Note that we set the default metadata fields based on whatever
                 // the JSON has as the defaults.
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "xAxisField",
                     this.metadataCols,
                     this.samplePlotJSON.encoding.x.field
                 );
-                RRVDisplay.populateSelectDOM(
+                dom_utils.populateSelect(
                     "colorField",
                     this.metadataCols,
                     this.samplePlotJSON.encoding.color.field
@@ -253,13 +240,17 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         // Given a "row" of data about a rank, return its new classification depending
         // on the new selection that just got made.
         updateRankColorSingle(rankRow) {
-            if (rankRow["Feature ID"] === this.newFeatureHigh) {
-                if (rankRow["Feature ID"] === this.newFeatureLow) {
+            if (rankRow["Feature ID"] === this.newFeatureHigh["Feature ID"]) {
+                if (
+                    rankRow["Feature ID"] === this.newFeatureLow["Feature ID"]
+                ) {
                     return "Both";
                 } else {
                     return "Numerator";
                 }
-            } else if (rankRow["Feature ID"] === this.newFeatureLow) {
+            } else if (
+                rankRow["Feature ID"] === this.newFeatureLow["Feature ID"]
+            ) {
                 return "Denominator";
             } else {
                 return "None";
@@ -269,11 +260,21 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         updateRankColorMulti(rankRow) {
             var inTop = false;
             var inBot = false;
-            if (this.topFeatures.indexOf(rankRow["Feature ID"]) >= 0) {
-                inTop = true;
+            for (var i = 0; i < this.topFeatures.length; i++) {
+                if (
+                    this.topFeatures[i]["Feature ID"] === rankRow["Feature ID"]
+                ) {
+                    inTop = true;
+                    break;
+                }
             }
-            if (this.botFeatures.indexOf(rankRow["Feature ID"]) >= 0) {
-                inBot = true;
+            for (var j = 0; j < this.botFeatures.length; j++) {
+                if (
+                    this.botFeatures[j]["Feature ID"] === rankRow["Feature ID"]
+                ) {
+                    inBot = true;
+                    break;
+                }
             }
             if (inTop) {
                 if (inBot) {
@@ -338,10 +339,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                     vega.changeset().modify(
                         /* Calculate the new balance for each sample.
                          *
-                         * For reference, the use of modify() here is based on this comment:
+                         * For reference, the use of modify() here is based on
                          * https://github.com/vega/vega/issues/1028#issuecomment-334295328
-                         * (This is where I learned that vega.changeset().modify() existed.)
-                         * Also, vega.truthy is a utility function: it just returns true.
+                         * (This is where I learned that
+                         * vega.changeset().modify() existed.)
+                         * Also, vega.truthy is a utility function: it just
+                         * returns true.
                          */
                         vega.truthy,
                         "rankratioviz_balance",
@@ -379,22 +382,24 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotMulti() {
-            // Determine how we're going to use the input for searching through
-            // features
-            var topType = document.getElementById("topSearch").value;
-            var botType = document.getElementById("botSearch").value;
+            // Determine which feature metadata field(s) to look at
+            var topField = document.getElementById("topSearch").value;
+            var botField = document.getElementById("botSearch").value;
+            var topSearchType = document.getElementById("topSearchType").value;
+            var botSearchType = document.getElementById("botSearchType").value;
             var topEnteredText = document.getElementById("topText").value;
             var botEnteredText = document.getElementById("botText").value;
-            // Now use these "types" to filter features for both parts of the log ratio
             this.topFeatures = feature_computation.filterFeatures(
-                this.feature_ids,
+                this.rankPlotJSON,
                 topEnteredText,
-                topType
+                topField,
+                topSearchType
             );
             this.botFeatures = feature_computation.filterFeatures(
-                this.feature_ids,
+                this.rankPlotJSON,
                 botEnteredText,
-                botType
+                botField,
+                botSearchType
             );
             this.changeSamplePlot(
                 this.updateBalanceMulti,
@@ -438,32 +443,82 @@ define(["./feature_computation", "vega", "vega-embed"], function(
                 " selected)";
         }
 
-        /* Updates the textareas that list the selected features.
+        /* Converts a list of feature "rows" from the rank plot JSON to a
+         * human-readable string that will be used to populate a <textarea>
+         * in rankratioviz' output.
          *
-         * This defaults to updating based on the "multiple" selections' values. If you
-         * pass in a truthy value for the clear argument, this will instead clear these
-         * text areas; if you pass in a truthy value for the single argument (and clear
-         * is falsy), this will instead update based on the single selection values.
+         * Basically, this goes through each feature and creates a
+         * representation that looks something like
+         * Feature ID / FeatMetadataField1Value / FeatMetadataField2Value ...,
+         * where each feature metadata value is separated by a " / ".
+         *
+         * The output text returned by this function is just a string
+         * containing all of these representations, which are themselves
+         * separated by newline characters.
+         */
+        featureRowListToText(featureRowList) {
+            if (featureRowList.length <= 0) {
+                return "";
+            }
+            var outputText = "";
+            var currVal, anotherFieldLeft;
+            for (var i = 0; i < featureRowList.length; i++) {
+                if (i > 0) {
+                    outputText += "\n";
+                }
+                // Note that "Feature ID" is included in
+                // this.featureMetadataFields, since we added it in
+                // makeRankPlot() above
+                for (var c = 0; c < this.featureMetadataFields.length; c++) {
+                    currVal = featureRowList[i][this.featureMetadataFields[c]];
+                    // If currVal *is* null or undefined, this will look like
+                    // / / in the output for this metadata field -- which is
+                    // fine.
+                    anotherFieldLeft =
+                        c + 1 < this.featureMetadataFields.length;
+                    if (currVal !== null && currVal !== undefined) {
+                        outputText += currVal;
+                        if (anotherFieldLeft) {
+                            outputText += " / ";
+                        }
+                    } else if (anotherFieldLeft) {
+                        outputText += "/ ";
+                    }
+                }
+            }
+            return outputText;
+        }
+
+        /* Updates the textareas that list the selected features, as well as
+         * the corresponding header elements that indicate the numbers of
+         * selected features.
+         *
+         * This defaults to updating based on the "multiple" selections'
+         * values. If you pass in a truthy value for the clear argument,
+         * this will instead clear these text areas; if you pass in a truthy
+         * value for the single argument (and clear is falsy), this will
+         * instead update based on the single selection values.
          */
         updateFeaturesTextDisplays(single, clear) {
             if (clear) {
                 document.getElementById("topFeaturesDisplay").value = "";
                 document.getElementById("botFeaturesDisplay").value = "";
+                this.updateFeatureHeaderCounts(0, 0);
             } else if (single) {
                 document.getElementById(
                     "topFeaturesDisplay"
-                ).value = this.newFeatureHigh;
+                ).value = this.featureRowListToText([this.newFeatureHigh]);
                 document.getElementById(
                     "botFeaturesDisplay"
-                ).value = this.newFeatureLow;
+                ).value = this.featureRowListToText([this.newFeatureLow]);
                 this.updateFeatureHeaderCounts(1, 1);
             } else {
                 document.getElementById(
                     "topFeaturesDisplay"
-                ).value = this.topFeatures.toString().replace(/,/g, "\n");
+                ).value = this.featureRowListToText(this.topFeatures);
                 document.getElementById(
                     "botFeaturesDisplay"
-                ).value = this.botFeatures.toString().replace(/,/g, "\n");
+                ).value = this.featureRowListToText(this.botFeatures);
                 this.updateFeatureHeaderCounts(
                     this.topFeatures.length,
                     this.botFeatures.length
@@ -572,25 +627,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             }
         }
 
-        static changeColorElementEnabled(enable) {
-            // List of DOM elements that have to do with the color controls. We
-            // disable these when in "boxplot mode" because Vega-Lite gets
-            // grumpy when you try to apply colors to a boxplot that have
-            // different granularity than the boxplot's current x-axis.
-            // (It does the same thing with tooltips.)
-            var colorEles = ["colorField", "colorScale"];
-            var e;
-            if (enable) {
-                for (e = 0; e < colorEles.length; e++) {
-                    document.getElementById(colorEles[e]).disabled = false;
-                }
-            } else {
-                for (e = 0; e < colorEles.length; e++) {
-                    document.getElementById(colorEles[e]).disabled = true;
-                }
-            }
-        }
-
         /* Changes the sample plot JSON and DOM elements to get ready for
          * switching to "boxplot mode." If callRemakeSamplePlot is truthy, this
          * will actually call this.remakeSamplePlot(); otherwise, this won't do
@@ -612,7 +648,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             // which only one sample is available show up on the white
             // background and light-gray axis.
             this.samplePlotJSON.mark.median = { color: "#000000" };
-            RRVDisplay.changeColorElementEnabled(false);
+            dom_utils.changeElementsEnabled(this.colorEles, false);
             this.setColorForBoxplot();
             delete this.samplePlotJSON.encoding.tooltip;
             if (callRemakeSamplePlot) {
@@ -630,7 +666,7 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
-            RRVDisplay.changeColorElementEnabled(true);
+            dom_utils.changeElementsEnabled(this.colorEles, true);
             // No need to explicitly adjust color or tooltips here; tooltips
             // will be auto-added in updateSamplePlotTooltips() (since it will
             // detect that boxplot mode is off, and therefore try to add
@@ -685,7 +721,9 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             this.validateSampleID(sampleID);
             var abundance = 0;
             for (var t = 0; t < features.length; t++) {
-                abundance += this.feature_cts[features[t]][sampleID];
+                abundance += this.feature_cts[features[t]["Feature ID"]][
+                    sampleID
+                ];
             }
             return abundance;
         }
@@ -699,8 +737,12 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
             this.validateSampleID(sampleID);
-            var topCt = this.feature_cts[this.newFeatureHigh][sampleID];
-            var botCt = this.feature_cts[this.newFeatureLow][sampleID];
+            var topCt = this.feature_cts[this.newFeatureHigh["Feature ID"]][
+                sampleID
+            ];
+            var botCt = this.feature_cts[this.newFeatureLow["Feature ID"]][
+                sampleID
+            ];
             return feature_computation.computeBalance(topCt, botCt);
         }
 
@@ -724,32 +766,14 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             return feature_computation.computeBalance(topCt, botCt);
         }
 
-        /* From downloadDataURI() in the MetagenomeScope viewer interface
-         * source code.
-         */
-        static downloadDataURI(filename, contentToDownload, isPlainText) {
-            document.getElementById("downloadHelper").download = filename;
-            if (isPlainText) {
-                var data =
-                    "data:text/plain;charset=utf-8;base64," +
-                    window.btoa(contentToDownload);
-                document.getElementById("downloadHelper").href = data;
-            } else {
-                document.getElementById(
-                    "downloadHelper"
-                ).href = contentToDownload;
-            }
-            document.getElementById("downloadHelper").click();
-        }
-
-        /* Calls RRVDisplay.downloadDataURI() on the result of
+        /* Calls dom_utils.downloadDataURI() on the result of
          * getSamplePlotData().
          */
         exportData() {
             var currMetadataField = this.samplePlotJSON.encoding.x.field;
             var tsv = this.getSamplePlotData(currMetadataField);
             if (tsv.length > 0) {
-                RRVDisplay.downloadDataURI(
+                dom_utils.downloadDataURI(
                     "rrv_sample_plot_data.tsv",
                     tsv,
                     true
@@ -843,17 +867,6 @@ define(["./feature_computation", "vega", "vega-embed"], function(
             return outputTSV;
         }
 
-        static clearDiv(divID) {
-            // From https://stackoverflow.com/a/3450726/10730311.
-            // This way is apparently faster than just using
-            // document.getElementById(divID).innerHTML = '' -- not that
-            // performance really matters a ton here, but whatever.
-            var element = document.getElementById(divID);
-            while (element.firstChild) {
-                element.removeChild(element.firstChild);
-            }
-        }
-
         /* Selectively clears the effects of this rrv instance on the DOM.
          *
          * You should only call this with clearOtherStuff set to a truthy value
@@ -865,11 +878,11 @@ define(["./feature_computation", "vega", "vega-embed"], function(
         destroy(clearRankPlot, clearSamplePlot, clearOtherStuff) {
             if (clearRankPlot) {
                 this.rankPlotView.finalize();
-                RRVDisplay.clearDiv("rankPlot");
+                dom_utils.clearDiv("rankPlot");
             }
             if (clearSamplePlot) {
                 this.samplePlotView.finalize();
-                RRVDisplay.clearDiv("samplePlot");
+                dom_utils.clearDiv("samplePlot");
             }
             if (clearOtherStuff) {
                 // Clear the "features text" displays

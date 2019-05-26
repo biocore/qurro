@@ -38,18 +38,20 @@
         <button id="multiFeatureButton"></button>
         <button id="exportDataButton"></button>
         <a id="downloadHelper"></a>
-        <select id="topSearch">
-            <option value="rank"></option>
+        <select id="topSearch"> </select>
+        <select id="topSearchType">
             <option value="text"></option>
+            <option value="rank"></option>
         </select>
         <!-- TODO instead of querying the DOM in the plot update functions,
              just make the search types and strings arguments (will make testing
              a lot easier)
         -->
         <input type="text" id="topText" />
-        <select id="botSearch">
-            <option value="rank"></option>
+        <select id="botSearch"> </select>
+        <select id="botSearchType">
             <option value="text"></option>
+            <option value="rank"></option>
         </select>
         <input type="text" id="botText" />
 
@@ -57,6 +59,29 @@
         <textarea id="topFeaturesDisplay"></textarea>
         <h4 id="denHeader">Denominator Features (0 selected)</h4>
         <textarea id="botFeaturesDisplay"></textarea>
+        <select id="qurro_select_test"></select>
+        <select id="qurro_enabled_test"></select>
+        <select id="qurro_enabled_test2"></select>
+        <div id="qurro_cleardiv_test">
+            <div id="child">
+                <div id="grandchild"></div>
+            </div>
+            <div id="child2">
+                <div id="grandchild2">
+                    <div id="greatgrandchild"></div>
+                </div>
+            </div>
+        </div>
+        <div id="qurro_cleardiv_emptyelement" sillyparam="hi!"></div>
+        <select id="qurro_bindingtest1">
+            <option value="1"></option>
+            <option value="2"></option>
+        </select>
+        <button id="qurro_bindingtest2"></button>
+        <select id="qurro_bindingtest3">
+            <option value="3"></option>
+            <option value="4"></option>
+        </select>
     </body>
 
     <script

@@ -1,11 +1,11 @@
 define(["display", "mocha", "chai"], function(display, mocha, chai) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
-    var rankPlotJSON = {"config": {"view": {"width": 400, "height": 300}, "mark": {"tooltip": null}, "axis": {"gridColor": "#f2f2f2", "labelBound": true}}, "data": {"name": "data-36414add24a5bf1eab9b625a76ffc1b9"}, "mark": "bar", "autosize": {"resize": true}, "background": "#FFFFFF", "encoding": {"color": {"type": "nominal", "field": "Classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}}, "tooltip": [{"type": "quantitative", "field": "rankratioviz_x", "title": "Current Ranking"}, {"type": "nominal", "field": "Classification"}, {"type": "nominal", "field": "Feature ID"}], "x": {"type": "ordinal", "axis": {"labelAngle": 0, "ticks": false}, "field": "rankratioviz_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Sorted Features"}, "y": {"type": "quantitative", "field": "Intercept"}}, "selection": {"selector013": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Feature Ranks", "transform": [{"window": [{"op": "row_number", "as": "rankratioviz_x"}], "sort": [{"field": "Intercept", "order": "ascending"}]}], "$schema": "https://vega.github.io/schema/vega-lite/v3.2.1.json", "datasets": {"data-36414add24a5bf1eab9b625a76ffc1b9": [{"Feature ID": "Taxon1", "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "Classification": "None"}, {"Feature ID": "Taxon2", "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "Classification": "None"}, {"Feature ID": "Taxon3 | Yeet | 100", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "Classification": "None"}, {"Feature ID": "Taxon4", "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "Classification": "None"}, {"Feature ID": "Taxon5", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "Classification": "None"}], "rankratioviz_rank_ordering": ["Intercept", "Rank 1", "Rank 2"]}};
+    var rankPlotJSON = {"config": {"view": {"width": 400, "height": 300}, "mark": {"tooltip": null}, "axis": {"gridColor": "#f2f2f2", "labelBound": true}}, "data": {"name": "data-7416c68b284d7fabf6066e786fa2c0aa"}, "mark": "bar", "autosize": {"resize": true}, "background": "#FFFFFF", "encoding": {"color": {"type": "nominal", "field": "Classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}}, "tooltip": [{"type": "quantitative", "field": "rankratioviz_x", "title": "Current Ranking"}, {"type": "nominal", "field": "Classification"}, {"type": "nominal", "field": "Feature ID"}, {"type": "nominal", "field": "FeatureMetadata1"}, {"type": "nominal", "field": "FeatureMetadata2"}], "x": {"type": "ordinal", "axis": {"labelAngle": 0, "ticks": false}, "field": "rankratioviz_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Sorted Features"}, "y": {"type": "quantitative", "field": "Intercept"}}, "selection": {"selector013": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Feature Ranks", "transform": [{"window": [{"op": "row_number", "as": "rankratioviz_x"}], "sort": [{"field": "Intercept", "order": "ascending"}]}], "$schema": "https://vega.github.io/schema/vega-lite/v3.2.1.json", "datasets": {"data-7416c68b284d7fabf6066e786fa2c0aa": [{"Feature ID": "Taxon1", "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "FeatureMetadata1": null, "FeatureMetadata2": null, "Classification": "None"}, {"Feature ID": "Taxon2", "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "FeatureMetadata1": null, "FeatureMetadata2": null, "Classification": "None"}, {"Feature ID": "Taxon3", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Classification": "None"}, {"Feature ID": "Taxon4", "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "FeatureMetadata1": null, "FeatureMetadata2": null, "Classification": "None"}, {"Feature ID": "Taxon5", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Classification": "None"}], "rankratioviz_rank_ordering": ["Intercept", "Rank 1", "Rank 2"], "rankratioviz_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"]}};
     // prettier-ignore
     var samplePlotJSON = {"config": {"view": {"width": 400, "height": 300}, "mark": {"tooltip": null}, "axis": {"labelBound": true}}, "data": {"name": "data-587975575c35e2a2f0cf84839938cac8"}, "mark": {"type": "circle"}, "autosize": {"resize": true}, "background": "#FFFFFF", "encoding": {"color": {"type": "nominal", "field": "Metadata1"}, "tooltip": [{"type": "nominal", "field": "Sample ID"}, {"type": "quantitative", "field": "rankratioviz_balance"}], "x": {"type": "quantitative", "field": "rankratioviz_balance"}, "y": {"type": "quantitative", "field": "rankratioviz_balance", "title": "log(Numerator / Denominator)"}}, "selection": {"selector014": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Log Ratio of Abundances in Samples", "$schema": "https://vega.github.io/schema/vega-lite/v3.2.1.json", "datasets": {"data-587975575c35e2a2f0cf84839938cac8": [{"Sample ID": "Sample1", "rankratioviz_balance": null, "Metadata1": 1, "Metadata2": 2, "Metadata3": 3}, {"Sample ID": "Sample2", "rankratioviz_balance": null, "Metadata1": 4, "Metadata2": 5, "Metadata3": 6}, {"Sample ID": "Sample3", "rankratioviz_balance": null, "Metadata1": 7, "Metadata2": 8, "Metadata3": 9}, {"Sample ID": "Sample5", "rankratioviz_balance": null, "Metadata1": 13, "Metadata2": 14, "Metadata3": 15}, {"Sample ID": "Sample6", "rankratioviz_balance": null, "Metadata1": 16, "Metadata2": 17, "Metadata3": 18}, {"Sample ID": "Sample7", "rankratioviz_balance": null, "Metadata1": 19, "Metadata2": 20, "Metadata3": 21}]}};
     // prettier-ignore
-    var countJSON = {"Taxon5": {"Sample6": 0.0, "Sample2": 0.0, "Sample5": 2.0, "Sample3": 1.0, "Sample7": 0.0, "Sample1": 0.0}, "Taxon4": {"Sample6": 1.0, "Sample2": 1.0, "Sample5": 1.0, "Sample3": 1.0, "Sample7": 1.0, "Sample1": 1.0}, "Taxon1": {"Sample6": 5.0, "Sample2": 1.0, "Sample5": 4.0, "Sample3": 2.0, "Sample7": 6.0, "Sample1": 0.0}, "Taxon2": {"Sample6": 1.0, "Sample2": 5.0, "Sample5": 2.0, "Sample3": 4.0, "Sample7": 0.0, "Sample1": 6.0}, "Taxon3 | Yeet | 100": {"Sample6": 3.0, "Sample2": 3.0, "Sample5": 4.0, "Sample3": 4.0, "Sample7": 2.0, "Sample1": 2.0}};
+    var countJSON = {"Taxon4": {"Sample7": 1.0, "Sample1": 1.0, "Sample5": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample6": 1.0}, "Taxon2": {"Sample7": 0.0, "Sample1": 6.0, "Sample5": 2.0, "Sample2": 5.0, "Sample3": 4.0, "Sample6": 1.0}, "Taxon3": {"Sample7": 2.0, "Sample1": 2.0, "Sample5": 4.0, "Sample2": 3.0, "Sample3": 4.0, "Sample6": 3.0}, "Taxon5": {"Sample7": 0.0, "Sample1": 0.0, "Sample5": 2.0, "Sample2": 0.0, "Sample3": 1.0, "Sample6": 0.0}, "Taxon1": {"Sample7": 6.0, "Sample1": 0.0, "Sample5": 4.0, "Sample2": 1.0, "Sample3": 2.0, "Sample6": 5.0}};
 
     describe("Dynamic RRVDisplay class functionality", function() {
         var rrv = new display.RRVDisplay(
@@ -50,28 +50,28 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         describe("Computing sample log ratios", function() {
             describe("Single-feature selections", function() {
                 it("Computes the correct sample log ratio", function() {
-                    rrv.newFeatureHigh = "Taxon3 | Yeet | 100";
-                    rrv.newFeatureLow = "Taxon4";
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon3" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon4" };
                     chai.assert.equal(
                         Math.log(3),
                         rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
                     );
                     // Test that flipping the counts within the log ratio works
-                    rrv.newFeatureHigh = "Taxon4";
-                    rrv.newFeatureLow = "Taxon3 | Yeet | 100";
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon4" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon3" };
                     chai.assert.equal(
                         -Math.log(3),
                         rrv.updateBalanceSingle({ "Sample ID": "Sample6" })
                     );
                     // Try the same stuff out with different features and sample
-                    rrv.newFeatureHigh = "Taxon1";
-                    rrv.newFeatureLow = "Taxon2";
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon2" };
                     chai.assert.equal(
                         Math.log(2),
                         rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
                     );
-                    rrv.newFeatureHigh = "Taxon2";
-                    rrv.newFeatureLow = "Taxon1";
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon2" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon1" };
                     chai.assert.equal(
                         -Math.log(2),
                         rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
@@ -79,14 +79,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 });
                 it("Returns NaN when numerator and/or denominator is 0", function() {
                     // In this first case, only the numerator is a 0.
-                    rrv.newFeatureHigh = "Taxon1";
-                    rrv.newFeatureLow = "Taxon2";
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon2" };
                     chai.assert.isNaN(
                         rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
                     );
                     // In this next case, both the numerator and denominator are 0.
-                    rrv.newFeatureHigh = "Taxon1";
-                    rrv.newFeatureLow = "Taxon1";
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon1" };
                     chai.assert.isNaN(
                         rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
                     );
@@ -103,16 +103,22 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             describe("Multi-feature selections", function() {
                 it("Computes the correct sample log ratio", function() {
                     // Standard 2-taxon / 2-taxon case
-                    rrv.topFeatures = ["Taxon1", "Taxon3 | Yeet | 100"];
-                    rrv.botFeatures = ["Taxon2", "Taxon4"];
+                    rrv.topFeatures = [
+                        { "Feature ID": "Taxon1" },
+                        { "Feature ID": "Taxon3" }
+                    ];
+                    rrv.botFeatures = [
+                        { "Feature ID": "Taxon2" },
+                        { "Feature ID": "Taxon4" }
+                    ];
                     chai.assert.equal(
                         Math.log(2 / 7),
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                     // only one feature over another (therefore should be equal to
                     // updateBalanceSingle -- this is the same test as done above)
-                    rrv.topFeatures = ["Taxon3 | Yeet | 100"];
-                    rrv.botFeatures = ["Taxon4"];
+                    rrv.topFeatures = [{ "Feature ID": "Taxon3" }];
+                    rrv.botFeatures = [{ "Feature ID": "Taxon4" }];
                     chai.assert.equal(
                         Math.log(2),
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
@@ -130,12 +136,12 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                     // 2. Just numerator is empty
-                    rrv.botFeatures = ["Taxon4"];
+                    rrv.botFeatures = [{ "Feature ID": "Taxon4" }];
                     chai.assert.isNaN(
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                     // 3. Just denominator is empty
-                    rrv.topFeatures = ["Taxon2"];
+                    rrv.topFeatures = [{ "Feature ID": "Taxon2" }];
                     rrv.botFeatures = [];
                     chai.assert.isNaN(
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
@@ -158,7 +164,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         6,
                         rrv.sumAbundancesForSampleFeatures(
                             { "Sample ID": "Sample1" },
-                            ["Taxon2"]
+                            [{ "Feature ID": "Taxon2" }]
                         )
                     );
                     // Check with multiple features
@@ -166,14 +172,21 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         7,
                         rrv.sumAbundancesForSampleFeatures(
                             { "Sample ID": "Sample1" },
-                            ["Taxon2", "Taxon4"]
+                            [
+                                { "Feature ID": "Taxon2" },
+                                { "Feature ID": "Taxon4" }
+                            ]
                         )
                     );
                     chai.assert.equal(
                         7,
                         rrv.sumAbundancesForSampleFeatures(
                             { "Sample ID": "Sample1" },
-                            ["Taxon2", "Taxon4", "Taxon1"]
+                            [
+                                { "Feature ID": "Taxon2" },
+                                { "Feature ID": "Taxon4" },
+                                { "Feature ID": "Taxon1" }
+                            ]
                         )
                     );
                     // Check with another sample + an annotated feature
@@ -181,7 +194,10 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         8,
                         rrv.sumAbundancesForSampleFeatures(
                             { "Sample ID": "Sample2" },
-                            ["Taxon2", "Taxon3 | Yeet | 100"]
+                            [
+                                { "Feature ID": "Taxon2" },
+                                { "Feature ID": "Taxon3" }
+                            ]
                         )
                     );
                 });
@@ -206,37 +222,77 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
         });
 
+        function checkHeaders(expTopCt, expBotCt) {
+            chai.assert.equal(
+                document.getElementById("numHeader").innerHTML,
+                "Numerator Features (" +
+                    expTopCt.toLocaleString() +
+                    " selected)"
+            );
+            chai.assert.equal(
+                document.getElementById("denHeader").innerHTML,
+                "Denominator Features (" +
+                    expBotCt.toLocaleString() +
+                    " selected)"
+            );
+        }
+
         describe('Updating "feature text" DOM elements', function() {
             it("Works for single-feature selections", function() {
-                rrv.newFeatureHigh = "New feature name high";
-                rrv.newFeatureLow = "New feature name low";
+                rrv.newFeatureHigh = {
+                    "Feature ID": "New feature name high",
+                    FeatureMetadata1: 5,
+                    FeatureMetadata2: "test"
+                };
+                rrv.newFeatureLow = {
+                    "Feature ID": "New feature name low",
+                    FeatureMetadata1: 10,
+                    FeatureMetadata2: 3
+                };
                 rrv.updateFeaturesTextDisplays(true);
                 chai.assert.equal(
                     document.getElementById("topFeaturesDisplay").value,
-                    rrv.newFeatureHigh
+                    "New feature name high / 5 / test"
                 );
                 chai.assert.equal(
                     document.getElementById("botFeaturesDisplay").value,
-                    rrv.newFeatureLow
+                    "New feature name low / 10 / 3"
                 );
+                checkHeaders(1, 1);
                 // Check it again -- ensure that the updating action overwrites the
                 // previous values
-                rrv.newFeatureHigh = "Thing 1!";
-                rrv.newFeatureLow = "Thing 2!";
+                rrv.newFeatureHigh = {
+                    "Feature ID": "Thing 1!",
+                    FeatureMetadata2: "lol"
+                };
+                rrv.newFeatureLow = { "Feature ID": "Thing 2!" };
                 rrv.updateFeaturesTextDisplays(true);
                 chai.assert.equal(
                     document.getElementById("topFeaturesDisplay").value,
-                    rrv.newFeatureHigh
+                    "Thing 1! / / lol"
                 );
                 chai.assert.equal(
                     document.getElementById("botFeaturesDisplay").value,
-                    rrv.newFeatureLow
+                    "Thing 2! / / "
                 );
+                checkHeaders(1, 1);
             });
             it("Works for multi-feature selections", function() {
                 // Standard case
-                rrv.topFeatures = ["abc", "def", "ghi", "lmno pqrs", "tuv"];
-                rrv.botFeatures = ["asdf", "ghjk"];
+                // only checking a single feature metadata field here, for my
+                // own sanity
+                rrv.featureMetadataFields = ["Feature ID"];
+                rrv.topFeatures = [
+                    { "Feature ID": "abc" },
+                    { "Feature ID": "def" },
+                    { "Feature ID": "ghi" },
+                    { "Feature ID": "lmno pqrs" },
+                    { "Feature ID": "tuv" }
+                ];
+                rrv.botFeatures = [
+                    { "Feature ID": "asdf" },
+                    { "Feature ID": "ghjk" }
+                ];
                 var expectedTopText = "abc\ndef\nghi\nlmno pqrs\ntuv";
                 var expectedBotText = "asdf\nghjk";
                 rrv.updateFeaturesTextDisplays();
@@ -248,10 +304,11 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     document.getElementById("botFeaturesDisplay").value,
                     expectedBotText
                 );
+                checkHeaders(5, 2);
                 // Check case where there's only one feature in a list
                 // In this case, the denominator + expected bottom text are the
                 // same as before
-                rrv.topFeatures = ["onlyfeature"];
+                rrv.topFeatures = [{ "Feature ID": "onlyfeature" }];
                 expectedTopText = "onlyfeature";
                 rrv.updateFeaturesTextDisplays();
                 chai.assert.equal(
@@ -262,7 +319,10 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     document.getElementById("botFeaturesDisplay").value,
                     expectedBotText
                 );
+                checkHeaders(1, 2);
                 // Check case where lists are empty
+                // This could happen if, e.g., both of the user's text queries
+                // don't have any results.
                 rrv.topFeatures = [];
                 rrv.botFeatures = [];
                 rrv.updateFeaturesTextDisplays();
@@ -272,12 +332,16 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
+                checkHeaders(0, 0);
             });
             it('Clears the "feature text" DOM elements properly', function() {
                 // Populate the DOM elements
                 rrv.newFeatureHigh = "Thing 1!";
                 rrv.newFeatureLow = "Thing 2!";
                 rrv.updateFeaturesTextDisplays(true);
+                // Just to be super sure, check that the headers were updated
+                // correctly
+                checkHeaders(1, 1);
                 // Check that clearing works
                 rrv.updateFeaturesTextDisplays(false, true);
                 chai.assert.isEmpty(
@@ -286,11 +350,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
+                checkHeaders(0, 0);
                 // Repopulate the DOM elements
                 rrv.newFeatureHigh = "Thing 1!";
                 rrv.newFeatureLow = "Thing 2!";
                 rrv.updateFeaturesTextDisplays(true);
-                // Check that clearing is done, even if "single" is true (the "clear" argument takes priority)
+                checkHeaders(1, 1);
+                // Check that clearing is done, even if "single" is true
+                // (the "clear" argument takes priority)
                 rrv.updateFeaturesTextDisplays(true, true);
                 chai.assert.isEmpty(
                     document.getElementById("topFeaturesDisplay").value
@@ -298,12 +365,13 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
+                checkHeaders(0, 0);
             });
         });
         describe("Updating feature rank colors", function() {
             it("Works for single-feature selections", function() {
-                rrv.newFeatureHigh = "FH";
-                rrv.newFeatureLow = "FL";
+                rrv.newFeatureHigh = { "Feature ID": "FH" };
+                rrv.newFeatureLow = { "Feature ID": "FL" };
                 chai.assert.equal(
                     "Numerator",
                     rrv.updateRankColorSingle({ "Feature ID": "FH" })
@@ -317,7 +385,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.updateRankColorSingle({ "Feature ID": "FN" })
                 );
                 // Test "both" case
-                rrv.newFeatureLow = "FH";
+                rrv.newFeatureLow = { "Feature ID": "FH" };
                 chai.assert.equal(
                     "Both",
                     rrv.updateRankColorSingle({ "Feature ID": "FH" })
@@ -325,8 +393,15 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
 
             it("Works for multi-feature selections", function() {
-                rrv.topFeatures = ["Feature1", "Feature2", "Feature3"];
-                rrv.botFeatures = ["Feature3", "Feature4"];
+                rrv.topFeatures = [
+                    { "Feature ID": "Feature1" },
+                    { "Feature ID": "Feature2" },
+                    { "Feature ID": "Feature3" }
+                ];
+                rrv.botFeatures = [
+                    { "Feature ID": "Feature3" },
+                    { "Feature ID": "Feature4" }
+                ];
                 chai.assert.equal(
                     "Numerator",
                     rrv.updateRankColorMulti({ "Feature ID": "Feature1" })
@@ -355,6 +430,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 // (after populating search fields/types, of course)
             });
         });
+        // WOW these plans are out of date lol. Update it!
         describe("Modifying plot signals", function() {
             // can use view.signal() to do this. Very feasible.
             describe("Changing the rank used on the rank plot", function() {});
