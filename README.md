@@ -1,4 +1,5 @@
 # Qurro: Quantitative Rank/Ratio Observations
+<img style="object-position: 50%;" src="https://github.com/fedarko/qurro/blob/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
 [![Build Status](https://travis-ci.org/fedarko/qurro.svg?branch=master)](https://travis-ci.org/fedarko/qurro) [![codecov](https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/qurro)
 
 Qurro visualizes the output from a tool like
