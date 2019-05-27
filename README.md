@@ -158,6 +158,10 @@ screenshot above) were taken from songbird's GitHub repository in its
 folder, and are associated with
 [this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/) [3].
 
+### Fonts
+
+Qurro's logo was created using the [Lalezar](https://github.com/BornaIz/Lalezar) font.
+
 ### Special Thanks
 
 The design of Qurro was strongly inspired by
