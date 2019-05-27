@@ -1,5 +1,5 @@
-<div style="text-align: center; width: 100%;">
-<img style="width: 20%;" src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
+<div align="center">
+<img width="20%" src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
 </div>
 
 # Qurro: Quantitative Rank/Ratio Observations
