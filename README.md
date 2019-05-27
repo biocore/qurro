@@ -1,8 +1,9 @@
+# Qurro: Quantitative Rank/Ratio Observations
+
 <div align="center">
 <img width="20%" src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
 </div>
 
-# Qurro: Quantitative Rank/Ratio Observations
 [![Build Status](https://travis-ci.org/fedarko/qurro.svg?branch=master)](https://travis-ci.org/fedarko/qurro) [![codecov](https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/qurro)
 
 Qurro visualizes the output from a tool like
@@ -158,9 +159,10 @@ screenshot above) were taken from songbird's GitHub repository in its
 folder, and are associated with
 [this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/) [3].
 
-### Fonts
+### Logo
 
 Qurro's logo was created using the [Lalezar](https://github.com/BornaIz/Lalezar) font.
+Also, shout out to [this gist](https://gist.github.com/DavidWells/7d2e0e1bc78f4ac59a123ddf8b74932d) for showing how to center images in GitHub markdown files (which is more of a hassle than it sounds).
 
 ### Special Thanks
 
