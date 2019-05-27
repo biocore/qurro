@@ -1,7 +1,7 @@
 # Qurro: Quantitative Rank/Ratio Observations
 
 <div align="center">
-<img width="20%" src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
+<img width="40%" src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
 </div>
 
 [![Build Status](https://travis-ci.org/fedarko/qurro.svg?branch=master)](https://travis-ci.org/fedarko/qurro) [![codecov](https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/qurro)
