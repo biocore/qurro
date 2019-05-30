@@ -165,11 +165,12 @@ def replace_js_plot_json_definitions(
         # plot JSONs with the actual JSON.
         for line in input_file_obj:
             output_line = line
+            # TODO Stop reusing all of this code -- make another function!
             if line.lstrip().startswith("var rankPlotJSON = {"):
                 if not plot_jsons_equal(curr_rank_plot_json, rank_plot_json):
                     output_line = (
                         output_line[: output_line.index("{")]
-                        + json.dumps(rank_plot_json)
+                        + json.dumps(rank_plot_json, sort_keys=True)
                         + ";\n"
                     )
                     at_least_one_plot_changed = True
@@ -179,7 +180,7 @@ def replace_js_plot_json_definitions(
                 ):
                     output_line = (
                         output_line[: output_line.index("{")]
-                        + json.dumps(sample_plot_json)
+                        + json.dumps(sample_plot_json, sort_keys=True)
                         + ";\n"
                     )
                     at_least_one_plot_changed = True
@@ -187,7 +188,7 @@ def replace_js_plot_json_definitions(
                 if not plot_jsons_equal(curr_count_json, count_json):
                     output_line = (
                         output_line[: output_line.index("{")]
-                        + json.dumps(count_json)
+                        + json.dumps(count_json, sort_keys=True)
                         + ";\n"
                     )
                     at_least_one_plot_changed = True
