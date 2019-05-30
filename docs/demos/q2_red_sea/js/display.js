@@ -333,6 +333,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
+            var numSamplesWithNaNBalance = 0;
             this.samplePlotView
                 .change(
                     dataName,
@@ -350,14 +351,24 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         "qurro_balance",
                         // function to run to determine what the new balances are
                         function(sampleRow) {
-                            return updateBalanceFunc.call(
+                            var sampleBalance = updateBalanceFunc.call(
                                 parentDisplay,
                                 sampleRow
                             );
+                            // We use Number.isNaN() instead of isNaN() because
+                            // the latter can have weird undesirable behavior.
+                            if (Number.isNaN(sampleBalance)) {
+                                numSamplesWithNaNBalance++;
+                            }
+                            return sampleBalance;
                         }
                     )
                 )
                 .run();
+            console.log(
+                String(numSamplesWithNaNBalance) +
+                    " sample(s) dropped due to NaN balance."
+            );
             // Update rank plot based on the new log ratio
             // Storing this within changeSamplePlot() is a (weak) safeguard that
             // changes to the state of the sample plot (at least enacted using the UI
