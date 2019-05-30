@@ -18,7 +18,7 @@ test: pytest jstest
 # statements sprinkled throughout the code, which helps with debugging).
 pytest:
 	@# Use of -f per https://unix.stackexchange.com/a/68096
-	rm -rf qurro/demos/*
+	rm -rf docs/demos/*
 	python3 -B -m pytest qurro/tests -s --cov qurro
 
 jstest:
