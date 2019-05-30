@@ -50,6 +50,17 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Used when searching through features.
             this.feature_ids = Object.keys(this.feature_cts);
 
+            // This is a list of all sample IDs. As of now, we don't have a
+            // strong need to store this in memory so we only define it in the
+            // scope of the constructor function.
+            var sampleIDs = this.feature_cts[this.feature_ids[0]];
+            // Used when letting the user know how many samples are present in
+            // the sample plot.
+            // Note that we need to use Object.keys() in order to be able to
+            // figure out how many entries are in the sampleIDs list; see
+            // https://stackoverflow.com/a/6700/10730311
+            this.sampleCount = Object.keys(sampleIDs).length;
+
             // Set when the sample plot JSON is loaded. Used to populate
             // possible sample plot x-axis/colorization options.
             this.metadataCols = undefined;
@@ -367,6 +378,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 .run();
             console.log(
                 String(numSamplesWithNaNBalance) +
+                    " / " +
+                    String(this.sampleCount) +
                     " sample(s) dropped due to NaN balance."
             );
             // Update rank plot based on the new log ratio
