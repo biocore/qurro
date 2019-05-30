@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            Qurro
+        </title>
+        <link rel="shortcut icon" href="icon.png" />
+        <link rel="stylesheet" href="vendor/reset.css" />
+        <link rel="stylesheet" href="qurro.css" />
+    </head>
+
+    <body>
+        <div class="twoColumnRow">
+            <div>
+                <div id="rankPlot"></div>
+                <div class="centeredBlock">
+                    <label for="rankField">Ranking</label>
+                    <select id="rankField"> </select>
+                </div>
+                <div class="centeredBlock">
+                    <label for="barSize">Bar width</label>
+                    <select id="barSize">
+                        <option value="1"
+                            >Set each bar's width to 1 pixel</option
+                        >
+                        <option value="2"
+                            >Set each bar's width to 2 pixels</option
+                        >
+                        <option value="3"
+                            >Set each bar's width to 3 pixels</option
+                        >
+                        <option value="fit"
+                            >Fit bar widths to display width</option
+                        >
+                    </select>
+                    <p
+                        id="barSizeWarning"
+                        class="warning centeredBlock invisible marginOnTop"
+                    >
+                        <strong>Warning:</strong> The rank plot is currently
+                        using a bar width of less than one pixel per bar. This
+                        means that the image shown isn't necessarily going to be
+                        an accurate representation of the rank plot.
+                    </p>
+                </div>
+            </div>
+            <div>
+                <div id="samplePlot"></div>
+                <div class="centeredBlock">
+                    <!-- NOTE that the scale/field select values below will be
+                         literally used in the JSON.
+                         Also, the first-listed one is the default. Since the
+                         default x-axis is the balance (quant.) and the default
+                         color is the sample ID (nom.), we adjust the default
+                         scale types accordingly.
+                    -->
+                    <div class="centeredBlock">
+                        <label for="xAxisField">x-axis field</label>
+                        <select id="xAxisField"> </select>
+                        <label for="xAxisScale">x-axis scale type</label>
+                        <select id="xAxisScale">
+                            <option value="quantitative">Quantitative</option>
+                            <option value="nominal">Categorical</option>
+                        </select>
+                    </div>
+                    <div class="centeredBlock">
+                        <label id="colorFieldLabel" for="colorField"
+                            >Color field</label
+                        >
+                        <select id="colorField"> </select>
+                        <label id="colorScaleLabel" for="colorScale"
+                            >Color scale type</label
+                        >
+                        <select id="colorScale">
+                            <option value="nominal">Categorical</option>
+                            <option value="quantitative">Quantitative</option>
+                        </select>
+                    </div>
+                    <div class="centeredBlock">
+                        <label for="boxplotCheckbox"
+                            >(Experimental) Use boxplots for categorical
+                            data?</label
+                        >
+                        <input type="checkbox" id="boxplotCheckbox" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="twoColumnRow">
+            <div>
+                <!-- Note for future reference: whitespace between the
+                    start and end tag of a textarea is apparently
+                    interpreted as just that, and preserved in the textarea
+                    on the page.
+                    (So that's why the textarea declarations below are on
+                    long lines.)
+                -->
+                <div class="centeredBlock">
+                    <h4 id="numHeader" class="centeredHeader">
+                        Numerator Features (0 selected)
+                    </h4>
+                    <textarea
+                        id="topFeaturesDisplay"
+                        class="fancyBorder num"
+                        rows="6"
+                    ></textarea>
+                </div>
+                <div id="divide" class="centeredBlock"></div>
+                <div class="centeredBlock">
+                    <h4 id="denHeader" class="centeredHeader">
+                        Denominator Features (0 selected)
+                    </h4>
+                    <textarea
+                        id="botFeaturesDisplay"
+                        class="fancyBorder den"
+                        rows="6"
+                    ></textarea>
+                </div>
+            </div>
+            <div id="selectionControls">
+                <h3 class="centeredHeader">Selecting Features</h3>
+                <p class="info centeredBlock marginOnTop">
+                    To construct a log ratio, select feature(s) by clicking on
+                    the plot of feature ranks on the left or by searching using
+                    the controls below.
+                </p>
+                <h4 class="centeredHeader">Numerator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
+                    <select class="fancyBorder num" id="topSearch"> </select>
+                    <select class="fancyBorder num" id="topSearchType">
+                        <option value="text">contains the text</option>
+                        <option value="rank"
+                            >contains the exact taxonomic rank(s)</option
+                        >
+                    </select>
+                    <input
+                        type="text"
+                        class="fancyBorder num searchInput"
+                        id="topText"
+                    />
+                </div>
+                <h4 class="centeredHeader">Denominator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
+                    <select class="fancyBorder den" id="botSearch"> </select>
+                    <select class="fancyBorder den" id="botSearchType">
+                        <option value="text">contains the text</option>
+                        <option value="rank"
+                            >contains the exact taxonomic rank(s)</option
+                        >
+                    </select>
+                    <input
+                        type="text"
+                        class="fancyBorder den searchInput"
+                        id="botText"
+                    />
+                </div>
+
+                <!-- Invisible <a> used for downloading data URIs.
+                     Based on #downloadHelper in MetagenomeScope's viewer
+                     interface.
+                -->
+                <a id="downloadHelper" class="invisible"></a>
+                <div class="centeredBlock marginOnTop">
+                    <button id="multiFeatureButton">
+                        Regenerate sample plot
+                    </button>
+                    <button id="exportDataButton">
+                        Export currently used data
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--
+        <p>
+            <label for="selectMicrobesFileSelector">
+                <strong>
+                    Upload "Select Features" List:
+                </strong>
+            </label>
+            TODO make RRVDisplay get this input by ID
+                and set its onchange to the RRVDisplay instance's
+                particular select microbes or whatever function
+            <input type="file" id="selectMicrobesFileSelector"
+                onChange="ssmv.uploadSelectMicrobesFile();" />
+        </p>
+        <p>
+            <label for="zeroFillInput">
+                <strong>
+                    Value to fill in for zero-abundance features:
+                </strong>
+            </label>
+            <input type="number" id="zeroFillInput" min="0"
+                max="1000" value="0">
+            </input>
+        </p>
+        -->
+        <!-- This file will be edited by the Qurro python script to
+             contain definitions for the rank plot and sample plot JSON,
+             and will use these to create an instance of RRVDisplay
+             (thereby starting Qurro).
+
+             Leaving this code at the bottom of the page is sufficient to wait
+             until the rest of the stuff in the page has been loaded:
+             see https://stackoverflow.com/a/1861233.
+
+             We need to wait for the page to load before calling
+             RRVDisplay.makePlots(); otherwise, we'll get (at least) the error
+             "ERROR: Signal bind element not found: null" described at
+             https://github.com/vega/vega-embed/issues/64.
+        -->
+        <script data-main="main" src="vendor/require.js"></script>
+    </body>
+</html>

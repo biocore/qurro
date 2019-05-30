@@ -8,22 +8,104 @@
         <link rel="shortcut icon" href="images/logos/icon.png" />
         <link rel="stylesheet" href="css/qurro_docs.css" />
     </head>
-
     <body>
         <div class="centeredBlock">
             <h1>
                 Qurro: Quantitative Rank/Ratio Observations
             </h1>
             <img id="logo" src="images/logos/qurro_logo.png" alt="Qurro logo" />
+            <p>
+                A software tool created by the
+                <a href="https://knightlab.ucsd.edu/"
+                    >Knight Lab at UC San Diego</a
+                >.
+                <!-- TODO: sync the README with this page -->
+                For information about what Qurro does, see its
+                <a href="https://github.com/fedarko/qurro">GitHub page</a>.
+            </p>
         </div>
-        <p>
-            A software tool created by the
-            <a href="https://knightlab.ucsd.edu/">Knight Lab at UC San Diego</a
-            >.
-        </p>
-        <p>
-            This will eventually be a site describing what Qurro does, with some
-            demos included. For now, though, it's just this one page.
+        <h2>Demos</h2>
+        <table class="datasetTable">
+            <tr>
+                <th>Demo Name</th>
+                <th>Briefly: What was this study looking at?</th>
+                <th>Feature Type</th>
+                <th>Ranking Tool Used</th>
+                <th>Demo Link</th>
+                <th>Dataset Citation</th>
+            </tr>
+            <tr>
+                <td>Moving Pictures</td>
+                <td>Changes in the human microbiome over time</td>
+                <td>OTUs</td>
+                <td>DEICODE</td>
+                <td><a href="demos/q2_moving_pictures/index.html">Here</a></td>
+                <td>
+                    <a
+                        href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2011-12-5-r50"
+                        >Caporaso et al. 2011</a
+                    >
+                </td>
+            </tr>
+            <tr>
+                <td>Byrd</td>
+                <td>
+                    Metagenomics of the skin microbiome with respect to atopic
+                    dermatitis
+                </td>
+                <td>OTUs</td>
+                <td>Songbird</td>
+                <td><a href="demos/byrd/index.html">Here</a></td>
+                <td>
+                    <a
+                        href="http://stm.sciencemag.org/content/9/397/eaal4651.short"
+                        >Byrd et al. 2017</a
+                    >; processing done in
+                    <a
+                        href="https://github.com/knightlab-analyses/reference-frames/"
+                        >Morton/Marotz et al. 2019 (to appear in Nature
+                        Communications)</a
+                    >
+                </td>
+            </tr>
+            <tr>
+                <td>Sleep Apnea</td>
+                <td>Intermittent hypoxia and hypercapnia in mice</td>
+                <td>OTUs</td>
+                <td>DEICODE</td>
+                <td><a href="demos/sleep_apnea/index.html">Here</a></td>
+                <td>
+                    <a
+                        href="https://msystems.asm.org/content/3/3/e00020-18.abstract"
+                        >Tripathi et al. 2018</a
+                    >
+                </td>
+            </tr>
+            <tr>
+                <td>Red Sea</td>
+                <td>
+                    Metagenomic and environmental covariation in the Red Sea
+                </td>
+                <td>KEGG orthologs</td>
+                <td>Songbird</td>
+                <td><a href="demos/red_sea/index.html">Here</a></td>
+                <td>
+                    <a href="https://www.nature.com/articles/ismej201699"
+                        >Thompson et al. 2017</a
+                    >
+                </td>
+            </tr>
+        </table>
+
+        <h2>Tutorials</h2>
+        <p class="centeredBlock">
+            See
+            <a
+                href="https://github.com/fedarko/qurro/tree/master/example_notebooks"
+                >here</a
+            >
+            for example Jupyter Notebooks that show how to generate Qurro plots
+            from inside and outside of <a href="https://qiime2.org">QIIME 2</a>.
         </p>
     </body>
 </html>

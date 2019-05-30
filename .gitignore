@@ -59,8 +59,6 @@ doc/source/generated
 # IPython checkpoints
 .ipynb_checkpoints
 
-# qurro test outputs
-qurro/tests/output/*
 # example jupyter notebook outputs
 example_notebooks/*/output/*
 

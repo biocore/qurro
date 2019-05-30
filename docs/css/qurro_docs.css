@@ -1,8 +1,33 @@
-.centeredBlock {
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    max-width: 75em;
+    /* Center on page */
+    margin: 0 auto;
+    /* And ensure the page has at least some padding, even on small screens */
+    padding: 1em;
+}
+
+.centeredBlock,
+h2 {
     width: 100%;
     text-align: center;
 }
 
 #logo {
     width: 20%;
+}
+
+.datasetTable,
+.datasetTable td,
+.datasetTable th {
+    border: 1px solid #aaa;
+}
+/* See https://www.w3.org/Style/Examples/007/evenodd.en.html for a
+ * description of what the :nth-child property can do. It's really cool!
+ */
+.datasetTable tr:nth-child(2n + 3) {
+    background: #eee;
+}
+.datasetTable {
+    border-radius: 0.5em;
 }

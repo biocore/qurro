@@ -8,7 +8,7 @@
 .PHONY: test pytest jstest stylecheck style
 
 JSLOCS = qurro/support_files/js/*.js qurro/support_files/main.js qurro/tests/web_tests/tests/*.js qurro/tests/web_tests/setup.js
-HTMLCSSLOCS = qurro/support_files/index.html qurro/tests/web_tests/index.html qurro/support_files/qurro.css docs/*.html
+HTMLCSSLOCS = qurro/support_files/index.html qurro/tests/web_tests/index.html qurro/support_files/qurro.css docs/*.html docs/css/*.css
 
 test: pytest jstest
 
@@ -18,7 +18,7 @@ test: pytest jstest
 # statements sprinkled throughout the code, which helps with debugging).
 pytest:
 	@# Use of -f per https://unix.stackexchange.com/a/68096
-	rm -rf qurro/tests/output/*
+	rm -rf qurro/demos/*
 	python3 -B -m pytest qurro/tests -s --cov qurro
 
 jstest:

@@ -31,7 +31,7 @@ def run_integration_test(
     floc = None
     if feature_metadata_name is not None:
         floc = os.path.join(in_dir, feature_metadata_name)
-    out_dir = os.path.join("qurro", "tests", "output", output_dir_name)
+    out_dir = os.path.join("docs", "demos", output_dir_name)
 
     rrv_qzv = result = None
     if use_q2:

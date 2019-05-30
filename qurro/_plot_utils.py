@@ -211,7 +211,7 @@ if __name__ == "__main__":
     test_dir = os.path.join("qurro", "tests", "web_tests", "tests")
     rrv_js_tests = filter(lambda f: f.endswith(".js"), os.listdir(test_dir))
     rank_plot_json, sample_plot_json, count_json = get_jsons(
-        os.path.join("qurro", "tests", "output", "matching_test", "main.js")
+        os.path.join("docs", "demos", "matching_test", "main.js")
     )
     for js_test_file in rrv_js_tests:
         replace_js_plot_json_definitions(
