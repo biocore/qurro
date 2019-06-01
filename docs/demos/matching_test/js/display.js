@@ -177,6 +177,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // We specify a "custom" theme which matches with the
             // "custom"-theme tooltip CSS.
             vegaEmbed("#rankPlot", this.rankPlotJSON, {
+                downloadFileName: "rank_plot",
                 tooltip: { theme: "custom" }
             }).then(function(result) {
                 parentDisplay.rankPlotView = result.view;
@@ -241,9 +242,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
-            vegaEmbed("#samplePlot", this.samplePlotJSON).then(function(
-                result
-            ) {
+            vegaEmbed("#samplePlot", this.samplePlotJSON, {
+                downloadFileName: "sample_plot"
+            }).then(function(result) {
                 parentDisplay.samplePlotView = result.view;
             });
         }
