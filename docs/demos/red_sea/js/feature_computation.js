@@ -123,7 +123,7 @@ define(function() {
             // If the current feature metadata value is null / otherwise not
             // text-searchable, trySearchable() returns null (which will cause
             // textToRankArray() to return [], which will cause
-            // existsIntersection() to return false quickly.
+            // existsIntersection() to return false quickly).
             ranksOfFeatureMetadata = textToRankArray(
                 trySearchable(featureRowList[ti][featureMetadataField])
             );

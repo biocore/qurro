@@ -75,6 +75,13 @@ define(function() {
         }
     }
 
+    /* Just reassigns the innerHTML attribute of a <div> (or really any HTML
+     * element, I guess).
+     */
+    function setDivText(divID, text) {
+        document.getElementById(divID).innerHTML = text;
+    }
+
     /* Downloads a string (either plain text or already a data URI) defining
      * the contents of a file.
      *
@@ -101,6 +108,7 @@ define(function() {
         populateSelect: populateSelect,
         changeElementsEnabled: changeElementsEnabled,
         clearDiv: clearDiv,
+        setDivText: setDivText,
         downloadDataURI: downloadDataURI
     };
 });

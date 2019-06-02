@@ -70,6 +70,12 @@ h4 {
     display: block;
     text-align: center;
 }
+.sampleRemovedDiv {
+    font-size: small;
+}
+code {
+    font-family: monospace;
+}
 /* Inspired by https://stackoverflow.com/a/42227872/10730311. */
 #divide {
     width: 98%;
