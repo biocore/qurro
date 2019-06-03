@@ -105,14 +105,16 @@ define(function() {
         dropType,
         field
     ) {
+        // Only bother updating the <div>'s text if we're actually going to be
+        // dropping samples for this "reason" -- i.e. numDroppedSamples > 0.
         if (numDroppedSamples > 0) {
-            var sampleNoun = "samples";
-            if (numDroppedSamples === 1) {
-                sampleNoun = "sample";
-            }
+            // Show the percentage of samples that have to be dropped due to
+            // this reason.
+            var percentage = 100 * (numDroppedSamples / totalSampleCount);
 
+            // Figure out the reason we'll be displaying as a justification for
+            // why at least this many samples have to be dropped.
             var reason = "(invalid reason given)";
-            // Figure out the reason we'll be displaying.
             if (dropType === "balance") {
                 reason = "an undefined log ratio.";
             } else if (dropType === "xAxis" || dropType === "color") {
@@ -123,8 +125,9 @@ define(function() {
                 String(numDroppedSamples) +
                 " / " +
                 String(totalSampleCount) +
-                " " +
-                sampleNoun +
+                "samples  (" +
+                String(percentage.toFixed(2)) +
+                "%) " +
                 " can't be shown due to having " +
                 reason;
             document.getElementById(divID).classList.remove("invisible");
