@@ -75,11 +75,62 @@ define(function() {
         }
     }
 
-    /* Just reassigns the innerHTML attribute of a <div> (or really any HTML
-     * element, I guess).
+    /* Updates a <div> regarding how many samples have been dropped for a given
+     * reason.
+     *
+     * numDroppedSamples: an integer indicating how many samples have been
+     * dropped for some reason
+     *  If this is 0, then the <div> will be hidden.
+     *  If this is > 0, then the <div> will be un-hidden if it's currently
+     *  hidden. (We define a "hidden" element as one that has the "invisible"
+     *  CSS class.)
+     *
+     * totalSampleCount: an integer corresponding to the total number of
+     * samples in this Qurro visualization
+     *
+     * divID: the ID of the <div> we're updating
+     *
+     * dropType: This defines the reason we'll include in the <div> indicating
+     * why samples have been dropped.
+     *  If this is "balance", the reason will be "an undefined log ratio."
+     *  If this is "xAxis" or "color", the reason will be
+     *  "a non-quantitative {f} field."
+     *      ({f} will be replaced with whatever the optional field argument
+     *      is.)
      */
-    function setDivText(divID, text) {
-        document.getElementById(divID).innerHTML = text;
+    function updateSampleDroppedDiv(
+        numDroppedSamples,
+        totalSampleCount,
+        divID,
+        dropType,
+        field
+    ) {
+        if (numDroppedSamples > 0) {
+            var sampleNoun = "samples";
+            if (numDroppedSamples === 1) {
+                sampleNoun = "sample";
+            }
+
+            var reason = "(invalid reason given)";
+            // Figure out the reason we'll be displaying.
+            if (dropType === "balance") {
+                reason = "an undefined log ratio.";
+            } else if (dropType === "xAxis" || dropType === "color") {
+                reason = "a non-quantitative " + field + " field.";
+            }
+
+            document.getElementById(divID).innerHTML =
+                String(numDroppedSamples) +
+                " / " +
+                String(totalSampleCount) +
+                " " +
+                sampleNoun +
+                " can't be shown due to having " +
+                reason;
+            document.getElementById(divID).classList.remove("invisible");
+        } else {
+            document.getElementById(divID).classList.add("invisible");
+        }
     }
 
     /* Downloads a string (either plain text or already a data URI) defining
@@ -108,7 +159,7 @@ define(function() {
         populateSelect: populateSelect,
         changeElementsEnabled: changeElementsEnabled,
         clearDiv: clearDiv,
-        setDivText: setDivText,
+        updateSampleDroppedDiv: updateSampleDroppedDiv,
         downloadDataURI: downloadDataURI
     };
 });

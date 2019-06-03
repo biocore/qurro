@@ -377,28 +377,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     )
                 )
                 .run();
-            if (numSamplesWithNaNBalance > 0) {
-                var sampleNoun = "samples";
-                if (numSamplesWithNaNBalance === 1) {
-                    sampleNoun = "sample";
-                }
-                dom_utils.setDivText(
-                    "balanceSamplesDroppedDiv",
-                    String(numSamplesWithNaNBalance) +
-                        " / " +
-                        String(this.sampleCount) +
-                        " " +
-                        sampleNoun +
-                        " can't be shown due to having an undefined log ratio."
-                );
-                document
-                    .getElementById("balanceSamplesDroppedDiv")
-                    .classList.remove("invisible");
-            } else {
-                document
-                    .getElementById("balanceSamplesDroppedDiv")
-                    .classList.add("invisible");
-            }
+            dom_utils.updateSampleDroppedDiv(
+                numSamplesWithNaNBalance,
+                this.sampleCount,
+                "balanceSamplesDroppedDiv",
+                "balance"
+            );
             // Update rank plot based on the new log ratio
             // Storing this within changeSamplePlot() is a (weak) safeguard that
             // changes to the state of the sample plot (at least enacted using the UI
