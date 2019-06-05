@@ -610,6 +610,59 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.makeSamplePlot(true);
         }
 
+        /* Iterates through every sample in the sample plot JSON and
+         * looks at the sample's fieldName field. Returns a list of "valid"
+         * sample IDs -- i.e. those that, based on the current field and
+         * corresponding encoding (e.g. "color" or "x"), should be displayed in
+         * the sample plot assuming their other properties (balance, other
+         * encodings) are valid.
+         *
+         * The "validity" of a sample is computed via the following checks:
+         * 1. The sample's fieldName field must not be null, undefined, or ""
+         * 2. If the corresponding encoding type is quantitative, the sample's
+         *    fieldName field must be a number (as determined by
+         *    isFinite(vega.toNumber(f)), where f is the field value). (This
+         *    accounts for Infinities/NaNs in the data.)
+         */
+        getValidSamples(fieldName, correspondingEncoding) {
+            var dataName = this.samplePlotJSON.data.name;
+            var currFieldVal;
+            var validSampleIDs = [];
+            for (
+                var i = 0;
+                i < this.samplePlotJSON.datasets[dataName].length;
+                i++
+            ) {
+                currFieldVal = this.samplePlotJSON.datasets[dataName][i][
+                    fieldName
+                ];
+                if (
+                    currFieldVal !== undefined &&
+                    currFieldVal !== null &&
+                    currFieldVal !== ""
+                ) {
+                    if (
+                        this.samplePlotJSON.encoding[correspondingEncoding]
+                            .type === "quantitative"
+                    ) {
+                        if (isFinite(vega.toNumber(currFieldVal))) {
+                            // scale is quantitative and this is a valid
+                            // numerical value
+                            validSampleIDs += currFieldVal;
+                        }
+                        // If the above check didn't pass (i.e. this value
+                        // isn't "numerical"), then we'll just continue on in
+                        // the loop without adding it to validSampleIDs.
+                    } else {
+                        // scale isn't quantitative and this is a valid
+                        // categorical value
+                        validSampleIDs += currFieldVal;
+                    }
+                }
+            }
+            return validSampleIDs;
+        }
+
         /* Changes the scale type of either the x-axis or colorization in the
          * sample plot. This isn't doable with Vega signals -- we need to
          * literally reload the Vega-Lite specification with the new scale
@@ -859,6 +912,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
+            // We get data from the samplePlotView and not from the
+            // samplePlotJSON because the balances in the sample plot JSON copy
+            // we have saved aren't necessarily going to be kept up-to-date
             var data = this.samplePlotView.data(dataName);
             var currBalance;
             var currSampleID;
