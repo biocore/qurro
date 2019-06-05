@@ -125,7 +125,7 @@ define(function() {
                 String(numDroppedSamples) +
                 " / " +
                 String(totalSampleCount) +
-                "samples  (" +
+                " samples  (" +
                 String(percentage.toFixed(2)) +
                 "%) " +
                 " can't be shown due to having " +
