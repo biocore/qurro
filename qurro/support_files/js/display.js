@@ -661,6 +661,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     } else {
                         // scale isn't quantitative and this is a valid
                         // categorical value
+                        // NOTE: this *assumes* that the scale is either
+                        // quantitative or nominal. If it's something like
+                        // temporal this will get messed up, and we'll need to
+                        // do something else to address it.
                         validSampleIDs.push(currSampleID);
                     }
                 }
