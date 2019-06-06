@@ -420,21 +420,63 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
             });
         });
+        describe("Identifying samples with a valid metadata field value", function() {
+            describe("Works properly when all samples have a valid field", function() {
+                var allSampleIDs = [
+                    "Sample1",
+                    "Sample2",
+                    "Sample3",
+                    "Sample5",
+                    "Sample6",
+                    "Sample7"
+                ];
+                function testOnMetadata1AndX() {
+                    var observedValidSamples = rrv.getValidSamples(
+                        "Metadata1",
+                        "x"
+                    );
+                    chai.assert.sameMembers(allSampleIDs, observedValidSamples);
+                }
+                it("...And when there's a quantitative encoding", function() {
+                    rrv.samplePlotJSON.encoding.x.type = "quantitative";
+                    testOnMetadata1AndX();
+                });
+                it("...And when there's a nominal encoding", function() {
+                    rrv.samplePlotJSON.encoding.x.type = "nominal";
+                    testOnMetadata1AndX();
+                });
+            });
+        });
         describe("Selecting features to update the plots", function() {
             describe("Single-feature selections", function() {
+                it("Works properly");
                 // TODO refactor display callback code to make it more easily
                 // testable (won't have to rely on clicks)
             });
             describe("Multi-feature selections", function() {
+                it("Works properly");
                 // Should be able to just call .click() on multiFeatureButton
                 // (after populating search fields/types, of course)
             });
         });
-        // WOW these plans are out of date lol. Update it!
-        describe("Modifying plot signals", function() {
+        // TODO: Update these to test modifying the plot JSONs.
+        describe("Modifying plot scales/axes", function() {
             // can use view.signal() to do this. Very feasible.
-            describe("Changing the rank used on the rank plot", function() {});
-            describe("Changing the x-axis used on the sample plot", function() {});
+            describe("Changing the rank used on the rank plot", function() {
+                it("Works properly");
+            });
+            describe("Changing the x-axis used on the sample plot", function() {
+                it("Works properly");
+            });
+            describe("Changing the x-axis scale type used on the sample plot", function() {
+                it("Works properly");
+            });
+            describe("Changing the color used on the sample plot", function() {
+                it("Works properly");
+            });
+            describe("Changing the color scale type used on the sample plot", function() {
+                it("Works properly");
+            });
         });
     });
 });
