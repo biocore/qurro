@@ -7,37 +7,70 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     // prettier-ignore
     var countJSON = {"Taxon4": {"Sample7": 1.0, "Sample1": 1.0, "Sample5": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample6": 1.0}, "Taxon2": {"Sample7": 0.0, "Sample1": 6.0, "Sample5": 2.0, "Sample2": 5.0, "Sample3": 4.0, "Sample6": 1.0}, "Taxon3": {"Sample7": 2.0, "Sample1": 2.0, "Sample5": 4.0, "Sample2": 3.0, "Sample3": 4.0, "Sample6": 3.0}, "Taxon5": {"Sample7": 0.0, "Sample1": 0.0, "Sample5": 2.0, "Sample2": 0.0, "Sample3": 1.0, "Sample6": 0.0}, "Taxon1": {"Sample7": 6.0, "Sample1": 0.0, "Sample5": 4.0, "Sample2": 1.0, "Sample3": 2.0, "Sample6": 5.0}};
     var rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON, countJSON);
+    var dataName = rrv.samplePlotJSON.data.name;
     describe("Exporting sample plot data", function() {
         it('Returns "" when no sample points are "drawn"', function() {
-            // We haven't actually selected any features yet so the balances
-            // are all null
+            // set balances to null, mimicking the state of the JSON before any
+            // features have been selected
+            rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = null;
             chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
             chai.assert.isEmpty(rrv.getSamplePlotData("Metadata2"));
             chai.assert.isEmpty(rrv.getSamplePlotData("Metadata3"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("qurro_balance"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("Sample ID"));
+            // Try setting a few samples to NaN to ensure that these are also
+            // omitted from the export
+            rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = NaN;
+            rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = NaN;
+            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata2"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata3"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("qurro_balance"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("Sample ID"));
         });
-        // TODO: Try with NaNs instead of nulls? Would necessitate calling
-        // change() on rrv.samplePlotView, which is currently a no-go due
-        // to issue #85.
-        // NOTE: I have literally no idea what the above comment means, nor any
-        // recollection of writing it. That being said I'm afraid to remove it,
-        // so I'm just gonna keep it here in case I remember this sometime.
-        it("Works properly when balances are directly set", function() {
-            var dataName = rrv.samplePlotJSON.data.name;
-            // Update sample plot balances directly.
-            rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = 1;
-            rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = 3;
-            rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6;
-            rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
-            var expectedTSV =
-                "Sample_ID\tLog_Ratio\tMetadata1\n" +
-                "Sample1\t1\t1\n" +
-                "Sample3\t3\t7\n" +
-                "Sample6\t6\t16\n" +
-                "Sample7\t7\t19";
-            var outputTSV = rrv.getSamplePlotData("Metadata1");
-            chai.assert.equal(expectedTSV, outputTSV);
+        describe("Works properly when balances are directly set", function() {
+            /* Utility function that updates sample plot balances directly.
+             * Most of the balances are set to normal numbers, but two samples'
+             * balances are set to null and NaN (in order to test filtering of
+             * some samples without "proper" balances -- i.e. undrawn samples).
+             */
+            function setNormalBalances() {
+                rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = 1;
+                rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
+                rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = 3;
+                rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = NaN;
+                rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6.5;
+                rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
+            }
+            it("Works properly when a normal metadata category set as x-axis", function() {
+                setNormalBalances();
+                var expectedTSV =
+                    "Sample_ID\tLog_Ratio\tMetadata1\n" +
+                    "Sample1\t1\t1\n" +
+                    "Sample3\t3\t7\n" +
+                    "Sample6\t6.5\t16\n" +
+                    "Sample7\t7\t19";
+                var outputTSV = rrv.getSamplePlotData("Metadata1");
+                chai.assert.equal(expectedTSV, outputTSV);
+            });
+            it("Works properly when qurro_balance or sample ID is set as x-axis", function() {
+                setNormalBalances();
+                var expectedTSV =
+                    "Sample_ID\tLog_Ratio\n" +
+                    "Sample1\t1\n" +
+                    "Sample3\t3\n" +
+                    "Sample6\t6.5\n" +
+                    "Sample7\t7";
+                var outputTSV = rrv.getSamplePlotData("qurro_balance");
+                chai.assert.equal(expectedTSV, outputTSV);
+                var outputTSV2 = rrv.getSamplePlotData("Sample ID");
+                chai.assert.equal(expectedTSV, outputTSV2);
+            });
         });
         // TODO: Ideally we'd test this by selecting features, but this
         // works also as a temporary measure
