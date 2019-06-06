@@ -8,17 +8,41 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     var countJSON = {"Taxon4": {"Sample7": 1.0, "Sample1": 1.0, "Sample5": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample6": 1.0}, "Taxon2": {"Sample7": 0.0, "Sample1": 6.0, "Sample5": 2.0, "Sample2": 5.0, "Sample3": 4.0, "Sample6": 1.0}, "Taxon3": {"Sample7": 2.0, "Sample1": 2.0, "Sample5": 4.0, "Sample2": 3.0, "Sample3": 4.0, "Sample6": 3.0}, "Taxon5": {"Sample7": 0.0, "Sample1": 0.0, "Sample5": 2.0, "Sample2": 0.0, "Sample3": 1.0, "Sample6": 0.0}, "Taxon1": {"Sample7": 6.0, "Sample1": 0.0, "Sample5": 4.0, "Sample2": 1.0, "Sample3": 2.0, "Sample6": 5.0}};
     var rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON, countJSON);
     describe("Exporting sample plot data", function() {
-        it('Returns "" when no sample points are "drawn"');
-        //chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
+        it('Returns "" when no sample points are "drawn"', function() {
+            // We haven't actually selected any features yet so the balances
+            // are all null
+            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata2"));
+            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata3"));
+        });
         // TODO: Try with NaNs instead of nulls? Would necessitate calling
         // change() on rrv.samplePlotView, which is currently a no-go due
         // to issue #85.
-        it("Works properly");
-        // TODO need to update sample plot somehow, either by calling rrv
-        // functions (preferable) or manually altering balances (not even
-        // sure that would work for this).
-        // Again, we're blocked here by #85.
-        //var outputTSV = rrv.getSamplePlotData("Metadata1");
+        // NOTE: I have literally no idea what the above comment means, nor any
+        // recollection of writing it. That being said I'm afraid to remove it,
+        // so I'm just gonna keep it here in case I remember this sometime.
+        it("Works properly when balances are directly set", function() {
+            var dataName = rrv.samplePlotJSON.data.name;
+            // Update sample plot balances directly.
+            rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = 1;
+            rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = 3;
+            rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = null;
+            rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6;
+            rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
+            var expectedTSV =
+                "Sample_ID\tLog_Ratio\tMetadata1\n" +
+                "Sample1\t1\t1\n" +
+                "Sample3\t3\t7\n" +
+                "Sample6\t6\t16\n" +
+                "Sample7\t7\t19";
+            var outputTSV = rrv.getSamplePlotData("Metadata1");
+            chai.assert.equal(expectedTSV, outputTSV);
+        });
+        // TODO: Ideally we'd test this by selecting features, but this
+        // works also as a temporary measure
+        it("Works properly when balances are set from user-based selection");
+
         describe("Quoting TSV fields", function() {
             // Quick way to avoid writing out "display.RRVDisplay..." every
             // time we want to call that function
