@@ -60,6 +60,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // figure out how many entries are in the sampleIDs list; see
             // https://stackoverflow.com/a/6700/10730311
             this.sampleCount = Object.keys(sampleIDs).length;
+            dom_utils.updateMainSampleShownDiv(0, this.sampleCount);
 
             // Set when the sample plot JSON is loaded. Used to populate
             // possible sample plot x-axis/colorization options.
