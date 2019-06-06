@@ -116,9 +116,10 @@ define(function() {
             // why at least this many samples have to be dropped.
             var reason = "(invalid reason given)";
             if (dropType === "balance") {
-                reason = "an undefined log ratio.";
+                reason =
+                    "an invalid (i.e. containing at least one 0) log ratio.";
             } else if (dropType === "xAxis" || dropType === "color") {
-                reason = "a non-quantitative " + field + " field.";
+                reason = "an invalid <code>" + field + "</code> field.";
             }
 
             document.getElementById(divID).innerHTML =
@@ -134,6 +135,34 @@ define(function() {
         } else {
             document.getElementById(divID).classList.add("invisible");
         }
+    }
+
+    /* Updates a given <div> re: total # of samples shown.
+     *
+     * Sort of like the opposite of updateSampleDroppedDiv().
+     *
+     * divID is an optional argument -- if not provided, it'll default to
+     * "mainSamplesDroppedDiv".
+     */
+    function updateMainSampleShownDiv(
+        numSamplesShown,
+        totalSampleCount,
+        divID
+    ) {
+        var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
+
+        var percentage = 100 * (numSamplesShown / totalSampleCount);
+        document.getElementById(divIDInUse).innerHTML =
+            String(numSamplesShown) +
+            " / " +
+            String(totalSampleCount) +
+            " samples  (" +
+            String(percentage.toFixed(2)) +
+            "%) " +
+            " currently shown.";
+        // Just in case this div was set to invisible (i.e. this is the first
+        // time it's been updated).
+        document.getElementById(divIDInUse).classList.remove("invisible");
     }
 
     /* Downloads a string (either plain text or already a data URI) defining
@@ -163,6 +192,7 @@ define(function() {
         changeElementsEnabled: changeElementsEnabled,
         clearDiv: clearDiv,
         updateSampleDroppedDiv: updateSampleDroppedDiv,
+        updateMainSampleShownDiv: updateMainSampleShownDiv,
         downloadDataURI: downloadDataURI
     };
 });
