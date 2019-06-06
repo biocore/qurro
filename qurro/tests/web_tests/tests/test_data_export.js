@@ -34,21 +34,20 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.isEmpty(rrv.getSamplePlotData("Sample ID"));
         });
         describe("Works properly when balances are directly set", function() {
-            /* Utility function that updates sample plot balances directly.
+            /* Update sample plot balances directly.
              * Most of the balances are set to normal numbers, but two samples'
              * balances are set to null and NaN (in order to test filtering of
              * some samples without "proper" balances -- i.e. undrawn samples).
              */
-            function setNormalBalances() {
+            before(function() {
                 rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = 1;
                 rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
                 rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = 3;
                 rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = NaN;
                 rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6.5;
                 rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
-            }
+            });
             it("Works properly when a normal metadata category set as x-axis", function() {
-                setNormalBalances();
                 var expectedTSV =
                     "Sample_ID\tLog_Ratio\tMetadata1\n" +
                     "Sample1\t1\t1\n" +
@@ -59,7 +58,6 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.equal(expectedTSV, outputTSV);
             });
             it("Works properly when qurro_balance or sample ID is set as x-axis", function() {
-                setNormalBalances();
                 var expectedTSV =
                     "Sample_ID\tLog_Ratio\n" +
                     "Sample1\t1\n" +
