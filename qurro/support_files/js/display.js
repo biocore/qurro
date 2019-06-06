@@ -628,6 +628,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         getValidSamples(fieldName, correspondingEncoding) {
             var dataName = this.samplePlotJSON.data.name;
             var currFieldVal;
+            var currSampleID;
             var validSampleIDs = [];
             for (
                 var i = 0;
@@ -636,6 +637,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             ) {
                 currFieldVal = this.samplePlotJSON.datasets[dataName][i][
                     fieldName
+                ];
+                currSampleID = this.samplePlotJSON.datasets[dataName][i][
+                    "Sample ID"
                 ];
                 if (
                     currFieldVal !== undefined &&
@@ -649,7 +653,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         if (isFinite(vega.toNumber(currFieldVal))) {
                             // scale is quantitative and this is a valid
                             // numerical value
-                            validSampleIDs += currFieldVal;
+                            validSampleIDs.push(currSampleID);
                         }
                         // If the above check didn't pass (i.e. this value
                         // isn't "numerical"), then we'll just continue on in
@@ -657,7 +661,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     } else {
                         // scale isn't quantitative and this is a valid
                         // categorical value
-                        validSampleIDs += currFieldVal;
+                        validSampleIDs.push(currSampleID);
                     }
                 }
             }
