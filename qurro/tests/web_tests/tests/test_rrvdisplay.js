@@ -421,6 +421,16 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
         });
         describe("Identifying samples with a valid metadata field value", function() {
+            function testOnMetadata1AndX(expectedSampleIDs) {
+                var observedValidSamples = rrv.getValidSamples(
+                    "Metadata1",
+                    "x"
+                );
+                chai.assert.sameMembers(
+                    expectedSampleIDs,
+                    observedValidSamples
+                );
+            }
             describe("Works properly when all samples have a valid field", function() {
                 var allSampleIDs = [
                     "Sample1",
@@ -430,20 +440,53 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     "Sample6",
                     "Sample7"
                 ];
-                function testOnMetadata1AndX() {
-                    var observedValidSamples = rrv.getValidSamples(
-                        "Metadata1",
-                        "x"
-                    );
-                    chai.assert.sameMembers(allSampleIDs, observedValidSamples);
-                }
-                it("...And when there's a quantitative encoding", function() {
+                it("...When there's a quantitative encoding", function() {
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
-                    testOnMetadata1AndX();
+                    testOnMetadata1AndX(allSampleIDs);
                 });
-                it("...And when there's a nominal encoding", function() {
+                it("...When there's a nominal encoding", function() {
                     rrv.samplePlotJSON.encoding.x.type = "nominal";
-                    testOnMetadata1AndX();
+                    testOnMetadata1AndX(allSampleIDs);
+                });
+            });
+            describe('Filters out samples with null/undefined/"" field values', function() {
+                var dataName = rrv.samplePlotJSON.data.name;
+
+                before(function() {
+                    // Manually set some samples' metadata vals to
+                    // null/undefined/"" for testing purposes
+                    // (Samples 1, 2, and 3, respectively)
+                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = null;
+                    rrv.samplePlotJSON.datasets[
+                        dataName
+                    ][1].Metadata1 = undefined;
+                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
+                });
+
+                after(function() {
+                    // Reset samples 1, 2, and 3's metadata values
+                    // (These values are based on what's in the
+                    // sample_metadata.txt file for the matching test inputs.
+                    // Please don't change that unless you have a really good
+                    // reason.)
+                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = 1;
+                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = 4;
+                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = 7;
+                });
+
+                // The samples we adjusted above are Samples 1, 2, and 3.
+                // (Sample 4 should be dropped on the python side of things due
+                // to being unsupported in the BIOM table.)
+                // So the only "valid" samples, then, should be 5, 6, and 7.
+                var expectedSampleIDs = ["Sample5", "Sample6", "Sample7"];
+
+                it("...When there's a quantitative encoding", function() {
+                    rrv.samplePlotJSON.encoding.x.type = "quantitative";
+                    testOnMetadata1AndX(expectedSampleIDs);
+                });
+                it("...When there's a nominal encoding", function() {
+                    rrv.samplePlotJSON.encoding.x.type = "nominal";
+                    testOnMetadata1AndX(expectedSampleIDs);
                 });
             });
         });
