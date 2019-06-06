@@ -912,10 +912,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
-            // We get data from the samplePlotView and not from the
-            // samplePlotJSON because the balances in the sample plot JSON copy
-            // we have saved aren't necessarily going to be kept up-to-date
-            var data = this.samplePlotView.data(dataName);
+            // (Note that changeSamplePlot() causes updates to samples'
+            // qurro_balance properties, so we don't have to use the
+            // samplePlotView)
+            var data = this.samplePlotJSON.datasets[dataName];
             var currBalance;
             var currSampleID;
             var currMetadataValue;
