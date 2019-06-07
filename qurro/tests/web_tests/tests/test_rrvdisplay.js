@@ -492,22 +492,56 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
             describe("Filtering out non-numeric values if encoding is quantitative", function() {
                 before(function() {
-                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 =
-                        "Missing: not provided";
-                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = "3.2a";
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
                 });
                 after(function() {
                     rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = 1;
                     rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = 4;
+                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = 7;
+                    rrv.samplePlotJSON.datasets[dataName][3].Metadata1 = 13;
+                    rrv.samplePlotJSON.datasets[dataName][4].Metadata1 = 16;
+                    rrv.samplePlotJSON.datasets[dataName][5].Metadata1 = 19;
                 });
                 it("Works properly when only some samples' field values are non-numeric", function() {
-                    testOnMetadata1AndX([
-                        "Sample3",
-                        "Sample5",
-                        "Sample6",
-                        "Sample7"
-                    ]);
+                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 =
+                        "Missing: not provided";
+                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = "3.2a";
+                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
+                    testOnMetadata1AndX(["Sample5", "Sample6", "Sample7"]);
+                });
+                function fillMetadata1Vals(value) {
+                    for (
+                        var i = 0;
+                        i < rrv.samplePlotJSON.datasets[dataName].length;
+                        i++
+                    ) {
+                        rrv.samplePlotJSON.datasets[dataName][
+                            i
+                        ].Metadata1 = value;
+                    }
+                }
+                it("Works properly when all samples' field values are non-numeric", function() {
+                    fillMetadata1Vals("Missing: not provided");
+                    testOnMetadata1AndX([]);
+                });
+                it("Properly filters out string Infinity values", function() {
+                    fillMetadata1Vals("Infinity");
+                    testOnMetadata1AndX([]);
+                });
+                it("Properly filters out string -Infinity values", function() {
+                    fillMetadata1Vals("-Infinity");
+                    testOnMetadata1AndX([]);
+                });
+                it("Properly filters out string NaN values", function() {
+                    fillMetadata1Vals("NaN");
+                    testOnMetadata1AndX([]);
+                });
+                // TODO I guess all of these fields should be acceptable (as
+                // strings, of course) in the categorical field stuff?
+                // Add tests to the "works properly" stuff way above.
+                it("Properly filters out string undefined values", function() {
+                    fillMetadata1Vals("undefined");
+                    testOnMetadata1AndX([]);
                 });
             });
         });
