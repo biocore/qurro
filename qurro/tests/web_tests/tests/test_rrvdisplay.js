@@ -13,6 +13,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             samplePlotJSON,
             countJSON
         );
+        var dataName = rrv.samplePlotJSON.data.name;
         after(function() {
             rrv.destroy(true, true, true);
         });
@@ -449,9 +450,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     testOnMetadata1AndX(allSampleIDs);
                 });
             });
-            describe('Filters out samples with null/undefined/"" field values', function() {
-                var dataName = rrv.samplePlotJSON.data.name;
-
+            describe('Filtering out samples with null/undefined/"" field values', function() {
                 before(function() {
                     // Manually set some samples' metadata vals to
                     // null/undefined/"" for testing purposes
@@ -487,6 +486,26 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 it("...When there's a nominal encoding", function() {
                     rrv.samplePlotJSON.encoding.x.type = "nominal";
                     testOnMetadata1AndX(expectedSampleIDs);
+                });
+            });
+            describe("Filtering out non-numeric values if encoding is quantitative", function() {
+                before(function() {
+                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 =
+                        "Missing: not provided";
+                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = "3.2a";
+                    rrv.samplePlotJSON.encoding.x.type = "quantitative";
+                });
+                after(function() {
+                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = 1;
+                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = 4;
+                });
+                it("Works properly when only some samples' field values are non-numeric", function() {
+                    testOnMetadata1AndX([
+                        "Sample3",
+                        "Sample5",
+                        "Sample6",
+                        "Sample7"
+                    ]);
                 });
             });
         });
