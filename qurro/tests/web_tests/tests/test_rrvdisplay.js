@@ -434,6 +434,27 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     observedValidSamples
                 );
             }
+            function resetMetadata1Values() {
+                // (These values are based on what's in the
+                // sample_metadata.txt file for the matching test inputs.
+                // Please don't change that unless you have a really good
+                // reason.)
+                rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = 1;
+                rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = 4;
+                rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = 7;
+                rrv.samplePlotJSON.datasets[dataName][3].Metadata1 = 13;
+                rrv.samplePlotJSON.datasets[dataName][4].Metadata1 = 16;
+                rrv.samplePlotJSON.datasets[dataName][5].Metadata1 = 19;
+            }
+            function fillMetadata1Vals(value) {
+                for (
+                    var i = 0;
+                    i < rrv.samplePlotJSON.datasets[dataName].length;
+                    i++
+                ) {
+                    rrv.samplePlotJSON.datasets[dataName][i].Metadata1 = value;
+                }
+            }
             describe("Works properly when all samples have a valid field", function() {
                 var allSampleIDs = [
                     "Sample1",
@@ -447,13 +468,39 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
                     testOnMetadata1AndX(allSampleIDs);
                 });
-                it("...When there's a nominal encoding", function() {
-                    rrv.samplePlotJSON.encoding.x.type = "nominal";
-                    testOnMetadata1AndX(allSampleIDs);
+                describe("...When there's a nominal encoding", function() {
+                    before(function() {
+                        rrv.samplePlotJSON.encoding.x.type = "nominal";
+                    });
+                    it('Works properly with "normal" numerical values', function() {
+                        testOnMetadata1AndX(allSampleIDs);
+                    });
+                    it('Accepts "special" values in strings like "NaN", "null", etc.', function() {
+                        // These are just non-empty strings, so they should be
+                        // acceptable.
+                        rrv.samplePlotJSON.datasets[dataName][0].Metadata1 =
+                            "NaN";
+                        rrv.samplePlotJSON.datasets[dataName][1].Metadata1 =
+                            "Infinity";
+                        rrv.samplePlotJSON.datasets[dataName][2].Metadata1 =
+                            "-Infinity";
+                        rrv.samplePlotJSON.datasets[dataName][3].Metadata1 =
+                            "null";
+                        rrv.samplePlotJSON.datasets[dataName][4].Metadata1 =
+                            "undefined";
+                        rrv.samplePlotJSON.datasets[dataName][5].Metadata1 =
+                            '""';
+                        testOnMetadata1AndX(allSampleIDs);
+                    });
+                    it('Works ok with just-whitespace strings (" ")', function() {
+                        fillMetadata1Vals(" ");
+                        testOnMetadata1AndX(allSampleIDs);
+                    });
                 });
             });
             describe('Filtering out samples with null/undefined/"" field values', function() {
                 before(function() {
+                    resetMetadata1Values();
                     // Manually set some samples' metadata vals to
                     // null/undefined/"" for testing purposes
                     // (Samples 1, 2, and 3, respectively)
@@ -464,16 +511,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
                 });
 
-                after(function() {
-                    // Reset samples 1, 2, and 3's metadata values
-                    // (These values are based on what's in the
-                    // sample_metadata.txt file for the matching test inputs.
-                    // Please don't change that unless you have a really good
-                    // reason.)
-                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = 1;
-                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = 4;
-                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = 7;
-                });
+                after(resetMetadata1Values);
 
                 // The samples we adjusted above are Samples 1, 2, and 3.
                 // (Sample 4 should be dropped on the python side of things due
@@ -492,16 +530,11 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
             describe("Filtering out non-numeric values if encoding is quantitative", function() {
                 before(function() {
+                    resetMetadata1Values();
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
                 });
-                after(function() {
-                    rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = 1;
-                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = 4;
-                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = 7;
-                    rrv.samplePlotJSON.datasets[dataName][3].Metadata1 = 13;
-                    rrv.samplePlotJSON.datasets[dataName][4].Metadata1 = 16;
-                    rrv.samplePlotJSON.datasets[dataName][5].Metadata1 = 19;
-                });
+                after(resetMetadata1Values);
+
                 it("Works properly when only some samples' field values are non-numeric", function() {
                     rrv.samplePlotJSON.datasets[dataName][0].Metadata1 =
                         "Missing: not provided";
@@ -509,17 +542,6 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
                     testOnMetadata1AndX(["Sample5", "Sample6", "Sample7"]);
                 });
-                function fillMetadata1Vals(value) {
-                    for (
-                        var i = 0;
-                        i < rrv.samplePlotJSON.datasets[dataName].length;
-                        i++
-                    ) {
-                        rrv.samplePlotJSON.datasets[dataName][
-                            i
-                        ].Metadata1 = value;
-                    }
-                }
                 it("Works properly when all samples' field values are non-numeric", function() {
                     fillMetadata1Vals("Missing: not provided");
                     testOnMetadata1AndX([]);
@@ -536,9 +558,6 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     fillMetadata1Vals("NaN");
                     testOnMetadata1AndX([]);
                 });
-                // TODO I guess all of these fields should be acceptable (as
-                // strings, of course) in the categorical field stuff?
-                // Add tests to the "works properly" stuff way above.
                 it("Properly filters out string undefined values", function() {
                     fillMetadata1Vals("undefined");
                     testOnMetadata1AndX([]);
