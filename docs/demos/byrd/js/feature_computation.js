@@ -183,10 +183,10 @@ define(function() {
      * weird and not-useful charts due to the presence of infinities.
      *
      * To get around this, we preemptively set the balance for samples with an
-     * abundance of <= 0 in either the top or bottom of the log ratio as NaN.
+     * abundance of <= 0 in either the top or bottom of the log ratio as null.
      *
-     * (Vega-Lite does filter out NaNs and nulls if the invalidValues config
-     * property is true [which is default]).
+     * (Vega-Lite filters out nulls if the invalidValues config property is
+     * true, which is the default behavior.)
      */
     function computeBalance(topValue, botValue) {
         if (typeof topValue !== "number" || typeof botValue !== "number") {
@@ -195,7 +195,7 @@ define(function() {
             );
         }
         if (topValue <= 0 || botValue <= 0) {
-            return NaN;
+            return null;
         }
         return Math.log(topValue) - Math.log(botValue);
     }
