@@ -13,13 +13,13 @@ define(["feature_computation", "mocha", "chai"], function(
                 -1
             );
         });
-        it("Returns NaN when numerator and/or denominator <= 0", function() {
-            chai.assert.isNaN(feature_computation.computeBalance(-2, 5));
-            chai.assert.isNaN(feature_computation.computeBalance(-2, -5));
-            chai.assert.isNaN(feature_computation.computeBalance(2, -5));
-            chai.assert.isNaN(feature_computation.computeBalance(3, 0));
-            chai.assert.isNaN(feature_computation.computeBalance(0, 3));
-            chai.assert.isNaN(feature_computation.computeBalance(0, 0));
+        it("Returns null when numerator and/or denominator <= 0", function() {
+            chai.assert.isNull(feature_computation.computeBalance(-2, 5));
+            chai.assert.isNull(feature_computation.computeBalance(-2, -5));
+            chai.assert.isNull(feature_computation.computeBalance(2, -5));
+            chai.assert.isNull(feature_computation.computeBalance(3, 0));
+            chai.assert.isNull(feature_computation.computeBalance(0, 3));
+            chai.assert.isNull(feature_computation.computeBalance(0, 0));
         });
         var delta = 0.00001;
         it("Computes the correct log ratio given valid inputs", function() {

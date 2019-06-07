@@ -346,7 +346,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
-            var numSamplesWithNaNBalance = 0;
+            var numSamplesWithNullBalance = 0;
             this.samplePlotView
                 .change(
                     dataName,
@@ -368,10 +368,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                                 parentDisplay,
                                 sampleRow
                             );
-                            // We use Number.isNaN() instead of isNaN() because
-                            // the latter can have weird undesirable behavior.
-                            if (Number.isNaN(sampleBalance)) {
-                                numSamplesWithNaNBalance++;
+                            if (sampleBalance === null) {
+                                numSamplesWithNullBalance++;
                             }
                             return sampleBalance;
                         }
@@ -379,7 +377,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 )
                 .run();
             dom_utils.updateSampleDroppedDiv(
-                numSamplesWithNaNBalance,
+                numSamplesWithNullBalance,
                 this.sampleCount,
                 "balanceSamplesDroppedDiv",
                 "balance"
@@ -619,11 +617,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * encodings) are valid.
          *
          * The "validity" of a sample is computed via the following checks:
-         * 1. The sample's fieldName field must not be null, undefined, or ""
+         * 1. The sample's fieldName field must not be null or ""
+         *    (we don't bother checking for NaN and undefined since they're
+         *    not defined in the JSON spec)
          * 2. If the corresponding encoding type is quantitative, the sample's
          *    fieldName field must be a number (as determined by
          *    isFinite(vega.toNumber(f)), where f is the field value). (This
-         *    accounts for Infinities/NaNs in the data.)
+         *    accounts for Infinities/NaNs in the data, which could have arisen
+         *    due to being encoded as strings (e.g. "Infinity" or "NaN").)
          */
         getValidSamples(fieldName, correspondingEncoding) {
             var dataName = this.samplePlotJSON.data.name;
@@ -903,9 +904,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * a .tsv file for further analysis of these data.
          *
          * If no points have been "drawn" on the sample plot -- i.e. they all
-         * have a qurro_balance attribute of null, NaN, or undefined,
-         * due to either no log ratio being selected or the current log ratio
-         * being NaN for all samples -- then this just returns an empty string.
+         * have a qurro_balance attribute of null -- then this just returns an
+         * empty string.
          */
         getSamplePlotData(currMetadataField) {
             var outputTSV = "Sample_ID\tLog_Ratio";
@@ -931,11 +931,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var atLeastOnePointDrawn = false;
             for (var i = 0; i < data.length; i++) {
                 currBalance = data[i].qurro_balance;
-                if (
-                    !Number.isNaN(currBalance) &&
-                    currBalance !== null &&
-                    currBalance !== undefined
-                ) {
+                if (currBalance !== null) {
                     atLeastOnePointDrawn = true;
                     currSampleID = RRVDisplay.quoteTSVFieldIfNeeded(
                         data[i]["Sample ID"]

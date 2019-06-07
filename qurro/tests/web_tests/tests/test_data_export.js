@@ -12,21 +12,13 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         it('Returns "" when no sample points are "drawn"', function() {
             // set balances to null, mimicking the state of the JSON before any
             // features have been selected
-            rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = null;
-            rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = null;
-            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata2"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata3"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("qurro_balance"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("Sample ID"));
-            // Try setting a few samples to NaN to ensure that these are also
-            // omitted from the export
-            rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = NaN;
-            rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = NaN;
+            for (
+                var i = 0;
+                i < rrv.samplePlotJSON.datasets[dataName].length;
+                i++
+            ) {
+                rrv.samplePlotJSON.datasets[dataName][i].qurro_balance = null;
+            }
             chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
             chai.assert.isEmpty(rrv.getSamplePlotData("Metadata2"));
             chai.assert.isEmpty(rrv.getSamplePlotData("Metadata3"));
@@ -36,14 +28,15 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         describe("Works properly when balances are directly set", function() {
             /* Update sample plot balances directly.
              * Most of the balances are set to normal numbers, but two samples'
-             * balances are set to null and NaN (in order to test filtering of
-             * some samples without "proper" balances -- i.e. undrawn samples).
+             * balances are set to null in order to test filtering of
+             * some samples without "proper" balances -- i.e. undrawn samples,
+             * which should be omitted from the exported data.
              */
             before(function() {
                 rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = 1;
                 rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
                 rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = 3;
-                rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = NaN;
+                rrv.samplePlotJSON.datasets[dataName][3].qurro_balance = null;
                 rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6.5;
                 rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
             });

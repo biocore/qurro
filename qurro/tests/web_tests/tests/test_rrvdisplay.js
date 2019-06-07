@@ -78,17 +78,17 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
                     );
                 });
-                it("Returns NaN when numerator and/or denominator is 0", function() {
+                it("Returns null when numerator and/or denominator is 0", function() {
                     // In this first case, only the numerator is a 0.
                     rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
                     rrv.newFeatureLow = { "Feature ID": "Taxon2" };
-                    chai.assert.isNaN(
+                    chai.assert.isNull(
                         rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
                     );
                     // In this next case, both the numerator and denominator are 0.
                     rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
                     rrv.newFeatureLow = { "Feature ID": "Taxon1" };
-                    chai.assert.isNaN(
+                    chai.assert.isNull(
                         rrv.updateBalanceSingle({ "Sample ID": "Sample1" })
                     );
                 });
@@ -125,26 +125,28 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                 });
-                it("Returns NaN when numerator and/or denominator feature lists are empty", function() {
-                    // Test what happens when numerator and/or denominator feature
-                    // lists are empty. If either or both of these feature lists are
-                    // empty, we should get a NaN balance (since that corresponds to
-                    // the numerator and/or denominator of the log ratio being 0).
+                it("Returns null when numerator and/or denominator feature lists are empty", function() {
+                    // Test what happens when numerator and/or denominator
+                    // feature lists are empty. If either or both of these
+                    // feature lists are empty, we should get a null balance
+                    // (since that corresponds to the numerator and/or
+                    // denominator of the log ratio being 0, due to how we
+                    // define compute_balance()).
                     // 1. Both numerator and denominator are empty
                     rrv.topFeatures = [];
                     rrv.botFeatures = [];
-                    chai.assert.isNaN(
+                    chai.assert.isNull(
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                     // 2. Just numerator is empty
                     rrv.botFeatures = [{ "Feature ID": "Taxon4" }];
-                    chai.assert.isNaN(
+                    chai.assert.isNull(
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                     // 3. Just denominator is empty
                     rrv.topFeatures = [{ "Feature ID": "Taxon2" }];
                     rrv.botFeatures = [];
-                    chai.assert.isNaN(
+                    chai.assert.isNull(
                         rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                     );
                 });
