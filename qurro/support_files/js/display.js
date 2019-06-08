@@ -240,6 +240,34 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 );
             }
             this.updateSamplePlotTooltips();
+            // TODO: abstract to another function
+            // Also TODO: make this change according to qurro_balance. Either
+            // that, or don't allow qurro_balance to be selected and only show
+            // static metadata values in the field selectors (and make the
+            // default x-axis + color fields the first metadata category, and
+            // have both be categorical).
+            var invalidXSampleIDs = this.getInvalidSampleIDs(
+                this.samplePlotJSON.encoding.x.field,
+                "x"
+            );
+            dom_utils.updateSampleDroppedDiv(
+                invalidXSampleIDs,
+                this.sampleCount,
+                "xAxisSamplesDroppedDiv",
+                "xAxis",
+                this.samplePlotJSON.encoding.x.field
+            );
+            var invalidColorSampleIDs = this.getInvalidSampleIDs(
+                this.samplePlotJSON.encoding.color.field,
+                "color"
+            );
+            dom_utils.updateSampleDroppedDiv(
+                invalidColorSampleIDs,
+                this.sampleCount,
+                "colorSamplesDroppedDiv",
+                "color",
+                this.samplePlotJSON.encoding.color.field
+            );
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
