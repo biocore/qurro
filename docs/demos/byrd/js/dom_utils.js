@@ -99,12 +99,13 @@ define(function() {
      *      is.)
      */
     function updateSampleDroppedDiv(
-        numDroppedSamples,
+        droppedSampleIDList,
         totalSampleCount,
         divID,
         dropType,
         field
     ) {
+        var numDroppedSamples = droppedSampleIDList.length;
         // Only bother updating the <div>'s text if we're actually going to be
         // dropping samples for this "reason" -- i.e. numDroppedSamples > 0.
         if (numDroppedSamples > 0) {

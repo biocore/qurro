@@ -240,6 +240,28 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 );
             }
             this.updateSamplePlotTooltips();
+            var invalidXSampleIDs = this.getInvalidSampleIDs(
+                this.samplePlotJSON.encoding.x.field,
+                "x"
+            );
+            dom_utils.updateSampleDroppedDiv(
+                invalidXSampleIDs,
+                this.sampleCount,
+                "xAxisSamplesDroppedDiv",
+                "xAxis",
+                this.samplePlotJSON.encoding.x.field
+            );
+            var invalidColorSampleIDs = this.getInvalidSampleIDs(
+                this.samplePlotJSON.encoding.color.field,
+                "color"
+            );
+            dom_utils.updateSampleDroppedDiv(
+                invalidColorSampleIDs,
+                this.sampleCount,
+                "colorSamplesDroppedDiv",
+                "color",
+                this.samplePlotJSON.encoding.color.field
+            );
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
@@ -346,7 +368,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
-            var numSamplesWithNullBalance = 0;
+            var nullBalanceSampleIDs = [];
             this.samplePlotView
                 .change(
                     dataName,
@@ -369,7 +391,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                                 sampleRow
                             );
                             if (sampleBalance === null) {
-                                numSamplesWithNullBalance++;
+                                nullBalanceSampleIDs.push(
+                                    sampleRow["Sample ID"]
+                                );
                             }
                             return sampleBalance;
                         }
@@ -377,7 +401,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 )
                 .run();
             dom_utils.updateSampleDroppedDiv(
-                numSamplesWithNullBalance,
+                nullBalanceSampleIDs,
                 this.sampleCount,
                 "balanceSamplesDroppedDiv",
                 "balance"
@@ -610,10 +634,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         /* Iterates through every sample in the sample plot JSON and
-         * looks at the sample's fieldName field. Returns a list of "valid"
+         * looks at the sample's fieldName field. Returns a list of "invalid"
          * sample IDs -- i.e. those that, based on the current field and
-         * corresponding encoding (e.g. "color" or "x"), should be displayed in
-         * the sample plot assuming their other properties (balance, other
+         * corresponding encoding (e.g. "color" or "x"), can't be displayed in
+         * the sample plot even if their other properties (balance, other
          * encodings) are valid.
          *
          * The "validity" of a sample is computed via the following checks:
@@ -626,11 +650,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          *    accounts for Infinities/NaNs in the data, which could have arisen
          *    due to being encoded as strings (e.g. "Infinity" or "NaN").)
          */
-        getValidSamples(fieldName, correspondingEncoding) {
+        getInvalidSampleIDs(fieldName, correspondingEncoding) {
             var dataName = this.samplePlotJSON.data.name;
             var currFieldVal;
             var currSampleID;
-            var validSampleIDs = [];
+            var invalidSampleIDs = [];
             for (
                 var i = 0;
                 i < this.samplePlotJSON.datasets[dataName].length;
@@ -651,26 +675,32 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         this.samplePlotJSON.encoding[correspondingEncoding]
                             .type === "quantitative"
                     ) {
-                        if (isFinite(vega.toNumber(currFieldVal))) {
-                            // scale is quantitative and this is a valid
+                        if (!isFinite(vega.toNumber(currFieldVal))) {
+                            // scale is quantitative and this isn't a valid
                             // numerical value
-                            validSampleIDs.push(currSampleID);
+                            invalidSampleIDs.push(currSampleID);
                         }
-                        // If the above check didn't pass (i.e. this value
-                        // isn't "numerical"), then we'll just continue on in
-                        // the loop without adding it to validSampleIDs.
-                    } else {
-                        // scale isn't quantitative and this is a valid
-                        // categorical value
-                        // NOTE: this *assumes* that the scale is either
-                        // quantitative or nominal. If it's something like
-                        // temporal this will get messed up, and we'll need to
-                        // do something else to address it.
-                        validSampleIDs.push(currSampleID);
+                        // If the above check passed (i.e. this value
+                        // is "numerical"), then we'll just continue on in
+                        // the loop without adding it to invalidSampleIDs.
                     }
+                    // We don't include an "else" branch here, because this
+                    // part is only reached if the current encoding is nominal
+                    // (in which case we know this sample ID is valid, so we
+                    // don't do anything with it).
+                    // NOTE: this *assumes* that the scale is either
+                    // quantitative or nominal. If it's something like temporal
+                    // then this will get messed up, and we'll need to do
+                    // something else to address it.
+                } else {
+                    // currFieldVal *is* one of undefined, null, or "". Ignore
+                    // it.
+                    // TODO: remove "" check, since we'll filter those out in
+                    // the python side of things
+                    invalidSampleIDs.push(currSampleID);
                 }
             }
-            return validSampleIDs;
+            return invalidSampleIDs;
         }
 
         /* Changes the scale type of either the x-axis or colorization in the
