@@ -346,7 +346,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
-            var numSamplesWithNullBalance = 0;
+            var nullBalanceSampleIDs = [];
             this.samplePlotView
                 .change(
                     dataName,
@@ -369,7 +369,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                                 sampleRow
                             );
                             if (sampleBalance === null) {
-                                numSamplesWithNullBalance++;
+                                nullBalanceSampleIDs.push(
+                                    sampleRow["Sample ID"]
+                                );
                             }
                             return sampleBalance;
                         }
@@ -377,7 +379,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 )
                 .run();
             dom_utils.updateSampleDroppedDiv(
-                numSamplesWithNullBalance,
+                nullBalanceSampleIDs,
                 this.sampleCount,
                 "balanceSamplesDroppedDiv",
                 "balance"
