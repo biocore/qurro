@@ -424,14 +424,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             });
         });
         describe("Identifying samples with a valid metadata field value", function() {
-            function testOnMetadata1AndX(expectedSampleIDs) {
-                var observedValidSamples = rrv.getValidSamples(
+            function testOnMetadata1AndX(expectedInvalidSampleIDs) {
+                var observedInvalidSampleIDs = rrv.getInvalidSampleIDs(
                     "Metadata1",
                     "x"
                 );
                 chai.assert.sameMembers(
-                    expectedSampleIDs,
-                    observedValidSamples
+                    expectedInvalidSampleIDs,
+                    observedInvalidSampleIDs
                 );
             }
             function resetMetadata1Values() {
@@ -455,25 +455,27 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.datasets[dataName][i].Metadata1 = value;
                 }
             }
+            var allSampleIDs = [
+                "Sample1",
+                "Sample2",
+                "Sample3",
+                "Sample5",
+                "Sample6",
+                "Sample7"
+            ];
             describe("Works properly when all samples have a valid field", function() {
-                var allSampleIDs = [
-                    "Sample1",
-                    "Sample2",
-                    "Sample3",
-                    "Sample5",
-                    "Sample6",
-                    "Sample7"
-                ];
                 it("...When there's a quantitative encoding", function() {
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
-                    testOnMetadata1AndX(allSampleIDs);
+                    // We expect the list of invalid sample IDs to be [] --
+                    // that is, every sample should be "valid."
+                    testOnMetadata1AndX([]);
                 });
                 describe("...When there's a nominal encoding", function() {
                     before(function() {
                         rrv.samplePlotJSON.encoding.x.type = "nominal";
                     });
                     it('Works properly with "normal" numerical values', function() {
-                        testOnMetadata1AndX(allSampleIDs);
+                        testOnMetadata1AndX([]);
                     });
                     it('Accepts "special" values in strings like "NaN", "null", etc.', function() {
                         // These are just non-empty strings, so they should be
@@ -490,11 +492,11 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                             "undefined";
                         rrv.samplePlotJSON.datasets[dataName][5].Metadata1 =
                             '""';
-                        testOnMetadata1AndX(allSampleIDs);
+                        testOnMetadata1AndX([]);
                     });
                     it('Works ok with just-whitespace strings (" ")', function() {
                         fillMetadata1Vals(" ");
-                        testOnMetadata1AndX(allSampleIDs);
+                        testOnMetadata1AndX([]);
                     });
                 });
             });
@@ -516,8 +518,8 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 // The samples we adjusted above are Samples 1, 2, and 3.
                 // (Sample 4 should be dropped on the python side of things due
                 // to being unsupported in the BIOM table.)
-                // So the only "valid" samples, then, should be 5, 6, and 7.
-                var expectedSampleIDs = ["Sample5", "Sample6", "Sample7"];
+                // So the "invalid" samples, then, should be 1, 2, and 3.
+                var expectedSampleIDs = ["Sample1", "Sample2", "Sample3"];
 
                 it("...When there's a quantitative encoding", function() {
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
@@ -540,27 +542,27 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         "Missing: not provided";
                     rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = "3.2a";
                     rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
-                    testOnMetadata1AndX(["Sample5", "Sample6", "Sample7"]);
+                    testOnMetadata1AndX(["Sample1", "Sample2", "Sample3"]);
                 });
                 it("Works properly when all samples' field values are non-numeric", function() {
                     fillMetadata1Vals("Missing: not provided");
-                    testOnMetadata1AndX([]);
+                    testOnMetadata1AndX(allSampleIDs);
                 });
                 it("Properly filters out string Infinity values", function() {
                     fillMetadata1Vals("Infinity");
-                    testOnMetadata1AndX([]);
+                    testOnMetadata1AndX(allSampleIDs);
                 });
                 it("Properly filters out string -Infinity values", function() {
                     fillMetadata1Vals("-Infinity");
-                    testOnMetadata1AndX([]);
+                    testOnMetadata1AndX(allSampleIDs);
                 });
                 it("Properly filters out string NaN values", function() {
                     fillMetadata1Vals("NaN");
-                    testOnMetadata1AndX([]);
+                    testOnMetadata1AndX(allSampleIDs);
                 });
                 it("Properly filters out string undefined values", function() {
                     fillMetadata1Vals("undefined");
-                    testOnMetadata1AndX([]);
+                    testOnMetadata1AndX(allSampleIDs);
                 });
             });
         });
