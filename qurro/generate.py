@@ -134,15 +134,20 @@ def process_input(
     """Processes the input files to Qurro."""
 
     logging.debug("Starting processing input.")
-    # Assert that the feature IDs and sample IDs contain only unique IDs.
-    # (This doesn't check that there aren't any identical IDs between the
-    # feature and sample IDs, but we shouldn't be using sample IDs to query
-    # feature IDs anyway. And besides, I think that should technically be
-    # allowed.)
-    ensure_df_headers_unique(feature_ranks, "feature ranks")
-    logging.debug("Ensured uniqueness of feature ranks.")
-    ensure_df_headers_unique(sample_metadata, "sample metadata")
-    logging.debug("Ensured uniqueness of sample metadata.")
+
+    # Assert that the feature IDs, ranking names, sample IDs, sample metadata
+    # column names, and feature metadata column names are each unique.
+    name2df = {
+        "feature ranks": feature_ranks,
+        "sample metadata": sample_metadata,
+    }
+    # Only validate the feature metadata if it was provided
+    if feature_metadata is not None:
+        name2df["feature metadata"] = feature_metadata
+
+    for name in name2df:
+        ensure_df_headers_unique(name2df[name], name)
+        logging.debug("Ensured uniqueness of {}.".format(name))
 
     # NOTE although we always call filter_unextreme_features(), no filtering is
     # necessarily done (depending on the value of extreme_feature_count and the
