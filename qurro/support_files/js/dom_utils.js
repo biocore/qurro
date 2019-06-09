@@ -152,11 +152,10 @@ define(function() {
      * divID is an optional argument -- if not provided, it'll default to
      * "mainSamplesDroppedDiv".
      */
-    function updateMainSampleShownDiv(
-        numSamplesShown,
-        totalSampleCount,
-        divID
-    ) {
+    function updateMainSampleShownDiv(droppedSamples, totalSampleCount, divID) {
+        // TODO compute intersection of all lists in droppedSamples. the len of
+        // that is numSamplesShown.
+
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
         var percentage = 100 * (numSamplesShown / totalSampleCount);
