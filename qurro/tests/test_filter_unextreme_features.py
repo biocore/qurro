@@ -3,6 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_equal
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
+import pytest
 from qurro._rank_utils import filter_unextreme_features
 
 
@@ -114,3 +115,26 @@ def test_filtering_no_efc():
     )
     assert biom_table == filtered_table
     assert_frame_equal(ranks, filtered_ranks)
+
+
+def test_filtering_invalid_efc():
+    """Tests that filter_unextreme_features() throws an error when the
+       extreme feature count is less than 1 and/or not an integer.
+    """
+
+    biom_table, ranks = get_test_data()
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(biom_table, ranks, 0)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(biom_table, ranks, -1)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(biom_table, ranks, -2)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(biom_table, ranks, 1.5)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(biom_table, ranks, 5.5)
