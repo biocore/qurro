@@ -241,11 +241,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
             this.updateSamplePlotTooltips();
             // TODO: abstract to another function
-            // Also TODO: make this change according to qurro_balance. Either
-            // that, or don't allow qurro_balance to be selected and only show
-            // static metadata values in the field selectors (and make the
-            // default x-axis + color fields the first metadata category, and
-            // have both be categorical).
             var invalidXSampleIDs = this.getInvalidSampleIDs(
                 this.samplePlotJSON.encoding.x.field,
                 "x"
@@ -587,7 +582,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // displayed.
                 this.samplePlotJSON.encoding.tooltip = [
                     { type: "nominal", field: "Sample ID" },
-                    { type: "quantitative", field: "qurro_balance" },
+                    {
+                        type: "quantitative",
+                        field: "qurro_balance",
+                        title: "Current Log Ratio"
+                    },
                     {
                         type: this.samplePlotJSON.encoding.x.type,
                         field: this.samplePlotJSON.encoding.x.field
@@ -810,7 +809,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var dataName = samplePlotSpec.data.name;
             var mdCols = Object.keys(samplePlotSpec.datasets[dataName][0]);
             if (mdCols.length > 0) {
-                return mdCols;
+                return mdCols.filter(function(mdColName) {
+                    return mdColName !== "qurro_balance";
+                });
             } else {
                 throw new Error(
                     "No metadata columns identified. Something seems " +

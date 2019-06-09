@@ -12,14 +12,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     badSpec.datasets[badSpec.data.name] = [{}, {}, {}, {}, {}, {}];
     describe("Identifying sample plot metadata columns", function() {
         it("Properly identifies all metadata columns", function() {
+            // Note that we ignore qurro_balance explictly.
             chai.assert.sameMembers(
-                [
-                    "Sample ID",
-                    "qurro_balance",
-                    "Metadata1",
-                    "Metadata2",
-                    "Metadata3"
-                ],
+                ["Sample ID", "Metadata1", "Metadata2", "Metadata3"],
                 display.RRVDisplay.identifyMetadataColumns(samplePlotJSON)
             );
         });
