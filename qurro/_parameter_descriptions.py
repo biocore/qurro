@@ -20,7 +20,8 @@ EXTREME_FEATURE_COUNT = (
     "time or crash due to memory limits. "
     'Additionally, following this feature-filtering step, all "empty" samples '
     "(i.e. those containing zeroes for every remaining feature) will be "
-    "removed from the visualization."
+    "removed from the visualization. This must be at least 1, and must be an "
+    "integer."
 )
 
 ASSUME_GNPS_FEATURE_METADATA = (
