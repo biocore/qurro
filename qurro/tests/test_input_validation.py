@@ -1,7 +1,6 @@
 from pandas import DataFrame
-from qurro.generate import ensure_df_headers_unique
-
-# import pytest
+from qurro.generate import ensure_df_headers_unique, validate_df
+import pytest
 
 
 def test_ensure_df_headers_unique():
@@ -59,3 +58,55 @@ def test_ensure_df_headers_unique():
         # erroring, I guess, but doesn't really matter) this test
         ensure_df_headers_unique(df, df_name)
         i += 1
+
+
+def test_validate_df():
+    """Tests the validate_df() function in generate.py."""
+
+    # Check that the min_row_ct and min_col_ct arguments work properly.
+    normal2x2DF = DataFrame({"x": [1, 2], "y": [3, 4]}, index=["a", "b"])
+    validate_df(normal2x2DF, "Normal 2x2 DF", 0, 0)
+    validate_df(normal2x2DF, "Normal 2x2 DF", 1, 1)
+    validate_df(normal2x2DF, "Normal 2x2 DF", 2, 2)
+    with pytest.raises(ValueError):
+        validate_df(normal2x2DF, "Normal 2x2 DF", 2, 3)
+    with pytest.raises(ValueError):
+        validate_df(normal2x2DF, "Normal 2x2 DF", 2, 4)
+    with pytest.raises(ValueError):
+        validate_df(normal2x2DF, "Normal 2x2 DF", 3, 2)
+    with pytest.raises(ValueError):
+        validate_df(normal2x2DF, "Normal 2x2 DF", 4, 2)
+
+    # Test that the ensure_df_headers_unique() call works. We don't go as in
+    # depth here as we do above, but we do still want to make sure that it
+    # works as expected.
+
+    # This is just df_bad from test_ensure_df_headers_unique().
+    nonuniqueRowDF = DataFrame(
+        {"col1": [1, 2, 3], "col2": [6, 7, 8]}, index=["a", "b", "a"]
+    )
+    with pytest.raises(ValueError):
+        validate_df(nonuniqueRowDF, "Non-unique-row DF", 3, 2)
+
+    # Check that errors don't "cancel out" (obviously shouldn't be the case,
+    # but might as well be safe)
+    with pytest.raises(ValueError):
+        validate_df(nonuniqueRowDF, "Non-unique-row DF", 3, 3)
+
+    # This is just df_bad4 from test_ensure_df_headers_unique().
+    nonuniqueColDF = DataFrame(
+        [[1, 6], [2, 7], [3, 8]],
+        columns=["col1", "col1"],
+        index=["a", "b", "c"],
+    )
+    with pytest.raises(ValueError):
+        validate_df(nonuniqueColDF, "Non-unique-column DF", 3, 2)
+
+    # This is just df_bad5 from test_ensure_df_headers_unique().
+    nonuniqueColRowDF = DataFrame(
+        [[1, 6], [2, 7], [3, 8]],
+        columns=["col1", "col1"],
+        index=["a", "b", "a"],
+    )
+    with pytest.raises(ValueError):
+        validate_df(nonuniqueColRowDF, "Non-unique-column-and-row DF", 3, 2)

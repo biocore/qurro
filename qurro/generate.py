@@ -124,6 +124,26 @@ def process_and_generate(
     )
 
 
+def validate_df(df, name, min_row_ct, min_col_ct):
+    """Does some basic validation on the DataFrame.
+
+       1. Calls ensure_df_headers_unique() to ensure that index and column
+          names are unique.
+       2. Checks that the DataFrame has at least min_row_ct rows.
+       3. Checks that the DataFrame has at least min_col_ct columns.
+    """
+    ensure_df_headers_unique(df, name)
+    logging.debug("Ensured uniqueness of {}.".format(name))
+    if df.shape[0] < min_row_ct:
+        raise ValueError(
+            "Less than {} rows found in the {}.".format(min_row_ct, name)
+        )
+    if df.shape[1] < min_col_ct:
+        raise ValueError(
+            "Less than {} columns found in the {}.".format(min_col_ct, name)
+        )
+
+
 def process_input(
     feature_ranks,
     sample_metadata,
@@ -135,19 +155,17 @@ def process_input(
 
     logging.debug("Starting processing input.")
 
-    # Assert that the feature IDs, ranking names, sample IDs, sample metadata
-    # column names, and feature metadata column names are each unique.
-    name2df = {
-        "feature ranks": feature_ranks,
-        "sample metadata": sample_metadata,
-    }
-    # Only validate the feature metadata if it was provided
+    validate_df(feature_ranks, "feature ranks", 2, 1)
+    validate_df(sample_metadata, "sample metadata", 1, 1)
     if feature_metadata is not None:
-        name2df["feature metadata"] = feature_metadata
-
-    for name in name2df:
-        ensure_df_headers_unique(name2df[name], name)
-        logging.debug("Ensured uniqueness of {}.".format(name))
+        # It's cool if there aren't any features actually described in the
+        # feature metadata (hence why we pass in 0 as the minimum # of rows in
+        # the feature metadata DataFrame), but we still pass it to
+        # validate_df() in order to ensure that:
+        #   1) there's at least one feature metadata column (because
+        #      otherwise the feature metadata is useless)
+        #   2) column names are unique
+        validate_df(feature_metadata, "feature metadata", 0, 1)
 
     # NOTE although we always call filter_unextreme_features(), no filtering is
     # necessarily done (depending on the value of extreme_feature_count and the
@@ -169,6 +187,10 @@ def process_input(
     # in to the SparseDataFrame.
     table.index = filtered_table.ids(axis="observation")
     table.columns = filtered_table.ids(axis="sample")
+
+    # Validate the table DataFrame -- should be ok since we loaded this through
+    # the biom module, but might as well check
+    validate_df(table, "BIOM table", 2, 1)
 
     logging.debug("Converted BIOM table to SparseDataFrame.")
 
