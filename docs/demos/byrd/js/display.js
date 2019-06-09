@@ -582,8 +582,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // displayed.
                 this.samplePlotJSON.encoding.tooltip = [
                     { type: "nominal", field: "Sample ID" },
-                    { type: "quantitative", field: "qurro_balance",
-                      title: "Current Log Ratio" },
+                    {
+                        type: "quantitative",
+                        field: "qurro_balance",
+                        title: "Current Log Ratio"
+                    },
                     {
                         type: this.samplePlotJSON.encoding.x.type,
                         field: this.samplePlotJSON.encoding.x.field
@@ -806,11 +809,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var dataName = samplePlotSpec.data.name;
             var mdCols = Object.keys(samplePlotSpec.datasets[dataName][0]);
             if (mdCols.length > 0) {
-                return mdCols.filter(
-                    function(mdColName) {
-                        return mdColName !== "qurro_balance";
-                    }
-                );
+                return mdCols.filter(function(mdColName) {
+                    return mdColName !== "qurro_balance";
+                });
             } else {
                 throw new Error(
                     "No metadata columns identified. Something seems " +

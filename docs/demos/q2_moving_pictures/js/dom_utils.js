@@ -109,6 +109,12 @@ define(function() {
         // Only bother updating the <div>'s text if we're actually going to be
         // dropping samples for this "reason" -- i.e. numDroppedSamples > 0.
         if (numDroppedSamples > 0) {
+            var prefix = "";
+            if (dropType === "xAxis") {
+                prefix = "<strong>x-axis:</strong> ";
+            } else if (dropType === "color") {
+                prefix = "<strong>Color:</strong> ";
+            }
             // Show the percentage of samples that have to be dropped due to
             // this reason.
             var percentage = 100 * (numDroppedSamples / totalSampleCount);
@@ -124,6 +130,7 @@ define(function() {
             }
 
             document.getElementById(divID).innerHTML =
+                prefix +
                 String(numDroppedSamples) +
                 " / " +
                 String(totalSampleCount) +
