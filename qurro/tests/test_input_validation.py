@@ -1,6 +1,9 @@
-from pandas import DataFrame
-from qurro.generate import ensure_df_headers_unique, validate_df
+from io import StringIO
 import pytest
+from pandas import DataFrame
+from pandas.testing import assert_frame_equal
+from qurro.generate import ensure_df_headers_unique, validate_df
+from qurro._rank_utils import differentials_to_df
 
 
 def test_ensure_df_headers_unique():
@@ -110,3 +113,28 @@ def test_validate_df():
     )
     with pytest.raises(ValueError):
         validate_df(nonuniqueColRowDF, "Non-unique-column-and-row DF", 3, 2)
+
+
+def test_differentials_to_df():
+    """Tests _rank_utils.differentials_to_df()."""
+
+    good_diff = StringIO(
+        "\tIntercept\tRank 1\nTaxon1\t1.0\t2.0\nTaxon2\t3.0\t4.0"
+    )
+    good_diff_df_exp = DataFrame(
+        {"Intercept": [1.0, 3.0], "Rank 1": [2.0, 4.0]},
+        index=["Taxon1", "Taxon2"],
+    )
+    assert_frame_equal(good_diff_df_exp, differentials_to_df(good_diff))
+
+    missing_val_diff = StringIO(
+        "\tIntercept\tRank 1\nTaxon1\t2.0\nTaxon2\t3.0\t4.0"
+    )
+    with pytest.raises(ValueError):
+        differentials_to_df(missing_val_diff)
+
+    non_numeric_val_diff = StringIO(
+        "\tIntercept\tRank 1\nTaxon1\t'1.0'\t2.0\nTaxon2\t3.0\t4.0"
+    )
+    with pytest.raises(ValueError):
+        differentials_to_df(non_numeric_val_diff)
