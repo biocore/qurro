@@ -35,7 +35,21 @@ def ordination_to_df(ordination_file_loc):
 def differentials_to_df(differentials_loc):
     """Converts a differential rank TSV file to a DataFrame."""
 
-    differentials = pd.read_csv(differentials_loc, sep="\t", index_col=0)
+    differentials = pd.read_csv(
+        differentials_loc, sep="\t", index_col=0, na_filter=False
+    )
+    # If we can find any missing values in the differentials columns
+    # (autodetected by pandas since we didn't set na_filter=False when calling
+    # pd.read_csv()), raise an error.
+    for column in differentials.columns:
+        try:
+            differentials[column].astype(float)
+        except ValueError:
+            raise ValueError(
+                "Missing / nonnumeric differentials found in "
+                "column {} of {}".format(column, differentials_loc)
+            )
+
     return differentials
 
 
