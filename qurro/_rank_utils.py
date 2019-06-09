@@ -65,6 +65,7 @@ def filter_unextreme_features(
             An integer representing the number of features from each "end" of
             the feature rankings to preserve in the table. If this is None, the
             input table and ranks will just be returned.
+            This has to be at least 1.
 
        print_warning: bool
             If True, this will print out a warning if (extreme_feature_count *
@@ -106,6 +107,8 @@ def filter_unextreme_features(
     if extreme_feature_count is None:
         logging.debug("No extreme feature count specified; not filtering.")
         return table, ranks
+    elif extreme_feature_count < 1:
+        raise ValueError("Extreme feature count must be at least 1.")
 
     efc2 = extreme_feature_count * 2
     if efc2 >= len(ranks):
