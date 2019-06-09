@@ -1,7 +1,7 @@
 /* This file contains some methods for manipulating DOM elements in a
  * client-side web interface.
  */
-define(function() {
+define(["vega"], function(vega) {
     /* Assigns DOM bindings to elements.
      *
      * If eventHandler is set to "onchange", this will update the onchange
@@ -152,11 +152,22 @@ define(function() {
      * divID is an optional argument -- if not provided, it'll default to
      * "mainSamplesDroppedDiv".
      */
-    function updateMainSampleShownDiv(
-        numSamplesShown,
-        totalSampleCount,
-        divID
-    ) {
+    function updateMainSampleShownDiv(droppedSamples, totalSampleCount, divID) {
+        // TODO compute intersection of all lists in droppedSamples. the len of
+        // that is numSamplesShown.
+        // NOTE: you can do that using vega.toSet()! Just call vega.toSet(a),
+        // where a is just all of the array values in droppedSamples
+        // concatenated into one big array. This will return an object, and you
+        // can do Object.keys(vega.toSet(a)).length to get numSamplesShown.
+
+        var reasons = Object.keys(droppedSamples);
+        var totalDroppedSampleArray = [];
+        for (var r = 0; r < reasons.length; r++) {
+            totalDroppedSampleArray = totalDroppedSampleArray.concat(
+                droppedSamples[reasons[r]]
+            );
+        }
+        var numSamplesShown = Object.keys(vega.toSet(totalDroppedSampleArray));
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
         var percentage = 100 * (numSamplesShown / totalSampleCount);

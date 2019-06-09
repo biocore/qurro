@@ -1,7 +1,7 @@
 /* This file contains some methods for manipulating DOM elements in a
  * client-side web interface.
  */
-define(function() {
+define(["vega"], function(vega) {
     /* Assigns DOM bindings to elements.
      *
      * If eventHandler is set to "onchange", this will update the onchange
@@ -153,20 +153,29 @@ define(function() {
      * "mainSamplesDroppedDiv".
      */
     function updateMainSampleShownDiv(droppedSamples, totalSampleCount, divID) {
-        // TODO compute intersection of all lists in droppedSamples. the len of
+        // compute intersection of all lists in droppedSamples. the length of
         // that is numSamplesShown.
-
+        var reasons = Object.keys(droppedSamples);
+        var totalDroppedSampleArray = [];
+        for (var r = 0; r < reasons.length; r++) {
+            totalDroppedSampleArray = totalDroppedSampleArray.concat(
+                droppedSamples[reasons[r]]
+            );
+        }
+        var numSamplesShown =
+            totalSampleCount -
+            Object.keys(vega.toSet(totalDroppedSampleArray)).length;
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
         var percentage = 100 * (numSamplesShown / totalSampleCount);
         document.getElementById(divIDInUse).innerHTML =
+            "<strong>" +
             String(numSamplesShown) +
             " / " +
             String(totalSampleCount) +
             " samples  (" +
             String(percentage.toFixed(2)) +
-            "%) " +
-            " currently shown.";
+            "%)</strong> currently shown.";
         // Just in case this div was set to invisible (i.e. this is the first
         // time it's been updated).
         document.getElementById(divIDInUse).classList.remove("invisible");

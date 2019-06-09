@@ -50,9 +50,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Used when searching through features.
             this.feature_ids = Object.keys(this.feature_cts);
 
-            // This is a list of all sample IDs. As of now, we don't have a
-            // strong need to store this in memory so we only define it in the
-            // scope of the constructor function.
+            // Just a list of all sample IDs.
             var sampleIDs = this.feature_cts[this.feature_ids[0]];
             // Used when letting the user know how many samples are present in
             // the sample plot.
@@ -60,7 +58,23 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // figure out how many entries are in the sampleIDs list; see
             // https://stackoverflow.com/a/6700/10730311
             this.sampleCount = Object.keys(sampleIDs).length;
-            dom_utils.updateMainSampleShownDiv(0, this.sampleCount);
+
+            // a mapping from "reason" (i.e. "balance", "xAxis", "color") to
+            // list of dropped sample IDs.
+            //
+            // "balance" maps to sampleIDs right now because all samples have a
+            // null balance starting off.
+            //
+            // NOTE: xAxis and color might already exclude some samples from
+            // being shown in the default categorical encoding. Their
+            // corresponding lists will be updated in makeSamplePlot(), before
+            // dom_utils.updateMainSampleShownDiv() will be called (so the
+            // nulls will be replaced with actual lists).
+            this.droppedSamples = {
+                balance: sampleIDs,
+                xAxis: null,
+                color: null
+            };
 
             // Set when the sample plot JSON is loaded. Used to populate
             // possible sample plot x-axis/colorization options.
@@ -263,6 +277,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "color",
                 this.samplePlotJSON.encoding.color.field
             );
+            this.droppedSamples.xAxis = invalidXSampleIDs;
+            this.droppedSamples.color = invalidColorSampleIDs;
+            dom_utils.updateMainSampleShownDiv(
+                this.droppedSamples,
+                this.sampleCount
+            );
+
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
@@ -401,6 +422,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     )
                 )
                 .run();
+
+            this.droppedSamples.balance = nullBalanceSampleIDs;
+            dom_utils.updateMainSampleShownDiv(
+                this.droppedSamples,
+                this.sampleCount
+            );
+
             dom_utils.updateSampleDroppedDiv(
                 nullBalanceSampleIDs,
                 this.sampleCount,
