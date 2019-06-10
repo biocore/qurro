@@ -520,9 +520,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         updateFeatureHeaderCounts(topCt, botCt) {
-            document.getElementById("numHeader").innerHTML =
+            document.getElementById("numHeader").textContent =
                 "Numerator Features (" + topCt.toLocaleString() + " selected)";
-            document.getElementById("denHeader").innerHTML =
+            document.getElementById("denHeader").textContent =
                 "Denominator Features (" +
                 botCt.toLocaleString() +
                 " selected)";

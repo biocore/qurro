@@ -167,7 +167,7 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
         });
         describe("Informing the user re: sample dropping statistics", function() {
             describe('Updating the "main" samples-shown div', function() {
-                var htmlSuffix = "</strong> currently shown.";
+                var htmlSuffix = " currently shown.";
                 it("Works properly with normal inputs", function() {
                     dom_utils.updateMainSampleShownDiv(
                         { a: [1, 2, 3], b: [2, 3, 4, 5] },
@@ -176,7 +176,7 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                     chai.assert.equal(
                         document.getElementById("mainSamplesDroppedDiv")
                             .innerHTML,
-                        "<strong>10 / 15 samples (66.67%)" + htmlSuffix
+                        "10 / 15 samples (66.67%)" + htmlSuffix
                     );
                     dom_utils.updateMainSampleShownDiv(
                         { a: [1, 2, 3], b: [4, 5] },
@@ -185,13 +185,13 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                     chai.assert.equal(
                         document.getElementById("mainSamplesDroppedDiv")
                             .innerHTML,
-                        "<strong>0 / 5 samples (0.00%)" + htmlSuffix
+                        "0 / 5 samples (0.00%)" + htmlSuffix
                     );
                     dom_utils.updateMainSampleShownDiv({}, 13);
                     chai.assert.equal(
                         document.getElementById("mainSamplesDroppedDiv")
                             .innerHTML,
-                        "<strong>13 / 13 samples (100.00%)" + htmlSuffix
+                        "13 / 13 samples (100.00%)" + htmlSuffix
                     );
                 });
 
@@ -278,9 +278,9 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                     );
                     chai.assert.equal(
                         document.getElementById(divID).innerHTML,
-                        "<strong>x-axis:</strong> 5 / 15 samples (33.33%) " +
+                        "x-axis: 5 / 15 samples (33.33%) " +
                             "can't be shown due to having an invalid " +
-                            "<code>fieldName</code> field."
+                            "fieldName field."
                     );
                     chai.assert.isFalse(
                         document
@@ -299,14 +299,30 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                     );
                     chai.assert.equal(
                         document.getElementById(divID).innerHTML,
-                        "<strong>Color:</strong> 2 / 7 samples (28.57%) " +
+                        "Color: 2 / 7 samples (28.57%) " +
                             "can't be shown due to having an invalid " +
-                            "<code>fieldNameC</code> field."
+                            "fieldNameC field."
                     );
                     chai.assert.isFalse(
                         document
                             .getElementById(divID)
                             .classList.contains("invisible")
+                    );
+                });
+                it("Properly escapes weird characters in field names due to use of .textContent instead of .innerHTML", function() {
+                    var divID = "colorSamplesDroppedDiv";
+                    dom_utils.updateSampleDroppedDiv(
+                        [1, 2],
+                        7,
+                        divID,
+                        "color",
+                        "weird <p>field!&name;"
+                    );
+                    chai.assert.equal(
+                        document.getElementById(divID).innerHTML,
+                        "Color: 2 / 7 samples (28.57%) " +
+                            "can't be shown due to having an invalid weird " +
+                            "&lt;p&gt;field!&amp;name; field."
                     );
                 });
                 it('Works properly for the balance "reason"', function() {

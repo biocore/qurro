@@ -115,9 +115,9 @@ define(["vega"], function(vega) {
         if (numDroppedSamples > 0) {
             var prefix = "";
             if (dropType === "xAxis") {
-                prefix = "<strong>x-axis:</strong> ";
+                prefix = "x-axis: ";
             } else if (dropType === "color") {
-                prefix = "<strong>Color:</strong> ";
+                prefix = "Color: ";
             }
             // Show the percentage of samples that have to be dropped due to
             // this reason.
@@ -129,10 +129,14 @@ define(["vega"], function(vega) {
             if (dropType === "balance") {
                 reason = "an invalid (i.e. containing zero) log ratio.";
             } else if (dropType === "xAxis" || dropType === "color") {
-                reason = "an invalid <code>" + field + "</code> field.";
+                reason = "an invalid " + field + " field.";
             }
 
-            document.getElementById(divID).innerHTML =
+            // We use textContent instead of innerHTML here because of the
+            // reason variable, which includes field, which in turn could
+            // conceivably include things like "</div>" that would mess up the
+            // formatting.
+            document.getElementById(divID).textContent =
                 prefix +
                 String(numDroppedSamples) +
                 " / " +
@@ -202,14 +206,13 @@ define(["vega"], function(vega) {
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
         var percentage = 100 * (numSamplesShown / totalSampleCount);
-        document.getElementById(divIDInUse).innerHTML =
-            "<strong>" +
+        document.getElementById(divIDInUse).textContent =
             String(numSamplesShown) +
             " / " +
             String(totalSampleCount) +
             " samples (" +
             String(percentage.toFixed(2)) +
-            "%)</strong> currently shown.";
+            "%) currently shown.";
         // Just in case this div was set to invisible (i.e. this is the first
         // time it's been updated).
         document.getElementById(divIDInUse).classList.remove("invisible");
