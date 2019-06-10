@@ -78,15 +78,17 @@ define(["vega"], function(vega) {
     /* Updates a <div> regarding how many samples have been dropped for a given
      * reason.
      *
-     * numDroppedSamples: an integer indicating how many samples have been
-     * dropped for some reason
-     *  If this is 0, then the <div> will be hidden.
-     *  If this is > 0, then the <div> will be un-hidden if it's currently
-     *  hidden. (We define a "hidden" element as one that has the "invisible"
-     *  CSS class.)
+     * numDroppedSamples: a list of sample IDs that have been dropped for
+     * some reason.
+     *  If the length of this is 0, then the <div> will be hidden.
+     *  If the length of this is > 0, then the <div> will be un-hidden if
+     *  it's currently hidden. (We define a "hidden" element as one that has
+     *  the "invisible" CSS class.)
      *
      * totalSampleCount: an integer corresponding to the total number of
-     * samples in this Qurro visualization
+     * samples in this Qurro visualization.
+     *  This will throw an error if totalSampleCount is 0, or if the number
+     *  of dropped samples is greater than totalSampleCount.
      *
      * divID: the ID of the <div> we're updating
      *
@@ -106,6 +108,8 @@ define(["vega"], function(vega) {
         field
     ) {
         var numDroppedSamples = droppedSampleIDList.length;
+        validateSampleCounts(numDroppedSamples, totalSampleCount);
+
         // Only bother updating the <div>'s text if we're actually going to be
         // dropping samples for this "reason" -- i.e. numDroppedSamples > 0.
         if (numDroppedSamples > 0) {
@@ -171,6 +175,14 @@ define(["vega"], function(vega) {
         return Object.keys(vega.toSet(totalArray)).length;
     }
 
+    function validateSampleCounts(droppedSampleCount, totalSampleCount) {
+        if (totalSampleCount === 0) {
+            throw new Error("# total samples cannot be 0");
+        } else if (droppedSampleCount > totalSampleCount) {
+            throw new Error("# dropped samples must be <= # total samples");
+        }
+    }
+
     /* Updates a given <div> re: total # of samples shown.
      *
      * Sort of like the opposite of updateSampleDroppedDiv().
@@ -185,12 +197,7 @@ define(["vega"], function(vega) {
         // compute union of all lists in droppedSamples. the length of
         // that is numSamplesShown.
         var droppedSampleCount = unionSize(droppedSamples);
-
-        if (totalSampleCount === 0) {
-            throw new Error("totalSampleCount cannot be 0");
-        } else if (droppedSampleCount > totalSampleCount) {
-            throw new Error("droppedSampleCount must be <= totalSampleCount");
-        }
+        validateSampleCounts(droppedSampleCount, totalSampleCount);
 
         var numSamplesShown = totalSampleCount - unionSize(droppedSamples);
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
