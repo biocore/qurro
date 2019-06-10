@@ -175,12 +175,23 @@ define(["vega"], function(vega) {
      *
      * Sort of like the opposite of updateSampleDroppedDiv().
      *
+     * Note that this will throw an error if totalSampleCount is 0 and/or if
+     * the total number of dropped samples is greater than totalSampleCount.
+     *
      * divID is an optional argument -- if not provided, it'll default to
      * "mainSamplesDroppedDiv".
      */
     function updateMainSampleShownDiv(droppedSamples, totalSampleCount, divID) {
         // compute union of all lists in droppedSamples. the length of
         // that is numSamplesShown.
+        var droppedSampleCount = unionSize(droppedSamples);
+
+        if (totalSampleCount === 0) {
+            throw new Error("totalSampleCount cannot be 0");
+        } else if (droppedSampleCount > totalSampleCount) {
+            throw new Error("droppedSampleCount must be <= totalSampleCount");
+        }
+
         var numSamplesShown = totalSampleCount - unionSize(droppedSamples);
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
@@ -190,7 +201,7 @@ define(["vega"], function(vega) {
             String(numSamplesShown) +
             " / " +
             String(totalSampleCount) +
-            " samples  (" +
+            " samples (" +
             String(percentage.toFixed(2)) +
             "%)</strong> currently shown.";
         // Just in case this div was set to invisible (i.e. this is the first
