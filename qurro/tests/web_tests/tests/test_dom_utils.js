@@ -260,6 +260,24 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                     });
                 });
             });
+            describe("Updating the other sample-dropped divs", function() {
+                it("Works properly in the basic case", function() {
+                    dom_utils.updateSampleDroppedDiv(
+                        [1, 2, 3, 4, 5],
+                        15,
+                        "xAxisSamplesDroppedDiv",
+                        "xAxis",
+                        "fieldName"
+                    );
+                    chai.assert.equal(
+                        document.getElementById("xAxisSamplesDroppedDiv")
+                            .innerHTML,
+                        "<strong>x-axis:</strong> 5 / 15 samples (33.33%) " +
+                            "can't be shown due to having an invalid " +
+                            "<code>fieldName</code> field."
+                    );
+                });
+            });
         });
     });
 });
