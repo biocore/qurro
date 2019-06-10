@@ -268,50 +268,74 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
             });
             describe("Updating the other sample-dropped divs", function() {
                 it('Works properly for the x-axis "reason"', function() {
+                    var divID = "xAxisSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2, 3, 4, 5],
                         15,
-                        "xAxisSamplesDroppedDiv",
+                        divID,
                         "xAxis",
                         "fieldName"
                     );
                     chai.assert.equal(
-                        document.getElementById("xAxisSamplesDroppedDiv")
-                            .innerHTML,
+                        document.getElementById(divID).innerHTML,
                         "<strong>x-axis:</strong> 5 / 15 samples (33.33%) " +
                             "can't be shown due to having an invalid " +
                             "<code>fieldName</code> field."
                     );
+                    chai.assert.isFalse(
+                        document
+                            .getElementById(divID)
+                            .classList.contains("invisible")
+                    );
                 });
                 it('Works properly for the color "reason"', function() {
+                    var divID = "colorSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2],
                         7,
-                        "colorSamplesDroppedDiv",
+                        divID,
                         "color",
                         "fieldNameC"
                     );
                     chai.assert.equal(
-                        document.getElementById("colorSamplesDroppedDiv")
-                            .innerHTML,
+                        document.getElementById(divID).innerHTML,
                         "<strong>Color:</strong> 2 / 7 samples (28.57%) " +
                             "can't be shown due to having an invalid " +
                             "<code>fieldNameC</code> field."
                     );
+                    chai.assert.isFalse(
+                        document
+                            .getElementById(divID)
+                            .classList.contains("invisible")
+                    );
                 });
                 it('Works properly for the balance "reason"', function() {
+                    var divID = "balanceSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2, 3, 4],
                         8,
-                        "balanceSamplesDroppedDiv",
+                        divID,
                         "balance"
                     );
                     chai.assert.equal(
-                        document.getElementById("balanceSamplesDroppedDiv")
-                            .innerHTML,
+                        document.getElementById(divID).innerHTML,
                         "4 / 8 samples (50.00%) " +
                             "can't be shown due to having an invalid " +
                             "(i.e. containing at least one 0) log ratio."
+                    );
+                    chai.assert.isFalse(
+                        document
+                            .getElementById(divID)
+                            .classList.contains("invisible")
+                    );
+                });
+                it("Makes the div invisible if the number of dropped samples is 0", function() {
+                    var divID = "balanceSamplesDroppedDiv";
+                    dom_utils.updateSampleDroppedDiv([], 8, divID, "balance");
+                    chai.assert.isTrue(
+                        document
+                            .getElementById(divID)
+                            .classList.contains("invisible")
                     );
                 });
                 it("Throws an error if totalSampleCount is 0", function() {
