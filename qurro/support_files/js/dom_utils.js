@@ -127,8 +127,7 @@ define(["vega"], function(vega) {
             // why at least this many samples have to be dropped.
             var reason = "(invalid reason given)";
             if (dropType === "balance") {
-                reason =
-                    "an invalid (i.e. containing at least one 0) log ratio.";
+                reason = "an invalid (i.e. containing zero) log ratio.";
             } else if (dropType === "xAxis" || dropType === "color") {
                 reason = "an invalid <code>" + field + "</code> field.";
             }
