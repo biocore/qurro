@@ -199,6 +199,12 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                     chai.assert.throws(function() {
                         dom_utils.updateMainSampleShownDiv({ a: [1, 2, 3] }, 0);
                     });
+                    chai.assert.throws(function() {
+                        dom_utils.updateMainSampleShownDiv({ a: [] }, 0);
+                    });
+                    chai.assert.throws(function() {
+                        dom_utils.updateMainSampleShownDiv({}, 0);
+                    });
                 });
 
                 it("Throws an error if droppedSampleCount > totalSampleCount", function() {
@@ -261,7 +267,7 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                 });
             });
             describe("Updating the other sample-dropped divs", function() {
-                it("Works properly in the basic case", function() {
+                it('Works properly for the x-axis "reason"', function() {
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2, 3, 4, 5],
                         15,
@@ -276,6 +282,69 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                             "can't be shown due to having an invalid " +
                             "<code>fieldName</code> field."
                     );
+                });
+                it('Works properly for the color "reason"', function() {
+                    dom_utils.updateSampleDroppedDiv(
+                        [1, 2],
+                        7,
+                        "colorSamplesDroppedDiv",
+                        "color",
+                        "fieldNameC"
+                    );
+                    chai.assert.equal(
+                        document.getElementById("colorSamplesDroppedDiv")
+                            .innerHTML,
+                        "<strong>Color:</strong> 2 / 7 samples (28.57%) " +
+                            "can't be shown due to having an invalid " +
+                            "<code>fieldNameC</code> field."
+                    );
+                });
+                it('Works properly for the balance "reason"', function() {
+                    dom_utils.updateSampleDroppedDiv(
+                        [1, 2, 3, 4],
+                        8,
+                        "balanceSamplesDroppedDiv",
+                        "balance"
+                    );
+                    chai.assert.equal(
+                        document.getElementById("balanceSamplesDroppedDiv")
+                            .innerHTML,
+                        "4 / 8 samples (50.00%) " +
+                            "can't be shown due to having an invalid " +
+                            "(i.e. containing at least one 0) log ratio."
+                    );
+                });
+                it("Throws an error if totalSampleCount is 0", function() {
+                    chai.assert.throws(function() {
+                        dom_utils.updateSampleDroppedDiv(
+                            [1, 2, 3],
+                            0,
+                            "xAxisSamplesDroppedDiv",
+                            "xAxis",
+                            "fieldName"
+                        );
+                    });
+                    chai.assert.throws(function() {
+                        dom_utils.updateSampleDroppedDiv(
+                            [],
+                            0,
+                            "xAxisSamplesDroppedDiv",
+                            "xAxis",
+                            "fieldName"
+                        );
+                    });
+                });
+
+                it("Throws an error if droppedSampleCount > totalSampleCount", function() {
+                    chai.assert.throws(function() {
+                        dom_utils.updateSampleDroppedDiv(
+                            [1, 2, 3],
+                            2,
+                            "xAxisSamplesDroppedDiv",
+                            "xAxis",
+                            "fieldName"
+                        );
+                    });
                 });
             });
         });
