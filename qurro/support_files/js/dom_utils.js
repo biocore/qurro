@@ -134,9 +134,9 @@ define(["vega"], function(vega) {
                 String(numDroppedSamples) +
                 " / " +
                 String(totalSampleCount) +
-                " samples  (" +
+                " samples (" +
                 String(percentage.toFixed(2)) +
-                "%) " +
+                "%)" +
                 " can't be shown due to having " +
                 reason;
             document.getElementById(divID).classList.remove("invisible");
