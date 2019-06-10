@@ -51,13 +51,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.feature_ids = Object.keys(this.feature_cts);
 
             // Just a list of all sample IDs.
-            var sampleIDs = this.feature_cts[this.feature_ids[0]];
+            var sampleIDs = Object.keys(this.feature_cts[this.feature_ids[0]]);
             // Used when letting the user know how many samples are present in
             // the sample plot.
             // Note that we need to use Object.keys() in order to be able to
             // figure out how many entries are in the sampleIDs list; see
             // https://stackoverflow.com/a/6700/10730311
-            this.sampleCount = Object.keys(sampleIDs).length;
+            this.sampleCount = sampleIDs.length;
 
             // a mapping from "reason" (i.e. "balance", "xAxis", "color") to
             // list of dropped sample IDs.
