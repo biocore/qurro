@@ -165,49 +165,100 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                 }
             });
         });
-        describe("Computing the size of a union of arrays", function() {
-            it("Works properly with normal inputs", function() {
-                chai.assert.equal(
-                    dom_utils.unionSize({ a: [1, 2, 3], b: [2, 3, 4, 5] }),
-                    5
-                );
-                chai.assert.equal(
-                    dom_utils.unionSize({ a: [1, 2, 3], b: [4, 5] }),
-                    5
-                );
-                chai.assert.equal(
-                    dom_utils.unionSize({ a: [1, 2], b: [2, 3, 4, 5], c: [6] }),
-                    6
-                );
-                chai.assert.equal(
-                    dom_utils.unionSize({
-                        a: ["Sample 1", "Sample 2"],
-                        b: ["Sample 2", "Sample 3"],
-                        c: ["Sample 1"]
-                    }),
-                    3
-                );
-            });
-            it("Works properly with empty list(s)", function() {
-                chai.assert.equal(
-                    dom_utils.unionSize({ a: [], b: [], c: [6] }),
-                    1
-                );
-                chai.assert.equal(
-                    dom_utils.unionSize({
-                        a: ["Sample 1"],
-                        b: [],
-                        c: ["Sample 2"]
-                    }),
-                    2
-                );
-                chai.assert.equal(
-                    dom_utils.unionSize({ a: [], b: [], c: [] }),
-                    0
-                );
-            });
-            it("Works properly with an empty input mapping", function() {
-                chai.assert.equal(dom_utils.unionSize({}), 0);
+        describe("Informing the user re: sample dropping statistics", function() {
+            describe('Updating the "main" samples-shown div', function() {
+                var htmlSuffix = "</strong> currently shown.";
+                it("Works properly with normal inputs", function() {
+                    dom_utils.updateMainSampleShownDiv(
+                        { a: [1, 2, 3], b: [2, 3, 4, 5] },
+                        15
+                    );
+                    chai.assert.equal(
+                        document.getElementById("mainSamplesDroppedDiv")
+                            .innerHTML,
+                        "<strong>10 / 15 samples (66.67%)" + htmlSuffix
+                    );
+                    dom_utils.updateMainSampleShownDiv(
+                        { a: [1, 2, 3], b: [4, 5] },
+                        5
+                    );
+                    chai.assert.equal(
+                        document.getElementById("mainSamplesDroppedDiv")
+                            .innerHTML,
+                        "<strong>0 / 5 samples (0.00%)" + htmlSuffix
+                    );
+                    dom_utils.updateMainSampleShownDiv({}, 13);
+                    chai.assert.equal(
+                        document.getElementById("mainSamplesDroppedDiv")
+                            .innerHTML,
+                        "<strong>13 / 13 samples (100.00%)" + htmlSuffix
+                    );
+                });
+
+                it("Throws an error if totalSampleCount is 0", function() {
+                    chai.assert.throws(function() {
+                        dom_utils.updateMainSampleShownDiv({ a: [1, 2, 3] }, 0);
+                    });
+                });
+
+                it("Throws an error if droppedSampleCount > totalSampleCount", function() {
+                    chai.assert.throws(function() {
+                        dom_utils.updateMainSampleShownDiv({ a: [1, 2, 3] }, 2);
+                    });
+                });
+
+                describe("Computing the size of a union of arrays", function() {
+                    it("Works properly with normal inputs", function() {
+                        chai.assert.equal(
+                            dom_utils.unionSize({
+                                a: [1, 2, 3],
+                                b: [2, 3, 4, 5]
+                            }),
+                            5
+                        );
+                        chai.assert.equal(
+                            dom_utils.unionSize({ a: [1, 2, 3], b: [4, 5] }),
+                            5
+                        );
+                        chai.assert.equal(
+                            dom_utils.unionSize({
+                                a: [1, 2],
+                                b: [2, 3, 4, 5],
+                                c: [6]
+                            }),
+                            6
+                        );
+                        chai.assert.equal(
+                            dom_utils.unionSize({
+                                a: ["Sample 1", "Sample 2"],
+                                b: ["Sample 2", "Sample 3"],
+                                c: ["Sample 1"]
+                            }),
+                            3
+                        );
+                    });
+                    it("Works properly with empty list(s)", function() {
+                        chai.assert.equal(
+                            dom_utils.unionSize({ a: [], b: [], c: [6] }),
+                            1
+                        );
+                        chai.assert.equal(
+                            dom_utils.unionSize({
+                                a: ["Sample 1"],
+                                b: [],
+                                c: ["Sample 2"]
+                            }),
+                            2
+                        );
+                        chai.assert.equal(
+                            dom_utils.unionSize({ a: [], b: [], c: [] }),
+                            0
+                        );
+                    });
+                    it("Works properly with an empty input mapping", function() {
+                        chai.assert.equal(dom_utils.unionSize({}), 0);
+                    });
+                });
             });
         });
     });
