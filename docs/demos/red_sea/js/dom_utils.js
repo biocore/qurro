@@ -78,15 +78,17 @@ define(["vega"], function(vega) {
     /* Updates a <div> regarding how many samples have been dropped for a given
      * reason.
      *
-     * numDroppedSamples: an integer indicating how many samples have been
-     * dropped for some reason
-     *  If this is 0, then the <div> will be hidden.
-     *  If this is > 0, then the <div> will be un-hidden if it's currently
-     *  hidden. (We define a "hidden" element as one that has the "invisible"
-     *  CSS class.)
+     * numDroppedSamples: a list of sample IDs that have been dropped for
+     * some reason.
+     *  If the length of this is 0, then the <div> will be hidden.
+     *  If the length of this is > 0, then the <div> will be un-hidden if
+     *  it's currently hidden. (We define a "hidden" element as one that has
+     *  the "invisible" CSS class.)
      *
      * totalSampleCount: an integer corresponding to the total number of
-     * samples in this Qurro visualization
+     * samples in this Qurro visualization.
+     *  This will throw an error if totalSampleCount is 0, or if the number
+     *  of dropped samples is greater than totalSampleCount.
      *
      * divID: the ID of the <div> we're updating
      *
@@ -106,6 +108,8 @@ define(["vega"], function(vega) {
         field
     ) {
         var numDroppedSamples = droppedSampleIDList.length;
+        validateSampleCounts(numDroppedSamples, totalSampleCount);
+
         // Only bother updating the <div>'s text if we're actually going to be
         // dropping samples for this "reason" -- i.e. numDroppedSamples > 0.
         if (numDroppedSamples > 0) {
@@ -134,9 +138,9 @@ define(["vega"], function(vega) {
                 String(numDroppedSamples) +
                 " / " +
                 String(totalSampleCount) +
-                " samples  (" +
+                " samples (" +
                 String(percentage.toFixed(2)) +
-                "%) " +
+                "%)" +
                 " can't be shown due to having " +
                 reason;
             document.getElementById(divID).classList.remove("invisible");
@@ -145,26 +149,57 @@ define(["vega"], function(vega) {
         }
     }
 
+    /* Given an object where each of the values is an array, computes the
+     * union of all of these arrays and returns the length of the
+     * union.
+     *
+     * Example usages:
+     * unionSize({"a": [1,2,3], "b": [2,3,4,5]}) === 5
+     * unionSize({"a": [1,2,3], "b": [4,5]}) === 5
+     * unionSize({"a": [1,2], "b": [2,3,4,5], "c": [6]}) === 6
+     * unionSize({"a": [], "b": [], "c": [6]}) === 1
+     */
+    function unionSize(mappingToArrays) {
+        var keys = Object.keys(mappingToArrays);
+        // Construct totalArray, which is just every array in mappingToArrays
+        // concatenated. For the first example usage above, this would just be
+        // something like [1,2,3,2,3,4,5].
+        var totalArray = [];
+        for (var k = 0; k < keys.length; k++) {
+            totalArray = totalArray.concat(mappingToArrays[keys[k]]);
+        }
+        // Now that we have totalArray, we use vega.toSet() to convert it to a
+        // mapping where each unique value in totalArray is a key. (See
+        // https://vega.github.io/vega/docs/api/util/#toSet.) Taking the length
+        // of the keys of this mapping gives us the "union size" we need.
+        return Object.keys(vega.toSet(totalArray)).length;
+    }
+
+    function validateSampleCounts(droppedSampleCount, totalSampleCount) {
+        if (totalSampleCount === 0) {
+            throw new Error("# total samples cannot be 0");
+        } else if (droppedSampleCount > totalSampleCount) {
+            throw new Error("# dropped samples must be <= # total samples");
+        }
+    }
+
     /* Updates a given <div> re: total # of samples shown.
      *
      * Sort of like the opposite of updateSampleDroppedDiv().
+     *
+     * Note that this will throw an error if totalSampleCount is 0 and/or if
+     * the total number of dropped samples is greater than totalSampleCount.
      *
      * divID is an optional argument -- if not provided, it'll default to
      * "mainSamplesDroppedDiv".
      */
     function updateMainSampleShownDiv(droppedSamples, totalSampleCount, divID) {
-        // compute intersection of all lists in droppedSamples. the length of
+        // compute union of all lists in droppedSamples. the length of
         // that is numSamplesShown.
-        var reasons = Object.keys(droppedSamples);
-        var totalDroppedSampleArray = [];
-        for (var r = 0; r < reasons.length; r++) {
-            totalDroppedSampleArray = totalDroppedSampleArray.concat(
-                droppedSamples[reasons[r]]
-            );
-        }
-        var numSamplesShown =
-            totalSampleCount -
-            Object.keys(vega.toSet(totalDroppedSampleArray)).length;
+        var droppedSampleCount = unionSize(droppedSamples);
+        validateSampleCounts(droppedSampleCount, totalSampleCount);
+
+        var numSamplesShown = totalSampleCount - unionSize(droppedSamples);
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
         var percentage = 100 * (numSamplesShown / totalSampleCount);
@@ -173,7 +208,7 @@ define(["vega"], function(vega) {
             String(numSamplesShown) +
             " / " +
             String(totalSampleCount) +
-            " samples  (" +
+            " samples (" +
             String(percentage.toFixed(2)) +
             "%)</strong> currently shown.";
         // Just in case this div was set to invisible (i.e. this is the first
@@ -208,6 +243,7 @@ define(["vega"], function(vega) {
         changeElementsEnabled: changeElementsEnabled,
         clearDiv: clearDiv,
         updateSampleDroppedDiv: updateSampleDroppedDiv,
+        unionSize: unionSize,
         updateMainSampleShownDiv: updateMainSampleShownDiv,
         downloadDataURI: downloadDataURI
     };

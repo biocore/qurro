@@ -254,31 +254,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 );
             }
             this.updateSamplePlotTooltips();
-            // TODO: abstract to another function
-            var invalidXSampleIDs = this.getInvalidSampleIDs(
-                this.samplePlotJSON.encoding.x.field,
-                "x"
-            );
-            dom_utils.updateSampleDroppedDiv(
-                invalidXSampleIDs,
-                this.sampleCount,
-                "xAxisSamplesDroppedDiv",
-                "xAxis",
-                this.samplePlotJSON.encoding.x.field
-            );
-            var invalidColorSampleIDs = this.getInvalidSampleIDs(
-                this.samplePlotJSON.encoding.color.field,
-                "color"
-            );
-            dom_utils.updateSampleDroppedDiv(
-                invalidColorSampleIDs,
-                this.sampleCount,
-                "colorSamplesDroppedDiv",
-                "color",
-                this.samplePlotJSON.encoding.color.field
-            );
-            this.droppedSamples.xAxis = invalidXSampleIDs;
-            this.droppedSamples.color = invalidColorSampleIDs;
+
+            this.updateFieldDroppedSampleStats("x");
+            this.updateFieldDroppedSampleStats("color");
             dom_utils.updateMainSampleShownDiv(
                 this.droppedSamples,
                 this.sampleCount
@@ -292,6 +270,29 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }).then(function(result) {
                 parentDisplay.samplePlotView = result.view;
             });
+        }
+
+        updateFieldDroppedSampleStats(encoding) {
+            var divID, reason;
+            if (encoding === "x") {
+                divID = "xAxisSamplesDroppedDiv";
+                reason = "xAxis";
+            } else if (encoding === "color") {
+                divID = "colorSamplesDroppedDiv";
+                reason = "color";
+            }
+            var invalidSampleIDs = this.getInvalidSampleIDs(
+                this.samplePlotJSON.encoding[encoding].field,
+                encoding
+            );
+            dom_utils.updateSampleDroppedDiv(
+                invalidSampleIDs,
+                this.sampleCount,
+                divID,
+                reason,
+                this.samplePlotJSON.encoding[encoding].field
+            );
+            this.droppedSamples[reason] = invalidSampleIDs;
         }
 
         // Given a "row" of data about a rank, return its new classification depending
