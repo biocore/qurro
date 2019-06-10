@@ -49,6 +49,19 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                 );
                 assertSelected(selectID, "lonely string");
             });
+            it("Works properly even with HTML characters in values", function() {
+                var vals = [
+                    "value<strong>1</strong>",
+                    "value &2;",
+                    "value<3.>{!$@"
+                ];
+                dom_utils.populateSelect(selectID, vals, "value &2;");
+                chai.assert.sameMembers(
+                    getChildValuesFromSelect(selectID),
+                    vals
+                );
+                assertSelected(selectID, "value &2;");
+            });
             it("Throws an error when passed an empty list", function() {
                 chai.assert.throws(function() {
                     dom_utils.populateSelect(selectID, [], "I'm irrelevant!");
