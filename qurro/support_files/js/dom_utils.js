@@ -145,6 +145,32 @@ define(["vega"], function(vega) {
         }
     }
 
+    /* Given an object where each of the values is an array, computes the
+     * union of all of these arrays and returns the length of the
+     * union.
+     *
+     * Example usages:
+     * unionSize({"a": [1,2,3], "b": [2,3,4,5]}) === 5
+     * unionSize({"a": [1,2,3], "b": [4,5]}) === 5
+     * unionSize({"a": [1,2], "b": [2,3,4,5], "c": [6]}) === 6
+     * unionSize({"a": [], "b": [], "c": [6]}) === 1
+     */
+    function unionSize(mappingToArrays) {
+        var keys = Object.keys(mappingToArrays);
+        // Construct totalArray, which is just every array in mappingToArrays
+        // concatenated. For the first example usage above, this would just be
+        // something like [1,2,3,2,3,4,5].
+        var totalArray = [];
+        for (var k = 0; k < keys.length; k++) {
+            totalArray = totalArray.concat(mappingToArrays[keys[k]]);
+        }
+        // Now that we have totalArray, we use vega.toSet() to convert it to a
+        // mapping where each unique value in totalArray is a key. (See
+        // https://vega.github.io/vega/docs/api/util/#toSet.) Taking the length
+        // of the keys of this mapping gives us the "union size" we need.
+        return Object.keys(vega.toSet(totalArray)).length;
+    }
+
     /* Updates a given <div> re: total # of samples shown.
      *
      * Sort of like the opposite of updateSampleDroppedDiv().
@@ -153,18 +179,9 @@ define(["vega"], function(vega) {
      * "mainSamplesDroppedDiv".
      */
     function updateMainSampleShownDiv(droppedSamples, totalSampleCount, divID) {
-        // compute intersection of all lists in droppedSamples. the length of
+        // compute union of all lists in droppedSamples. the length of
         // that is numSamplesShown.
-        var reasons = Object.keys(droppedSamples);
-        var totalDroppedSampleArray = [];
-        for (var r = 0; r < reasons.length; r++) {
-            totalDroppedSampleArray = totalDroppedSampleArray.concat(
-                droppedSamples[reasons[r]]
-            );
-        }
-        var numSamplesShown =
-            totalSampleCount -
-            Object.keys(vega.toSet(totalDroppedSampleArray)).length;
+        var numSamplesShown = totalSampleCount - unionSize(droppedSamples);
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
         var percentage = 100 * (numSamplesShown / totalSampleCount);
@@ -208,6 +225,7 @@ define(["vega"], function(vega) {
         changeElementsEnabled: changeElementsEnabled,
         clearDiv: clearDiv,
         updateSampleDroppedDiv: updateSampleDroppedDiv,
+        unionSize: unionSize,
         updateMainSampleShownDiv: updateMainSampleShownDiv,
         downloadDataURI: downloadDataURI
     };

@@ -165,5 +165,50 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                 }
             });
         });
+        describe("Computing the size of a union of arrays", function() {
+            it("Works properly with normal inputs", function() {
+                chai.assert.equal(
+                    dom_utils.unionSize({ a: [1, 2, 3], b: [2, 3, 4, 5] }),
+                    5
+                );
+                chai.assert.equal(
+                    dom_utils.unionSize({ a: [1, 2, 3], b: [4, 5] }),
+                    5
+                );
+                chai.assert.equal(
+                    dom_utils.unionSize({ a: [1, 2], b: [2, 3, 4, 5], c: [6] }),
+                    6
+                );
+                chai.assert.equal(
+                    dom_utils.unionSize({
+                        a: ["Sample 1", "Sample 2"],
+                        b: ["Sample 2", "Sample 3"],
+                        c: ["Sample 1"]
+                    }),
+                    3
+                );
+            });
+            it("Works properly with empty list(s)", function() {
+                chai.assert.equal(
+                    dom_utils.unionSize({ a: [], b: [], c: [6] }),
+                    1
+                );
+                chai.assert.equal(
+                    dom_utils.unionSize({
+                        a: ["Sample 1"],
+                        b: [],
+                        c: ["Sample 2"]
+                    }),
+                    2
+                );
+                chai.assert.equal(
+                    dom_utils.unionSize({ a: [], b: [], c: [] }),
+                    0
+                );
+            });
+            it("Works properly with an empty input mapping", function() {
+                chai.assert.equal(dom_utils.unionSize({}), 0);
+            });
+        });
     });
 });
