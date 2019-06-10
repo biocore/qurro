@@ -49,9 +49,10 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
                 );
                 assertSelected(selectID, "lonely string");
             });
-            it("Works properly even with HTML characters in values", function() {
+            it("Works properly even with weird HTML characters in values", function() {
                 var vals = [
                     "value<strong>1</strong>",
+                    "value</option></select>",
                     "value &2;",
                     "value<3.>{!$@"
                 ];
