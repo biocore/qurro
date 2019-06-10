@@ -272,6 +272,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             });
         }
 
+        /* Finds the invalid sample IDs for a given encoding, updates the
+         * corresponding <div>, and then updates this.droppedSamples.
+         *
+         * The input "encoding" should be either "x" or "color". In the future,
+         * if other encodings in the sample plot are variable (e.g. size?), it
+         * shouldn't be too difficult to update this function to support these.
+         */
         updateFieldDroppedSampleStats(encoding) {
             var divID, reason;
             if (encoding === "x") {
