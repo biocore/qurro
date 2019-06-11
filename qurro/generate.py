@@ -374,7 +374,11 @@ def gen_sample_plot(table, metadata):
         )
         .mark_circle()
         .encode(
-            alt.X(default_metadata_col, type="nominal"),
+            alt.X(
+                default_metadata_col,
+                type="nominal",
+                axis=alt.Axis(labelAngle=-45),
+            ),
             alt.Y(
                 "qurro_balance",
                 title="log(Numerator / Denominator)",
