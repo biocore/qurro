@@ -2,7 +2,7 @@ from io import StringIO
 import pytest
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
-from qurro.generate import ensure_df_headers_unique, validate_df
+from qurro._metadata_utils import ensure_df_headers_unique, validate_df
 from qurro._rank_utils import differentials_to_df
 
 
@@ -138,3 +138,21 @@ def test_differentials_to_df():
     )
     with pytest.raises(ValueError):
         differentials_to_df(non_numeric_val_diff)
+
+    nan_val_diff = StringIO(
+        "\tIntercept\tRank 1\nTaxon1\tNaN\t2.0\nTaxon2\t3.0\t4.0"
+    )
+    with pytest.raises(ValueError):
+        print(differentials_to_df(nan_val_diff))
+
+    inf_val_diff = StringIO(
+        "\tIntercept\tRank 1\nTaxon1\tInfinity\t2.0\nTaxon2\t3.0\t4.0"
+    )
+    with pytest.raises(ValueError):
+        differentials_to_df(inf_val_diff)
+
+    ninf_val_diff = StringIO(
+        "\tIntercept\tRank 1\nTaxon1\t-Infinity\t2.0\nTaxon2\t3.0\t4.0"
+    )
+    with pytest.raises(ValueError):
+        differentials_to_df(ninf_val_diff)

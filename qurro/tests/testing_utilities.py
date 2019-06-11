@@ -6,6 +6,7 @@ from qiime2 import Artifact, Metadata
 from qiime2.plugins import qurro as q2qurro
 import qurro.scripts._plot as rrvp
 from qurro._rank_utils import read_rank_file
+from qurro._metadata_utils import replace_nan, read_metadata_file
 from qurro._plot_utils import get_jsons
 
 
@@ -277,7 +278,7 @@ def validate_sample_plot_json(
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
-    sample_metadata = Metadata.load(metadata_loc).to_dataframe()
+    sample_metadata = replace_nan(read_metadata_file(metadata_loc))
     for sample in sample_json["datasets"][dn]:
 
         sample_id = sample["Sample ID"]
@@ -285,8 +286,19 @@ def validate_sample_plot_json(
         for metadata_col in sample_metadata.columns:
             expected_md = sample_metadata.at[sample_id, metadata_col]
             actual_md = sample[metadata_col]
+
             try:
-                assert expected_md == actual_md
+                # Either these values are equal, *or* this was a QIIME 2
+                # integration test (in which case the metadata files were
+                # loaded as qiime2.Metadata objects) and certain columns'
+                # values have been treated as numeric (which is fine, but this
+                # might result in some things like a value of 53 being
+                # interpreted as a value of 53.0 to qiime2.Metadata -- this
+                # isn't a problem, so if the first check of equality fails we
+                # try a looser check using approx() and float().
+                assert expected_md == actual_md or float(
+                    expected_md
+                ) == approx(float(actual_md))
             except AssertionError:
                 # quick and dirty hack to actually give useful information when
                 # something goes wrong

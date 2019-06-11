@@ -23,46 +23,7 @@ import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
 from qurro._plot_utils import replace_js_plot_json_definitions
-
-
-def fix_id(fid):
-    """Like escape_id() but a lot lazier."""
-
-    new_id = ""
-    for c in fid:
-        if c == ".":
-            new_id += ":"
-        elif c == "]":
-            new_id += ")"
-        elif c == "[":
-            new_id += "("
-        elif c == "'" or c == '"' or c == "\\":
-            continue
-        else:
-            new_id += c
-    return new_id
-
-
-# def escape_id(fid):
-#     """Escapes certain characters in an ID for a Vega/Vega-Lite spec.
-#
-#        This is in order to prevent Vega-Lite from interpreting stuff from
-#        these IDs, which results in problems.
-#
-#        See https://vega.github.io/vega-lite/docs/field.html for context.
-#     """
-#
-#     # Characters that need to be escaped: ."'\[]
-#     # (JSON doesn't assign special significance to the single-quote (') but
-#     # Vega-Lite does, which is why we escape it anyway.)
-#     spec_char_regex = re.compile("[\.\"\'\\\[\]]")
-#     new_id = ""
-#     for c in fid:
-#         if spec_char_regex.match(c):
-#             new_id += "\\{}".format(c)
-#         else:
-#             new_id += c
-#     return new_id
+from qurro._metadata_utils import replace_nan, validate_df, fix_id
 
 
 def matchdf(df1, df2):
@@ -73,34 +34,6 @@ def matchdf(df1, df2):
 
     idx = set(df1.index) & set(df2.index)
     return df1.loc[idx], df2.loc[idx]
-
-
-def ensure_df_headers_unique(df, df_name):
-    """Raises an error if the index or columns of the DataFrame aren't unique.
-
-       (If both index and columns are non-unique, the index error will take
-       precedence.)
-
-       If these fields are unique, no errors are raised and nothing (None) is
-       implicitly returned.
-
-       Parameters
-       ----------
-
-       df: pandas.DataFrame
-       df_name: str
-           The "name" of the DataFrame -- this is displayed to the user in the
-           error message thrown if the DataFrame has any non-unique IDs.
-    """
-    if len(df.index.unique()) != df.shape[0]:
-        raise ValueError(
-            "Indices of the {} DataFrame are not" " unique.".format(df_name)
-        )
-
-    if len(df.columns.unique()) != df.shape[1]:
-        raise ValueError(
-            "Columns of the {} DataFrame are not" " unique.".format(df_name)
-        )
 
 
 def process_and_generate(
@@ -122,26 +55,6 @@ def process_and_generate(
     return gen_visualization(
         V, ranking_ids, feature_metadata_cols, processed_table, U, output_dir
     )
-
-
-def validate_df(df, name, min_row_ct, min_col_ct):
-    """Does some basic validation on the DataFrame.
-
-       1. Calls ensure_df_headers_unique() to ensure that index and column
-          names are unique.
-       2. Checks that the DataFrame has at least min_row_ct rows.
-       3. Checks that the DataFrame has at least min_col_ct columns.
-    """
-    ensure_df_headers_unique(df, name)
-    logging.debug("Ensured uniqueness of {}.".format(name))
-    if df.shape[0] < min_row_ct:
-        raise ValueError(
-            "Less than {} rows found in the {}.".format(min_row_ct, name)
-        )
-    if df.shape[1] < min_col_ct:
-        raise ValueError(
-            "Less than {} columns found in the {}.".format(min_col_ct, name)
-        )
 
 
 def process_input(
@@ -166,6 +79,14 @@ def process_input(
         #      otherwise the feature metadata is useless)
         #   2) column names are unique
         validate_df(feature_metadata, "feature metadata", 0, 1)
+
+    # Replace NaN values (which both _metadata_utils.read_metadata_file() and
+    # qiime2.Metadata use to represent missing values, i.e. ""s) with None --
+    # this is generally easier for us to handle in the JS side of things (since
+    # it'll just be consistently converted to null by json.dumps()).
+    sample_metadata = replace_nan(sample_metadata)
+    if feature_metadata is not None:
+        feature_metadata = replace_nan(feature_metadata)
 
     # NOTE although we always call filter_unextreme_features(), no filtering is
     # necessarily done (depending on the value of extreme_feature_count and the

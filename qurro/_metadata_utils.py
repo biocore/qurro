@@ -9,7 +9,79 @@
 
 import logging
 import pandas as pd
-from qurro.generate import fix_id, ensure_df_headers_unique
+from io import StringIO
+
+
+def ensure_df_headers_unique(df, df_name):
+    """Raises an error if the index or columns of the DataFrame aren't unique.
+
+       (If both index and columns are non-unique, the index error will take
+       precedence.)
+
+       If these fields are unique, no errors are raised and nothing (None) is
+       implicitly returned.
+
+       Parameters
+       ----------
+
+       df: pandas.DataFrame
+       df_name: str
+           The "name" of the DataFrame -- this is displayed to the user in the
+           error message thrown if the DataFrame has any non-unique IDs.
+    """
+    if len(df.index.unique()) != df.shape[0]:
+        raise ValueError(
+            "Indices of the {} DataFrame are not" " unique.".format(df_name)
+        )
+
+    if len(df.columns.unique()) != df.shape[1]:
+        raise ValueError(
+            "Columns of the {} DataFrame are not" " unique.".format(df_name)
+        )
+
+
+def validate_df(df, name, min_row_ct, min_col_ct):
+    """Does some basic validation on the DataFrame.
+
+       1. Calls ensure_df_headers_unique() to ensure that index and column
+          names are unique.
+       2. Checks that the DataFrame has at least min_row_ct rows.
+       3. Checks that the DataFrame has at least min_col_ct columns.
+    """
+    ensure_df_headers_unique(df, name)
+    logging.debug("Ensured uniqueness of {}.".format(name))
+    if df.shape[0] < min_row_ct:
+        raise ValueError(
+            "Less than {} rows found in the {}.".format(min_row_ct, name)
+        )
+    if df.shape[1] < min_col_ct:
+        raise ValueError(
+            "Less than {} columns found in the {}.".format(min_col_ct, name)
+        )
+
+
+def fix_id(fid):
+    """As a temporary measure, escapes certain special characters in a name.
+
+       Right now, a measure like this is required to make Vega* work properly
+       with various field names.
+
+       See https://github.com/vega/vega-lite/issues/4965.
+    """
+
+    new_id = ""
+    for c in fid:
+        if c == ".":
+            new_id += ":"
+        elif c == "]":
+            new_id += ")"
+        elif c == "[":
+            new_id += "("
+        elif c == "'" or c == '"' or c == "\\":
+            continue
+        else:
+            new_id += c
+    return new_id
 
 
 def get_q2_comment_lines(md_file_loc):
@@ -28,11 +100,19 @@ def get_q2_comment_lines(md_file_loc):
          that doesn't start with "#q2:". Currently, "#q2:types" is the only Q2
          "comment directive" available, but ostensibly this could detect future
          Q2 comment directives.
+        -This checks if md_file_loc is of type StringIO. If so, this will
+         handle it properly (iterating over it directly); otherwise, this
+         assumes that md_file_loc is an actual filename, and this will open
+         it using open().
+         (I realize that ideally this wouldn't have to do any type checking,
+         but it's either this or do a bunch of weird refactoring to get my test
+         code working.)
     """
-    q2_lines = []
-    with open(md_file_loc, "r") as md_file_obj:
+
+    def iterate_over_file_obj_lines(file_obj):
+        q2_lines = []
         line_num = 0
-        for line in md_file_obj:
+        for line in file_obj:
             # Don't check for a #q2: comment on the first line of the file,
             # since the first line (should) define the file header.
             if line_num > 0:
@@ -44,37 +124,64 @@ def get_q2_comment_lines(md_file_loc):
                     # with "#q2:", we stop checking.
                     break
             line_num += 1
-    return q2_lines
+        return q2_lines
+
+    if type(md_file_loc) == StringIO:
+        q2_lines = iterate_over_file_obj_lines(md_file_loc)
+        # HACK: Allow us to read through this StringIO again --
+        # https://stackoverflow.com/a/27261215/10730311
+        # Note that we're only ever bothering with StringIOs here during test
+        # code, so this weirdness should be ignored during normal operation of
+        # Qurro.
+        md_file_loc.seek(0)
+        return q2_lines
+    else:
+        with open(md_file_loc, "r") as md_file_obj:
+            return iterate_over_file_obj_lines(md_file_obj)
 
 
 def read_metadata_file(md_file_loc):
     """Reads in a metadata file using pandas.read_csv().
 
-       One slightly strange thing is that pandas.read_csv() interprets
-       columns containing all values of True / False as booleans. This
-       causes problems down the line, since these values are converted to
-       true / false (note the lowercase) when using them in JavaScript.
-
-       To ensure consistency with QIIME 2's metadata guidelines (which only
-       consider numeric and categorical types), we convert all values in
-       columns labelled with the bool type to strings. This preserves the
-       "case" of True / False, and should result in predictable outcomes.
+       This treats all metadata values (including the index column) as
+       strings, due to the use of dtype=object.
     """
     q2_lines = get_q2_comment_lines(md_file_loc)
     metadata_df = pd.read_csv(
-        md_file_loc, index_col=0, sep="\t", na_filter=False, skiprows=q2_lines
+        md_file_loc,
+        sep="\t",
+        na_values=[""],
+        keep_default_na=False,
+        dtype=object,
+        skiprows=q2_lines,
     )
-
-    bool_cols = metadata_df.select_dtypes(include=[bool]).columns
-    if len(bool_cols) > 0:
-        type_conv_dict = {col: str for col in bool_cols}
-        metadata_df = metadata_df.astype(type_conv_dict)
-
-    # Ensure that the first column in the metadata file is treated as a string.
-    # This is needed to ensure that matching sample/feature IDs works.
-    metadata_df.index = metadata_df.index.astype(str)
-
+    # Instead of passing index_col=0 to pd.read_csv(), we delay setting the
+    # first column as the index until after we've read in the metadata file.
+    #
+    # This is because, as of writing, pandas doesn't set the dtype of the
+    # index_col (see https://stackoverflow.com/a/35058538/10730311 for a good
+    # explanation) -- so if we don't delay setting the index column, then it
+    # won't necessarily be read as an object dtype. This can have bad results
+    # (e.g. the sample IDs start with 0s, and those 0s will be removed by
+    # pandas).
+    #
+    # This workaround should address this.
+    metadata_df.set_index(metadata_df.columns[0], inplace=True)
     return metadata_df
+
+
+def replace_nan(df, new_nan_val=None):
+    """Replaces all occurrences of NaN values in the DataFrame with a specified
+       value.
+
+       Note that this solution seems to result in the DataFrame's columns'
+       dtypes being changed to object. (This shouldn't change much due to how
+       we handle metadata files, though.)
+
+       Based on the solution described here:
+       https://stackoverflow.com/a/14163209/10730311
+    """
+    return df.where(df.notna(), new_nan_val)
 
 
 def escape_columns(df):

@@ -36,20 +36,38 @@ def differentials_to_df(differentials_loc):
     """Converts a differential rank TSV file to a DataFrame."""
 
     differentials = pd.read_csv(
-        differentials_loc, sep="\t", index_col=0, na_filter=False
+        differentials_loc, sep="\t", na_filter=False, dtype=object
     )
-    # If we can find any missing values in the differentials columns
-    # (autodetected by pandas since we didn't set na_filter=False when calling
-    # pd.read_csv()), raise an error.
-    for column in differentials.columns:
-        try:
-            differentials[column].astype(float)
-        except ValueError:
-            raise ValueError(
-                "Missing / nonnumeric differentials found in "
-                "column {} of {}".format(column, differentials_loc)
-            )
+    # Delay setting index column so we can first load it as an object (this
+    # saves us from situations where the index col would otherwise be read as a
+    # number or something that would mess things up -- read_metadata_file()
+    # does the same sorta thing)
+    differentials.set_index(differentials.columns[0], inplace=True)
+    # Also, we don't bother naming the differentials index (yet). This is
+    # actually needed to make some of the tests pass (which is dumb, I know,
+    # but if I pass check_names=False to assert_frame_equal then the test
+    # doesn't check column names, and I want it to do that...)
+    differentials.index.rename(None, inplace=True)
 
+    # This is slow but it should at least *work as intended.*
+    # If there are any non-numeric differentials, or any NaN differentials, or
+    # any infinity/-infinity differentials (???), then we should raise an
+    # error. This code should do that.
+    for feature_row in differentials.itertuples():
+        for differential in feature_row[1:]:
+            try:
+                fd = float(differential)
+                if pd.isna(fd) or fd == float("inf") or fd == float("-inf"):
+                    raise ValueError
+            except ValueError:
+                raise ValueError(
+                    "Missing / nonnumeric differential(s) found for feature "
+                    "{}".format(feature_row[0])
+                )
+
+    # Now, we should be able to do this freely.
+    for column in differentials.columns:
+        differentials[column] = differentials[column].astype(float)
     return differentials
 
 
