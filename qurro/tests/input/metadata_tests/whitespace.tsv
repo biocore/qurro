@@ -1,0 +1,10 @@
+Sample-ID	Metadata1	Metadata2	Metadata3
+#q2:types	categorical	categorical	categorical
+01
+02	4	'5'	   MISSING LOL
+03		8	9
+04	10	null	12
+05	13
+06	16	17  	"  	   "
+07	NaN	   	21
+08	22		Infinity

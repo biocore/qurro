@@ -169,3 +169,74 @@ def test_read_metadata_file_extra_col():
     # this will cause pd.read_csv() to throw a ParserError
     with pytest.raises(ParserError):
         read_metadata_file(ec)
+
+
+def test_read_metadata_file_whitespace_stripping():
+    """Tests that whitespace is properly stripped when reading a metadata
+       file.
+    """
+
+    ws = os.path.join(
+        "qurro", "tests", "input", "metadata_tests", "whitespace.tsv"
+    )
+    ws_df = replace_nan(read_metadata_file(ws))
+
+    # Following stuff is *mostly* copied from
+    # test_read_metadata_file_complex(), with some added tweaks
+
+    # Check that dtypes match up (should all be object)
+    assert ws_df.index.dtype == "object"
+    for col in ws_df.columns:
+        assert ws_df[col].dtype == "object"
+
+    # Check that index IDs were treated as strings (issue #116 on the Qurro
+    # GitHub page)
+    assert ws_df.index.equals(
+        Index(["01", "02", "03", "04", "05", "06", "07", "08"])
+    )
+
+    assert ws_df.at["01", "Metadata1"] is None
+    assert ws_df.at["01", "Metadata2"] is None
+    assert ws_df.at["01", "Metadata3"] is None
+
+    assert ws_df.at["02", "Metadata1"] == "4"
+    assert ws_df.at["02", "Metadata2"] == "'5'"
+    # The leading spaces in this value should be ignored
+    assert ws_df.at["02", "Metadata3"] == "MISSING LOL"
+
+    assert ws_df.at["03", "Metadata1"] is None
+    assert ws_df.at["03", "Metadata2"] == "8"
+    assert ws_df.at["03", "Metadata3"] == "9"
+
+    assert ws_df.at["04", "Metadata1"] == "10"
+    assert ws_df.at["04", "Metadata2"] == "null"
+    assert ws_df.at["04", "Metadata3"] == "12"
+
+    assert ws_df.at["05", "Metadata1"] == "13"
+    assert ws_df.at["05", "Metadata2"] is None
+    assert ws_df.at["05", "Metadata3"] is None
+
+    assert ws_df.at["06", "Metadata1"] == "16"
+    # The trailing spaces in this value should be ignored
+    assert ws_df.at["06", "Metadata2"] == "17"
+    # This entire value should be treated as equivalent to a ""
+    assert ws_df.at["06", "Metadata3"] is None
+
+    assert ws_df.at["07", "Metadata1"] == "NaN"
+    # This entire value should be treated as equivalent to a ""
+    assert ws_df.at["07", "Metadata2"] is None
+    assert ws_df.at["07", "Metadata3"] == "21"
+
+    assert ws_df.at["08", "Metadata1"] == "22"
+    assert ws_df.at["08", "Metadata2"] is None
+    assert ws_df.at["08", "Metadata3"] == "Infinity"
+
+
+def test_read_metadata_file_nan_id():
+    """Tests the case when there's an empty ID in the metadata file."""
+
+    ni = os.path.join(
+        "qurro", "tests", "input", "metadata_tests", "nan_id.tsv"
+    )
+    with pytest.raises(ValueError):
+        read_metadata_file(ni)

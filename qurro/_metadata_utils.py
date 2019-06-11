@@ -9,6 +9,7 @@
 
 import logging
 import pandas as pd
+import numpy as np
 from io import StringIO
 
 
@@ -155,6 +156,25 @@ def read_metadata_file(md_file_loc):
         dtype=object,
         skiprows=q2_lines,
     )
+
+    # Take care of leading/trailing whitespace
+    for column in metadata_df.columns:
+        # Strip surrounding whitespace from each value
+        # This mimics how QIIME 2 ignores this whitespace
+        metadata_df[column] = metadata_df[column].str.strip()
+    # Sorta the opposite of replace_nan(). Find all of the ""s resulting from
+    # removing values with just-whitespace, and convert them to NaNs.
+    metadata_df.where(metadata_df != "", np.NaN, inplace=True)
+
+    # If there are any NaNs in the first column (that will end up being the
+    # index column), then the user supplied at least one empty ID
+    # (remember that we just converted all ""s to NaNs).
+    #
+    # This is obviously terrible, so just raise an error (this sort of
+    # situation also results in an error from qiime2.Metadata).
+    if metadata_df[metadata_df.columns[0]].isna().any():
+        raise ValueError("Empty ID found in metadata file.")
+
     # Instead of passing index_col=0 to pd.read_csv(), we delay setting the
     # first column as the index until after we've read in the metadata file.
     #
