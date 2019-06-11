@@ -4,6 +4,7 @@ import pytest
 from pandas import DataFrame, Index
 from pandas.testing import assert_frame_equal
 from pandas.errors import ParserError
+import qiime2
 from qurro._metadata_utils import read_metadata_file, replace_nan
 
 
@@ -158,6 +159,10 @@ def test_read_metadata_file_complex():
     assert weird_df.at["08", "Metadata2"] is None
     assert weird_df.at["08", "Metadata3"] == "Infinity"
 
+    assert_frame_equal(
+        weird_df, replace_nan(qiime2.Metadata.load(weird).to_dataframe())
+    )
+
 
 def test_read_metadata_file_extra_col():
     """Tests the case when there's an extra column in the metadata file."""
@@ -169,6 +174,9 @@ def test_read_metadata_file_extra_col():
     # this will cause pd.read_csv() to throw a ParserError
     with pytest.raises(ParserError):
         read_metadata_file(ec)
+
+    with pytest.raises(qiime2.metadata.MetadataFileError):
+        qiime2.Metadata.load(ec)
 
 
 def test_read_metadata_file_whitespace_stripping():
@@ -231,6 +239,10 @@ def test_read_metadata_file_whitespace_stripping():
     assert ws_df.at["08", "Metadata2"] is None
     assert ws_df.at["08", "Metadata3"] == "Infinity"
 
+    assert_frame_equal(
+        ws_df, replace_nan(qiime2.Metadata.load(ws).to_dataframe())
+    )
+
 
 def test_read_metadata_file_nan_id():
     """Tests the case when there's an empty ID in the metadata file."""
@@ -240,3 +252,6 @@ def test_read_metadata_file_nan_id():
     )
     with pytest.raises(ValueError):
         read_metadata_file(ni)
+
+    with pytest.raises(qiime2.metadata.MetadataFileError):
+        qiime2.Metadata.load(ni)
