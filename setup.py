@@ -69,6 +69,7 @@ setup(
         "altair >= 3.0",
         "biom-format[hdf5]",
         "click",
+        "numpy",
         "pandas >= 0.20.0",
         "scikit-bio > 0.5.3",
     ],
