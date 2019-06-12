@@ -23,7 +23,7 @@ import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
 from qurro._plot_utils import replace_js_plot_json_definitions
-from qurro._metadata_utils import replace_nan, validate_df, fix_id
+from qurro._metadata_utils import replace_nan, validate_df, escape_columns
 
 
 def matchdf(df1, df2):
@@ -161,8 +161,12 @@ def process_input(
 
     # Before we go through feature metadata: convert all rank column IDs
     # to strings (since Altair gets angry if you pass in ints as column IDs),
-    # and (as a temporary fix for #66) call fix_id() on these column IDs.
-    filtered_ranks.columns = [fix_id(str(c)) for c in filtered_ranks.columns]
+    # and (as a temporary fix for #66) call fix_id() on these column IDs via
+    # escape_columns(). (escape_columns() will also check to make sure that the
+    # column names stay unique after calling fix_id().)
+    filtered_ranks.columns = [str(c) for c in filtered_ranks.columns]
+    filtered_ranks = escape_columns(filtered_ranks)
+
     ranking_ids = filtered_ranks.columns
 
     feature_metadata_cols = []
