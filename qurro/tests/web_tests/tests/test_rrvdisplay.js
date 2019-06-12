@@ -500,17 +500,16 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     });
                 });
             });
-            describe('Filtering out samples with null/undefined/"" field values', function() {
+            describe("Filtering out samples with null field values", function() {
                 before(function() {
                     resetMetadata1Values();
-                    // Manually set some samples' metadata vals to
-                    // null/undefined/"" for testing purposes
-                    // (Samples 1, 2, and 3, respectively)
+                    // Manually set some samples' (1, 2, and 3) metadata vals
+                    // to null or "null". ("null" should be treated as a normal
+                    // string value, while actual null should be always
+                    // filtered out regardless of encoding)
                     rrv.samplePlotJSON.datasets[dataName][0].Metadata1 = null;
-                    rrv.samplePlotJSON.datasets[
-                        dataName
-                    ][1].Metadata1 = undefined;
-                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
+                    rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = null;
+                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "null";
                 });
 
                 after(resetMetadata1Values);
@@ -522,12 +521,18 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 var expectedSampleIDs = ["Sample1", "Sample2", "Sample3"];
 
                 it("...When there's a quantitative encoding", function() {
+                    // Both the actual null values and normal strings (like the
+                    // "null" value that we set to Sample3) should be filtered
+                    // out for a quantitative encoding.
                     rrv.samplePlotJSON.encoding.x.type = "quantitative";
-                    testOnMetadata1AndX(expectedSampleIDs);
+                    testOnMetadata1AndX(["Sample1", "Sample2", "Sample3"]);
                 });
                 it("...When there's a nominal encoding", function() {
+                    // "null" should be kept since it's just a normal string,
+                    // as tested above. The actual null values should be
+                    // filtered out -- even in a nominal encoding -- though.
                     rrv.samplePlotJSON.encoding.x.type = "nominal";
-                    testOnMetadata1AndX(expectedSampleIDs);
+                    testOnMetadata1AndX(["Sample1", "Sample2"]);
                 });
             });
             describe("Filtering out non-numeric values if encoding is quantitative", function() {
@@ -541,7 +546,8 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.datasets[dataName][0].Metadata1 =
                         "Missing: not provided";
                     rrv.samplePlotJSON.datasets[dataName][1].Metadata1 = "3.2a";
-                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 = "";
+                    rrv.samplePlotJSON.datasets[dataName][2].Metadata1 =
+                        "2019-07-14";
                     testOnMetadata1AndX(["Sample1", "Sample2", "Sample3"]);
                 });
                 it("Works properly when all samples' field values are non-numeric", function() {

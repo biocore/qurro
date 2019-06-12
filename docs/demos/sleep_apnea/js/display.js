@@ -254,6 +254,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 );
             }
             this.updateSamplePlotTooltips();
+            this.updateSamplePlotFilters();
 
             this.updateFieldDroppedSampleStats("x");
             this.updateFieldDroppedSampleStats("color");
@@ -635,6 +636,49 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
+        /* Modifies the transform property of the sample plot JSON to include a
+         * filter based on the currently-used x-axis and color fields.
+         *
+         * This results of this filter should corroborate the result of
+         * getInvalidSampleIDs(). From testing, it looks like the only other
+         * values that would automatically be filtered out would be NaN /
+         * undefined values, and none of those should show up in the sample
+         * metadata values due to how Qurro's python code processes sample
+         * metadata (replacing all NaN values with None, which gets converted
+         * to null by json.dumps() in python).
+         */
+        updateSamplePlotFilters() {
+            // Figure out the current [x-axis/color] [field/encoding type].
+            // Note that we explicitly wrap the fields in double-quotes, so
+            // even field names with weird characters shouldn't be able to mess
+            // this up.
+            var datumXField =
+                "datum[" +
+                vega.stringValue(this.samplePlotJSON.encoding.x.field) +
+                "]";
+            var datumColorField =
+                "datum[" +
+                vega.stringValue(this.samplePlotJSON.encoding.color.field) +
+                "]";
+            var xType = this.samplePlotJSON.encoding.x.type;
+            var colorType = this.samplePlotJSON.encoding.color.type;
+
+            var filterString = "datum.qurro_balance != null";
+            filterString += " && " + datumXField + " != null";
+            filterString += " && " + datumColorField + " != null";
+
+            if (xType === "quantitative") {
+                filterString += " && isFinite(toNumber(" + datumXField + "))";
+            }
+            if (colorType === "quantitative") {
+                filterString +=
+                    " && isFinite(toNumber(" + datumColorField + "))";
+            }
+            console.log(filterString);
+
+            this.samplePlotJSON.transform = [{ filter: filterString }];
+        }
+
         /* Update color so that color encoding matches the x-axis encoding
          * (due to how box plots work in Vega-Lite). To be clear, we also
          * update the color field <select> to show the user what's going on.
@@ -682,14 +726,19 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * encodings) are valid.
          *
          * The "validity" of a sample is computed via the following checks:
-         * 1. The sample's fieldName field must not be null or ""
-         *    (we don't bother checking for NaN and undefined since they're
-         *    not defined in the JSON spec)
+         * 1. The sample's fieldName field must not be null
+         *    (we don't bother explicitly checking for NaN, "", strings
+         *    containing only whitespace, and undefined since they should never
+         *    be included in the sample metadata JSON produced by Qurro's python
+         *    code)
          * 2. If the corresponding encoding type is quantitative, the sample's
-         *    fieldName field must be a number (as determined by
-         *    isFinite(vega.toNumber(f)), where f is the field value). (This
-         *    accounts for Infinities/NaNs in the data, which could have arisen
-         *    due to being encoded as strings (e.g. "Infinity" or "NaN").)
+         *    fieldName field must be a finite number (as determined by
+         *    isFinite(vega.toNumber(f)), where f is the field value). This
+         *    accounts for Infinities/NaNs in the data, which shouldn't appear
+         *    literally in the dataset but could potentially sneak in as
+         *    strings (e.g. "Infinity", "-Infinity", "NaN") -- we'd display
+         *    these strings normally for a nominal encoding, but for a
+         *    quantitative encoding we filter them out.
          */
         getInvalidSampleIDs(fieldName, correspondingEncoding) {
             var dataName = this.samplePlotJSON.data.name;
@@ -707,11 +756,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 currSampleID = this.samplePlotJSON.datasets[dataName][i][
                     "Sample ID"
                 ];
-                if (
-                    currFieldVal !== undefined &&
-                    currFieldVal !== null &&
-                    currFieldVal !== ""
-                ) {
+                if (currFieldVal !== null) {
                     if (
                         this.samplePlotJSON.encoding[correspondingEncoding]
                             .type === "quantitative"
