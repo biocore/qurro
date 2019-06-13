@@ -138,9 +138,21 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
         }
 
-        makePlots() {
-            this.makeRankPlot();
-            this.makeSamplePlot();
+        /* Calls makeRankPlot() and makeSamplePlot(), and waits for them to
+         * finish before hiding the loadingMessage.
+         *
+         * The structure of the async/await usage here is based on the
+         * concurrentStart() example on
+         * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function.
+         */
+        async makePlots() {
+            var rankPlotPromise = this.makeRankPlot();
+            var samplePlotPromise = this.makeSamplePlot();
+            await rankPlotPromise;
+            await samplePlotPromise;
+            document
+                .getElementById("loadingMessage")
+                .classList.add("invisible");
         }
 
         makeRankPlot(notFirstTime) {
@@ -191,7 +203,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var parentDisplay = this;
             // We specify a "custom" theme which matches with the
             // "custom"-theme tooltip CSS.
-            vegaEmbed("#rankPlot", this.rankPlotJSON, {
+            return vegaEmbed("#rankPlot", this.rankPlotJSON, {
                 downloadFileName: "rank_plot",
                 tooltip: { theme: "custom" }
             }).then(function(result) {
@@ -266,7 +278,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
-            vegaEmbed("#samplePlot", this.samplePlotJSON, {
+            return vegaEmbed("#samplePlot", this.samplePlotJSON, {
                 downloadFileName: "sample_plot"
             }).then(function(result) {
                 parentDisplay.samplePlotView = result.view;
@@ -365,9 +377,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.remakeRankPlot();
         }
 
-        remakeRankPlot() {
+        async remakeRankPlot() {
             this.destroy(true, false, false);
-            this.makeRankPlot(true);
+            await this.makeRankPlot(true);
         }
 
         updateRankPlotBarSize(callRemakeRankPlot) {
@@ -710,12 +722,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.remakeSamplePlot();
         }
 
-        remakeSamplePlot() {
+        async remakeSamplePlot() {
             // Clear out the sample plot. NOTE that I'm not sure if this is
             // 100% necessary, but it's probs a good idea to prevent memory
             // waste.
             this.destroy(false, true, false);
-            this.makeSamplePlot(true);
+            await this.makeSamplePlot(true);
         }
 
         /* Iterates through every sample in the sample plot JSON and
