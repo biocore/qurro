@@ -794,10 +794,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     // then this will get messed up, and we'll need to do
                     // something else to address it.
                 } else {
-                    // currFieldVal *is* one of undefined, null, or "". Ignore
-                    // it.
-                    // TODO: remove "" check, since we'll filter those out in
-                    // the python side of things
+                    // currFieldVal *is* null.
                     invalidSampleIDs.push(currSampleID);
                 }
             }
