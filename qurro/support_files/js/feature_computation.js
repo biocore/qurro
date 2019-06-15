@@ -178,15 +178,11 @@ define(function() {
         }
     }
 
-    /* Vega-Lite doesn't filter out infinities (caused by taking log(0)
-     * or of log(0)/log(0), etc.) by default. If left unchecked, this leads to
-     * weird and not-useful charts due to the presence of infinities.
+    /* We set the balance for samples with an abundance of <= 0 in either
+     * the top or bottom of the log ratio as null.
      *
-     * To get around this, we preemptively set the balance for samples with an
-     * abundance of <= 0 in either the top or bottom of the log ratio as null.
-     *
-     * (Vega-Lite filters out nulls if the invalidValues config property is
-     * true, which is the default behavior.)
+     * RRVDisplay.updateSamplePlotFilters() should ensure that samples with
+     * a null log ratio are filtered out of the sample plot.
      */
     function computeBalance(topValue, botValue) {
         if (typeof topValue !== "number" || typeof botValue !== "number") {
@@ -199,6 +195,7 @@ define(function() {
         }
         return Math.log(topValue) - Math.log(botValue);
     }
+
     return {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,
