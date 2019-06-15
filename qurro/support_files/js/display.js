@@ -31,6 +31,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * DOM elements configurable in the class constructor, but I don't
          * think that would be super useful unless you want to embed
          * qurro' web interface in a bunch of other environments.)
+         *
+         * You need to call this.makePlots() to actually make this interactive
+         * / show things.
          */
         constructor(rankPlotJSON, samplePlotJSON, countJSON) {
             // Used for selections of log ratios between single features (via
@@ -88,11 +91,29 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
 
-            // Actually create the visualization
+            // Save the JSONs that will be used to create the visualization.
             this.rankPlotJSON = rankPlotJSON;
             this.samplePlotJSON = samplePlotJSON;
-            this.makePlots();
+        }
 
+        /* Calls makeRankPlot() and makeSamplePlot(), and waits for them to
+         * finish before hiding the loadingMessage.
+         *
+         * The structure of the async/await usage here is based on the
+         * concurrentStart() example on
+         * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function.
+         */
+        async makePlots() {
+            // Note that this will fail if either makePlot function fails with
+            // an error. This should be ok for Qurro's purposes, though.
+            await Promise.all([this.makeRankPlot(), this.makeSamplePlot()]);
+            this.setUpDOM();
+            document
+                .getElementById("loadingMessage")
+                .classList.add("invisible");
+        }
+
+        setUpDOM() {
             // All DOM elements that we disable/enable when switching to/from
             // "boxplot mode." We disable these when in "boxplot mode" because
             // Vega-Lite gets grumpy when you try to apply colors to a boxplot
@@ -136,23 +157,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 },
                 "onchange"
             );
-        }
-
-        /* Calls makeRankPlot() and makeSamplePlot(), and waits for them to
-         * finish before hiding the loadingMessage.
-         *
-         * The structure of the async/await usage here is based on the
-         * concurrentStart() example on
-         * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function.
-         */
-        async makePlots() {
-            var rankPlotPromise = this.makeRankPlot();
-            var samplePlotPromise = this.makeSamplePlot();
-            await rankPlotPromise;
-            await samplePlotPromise;
-            document
-                .getElementById("loadingMessage")
-                .classList.add("invisible");
         }
 
         makeRankPlot(notFirstTime) {
@@ -686,7 +690,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 filterString +=
                     " && isFinite(toNumber(" + datumColorField + "))";
             }
-            console.log(filterString);
 
             this.samplePlotJSON.transform = [{ filter: filterString }];
         }
@@ -1109,9 +1112,15 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     i < this.elementsWithOnClickBindings.length;
                     i++
                 ) {
+                    // Based on https://stackoverflow.com/a/53357610/10730311.
+                    // Setting .onclick = undefined just straight-up doesn't
+                    // work for some reason (even after you do that, the
+                    // onclick property is null instead of undefined).
+                    // So setting to null is needed in order for a testable way
+                    // to "unset" the .onclick property.
                     document.getElementById(
                         this.elementsWithOnClickBindings[i]
-                    ).onclick = undefined;
+                    ).onclick = null;
                 }
                 for (
                     var j = 0;
@@ -1120,7 +1129,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 ) {
                     document.getElementById(
                         this.elementsWithOnChangeBindings[j]
-                    ).onchange = undefined;
+                    ).onchange = null;
                 }
             }
         }

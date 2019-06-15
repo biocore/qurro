@@ -8,12 +8,16 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     var countJSON = {"Taxon4": {"Sample7": 1.0, "Sample1": 1.0, "Sample5": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample6": 1.0}, "Taxon2": {"Sample7": 0.0, "Sample1": 6.0, "Sample5": 2.0, "Sample2": 5.0, "Sample3": 4.0, "Sample6": 1.0}, "Taxon3": {"Sample7": 2.0, "Sample1": 2.0, "Sample5": 4.0, "Sample2": 3.0, "Sample3": 4.0, "Sample6": 3.0}, "Taxon5": {"Sample7": 0.0, "Sample1": 0.0, "Sample5": 2.0, "Sample2": 0.0, "Sample3": 1.0, "Sample6": 0.0}, "Taxon1": {"Sample7": 6.0, "Sample1": 0.0, "Sample5": 4.0, "Sample2": 1.0, "Sample3": 2.0, "Sample6": 5.0}};
 
     describe("Dynamic RRVDisplay class functionality", function() {
-        var rrv = new display.RRVDisplay(
-            rankPlotJSON,
-            samplePlotJSON,
-            countJSON
-        );
-        var dataName = rrv.samplePlotJSON.data.name;
+        var rrv, dataName;
+        before(async function() {
+            rrv = new display.RRVDisplay(
+                rankPlotJSON,
+                samplePlotJSON,
+                countJSON
+            );
+            dataName = rrv.samplePlotJSON.data.name;
+            await rrv.makePlots();
+        });
         after(function() {
             rrv.destroy(true, true, true);
         });
@@ -602,6 +606,39 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             describe("Changing the color scale type used on the sample plot", function() {
                 it("Works properly");
             });
+        });
+    });
+    describe("The RRVDisplay destructor (destroy())", function() {
+        var rrv;
+        beforeEach(async function() {
+            rrv = new display.RRVDisplay(
+                rankPlotJSON,
+                samplePlotJSON,
+                countJSON
+            );
+            await rrv.makePlots();
+        });
+        it("Properly clears DOM element bindings", async function() {
+            await rrv.destroy(true, true, true);
+            for (var i = 0; i < rrv.elementsWithOnClickBindings.length; i++) {
+                chai.assert.isNull(
+                    document.getElementById(rrv.elementsWithOnClickBindings[i])
+                        .onclick
+                );
+            }
+            for (var j = 0; j < rrv.elementsWithOnChangeBindings.length; j++) {
+                chai.assert.isNull(
+                    document.getElementById(rrv.elementsWithOnChangeBindings[j])
+                        .onchange
+                );
+            }
+        });
+        it("Properly clears the #rankPlot and #samplePlot divs", async function() {
+            await rrv.destroy(true, true, true);
+            chai.assert.isEmpty(document.getElementById("rankPlot").innerHTML);
+            chai.assert.isEmpty(
+                document.getElementById("samplePlot").innerHTML
+            );
         });
     });
 });

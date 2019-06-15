@@ -1,8 +1,8 @@
 requirejs.config({
     paths: {
-        display: "instrumented_js/display",
-        dom_utils: "instrumented_js/dom_utils",
-        feature_computation: "instrumented_js/feature_computation",
+        display: "../../support_files/js/display",
+        dom_utils: "../../support_files/js/dom_utils",
+        feature_computation: "../../support_files/js/feature_computation",
         vega: "../../support_files/vendor/vega.min",
         "vega-lite": "../../support_files/vendor/vega-lite.min",
         "vega-embed": "../../support_files/vendor/vega-embed.min",

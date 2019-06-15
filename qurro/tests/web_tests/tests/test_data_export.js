@@ -7,6 +7,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     // prettier-ignore
     var countJSON = {"Taxon4": {"Sample7": 1.0, "Sample1": 1.0, "Sample5": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample6": 1.0}, "Taxon2": {"Sample7": 0.0, "Sample1": 6.0, "Sample5": 2.0, "Sample2": 5.0, "Sample3": 4.0, "Sample6": 1.0}, "Taxon3": {"Sample7": 2.0, "Sample1": 2.0, "Sample5": 4.0, "Sample2": 3.0, "Sample3": 4.0, "Sample6": 3.0}, "Taxon5": {"Sample7": 0.0, "Sample1": 0.0, "Sample5": 2.0, "Sample2": 0.0, "Sample3": 1.0, "Sample6": 0.0}, "Taxon1": {"Sample7": 6.0, "Sample1": 0.0, "Sample5": 4.0, "Sample2": 1.0, "Sample3": 2.0, "Sample6": 5.0}};
     var rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON, countJSON);
+    rrv.makePlots();
     var dataName = rrv.samplePlotJSON.data.name;
     describe("Exporting sample plot data", function() {
         it('Returns "" when no sample points are "drawn"', function() {
