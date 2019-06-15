@@ -1,4 +1,9 @@
-define(["display", "mocha", "chai"], function(display, mocha, chai) {
+define(["display", "mocha", "chai", "testing_utilities"], function(
+    display,
+    mocha,
+    chai,
+    testing_utilities
+) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
     var rankPlotJSON = {"config": {"view": {"width": 400, "height": 300}, "mark": {"tooltip": null}, "axis": {"gridColor": "#f2f2f2", "labelBound": true}}, "data": {"name": "data-7416c68b284d7fabf6066e786fa2c0aa"}, "mark": "bar", "autosize": {"resize": true}, "background": "#FFFFFF", "encoding": {"color": {"type": "nominal", "field": "Classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}}, "tooltip": [{"type": "quantitative", "field": "qurro_x", "title": "Current Ranking"}, {"type": "nominal", "field": "Classification"}, {"type": "nominal", "field": "Feature ID"}, {"type": "nominal", "field": "FeatureMetadata1"}, {"type": "nominal", "field": "FeatureMetadata2"}], "x": {"type": "ordinal", "axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Sorted Features"}, "y": {"type": "quantitative", "field": "Intercept"}}, "selection": {"selector015": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Feature Ranks", "transform": [{"window": [{"op": "row_number", "as": "qurro_x"}], "sort": [{"field": "Intercept", "order": "ascending"}]}], "$schema": "https://vega.github.io/schema/vega-lite/v3.2.1.json", "datasets": {"data-7416c68b284d7fabf6066e786fa2c0aa": [{"Feature ID": "Taxon1", "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "FeatureMetadata1": null, "FeatureMetadata2": null, "Classification": "None"}, {"Feature ID": "Taxon2", "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "FeatureMetadata1": null, "FeatureMetadata2": null, "Classification": "None"}, {"Feature ID": "Taxon3", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Classification": "None"}, {"Feature ID": "Taxon4", "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "FeatureMetadata1": null, "FeatureMetadata2": null, "Classification": "None"}, {"Feature ID": "Taxon5", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Classification": "None"}], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2"], "qurro_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"]}};
@@ -583,9 +588,38 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 // testable (won't have to rely on clicks)
             });
             describe("Multi-feature selections", function() {
-                it("Works properly");
-                // Should be able to just call .click() on multiFeatureButton
-                // (after populating search fields/types, of course)
+                before(function() {
+                    document.getElementById("topSearch").value = "Feature ID";
+                    document.getElementById("botSearch").value =
+                        "FeatureMetadata1";
+                    document.getElementById("topSearchType").value = "text";
+                    document.getElementById("botSearchType").value = "text";
+                    document.getElementById("topText").value = "Taxon";
+                    document.getElementById("botText").value = "Yeet";
+                    rrv.updateSamplePlotMulti();
+                });
+                it("Properly updates topFeatures and botFeatures", function() {
+                    chai.assert.sameMembers(
+                        ["Taxon1", "Taxon2", "Taxon3", "Taxon4", "Taxon5"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon3"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                });
+                // TODO: We will probably need to change changeSamplePlot() to
+                // be an async function that updates the rank and sample plot
+                // with runAsync() instead of run(), and awaits that result.
+                // Then we can make updateSamplePlotMulti async (and have it
+                // await changeSamplePlot()), and then await
+                // updateSamplePlotMulti's result here. Yay!
+                it("Properly updates the rank plot and sample plot Vega Views");
+                it('Properly updates the "feature text" headers');
             });
         });
         // TODO: Update these to test modifying the plot JSONs.
