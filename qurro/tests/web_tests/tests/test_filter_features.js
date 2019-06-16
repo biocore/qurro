@@ -256,39 +256,36 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     )
                 );
             });
-            it("Doesn't find anything if inputText is empty or contains only whitespace", function() {
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        "",
-                        "Feature ID",
-                        "rank"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "",
-                        "Taxonomy",
-                        "rank"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        " \n \t ",
-                        "Feature ID",
-                        "rank"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        " \n \t ",
-                        "Taxonomy",
-                        "rank"
-                    )
-                );
+            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characers", function() {
+                /* Just a helper function to alleviate redundant code here.
+                 *
+                 * Asserts that filterFeatures() with the given input text is
+                 * empty. Tries this on both rpJSON1 and rpJSON2, with the
+                 * "Feature ID" field for rpJSON1 and the "Taxonomy" field for
+                 * rpJSON2.
+                 */
+                function assertEmpty(inputText) {
+                    var jsonList = [rpJSON1, rpJSON2];
+                    var fmList = ["Feature ID", "Taxonomy"];
+
+                    for (var i = 0; i < jsonList.length; i++) {
+                        chai.assert.isEmpty(
+                            feature_computation.filterFeatures(
+                                jsonList[i],
+                                inputText,
+                                fmList[i],
+                                "rank"
+                            )
+                        );
+                    }
+                }
+                assertEmpty("");
+                assertEmpty(" \n \t ");
+                assertEmpty(",,,,");
+                assertEmpty(";;;;");
+                assertEmpty(",; \t ;;");
+                assertEmpty("  ,; \t ;;\n");
+                assertEmpty("\n ,; \t ;;\n");
             });
             it("Ignores actual null values", function() {
                 chai.assert.sameMembers(
