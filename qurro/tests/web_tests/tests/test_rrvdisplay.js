@@ -635,7 +635,6 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     rrv.newFeatureLow = { "Feature ID": "Taxon2" };
                     rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
                     await rrv.updateSamplePlotSingle();
-                    testing_utilities.checkHeaders(1, 1);
                     // Check that the sample log ratios were properly updated
                     // Sample1 has a Taxon1 count of 0, so its log ratio should
                     // be null (because log(0/x) is undefined).
@@ -666,7 +665,38 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     chai.assert.isNull(
                         rrv.samplePlotJSON.datasets[dataName][5].qurro_balance
                     );
+                    // Check that various DOM elements were properly updated
                     testing_utilities.checkHeaders(1, 1);
+                    chai.assert.equal(
+                        "2 / 6 samples (33.33%) can't be shown due to having an invalid (i.e. containing zero) log ratio.",
+                        document.getElementById("balanceSamplesDroppedDiv")
+                            .textContent
+                    );
+                    chai.assert.equal(
+                        "4 / 6 samples (66.67%) currently shown.",
+                        document.getElementById("mainSamplesDroppedDiv")
+                            .textContent
+                    );
+                    chai.assert.isFalse(
+                        document
+                            .getElementById("mainSamplesDroppedDiv")
+                            .classList.contains("invisible")
+                    );
+                    chai.assert.isFalse(
+                        document
+                            .getElementById("balanceSamplesDroppedDiv")
+                            .classList.contains("invisible")
+                    );
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("xAxisSamplesDroppedDiv")
+                            .classList.contains("invisible")
+                    );
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("colorSamplesDroppedDiv")
+                            .classList.contains("invisible")
+                    );
                 });
             });
             describe("Multi-feature selections", function() {
