@@ -416,42 +416,61 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
-        changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
+        async changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
             var nullBalanceSampleIDs = [];
-            this.samplePlotView
-                .change(
-                    dataName,
-                    vega.changeset().modify(
-                        /* Calculate the new balance for each sample.
-                         *
-                         * For reference, the use of modify() here is based on
-                         * https://github.com/vega/vega/issues/1028#issuecomment-334295328
-                         * (This is where I learned that
-                         * vega.changeset().modify() existed.)
-                         * Also, vega.truthy is a utility function: it just
-                         * returns true.
-                         */
-                        vega.truthy,
-                        "qurro_balance",
-                        // function to run to determine what the new balances are
-                        function(sampleRow) {
-                            var sampleBalance = updateBalanceFunc.call(
-                                parentDisplay,
-                                sampleRow
-                            );
-                            if (sampleBalance === null) {
-                                nullBalanceSampleIDs.push(
-                                    sampleRow["Sample ID"]
-                                );
-                            }
-                            return sampleBalance;
-                        }
-                    )
-                )
-                .run();
 
+            var samplePlotViewChanged = this.samplePlotView.change(
+                dataName,
+                vega.changeset().modify(
+                    /* Calculate the new balance for each sample.
+                     *
+                     * For reference, the use of modify() here is based on
+                     * https://github.com/vega/vega/issues/1028#issuecomment-334295328
+                     * (This is where I learned that
+                     * vega.changeset().modify() existed.)
+                     * Also, vega.truthy is a utility function: it just
+                     * returns true.
+                     */
+                    vega.truthy,
+                    "qurro_balance",
+                    // function to run to determine what the new balances are
+                    function(sampleRow) {
+                        var sampleBalance = updateBalanceFunc.call(
+                            parentDisplay,
+                            sampleRow
+                        );
+                        if (sampleBalance === null) {
+                            nullBalanceSampleIDs.push(sampleRow["Sample ID"]);
+                        }
+                        return sampleBalance;
+                    }
+                )
+            );
+
+            // Update rank plot based on the new log ratio
+            // Doing this alongside the change to the sample plot is done so that
+            // the "states" of the plot re: selected features + sample log
+            // ratios are unified.
+            var rankDataName = this.rankPlotJSON.data.name;
+            var rankPlotViewChanged = this.rankPlotView.change(
+                rankDataName,
+                vega
+                    .changeset()
+                    .modify(vega.truthy, "Classification", function(rankRow) {
+                        return updateRankColorFunc.call(parentDisplay, rankRow);
+                    })
+            );
+
+            // Change both the plots, and move on when these changes are done.
+            await Promise.all([
+                samplePlotViewChanged.runAsync(),
+                rankPlotViewChanged.runAsync()
+            ]);
+
+            // Now that the plots have been updated, update the dropped sample
+            // count re: the new sample log ratios.
             this.droppedSamples.balance = nullBalanceSampleIDs;
             dom_utils.updateMainSampleShownDiv(
                 this.droppedSamples,
@@ -464,27 +483,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "balanceSamplesDroppedDiv",
                 "balance"
             );
-            // Update rank plot based on the new log ratio
-            // Storing this within changeSamplePlot() is a (weak) safeguard that
-            // changes to the state of the sample plot (at least enacted using the UI
-            // controls on the page, not the dev console) also propagate to the rank
-            // plot.
-            var rankDataName = this.rankPlotJSON.data.name;
-            this.rankPlotView
-                .change(
-                    rankDataName,
-                    vega
-                        .changeset()
-                        .modify(vega.truthy, "Classification", function(
-                            rankRow
-                        ) {
-                            return updateRankColorFunc.call(
-                                parentDisplay,
-                                rankRow
-                            );
-                        })
-                )
-                .run();
         }
 
         updateSamplePlotMulti() {
