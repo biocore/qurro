@@ -375,14 +375,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
-        updateRankField() {
+        async updateRankField() {
             var newRank = document.getElementById("rankField").value;
             this.rankPlotJSON.encoding.y.field = newRank;
             // NOTE that this assumes that the rank plot only has one transform
             // being used, and that it's a "rank" window transform. (This is a
             // reasonable assumption, since we generate the rank plot.)
             this.rankPlotJSON.transform[0].sort[0].field = newRank;
-            this.remakeRankPlot();
+            await this.remakeRankPlot();
         }
 
         async remakeRankPlot() {
@@ -390,7 +390,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             await this.makeRankPlot(true);
         }
 
-        updateRankPlotBarSize(callRemakeRankPlot) {
+        async updateRankPlotBarSize(callRemakeRankPlot) {
             var newSizeType = document.getElementById("barSize").value;
             var newBarSize;
             if (newSizeType === "fit") {
@@ -412,7 +412,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     .classList.add("invisible");
             }
             if (callRemakeRankPlot) {
-                this.remakeRankPlot();
+                await this.remakeRankPlot();
             }
         }
 
@@ -485,7 +485,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
         }
 
-        updateSamplePlotMulti() {
+        async updateSamplePlotMulti() {
             // Determine which feature metadata field(s) to look at
             var topField = document.getElementById("topSearch").value;
             var botField = document.getElementById("botSearch").value;
@@ -505,7 +505,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            this.changeSamplePlot(
+            await this.changeSamplePlot(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
@@ -513,7 +513,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.updateFeaturesTextDisplays();
         }
 
-        updateSamplePlotSingle() {
+        async updateSamplePlotSingle() {
             if (
                 this.newFeatureLow !== undefined &&
                 this.newFeatureHigh !== undefined
@@ -522,13 +522,33 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.newFeatureLow !== null &&
                     this.newFeatureHigh !== null
                 ) {
-                    var lowsDiffer = this.oldFeatureLow != this.newFeatureLow;
-                    var highsDiffer =
-                        this.oldFeatureHigh != this.newFeatureHigh;
+                    // We wrap this stuff in checks because it's conceivable
+                    // that we've reached this point and oldFeatureLow /
+                    // oldFeatureHigh are still undefined/null. However, we
+                    // expect that at least the new features should be actual
+                    // feature row objects (i.e. with "Feature ID" properties).
+                    var lowsDiffer = true;
+                    var highsDiffer = true;
+                    if (
+                        this.oldFeatureLow !== null &&
+                        this.oldFeatureLow !== undefined
+                    ) {
+                        lowsDiffer =
+                            this.oldFeatureLow["Feature ID"] !=
+                            this.newFeatureLow["Feature ID"];
+                    }
+                    if (
+                        this.oldFeatureHigh !== null &&
+                        this.oldFeatureHigh !== undefined
+                    ) {
+                        highsDiffer =
+                            this.oldFeatureHigh["Feature ID"] !=
+                            this.newFeatureHigh["Feature ID"];
+                    }
                     if (lowsDiffer || highsDiffer) {
                         // Time to update the sample scatterplot regarding new
                         // microbes.
-                        this.changeSamplePlot(
+                        await this.changeSamplePlot(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
@@ -708,7 +728,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.samplePlotJSON.encoding.color.type = "nominal";
         }
 
-        updateSamplePlotField(vizAttribute) {
+        async updateSamplePlotField(vizAttribute) {
             if (vizAttribute === "xAxis") {
                 this.samplePlotJSON.encoding.x.field = document.getElementById(
                     "xAxisField"
@@ -724,7 +744,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "colorField"
                 ).value;
             }
-            this.remakeSamplePlot();
+            await this.remakeSamplePlot();
         }
 
         async remakeSamplePlot() {
@@ -808,7 +828,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * literally reload the Vega-Lite specification with the new scale
          * type in order to make these changes take effect.
          */
-        updateSamplePlotScale(vizAttribute) {
+        async updateSamplePlotScale(vizAttribute) {
             if (vizAttribute === "xAxis") {
                 var newScale = document.getElementById("xAxisScale").value;
                 this.samplePlotJSON.encoding.x.type = newScale;
@@ -830,17 +850,17 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "colorScale"
                 ).value;
             }
-            this.remakeSamplePlot();
+            await this.remakeSamplePlot();
         }
 
-        updateSamplePlotBoxplot() {
+        async updateSamplePlotBoxplot() {
             // We only bother changing up anything if the sample plot x-axis
             // is currently categorical.
             if (this.samplePlotJSON.encoding.x.type === "nominal") {
                 if (document.getElementById("boxplotCheckbox").checked) {
-                    this.changeSamplePlotToBoxplot(true);
+                    await this.changeSamplePlotToBoxplot(true);
                 } else {
-                    this.changeSamplePlotFromBoxplot(true);
+                    await this.changeSamplePlotFromBoxplot(true);
                 }
             }
         }
@@ -860,7 +880,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * was already using a categorical x-axis scale, and they just clicked
          * the "use boxplots" checkbox.
          */
-        changeSamplePlotToBoxplot(callRemakeSamplePlot) {
+        async changeSamplePlotToBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "boxplot";
             // Make the middle tick of the boxplot black. This makes boxes for
             // which only one sample is available show up on the white
@@ -870,7 +890,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.setColorForBoxplot();
             delete this.samplePlotJSON.encoding.tooltip;
             if (callRemakeSamplePlot) {
-                this.remakeSamplePlot();
+                await this.remakeSamplePlot();
             }
         }
 
@@ -881,7 +901,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * callRemakeSamplePlot works the same way as in
          * changeSamplePlotToBoxplot().
          */
-        changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
+        async changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
             dom_utils.changeElementsEnabled(this.colorEles, true);
@@ -892,7 +912,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // the field was changed while boxplot mode was going on (as well
             // as at the start of boxplot mode), in setColorForBoxplot().
             if (callRemakeSamplePlot) {
-                this.remakeSamplePlot();
+                await this.remakeSamplePlot();
             }
         }
 
