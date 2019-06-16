@@ -234,21 +234,6 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             });
         });
 
-        function checkHeaders(expTopCt, expBotCt) {
-            chai.assert.equal(
-                document.getElementById("numHeader").innerHTML,
-                "Numerator Features (" +
-                    expTopCt.toLocaleString() +
-                    " selected)"
-            );
-            chai.assert.equal(
-                document.getElementById("denHeader").innerHTML,
-                "Denominator Features (" +
-                    expBotCt.toLocaleString() +
-                    " selected)"
-            );
-        }
-
         describe('Updating "feature text" DOM elements', function() {
             it("Works for single-feature selections", function() {
                 rrv.newFeatureHigh = {
@@ -270,7 +255,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     document.getElementById("botFeaturesDisplay").value,
                     "New feature name low / 10 / 3"
                 );
-                checkHeaders(1, 1);
+                testing_utilities.checkHeaders(1, 1);
                 // Check it again -- ensure that the updating action overwrites the
                 // previous values
                 rrv.newFeatureHigh = {
@@ -287,7 +272,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     document.getElementById("botFeaturesDisplay").value,
                     "Thing 2! / / "
                 );
-                checkHeaders(1, 1);
+                testing_utilities.checkHeaders(1, 1);
             });
             it("Works for multi-feature selections", function() {
                 // Standard case
@@ -316,7 +301,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     document.getElementById("botFeaturesDisplay").value,
                     expectedBotText
                 );
-                checkHeaders(5, 2);
+                testing_utilities.checkHeaders(5, 2);
                 // Check case where there's only one feature in a list
                 // In this case, the denominator + expected bottom text are the
                 // same as before
@@ -331,7 +316,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     document.getElementById("botFeaturesDisplay").value,
                     expectedBotText
                 );
-                checkHeaders(1, 2);
+                testing_utilities.checkHeaders(1, 2);
                 // Check case where lists are empty
                 // This could happen if, e.g., both of the user's text queries
                 // don't have any results.
@@ -344,7 +329,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
-                checkHeaders(0, 0);
+                testing_utilities.checkHeaders(0, 0);
             });
             it('Clears the "feature text" DOM elements properly', function() {
                 // Populate the DOM elements
@@ -353,7 +338,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 rrv.updateFeaturesTextDisplays(true);
                 // Just to be super sure, check that the headers were updated
                 // correctly
-                checkHeaders(1, 1);
+                testing_utilities.checkHeaders(1, 1);
                 // Check that clearing works
                 rrv.updateFeaturesTextDisplays(false, true);
                 chai.assert.isEmpty(
@@ -362,12 +347,12 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
-                checkHeaders(0, 0);
+                testing_utilities.checkHeaders(0, 0);
                 // Repopulate the DOM elements
                 rrv.newFeatureHigh = "Thing 1!";
                 rrv.newFeatureLow = "Thing 2!";
                 rrv.updateFeaturesTextDisplays(true);
-                checkHeaders(1, 1);
+                testing_utilities.checkHeaders(1, 1);
                 // Check that clearing is done, even if "single" is true
                 // (the "clear" argument takes priority)
                 rrv.updateFeaturesTextDisplays(true, true);
@@ -377,7 +362,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 chai.assert.isEmpty(
                     document.getElementById("botFeaturesDisplay").value
                 );
-                checkHeaders(0, 0);
+                testing_utilities.checkHeaders(0, 0);
             });
         });
         describe("Updating feature rank colors", function() {
@@ -582,6 +567,17 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             });
         });
         describe("Selecting features to update the plots", function() {
+            /* Reset rrv so we're working with a blank slate before this test
+             * suite. */
+            before(async function() {
+                rrv.destroy(true, true, true);
+                rrv = new display.RRVDisplay(
+                    rankPlotJSON,
+                    samplePlotJSON,
+                    countJSON
+                );
+                await rrv.makePlots();
+            });
             describe("Single-feature selections", function() {
                 it("Works properly");
                 // TODO refactor display callback code to make it more easily
@@ -596,7 +592,11 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     document.getElementById("botSearchType").value = "text";
                     document.getElementById("topText").value = "Taxon";
                     document.getElementById("botText").value = "Yeet";
-                    rrv.updateSamplePlotMulti();
+                    // This should just result in rrv.updateSamplePlotMulti()
+                    // being called. The added benefit is that this also tests
+                    // that the onclick event of the multiFeatureButton was set
+                    // properly :)
+                    document.getElementById("multiFeatureButton").click();
                 });
                 it("Properly updates topFeatures and botFeatures", function() {
                     chai.assert.sameMembers(
@@ -619,7 +619,25 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 // await changeSamplePlot()), and then await
                 // updateSamplePlotMulti's result here. Yay!
                 it("Properly updates the rank plot and sample plot Vega Views");
-                it('Properly updates the "feature text" headers');
+                it('Properly updates the "feature text" headers', function() {
+                    testing_utilities.checkHeaders(5, 1);
+                    chai.assert.sameMembers(
+                        [
+                            "Taxon1 / / ",
+                            "Taxon2 / / ",
+                            "Taxon3 / Yeet / 100",
+                            "Taxon4 / / ",
+                            "Taxon5 / null / lol"
+                        ],
+                        document
+                            .getElementById("topFeaturesDisplay")
+                            .value.split("\n")
+                    );
+                    chai.assert.equal(
+                        "Taxon3 / Yeet / 100",
+                        document.getElementById("botFeaturesDisplay").value
+                    );
+                });
             });
         });
         // TODO: Update these to test modifying the plot JSONs.

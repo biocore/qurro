@@ -167,7 +167,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.rankOrdering,
                     this.rankOrdering[0]
                 );
-                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
+                // NOTE: we use .slice() to make a copy of the initial array so
+                // that when we unshift "Feature ID" onto
+                // this.featureMetadataFields, the original array (in the rank
+                // plot JSON) isn't modified.
+                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering.slice();
                 // Just so that we have something to search by, even if no
                 // actual feature metadata was passed.
                 // Note that in JS, .unshift() adds to the beginning (not end)
