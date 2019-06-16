@@ -12,14 +12,18 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon4": {"Sample7": 1.0, "Sample1": 1.0, "Sample5": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample6": 1.0}, "Taxon2": {"Sample7": 0.0, "Sample1": 6.0, "Sample5": 2.0, "Sample2": 5.0, "Sample3": 4.0, "Sample6": 1.0}, "Taxon3": {"Sample7": 2.0, "Sample1": 2.0, "Sample5": 4.0, "Sample2": 3.0, "Sample3": 4.0, "Sample6": 3.0}, "Taxon5": {"Sample7": 0.0, "Sample1": 0.0, "Sample5": 2.0, "Sample2": 0.0, "Sample3": 1.0, "Sample6": 0.0}, "Taxon1": {"Sample7": 6.0, "Sample1": 0.0, "Sample5": 4.0, "Sample2": 1.0, "Sample3": 2.0, "Sample6": 5.0}};
 
+    function getNewRRVDisplay() {
+        return new display.RRVDisplay(
+            JSON.parse(JSON.stringify(rankPlotJSON)),
+            JSON.parse(JSON.stringify(samplePlotJSON)),
+            JSON.parse(JSON.stringify(countJSON))
+        );
+    }
+
     describe("Dynamic RRVDisplay class functionality", function() {
         var rrv, dataName;
         before(async function() {
-            rrv = new display.RRVDisplay(
-                rankPlotJSON,
-                samplePlotJSON,
-                countJSON
-            );
+            rrv = getNewRRVDisplay();
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
         });
@@ -28,10 +32,11 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
         });
 
         it("Initializes an RRVDisplay object", function() {
-            // This test doesn't check much. Unit tests of the RRVDisplay
-            // methods are needed to validate things more carefully.
-            chai.assert.strictEqual(rrv.rankPlotJSON, rankPlotJSON);
-            chai.assert.strictEqual(rrv.samplePlotJSON, samplePlotJSON);
+            // We don't bother checking that the JSONs are equal b/c all we do
+            // is just set them equal. Also, there are some things done on init
+            // (that modify the RRVDisplay object's copy of the JSON) that
+            // change things, so comparing equality wouldn't work anyway.
+            //
             // RRVDisplay.onHigh indicates that the next "single"-selected
             // feature from the rank plot will be the numerator of a log
             // ratio
@@ -572,11 +577,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
              */
             async function resetRRVDisplay() {
                 rrv.destroy(true, true, true);
-                rrv = new display.RRVDisplay(
-                    rankPlotJSON,
-                    samplePlotJSON,
-                    countJSON
-                );
+                rrv = getNewRRVDisplay();
                 await rrv.makePlots();
             }
             async function updateSingleAndCheckAllBalancesNull() {
@@ -780,11 +781,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     describe("The RRVDisplay destructor (destroy())", function() {
         var rrv;
         beforeEach(async function() {
-            rrv = new display.RRVDisplay(
-                rankPlotJSON,
-                samplePlotJSON,
-                countJSON
-            );
+            rrv = getNewRRVDisplay();
             await rrv.makePlots();
         });
         it("Properly clears DOM element bindings", async function() {
