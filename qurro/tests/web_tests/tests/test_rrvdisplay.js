@@ -692,5 +692,17 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 document.getElementById("samplePlot").innerHTML
             );
         });
+        it("Properly clears the ranking/metadata field <select>s", async function() {
+            await rrv.destroy(true, true, true);
+            chai.assert.isEmpty(document.getElementById("rankField").innerHTML);
+            chai.assert.isEmpty(document.getElementById("topSearch").innerHTML);
+            chai.assert.isEmpty(document.getElementById("botSearch").innerHTML);
+            chai.assert.isEmpty(
+                document.getElementById("xAxisField").innerHTML
+            );
+            chai.assert.isEmpty(
+                document.getElementById("colorField").innerHTML
+            );
+        });
     });
 });

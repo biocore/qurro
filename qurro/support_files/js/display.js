@@ -1132,6 +1132,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         this.elementsWithOnChangeBindings[j]
                     ).onchange = null;
                 }
+                // Clear <select>s populated with field information from this
+                // RRVDisplay's JSONs
+                dom_utils.clearDiv("rankField");
+                dom_utils.clearDiv("topSearch");
+                dom_utils.clearDiv("botSearch");
+                dom_utils.clearDiv("xAxisField");
+                dom_utils.clearDiv("colorField");
             }
         }
     }
