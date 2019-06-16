@@ -567,9 +567,10 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             });
         });
         describe("Selecting features to update the plots", function() {
-            /* Reset rrv so we're working with a blank slate before this test
-             * suite. */
-            before(async function() {
+            /* Resets an RRVDisplay object so we're working with a blank slate
+             * before test(s).
+             */
+            async function resetRRVDisplay() {
                 rrv.destroy(true, true, true);
                 rrv = new display.RRVDisplay(
                     rankPlotJSON,
@@ -577,14 +578,100 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     countJSON
                 );
                 await rrv.makePlots();
-            });
+            }
+            async function updateSingleAndCheckAllBalancesNull() {
+                await rrv.updateSamplePlotSingle();
+                var data = rrv.samplePlotView.data(dataName);
+                for (var i = 0; i < data.length; i++) {
+                    chai.assert.isNull(data[i].qurro_balance);
+                }
+                testing_utilities.checkHeaders(0, 0);
+            }
             describe("Single-feature selections", function() {
-                it("Works properly");
-                // TODO refactor display callback code to make it more easily
-                // testable (won't have to rely on clicks)
+                beforeEach(async function() {
+                    await resetRRVDisplay(rrv);
+                });
+                it("Doesn't do anything if .newFeatureLow and/or .newFeatureHigh is null or undefined", async function() {
+                    // Since we just called resetRRVDisplay(),
+                    // rrv.newFeatureLow and rrv.newFeatureHigh should both be
+                    // undefined.
+                    // Check (low = undefined, high = undefined)
+                    await updateSingleAndCheckAllBalancesNull();
+
+                    // Check (low = null, high = undefined)
+                    // and (low = undefined, high = null)
+                    rrv.newFeatureLow = null;
+                    await updateSingleAndCheckAllBalancesNull();
+                    rrv.newFeatureLow = undefined;
+                    await updateSingleAndCheckAllBalancesNull();
+
+                    // Check (low = null, high = null)
+                    rrv.newFeatureHigh = null;
+                    await updateSingleAndCheckAllBalancesNull();
+
+                    // Check (low = null, high = an actual feature object)
+                    // and (low = undefined, high = an actual feature object)
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    await updateSingleAndCheckAllBalancesNull();
+                    rrv.newFeatureLow = undefined;
+                    await updateSingleAndCheckAllBalancesNull();
+
+                    // Check (low = an actual feature object, high = null)
+                    // and (low = an actual feature object, high = undefined)
+                    rrv.newFeatureLow = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureHigh = null;
+                    await updateSingleAndCheckAllBalancesNull();
+                    rrv.newFeatureHigh = undefined;
+                    await updateSingleAndCheckAllBalancesNull();
+                });
+                it("Doesn't do anything if the newly selected features don't differ from the old ones", async function() {
+                    rrv.oldFeatureLow = { "Feature ID": "Taxon1" };
+                    rrv.oldFeatureHigh = { "Feature ID": "Taxon2" };
+                    rrv.newFeatureLow = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon2" };
+                    await updateSingleAndCheckAllBalancesNull();
+                });
+                it("Works properly when actually changing the plots", async function() {
+                    rrv.newFeatureLow = { "Feature ID": "Taxon2" };
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    await rrv.updateSamplePlotSingle();
+                    testing_utilities.checkHeaders(1, 1);
+                    // Check that the sample log ratios were properly updated
+                    // Sample1 has a Taxon1 count of 0, so its log ratio should
+                    // be null (because log(0/x) is undefined).
+                    chai.assert.isNull(
+                        rrv.samplePlotJSON.datasets[dataName][0].qurro_balance
+                    );
+                    // Sample2
+                    chai.assert.equal(
+                        Math.log(1 / 5),
+                        rrv.samplePlotJSON.datasets[dataName][1].qurro_balance
+                    );
+                    // Sample3
+                    chai.assert.equal(
+                        Math.log(2 / 4),
+                        rrv.samplePlotJSON.datasets[dataName][2].qurro_balance
+                    );
+                    // Sample5
+                    chai.assert.equal(
+                        Math.log(4 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][3].qurro_balance
+                    );
+                    // Sample6
+                    chai.assert.equal(
+                        Math.log(5 / 1),
+                        rrv.samplePlotJSON.datasets[dataName][4].qurro_balance
+                    );
+                    // Sample7
+                    chai.assert.isNull(
+                        rrv.samplePlotJSON.datasets[dataName][5].qurro_balance
+                    );
+                    testing_utilities.checkHeaders(1, 1);
+                });
             });
             describe("Multi-feature selections", function() {
-                before(function() {
+                before(async function() {
+                    await resetRRVDisplay(rrv);
                     document.getElementById("topSearch").value = "Feature ID";
                     document.getElementById("botSearch").value =
                         "FeatureMetadata1";
