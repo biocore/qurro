@@ -267,9 +267,38 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             });
         });
         describe("Modifying rank plot field/size", function() {
+            beforeEach(async function() {
+                await resetRRVDisplay(rrv);
+            });
             describe("Changing the ranking used on the rank plot", function() {
-                it("Works properly");
-                it("Resorts the features by the new ranking");
+                it("Updates rank plot field, title, and window sort transform", async function() {
+                    document.getElementById("rankField").value = "Rank 1";
+                    await document.getElementById("rankField").onchange();
+                    // Check that the rank plot JSON was updated accordingly:
+                    // 1. y-axis field updated
+                    // 2. y-axis title updated to say "Rank: [rank name]"
+                    // 3. The lone transform of the rank plot JSON should now
+                    //    sort by the new rank field
+                    chai.assert.equal(
+                        "Rank 1",
+                        rrv.rankPlotJSON.encoding.y.field
+                    );
+                    chai.assert.equal(
+                        "Rank: Rank 1",
+                        rrv.rankPlotJSON.encoding.y.title
+                    );
+                    // Sanity check -- verify there's only one transform, and
+                    // it has just one sort property
+                    chai.assert.equal(1, rrv.rankPlotJSON.transform.length);
+                    chai.assert.equal(
+                        1,
+                        rrv.rankPlotJSON.transform.sort.length
+                    );
+                    chai.assert.equal(
+                        "Rank 1",
+                        rrv.rankPlotJSON.transform[0].sort[0].field
+                    );
+                });
             });
             describe("Changing the bar width", function() {
                 describe("Changing the bar width to a constant size", function() {
