@@ -931,35 +931,35 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             beforeEach(async function() {
                 await resetRRVDisplay(rrv);
             });
-            async function testSwitchToBoxplot(currXField) {
-                document.getElementById("boxplotCheckbox").click();
-                var xScaleEle = document.getElementById("xAxisScale");
-                xScaleEle.value = "nominal";
-                await xScaleEle.onchange();
-                // Now the sample plot should be a boxplot
+            function testBoxplotEncodings(xField) {
                 chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
                 chai.assert.exists(rrv.samplePlotJSON.mark.median);
                 chai.assert.equal(
                     "#000000",
                     rrv.samplePlotJSON.mark.median.color
                 );
-                // In "boxplot mode", the color controls should be disabled
-                testing_utilities.assertEnabled("colorField", false);
-                testing_utilities.assertEnabled("colorScale", false);
                 // Also, the color field encoding should match the x-axis
                 // field encoding and be nominal
+                chai.assert.equal(xField, rrv.samplePlotJSON.encoding.x.field);
                 chai.assert.equal(
-                    currXField,
-                    rrv.samplePlotJSON.encoding.x.field
-                );
-                chai.assert.equal(
-                    currXField,
+                    xField,
                     rrv.samplePlotJSON.encoding.color.field
                 );
                 chai.assert.equal(
                     "nominal",
                     rrv.samplePlotJSON.encoding.color.type
                 );
+            }
+            async function testSwitchToBoxplot(currXField) {
+                await document.getElementById("boxplotCheckbox").click();
+                var xScaleEle = document.getElementById("xAxisScale");
+                xScaleEle.value = "nominal";
+                await xScaleEle.onchange();
+                // Now the sample plot should be a boxplot
+                testBoxplotEncodings(currXField);
+                // In "boxplot mode", the color controls should be disabled
+                testing_utilities.assertEnabled("colorField", false);
+                testing_utilities.assertEnabled("colorScale", false);
             }
             describe("Changing to a boxplot...", function() {
                 it("...By checking the boxplot checkbox", async function() {
@@ -977,24 +977,61 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // color field
                     document.getElementById("xAxisField").value = "Sample ID";
                     await document.getElementById("xAxisField").onchange();
-                    // Test that color field stuff was updated correctly
+                    testBoxplotEncodings("Sample ID");
+                });
+            });
+            describe("Changing from a boxplot...", function() {
+                async function testSwitchFromBoxplot(currXField) {
+                    await document.getElementById("boxplotCheckbox").click();
+                    chai.assert.equal("circle", rrv.samplePlotJSON.mark.type);
+                    chai.assert.notExists(rrv.samplePlotJSON.mark.median);
+                    testing_utilities.assertEnabled("colorField", true);
+                    testing_utilities.assertEnabled("colorScale", true);
+                    // Fields should stay the same, and scales should stay
+                    // categorical
+                    chai.assert.equal(
+                        currXField,
+                        rrv.samplePlotJSON.encoding.x.field
+                    );
+                    chai.assert.equal(
+                        currXField,
+                        rrv.samplePlotJSON.encoding.color.field
+                    );
+                    chai.assert.equal(
+                        "nominal",
+                        rrv.samplePlotJSON.encoding.x.type
+                    );
+                    chai.assert.equal(
+                        "nominal",
+                        rrv.samplePlotJSON.encoding.color.type
+                    );
+                }
+                // NOTE/TODO: ensure that #148 on GitHub is addressed?
+                it("...By unchecking the boxplot checkbox", async function() {
+                    await testSwitchToBoxplot("Metadata1");
+                    await testSwitchFromBoxplot("Metadata1");
+                    // Now, changing the x-axis field shouldn't update the
+                    // color field
+                    document.getElementById("xAxisField").value = "Sample ID";
+                    await document.getElementById("xAxisField").onchange();
                     chai.assert.equal(
                         "Sample ID",
                         rrv.samplePlotJSON.encoding.x.field
                     );
                     chai.assert.equal(
-                        "Sample ID",
+                        "Metadata1",
                         rrv.samplePlotJSON.encoding.color.field
+                    );
+                    // Of course, scales should stay the same
+                    chai.assert.equal(
+                        "nominal",
+                        rrv.samplePlotJSON.encoding.x.type
                     );
                     chai.assert.equal(
                         "nominal",
                         rrv.samplePlotJSON.encoding.color.type
                     );
                 });
-            });
-            describe("Changing from a boxplot...", function() {
-                // NOTE/TODO: ensure that #148 on GitHub is addressed?
-                it("...By unchecking the boxplot checkbox");
                 it("...By changing the x-axis scale type to quantitative");
             });
         });
