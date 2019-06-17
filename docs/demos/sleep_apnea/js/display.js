@@ -123,9 +123,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.colorEles = ["colorField", "colorScale"];
             // Set up relevant DOM bindings
             var display = this;
+            // NOTE: can probably update a few of these callbacks to just refer
+            // to te original function?
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
-                multiFeatureButton: function() {
-                    display.updateSamplePlotMulti();
+                multiFeatureButton: async function() {
+                    await display.updateSamplePlotMulti();
                 },
                 exportDataButton: function() {
                     display.exportData();
@@ -133,26 +135,26 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             });
             this.elementsWithOnChangeBindings = dom_utils.setUpDOMBindings(
                 {
-                    xAxisField: function() {
-                        display.updateSamplePlotField("xAxis");
+                    xAxisField: async function() {
+                        await display.updateSamplePlotField("xAxis");
                     },
-                    colorField: function() {
-                        display.updateSamplePlotField("color");
+                    colorField: async function() {
+                        await display.updateSamplePlotField("color");
                     },
-                    xAxisScale: function() {
-                        display.updateSamplePlotScale("xAxis");
+                    xAxisScale: async function() {
+                        await display.updateSamplePlotScale("xAxis");
                     },
-                    colorScale: function() {
-                        display.updateSamplePlotScale("color");
+                    colorScale: async function() {
+                        await display.updateSamplePlotScale("color");
                     },
-                    rankField: function() {
-                        display.updateRankField();
+                    rankField: async function() {
+                        await display.updateRankField();
                     },
-                    barSize: function() {
-                        display.updateRankPlotBarSize(true);
+                    barSize: async function() {
+                        await display.updateRankPlotBarSize(true);
                     },
-                    boxplotCheckbox: function() {
-                        display.updateSamplePlotBoxplot();
+                    boxplotCheckbox: async function() {
+                        await display.updateSamplePlotBoxplot();
                     }
                 },
                 "onchange"
@@ -193,6 +195,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // ranked features (e.g. the matching test) -- in these cases,
                 // fitting actually increases the bar sizes to be reasonable to
                 // view/select.
+                // TODO: make this a separate func so we can unit-test it
                 if (
                     this.feature_ids.length <=
                     this.rankPlotJSON.config.view.width
@@ -1123,8 +1126,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 dom_utils.clearDiv("samplePlot");
             }
             if (clearOtherStuff) {
-                // Clear the "features text" displays
-                this.updateFeaturesTextDisplays(false, true);
                 // Clear the bindings of bound DOM elements
                 for (
                     var i = 0;
@@ -1150,6 +1151,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         this.elementsWithOnChangeBindings[j]
                     ).onchange = null;
                 }
+                // Reset various UI elements to their "default" states
+
+                // Clear the "features text" displays
+                this.updateFeaturesTextDisplays(false, true);
+
                 // Clear <select>s populated with field information from this
                 // RRVDisplay's JSONs
                 dom_utils.clearDiv("rankField");
@@ -1157,6 +1163,30 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 dom_utils.clearDiv("botSearch");
                 dom_utils.clearDiv("xAxisField");
                 dom_utils.clearDiv("colorField");
+
+                // Un-check the boxplot checkbox
+                document.getElementById("boxplotCheckbox").checked = false;
+
+                // Set search types to "text"
+                document.getElementById("topSearchType").value = "text";
+                document.getElementById("botSearchType").value = "text";
+
+                // Clear search input fields
+                document.getElementById("topText").value = "";
+                document.getElementById("botText").value = "";
+
+                // Set scale type and bar width <select>s to default values
+                document.getElementById("xAxisScale").value = "nominal";
+                document.getElementById("colorScale").value = "nominal";
+                document.getElementById("barSize").value = "1";
+
+                // Clear sample dropped stats divs and set them invisible
+                for (var s = 0; s < dom_utils.statDivs.length; s++) {
+                    dom_utils.clearDiv(dom_utils.statDivs[s]);
+                    document
+                        .getElementById(dom_utils.statDivs[s])
+                        .classList.add("invisible");
+                }
             }
         }
     }

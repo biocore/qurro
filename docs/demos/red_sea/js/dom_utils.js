@@ -239,6 +239,15 @@ define(["vega"], function(vega) {
         document.getElementById("downloadHelper").click();
     }
 
+    // Array of all dropped-sample-statistics <div> IDs.
+    // Used in a few places in the codebase, so I'm storing it here.
+    var statDivs = [
+        "mainSamplesDroppedDiv",
+        "balanceSamplesDroppedDiv",
+        "xAxisSamplesDroppedDiv",
+        "colorSamplesDroppedDiv"
+    ];
+
     return {
         setUpDOMBindings: setUpDOMBindings,
         populateSelect: populateSelect,
@@ -247,6 +256,7 @@ define(["vega"], function(vega) {
         updateSampleDroppedDiv: updateSampleDroppedDiv,
         unionSize: unionSize,
         updateMainSampleShownDiv: updateMainSampleShownDiv,
-        downloadDataURI: downloadDataURI
+        downloadDataURI: downloadDataURI,
+        statDivs: statDivs
     };
 });
