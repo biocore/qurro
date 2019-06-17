@@ -17,6 +17,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
         });
+        after(async function() {
+            await rrv.destroy(true, true, true);
+        });
         it('Returns "" when no sample points are "drawn"', function() {
             // set balances to null, mimicking the state of the JSON before any
             // features have been selected
