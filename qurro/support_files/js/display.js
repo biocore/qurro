@@ -1170,6 +1170,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 document.getElementById("topSearchType").value = "text";
                 document.getElementById("botSearchType").value = "text";
 
+                // Clear search input fields
+                document.getElementById("topText").value = "";
+                document.getElementById("botText").value = "";
+
                 // Set scale type and bar width <select>s to default values
                 document.getElementById("xAxisScale").value = "nominal";
                 document.getElementById("colorScale").value = "nominal";

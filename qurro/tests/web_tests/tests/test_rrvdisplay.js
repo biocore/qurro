@@ -849,6 +849,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
         });
     });
     describe("The RRVDisplay destructor (destroy())", function() {
+        // TODO: add tests that leaving certain args as false still lets
+        // destroy() work partially
         var rrv;
         beforeEach(async function() {
             rrv = getNewRRVDisplay();
@@ -890,6 +892,9 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             await document.getElementById("boxplotCheckbox").click();
             document.getElementById("topSearchType").value = "rank";
             document.getElementById("botSearchType").value = "rank";
+            document.getElementById("topText").value = "Test top search text";
+            document.getElementById("botText").value =
+                "Test bottom search text";
             // TODO: actually call the callback functions (e.g.
             // updateSamplePlotScale()) to change these? I don't want to do
             // that just yet b/c it will completely mess with JS code coverage,
@@ -910,6 +915,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 "text",
                 document.getElementById("botSearchType").value
             );
+            chai.assert.isEmpty(document.getElementById("topText").value);
+            chai.assert.isEmpty(document.getElementById("botText").value);
             chai.assert.equal(
                 "nominal",
                 document.getElementById("xAxisScale").value
