@@ -22,6 +22,7 @@ def run_integration_test(
     expected_unsupported_samples=0,
     expected_unsupported_features=0,
     expect_all_unsupported_samples=False,
+    q2_table_biom_format="BIOMV210Format",
 ):
     """Runs qurro, and validates the output somewhat."""
 
@@ -48,7 +49,9 @@ def run_integration_test(
             )
         # Import all of these files as Q2 artifacts or metadata.
         rank_qza = Artifact.import_data(q2_rank_type, rloc)
-        table_qza = Artifact.import_data("FeatureTable[Frequency]", tloc)
+        table_qza = Artifact.import_data(
+            "FeatureTable[Frequency]", tloc, view_type=q2_table_biom_format
+        )
         sample_metadata = Metadata.load(sloc)
         feature_metadata = None
         if floc is not None:
@@ -327,3 +330,42 @@ def validate_sample_plot_json(
             actual_count = count_json[feature_id][sample_id]
             expected_count = table.get_value_by_ids(feature_id, sample_id)
             assert actual_count == expected_count
+
+
+def validate_sample_stats_test_sample_plot_json(sample_json):
+    """This checks that the sample metadata for this test was perfectly read.
+
+       This should already be guaranteed due to the Qurro python metadata tests
+       and validate_sample_plot_json() being done during
+       run_integration_test(), but we might as well be extra safe.
+    """
+    dn = sample_json["data"]["name"]
+    for sample in sample_json["datasets"][dn]:
+        if sample["Sample ID"] == "Sample1":
+            assert sample["Metadata1"] == "1"
+            assert sample["Metadata2"] == "2"
+            assert sample["Metadata3"] == "NaN"
+        elif sample["Sample ID"] == "Sample2":
+            # These special values should be read as just normal strings
+            assert sample["Metadata1"] == "Infinity"
+            assert sample["Metadata2"] == "null"
+            assert sample["Metadata3"] == "6"
+        elif sample["Sample ID"] == "Sample3":
+            assert sample["Metadata1"] == "7"
+            assert sample["Metadata2"] == "8"
+            # all-whitespace should evaluate to just an empty value ("", which
+            # is represented in the output JSON as None --> null in JS)
+            assert sample["Metadata3"] is None
+        elif sample["Sample ID"] == "Sample5":
+            assert sample["Metadata1"] == "13"
+            assert sample["Metadata2"] == "'14'"
+            assert sample["Metadata3"] == "15"
+        elif sample["Sample ID"] == "Sample6":
+            assert sample["Metadata1"] == "Missing: not provided"
+            assert sample["Metadata2"] == "17"
+            assert sample["Metadata3"] == "18"
+        elif sample["Sample ID"] == "Sample7":
+            assert sample["Metadata1"] == "19"
+            # surrounding whitespace should be stripped
+            assert sample["Metadata2"] == "20"
+            assert sample["Metadata3"] == "21"

@@ -1,0 +1,8 @@
+Sample-ID	Metadata1	Metadata2	Metadata3
+Sample1	1	2	NaN
+Sample2	Infinity	null	6
+Sample3	7	"8"	" 	  "
+Sample4	10	11	"null"
+Sample5	13	'14'	15
+Sample6	Missing: not provided	17	18
+Sample7	19	" 20	"	21
