@@ -994,8 +994,11 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             document.getElementById("botText").value =
                 "Test bottom search text";
             for (var i = 0; i < dom_utils.statDivs.length; i++) {
-                document.getElementById(dom_utils.statDivs[i]).textContent = "test lol";
-                document.getElementById(dom_utils.statDivs[i]).classList.add("invisible");
+                document.getElementById(dom_utils.statDivs[i]).textContent =
+                    "test lol";
+                document
+                    .getElementById(dom_utils.statDivs[i])
+                    .classList.add("invisible");
             }
             // TODO: actually call the callback functions (e.g.
             // updateSamplePlotScale()) to change these? I don't want to do
