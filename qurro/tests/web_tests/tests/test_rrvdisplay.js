@@ -202,7 +202,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Multi-feature selections", function() {
+            describe("Multi-feature selections (basic case)", function() {
                 before(async function() {
                     await resetRRVDisplay(rrv);
                     document.getElementById("topSearch").value = "Feature ID";
@@ -238,7 +238,8 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 // Then we can make updateSamplePlotMulti async (and have it
                 // await changeSamplePlot()), and then await
                 // updateSamplePlotMulti's result here. Yay!
-                it("Properly updates the rank plot and sample plot Vega Views");
+                it("Properly updates the sample plot balances");
+                it("Properly updates the rank plot classifications");
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1);
                     chai.assert.sameMembers(
@@ -257,6 +258,11 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         "Taxon3 / Yeet / 100",
                         document.getElementById("botFeaturesDisplay").value
                     );
+                });
+            });
+            describe("Multi-feature selections (corner cases)", function() {
+                describe("Empty search fields provided", function() {
+                    it("Clears feature classifications and sample balances");
                 });
             });
         });
@@ -337,12 +343,6 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.encoding.x.axis.labelAngle
                     );
                 });
-                it(
-                    "Works properly for case of (boxplot) categorical -> quantitative"
-                );
-                it(
-                    "Works properly for case of quantitative -> (boxplot) categorical"
-                );
             });
             describe("Changing the color used on the sample plot", function() {
                 var colorFieldEle = document.getElementById("colorField");
