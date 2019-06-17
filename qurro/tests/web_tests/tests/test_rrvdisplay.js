@@ -803,7 +803,42 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 });
             });
             describe("Changing the x-axis scale type used on the sample plot", function() {
-                it("Works properly");
+                // TODO test filters, tooltips, etc.
+                var xScaleEle = document.getElementById("xAxisScale");
+                async function testCategoricalToQuantitative() {
+                    xScaleEle.value = "quantitative";
+                    await xScaleEle.onchange();
+                    chai.assert.equal(
+                        "quantitative",
+                        rrv.samplePlotJSON.encoding.x.type
+                    );
+                    chai.assert.notExists(rrv.samplePlotJSON.encoding.x.axis);
+                }
+                it(
+                    "Works properly for basic case of (non-boxplot) categorical -> quantitative",
+                    testCategoricalToQuantitative
+                );
+                it("Works properly for basic case of quantitative -> (non-boxplot) categorical", async function() {
+                    await testCategoricalToQuantitative();
+                    xScaleEle.value = "nominal";
+                    await xScaleEle.onchange();
+                    chai.assert.equal(
+                        "nominal",
+                        rrv.samplePlotJSON.encoding.x.type
+                    );
+                    chai.assert.exists(rrv.samplePlotJSON.encoding.x.axis);
+                    chai.assert.isObject(rrv.samplePlotJSON.encoding.x.axis);
+                    chai.assert.equal(
+                        -45,
+                        rrv.samplePlotJSON.encoding.x.axis.labelAngle
+                    );
+                });
+                it(
+                    "Works properly for case of (boxplot) categorical -> quantitative"
+                );
+                it(
+                    "Works properly for case of quantitative -> (boxplot) categorical"
+                );
             });
             describe("Changing the color used on the sample plot", function() {
                 it("Works properly");
@@ -818,9 +853,9 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
         beforeEach(async function() {
             rrv = getNewRRVDisplay();
             await rrv.makePlots();
+            await rrv.destroy(true, true, true);
         });
         it("Properly clears DOM element bindings", async function() {
-            await rrv.destroy(true, true, true);
             for (var i = 0; i < rrv.elementsWithOnClickBindings.length; i++) {
                 chai.assert.isNull(
                     document.getElementById(rrv.elementsWithOnClickBindings[i])
@@ -835,14 +870,12 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             }
         });
         it("Properly clears the #rankPlot and #samplePlot divs", async function() {
-            await rrv.destroy(true, true, true);
             chai.assert.isEmpty(document.getElementById("rankPlot").innerHTML);
             chai.assert.isEmpty(
                 document.getElementById("samplePlot").innerHTML
             );
         });
         it("Properly clears the ranking/metadata field <select>s", async function() {
-            await rrv.destroy(true, true, true);
             chai.assert.isEmpty(document.getElementById("rankField").innerHTML);
             chai.assert.isEmpty(document.getElementById("topSearch").innerHTML);
             chai.assert.isEmpty(document.getElementById("botSearch").innerHTML);
