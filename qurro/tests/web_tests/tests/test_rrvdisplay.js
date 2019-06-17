@@ -69,7 +69,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             }
         });
 
-        it("Identifies nonexistent sample IDs", function() {
+        it("RRVDisplay.validateSampleID() identifies nonexistent sample IDs", function() {
             chai.assert.doesNotThrow(function() {
                 rrv.validateSampleID("Sample2");
             });
