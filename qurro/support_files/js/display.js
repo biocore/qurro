@@ -1179,6 +1179,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 document.getElementById("xAxisScale").value = "nominal";
                 document.getElementById("colorScale").value = "nominal";
                 document.getElementById("barSize").value = "1";
+
+                // Clear sample dropped stats divs and set them invisible
+                for (var s = 0; s < dom_utils.statDivs.length; s++) {
+                    dom_utils.clearDiv(dom_utils.statDivs[s]);
+                    document
+                        .getElementById(dom_utils.statDivs[s])
+                        .classList.add("invisible");
+                }
             }
         }
     }

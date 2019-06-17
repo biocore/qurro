@@ -1,8 +1,9 @@
-define(["display", "mocha", "chai", "testing_utilities"], function(
+define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
     display,
     mocha,
     chai,
-    testing_utilities
+    testing_utilities,
+    dom_utils
 ) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
@@ -1023,6 +1024,17 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 document.getElementById("colorScale").value
             );
             chai.assert.equal("1", document.getElementById("barSize").value);
+
+            for (var s = 0; s < dom_utils.statDivs.length; s++) {
+                chai.assert.isEmpty(
+                    document.getElementById(dom_utils.statDivs[s]).textContent
+                );
+                chai.assert.isTrue(
+                    document
+                        .getElementById(dom_utils.statDivs[s])
+                        .classList.contains("invisible")
+                );
+            }
         });
     });
 });
