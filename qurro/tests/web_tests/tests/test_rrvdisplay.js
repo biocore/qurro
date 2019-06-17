@@ -841,10 +841,77 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 );
             });
             describe("Changing the color used on the sample plot", function() {
-                it("Works properly");
+                var colorFieldEle = document.getElementById("colorField");
+                async function testColorFieldChange(field) {
+                    colorFieldEle.value = field;
+                    await colorFieldEle.onchange();
+                    chai.assert.equal(
+                        field,
+                        rrv.samplePlotJSON.encoding.color.field
+                    );
+                    chai.assert.exists(rrv.samplePlotJSON.transform[0].filter);
+                    chai.assert.isTrue(
+                        rrv.samplePlotJSON.transform[0].filter.includes(
+                            'datum["' + field + '"] != null'
+                        )
+                    );
+                }
+                it("Works properly: changes color and updates filter accordingly", async function() {
+                    await testColorFieldChange("Metadata3");
+                    await testColorFieldChange("Metadata2");
+                    // Check that changing the color field overwrites old
+                    // changes (since now Metadata3 isn't used for the x-axis
+                    // or color encodings)
+                    chai.assert.isFalse(
+                        rrv.samplePlotJSON.transform[0].filter.includes(
+                            'datum["Metadata3"] != null'
+                        )
+                    );
+                });
             });
             describe("Changing the color scale type used on the sample plot", function() {
-                it("Works properly");
+                var colorScaleEle = document.getElementById("colorScale");
+
+                // Analogous to testCategoricalToQuantitative() above for the
+                // x-axis scale stuff. Possible TODO: merge this function with
+                // that? (Might be more trouble than it's worth, though.)
+                async function testChangeScaleType(newScaleType) {
+                    colorScaleEle.value = newScaleType;
+                    await colorScaleEle.onchange();
+                    chai.assert.equal(
+                        newScaleType,
+                        rrv.samplePlotJSON.encoding.color.type
+                    );
+                    // Assert that both the filter-nulls and
+                    // filter-invalid-numbers filters are in use
+                    var datumField = 'datum["Metadata1"]';
+                    chai.assert.isTrue(
+                        rrv.samplePlotJSON.transform[0].filter.includes(
+                            datumField + " != null"
+                        )
+                    );
+                    var hasQuantFilter = rrv.samplePlotJSON.transform[0].filter.includes(
+                        "isFinite(toNumber(" + datumField + "))"
+                    );
+                    if (newScaleType === "quantitative") {
+                        chai.assert.isTrue(hasQuantFilter);
+                    } else {
+                        // NOTE: this assumes that at least either 1) the
+                        // x-axis scale isn't set to quantitative or 2)
+                        // the x-axis field isn't set to Metadata1.
+                        // This is a safe assumption to make for these
+                        // basic tests but not for normal usage of Qurro.
+                        chai.assert.isFalse(hasQuantFilter);
+                    }
+                }
+                // TODO test filters/TOOLTIPS updated properly
+                it("Works properly for categorical -> quantitative", async function() {
+                    await testChangeScaleType("quantitative");
+                });
+                it("Works properly for quantitative -> categorical", async function() {
+                    await testChangeScaleType("quantitative");
+                    await testChangeScaleType("nominal");
+                });
             });
         });
     });
