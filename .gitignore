@@ -73,6 +73,8 @@ docs/demos/matching_test/
 docs/demos/q2_byrd/
 docs/demos/q2_sleep_apnea/
 docs/demos/q2_red_sea/
+docs/demos/q2_sample_stats_test/
+docs/demos/sample_stats_test/
 
 # Ignore various outputs from Qurro's JS testing process
 qurro/tests/web_tests/instrumented_js/*
