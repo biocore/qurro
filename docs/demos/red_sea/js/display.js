@@ -654,27 +654,25 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotTooltips() {
-            if (!document.getElementById("boxplotCheckbox").checked) {
-                // NOTE: this should be safe from duplicate entries within
-                // tooltips so long as you don't change the field titles
-                // displayed.
-                this.samplePlotJSON.encoding.tooltip = [
-                    { type: "nominal", field: "Sample ID" },
-                    {
-                        type: "quantitative",
-                        field: "qurro_balance",
-                        title: "Current Log Ratio"
-                    },
-                    {
-                        type: this.samplePlotJSON.encoding.x.type,
-                        field: this.samplePlotJSON.encoding.x.field
-                    },
-                    {
-                        type: this.samplePlotJSON.encoding.color.type,
-                        field: this.samplePlotJSON.encoding.color.field
-                    }
-                ];
-            }
+            // NOTE: this should be safe from duplicate entries within
+            // tooltips so long as you don't change the field titles
+            // displayed.
+            this.samplePlotJSON.encoding.tooltip = [
+                { type: "nominal", field: "Sample ID" },
+                {
+                    type: "quantitative",
+                    field: "qurro_balance",
+                    title: "Current Log Ratio"
+                },
+                {
+                    type: this.samplePlotJSON.encoding.x.type,
+                    field: this.samplePlotJSON.encoding.x.field
+                },
+                {
+                    type: this.samplePlotJSON.encoding.color.type,
+                    field: this.samplePlotJSON.encoding.color.field
+                }
+            ];
         }
 
         /* Modifies the transform property of the sample plot JSON to include a
@@ -891,7 +889,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.samplePlotJSON.mark.median = { color: "#000000" };
             dom_utils.changeElementsEnabled(this.colorEles, false);
             this.setColorForBoxplot();
-            delete this.samplePlotJSON.encoding.tooltip;
             if (callRemakeSamplePlot) {
                 await this.remakeSamplePlot();
             }
@@ -909,11 +906,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             delete this.samplePlotJSON.mark.median;
             dom_utils.changeElementsEnabled(this.colorEles, true);
             // No need to explicitly adjust color or tooltips here; tooltips
-            // will be auto-added in updateSamplePlotTooltips() (since it will
-            // detect that boxplot mode is off, and therefore try to add
-            // tooltips), and color should have been kept up-to-date every time
-            // the field was changed while boxplot mode was going on (as well
-            // as at the start of boxplot mode), in setColorForBoxplot().
+            // will be auto-added in updateSamplePlotTooltips(), and color
+            // should have been kept up-to-date every time the field was
+            // changed while boxplot mode was going on (as well as at the
+            // start of boxplot mode), in setColorForBoxplot().
             if (callRemakeSamplePlot) {
                 await this.remakeSamplePlot();
             }
