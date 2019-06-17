@@ -22,6 +22,11 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
 
     describe("Dynamic RRVDisplay class functionality", function() {
         var rrv, dataName;
+        async function resetRRVDisplay() {
+            rrv.destroy(true, true, true);
+            rrv = getNewRRVDisplay();
+            await rrv.makePlots();
+        }
         before(async function() {
             rrv = getNewRRVDisplay();
             dataName = rrv.samplePlotJSON.data.name;
@@ -575,11 +580,6 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             /* Resets an RRVDisplay object so we're working with a blank slate
              * before test(s).
              */
-            async function resetRRVDisplay() {
-                rrv.destroy(true, true, true);
-                rrv = getNewRRVDisplay();
-                await rrv.makePlots();
-            }
             async function updateSingleAndCheckAllBalancesNull() {
                 await rrv.updateSamplePlotSingle();
                 var data = rrv.samplePlotView.data(dataName);
@@ -714,7 +714,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     // being called. The added benefit is that this also tests
                     // that the onclick event of the multiFeatureButton was set
                     // properly :)
-                    document.getElementById("multiFeatureButton").click();
+                    await document.getElementById("multiFeatureButton").click();
                 });
                 it("Properly updates topFeatures and botFeatures", function() {
                     chai.assert.sameMembers(
@@ -758,14 +758,49 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 });
             });
         });
-        // TODO: Update these to test modifying the plot JSONs.
         describe("Modifying plot scales/axes", function() {
-            // can use view.signal() to do this. Very feasible.
+            beforeEach(async function() {
+                await resetRRVDisplay(rrv);
+            });
             describe("Changing the rank used on the rank plot", function() {
                 it("Works properly");
             });
-            describe("Changing the x-axis used on the sample plot", function() {
-                it("Works properly");
+            describe("Changing the x-axis field used on the sample plot", function() {
+                var xFieldEle = document.getElementById("xAxisField");
+                it("Works properly in the basic case (no boxplots involved)", async function() {
+                    xFieldEle.value = "Metadata2";
+                    // Kind of a lazy solution, but we assume that .onchange()
+                    // works well enough: this is derived from
+                    // https://stackoverflow.com/a/2856602/10730311
+                    await xFieldEle.onchange();
+
+                    chai.assert.equal(
+                        "Metadata2",
+                        rrv.samplePlotJSON.encoding.x.field
+                    );
+                    // Color field shouldn't change (since we're not messing
+                    // with boxplots yet)
+                    chai.assert.equal(
+                        "Metadata1",
+                        rrv.samplePlotJSON.encoding.color.field
+                    );
+                });
+                it('Also updates color field when in "boxplot" mode', async function() {
+                    // There's obviously more stuff we could test here re:
+                    // details of the boxplot functionality, but that's for
+                    // another test.
+                    await document.getElementById("boxplotCheckbox").click();
+                    xFieldEle.value = "Metadata2";
+                    await xFieldEle.onchange();
+                    chai.assert.equal(
+                        "Metadata2",
+                        rrv.samplePlotJSON.encoding.x.field
+                    );
+                    chai.assert.equal(
+                        "Metadata2",
+                        rrv.samplePlotJSON.encoding.color.field
+                    );
+                });
             });
             describe("Changing the x-axis scale type used on the sample plot", function() {
                 it("Works properly");
@@ -817,6 +852,40 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             chai.assert.isEmpty(
                 document.getElementById("colorField").innerHTML
             );
+        });
+        it("Properly resets other UI elements to their defaults", async function() {
+            await document.getElementById("boxplotCheckbox").click();
+            document.getElementById("topSearchType").value = "rank";
+            document.getElementById("botSearchType").value = "rank";
+            // TODO: actually call the callback functions (e.g.
+            // updateSamplePlotScale()) to change these? I don't want to do
+            // that just yet b/c it will completely mess with JS code coverage,
+            // but eventually that'd be a good idea.
+            document.getElementById("xAxisScale").value = "quantitative";
+            document.getElementById("colorScale").value = "quantitative";
+            document.getElementById("barSize").value = "3";
+            await rrv.destroy(true, true, true);
+
+            chai.assert.isFalse(
+                document.getElementById("boxplotCheckbox").checked
+            );
+            chai.assert.equal(
+                "text",
+                document.getElementById("topSearchType").value
+            );
+            chai.assert.equal(
+                "text",
+                document.getElementById("botSearchType").value
+            );
+            chai.assert.equal(
+                "nominal",
+                document.getElementById("xAxisScale").value
+            );
+            chai.assert.equal(
+                "nominal",
+                document.getElementById("colorScale").value
+            );
+            chai.assert.equal("1", document.getElementById("barSize").value);
         });
     });
 });
