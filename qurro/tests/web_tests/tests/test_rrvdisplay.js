@@ -23,7 +23,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     describe("Dynamic RRVDisplay class functionality", function() {
         var rrv, dataName;
         async function resetRRVDisplay() {
-            rrv.destroy(true, true, true);
+            await rrv.destroy(true, true, true);
             rrv = getNewRRVDisplay();
             await rrv.makePlots();
         }
@@ -32,8 +32,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
         });
-        after(function() {
-            rrv.destroy(true, true, true);
+        after(async function() {
+            await rrv.destroy(true, true, true);
         });
 
         it("Initializes an RRVDisplay object", function() {
