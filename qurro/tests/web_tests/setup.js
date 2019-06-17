@@ -14,7 +14,8 @@ requirejs.config({
         test_filter_features: "tests/test_filter_features",
         test_identify_metadata_columns: "tests/test_identify_metadata_columns",
         test_data_export: "tests/test_data_export",
-        test_rrvdisplay: "tests/test_rrvdisplay"
+        test_rrvdisplay: "tests/test_rrvdisplay",
+        test_rrvdisplay_compute_balance: "tests/test_rrvdisplay_compute_balance"
     },
     shim: {
         // Mocha shim based on
@@ -48,7 +49,8 @@ requirejs(
         "test_filter_features",
         "test_identify_metadata_columns",
         "test_data_export",
-        "test_rrvdisplay"
+        "test_rrvdisplay",
+        "test_rrvdisplay_compute_balance"
     ],
     function(
         display,
@@ -65,7 +67,8 @@ requirejs(
         test_filter_features,
         test_identify_metadata_columns,
         test_data_export,
-        test_rrvdisplay
+        test_rrvdisplay,
+        test_rrvdisplay_compute_balance
     ) {
         // Enables checking for global variables created while running tests
         mocha.checkLeaks();
