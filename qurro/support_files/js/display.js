@@ -195,6 +195,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // ranked features (e.g. the matching test) -- in these cases,
                 // fitting actually increases the bar sizes to be reasonable to
                 // view/select.
+                // TODO: make this a separate func so we can unit-test it
                 if (
                     this.feature_ids.length <=
                     this.rankPlotJSON.config.view.width
