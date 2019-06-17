@@ -758,12 +758,23 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 });
             });
         });
-        describe("Modifying plot scales/axes", function() {
+        describe("Modifying rank plot field/size", function() {
+            describe("Changing the ranking used on the rank plot", function() {
+                it("Works properly");
+                it("Resorts the features by the new ranking");
+            });
+            describe("Changing the bar width", function() {
+                describe("Changing the bar width to a constant size", function() {
+                    it("Works properly");
+                });
+                describe("Changing the bar width to fit to the display", function() {
+                    it("Works properly");
+                });
+            });
+        });
+        describe("Modifying sample plot fields/scales", function() {
             beforeEach(async function() {
                 await resetRRVDisplay(rrv);
-            });
-            describe("Changing the rank used on the rank plot", function() {
-                it("Works properly");
             });
             describe("Changing the x-axis field used on the sample plot", function() {
                 var xFieldEle = document.getElementById("xAxisField");
@@ -912,6 +923,25 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                     await testChangeScaleType("quantitative");
                     await testChangeScaleType("nominal");
                 });
+            });
+        });
+        describe("Boxplot functionality", function() {
+            describe("Changing to a boxplot by changing the x-axis scale type to categorical", function() {
+                it("Works properly");
+                it("Removes tooltips");
+            });
+            describe("Changing to a boxplot by checking the boxplot checkbox", function() {
+                it("Works properly");
+                it("Removes tooltips");
+            });
+            describe("Changing from a boxplot by changing the x-axis scale type to quantitative", function() {
+                it("Works properly");
+                // NOTE/TODO: ensure that #148 on GitHub is addressed
+                it("Adds tooltips");
+            });
+            describe("Changing from a boxplot by unchecking the boxplot checkbox", function() {
+                it("Works properly");
+                it("Adds tooltips");
             });
         });
     });
