@@ -981,8 +981,11 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
             describe("Changing from a boxplot...", function() {
-                async function testSwitchFromBoxplot(currXField) {
-                    await document.getElementById("boxplotCheckbox").click();
+                async function testSamplePlotStateAfterBoxplot(
+                    currXField,
+                    currXScaleType,
+                    newXField
+                ) {
                     chai.assert.equal("circle", rrv.samplePlotJSON.mark.type);
                     chai.assert.notExists(rrv.samplePlotJSON.mark.median);
                     testing_utilities.assertEnabled("colorField", true);
@@ -998,7 +1001,28 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.encoding.color.field
                     );
                     chai.assert.equal(
+                        currXScaleType,
+                        rrv.samplePlotJSON.encoding.x.type
+                    );
+                    chai.assert.equal(
                         "nominal",
+                        rrv.samplePlotJSON.encoding.color.type
+                    );
+                    // Now, changing the x-axis field shouldn't update the
+                    // color field. Verify this.
+                    document.getElementById("xAxisField").value = newXField;
+                    await document.getElementById("xAxisField").onchange();
+                    chai.assert.equal(
+                        newXField,
+                        rrv.samplePlotJSON.encoding.x.field
+                    );
+                    chai.assert.equal(
+                        currXField,
+                        rrv.samplePlotJSON.encoding.color.field
+                    );
+                    // Of course, scales should stay the same
+                    chai.assert.equal(
+                        currXScaleType,
                         rrv.samplePlotJSON.encoding.x.type
                     );
                     chai.assert.equal(
@@ -1006,33 +1030,26 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.encoding.color.type
                     );
                 }
-                // NOTE/TODO: ensure that #148 on GitHub is addressed?
                 it("...By unchecking the boxplot checkbox", async function() {
                     await testSwitchToBoxplot("Metadata1");
-                    await testSwitchFromBoxplot("Metadata1");
-                    // Now, changing the x-axis field shouldn't update the
-                    // color field
-                    document.getElementById("xAxisField").value = "Sample ID";
-                    await document.getElementById("xAxisField").onchange();
-                    chai.assert.equal(
-                        "Sample ID",
-                        rrv.samplePlotJSON.encoding.x.field
-                    );
-                    chai.assert.equal(
+                    await document.getElementById("boxplotCheckbox").click();
+                    await testSamplePlotStateAfterBoxplot(
                         "Metadata1",
-                        rrv.samplePlotJSON.encoding.color.field
-                    );
-                    // Of course, scales should stay the same
-                    chai.assert.equal(
                         "nominal",
-                        rrv.samplePlotJSON.encoding.x.type
-                    );
-                    chai.assert.equal(
-                        "nominal",
-                        rrv.samplePlotJSON.encoding.color.type
+                        "Sample ID"
                     );
                 });
-                it("...By changing the x-axis scale type to quantitative");
+                it("...By changing the x-axis scale type to quantitative", async function() {
+                    await testSwitchToBoxplot("Metadata1");
+                    document.getElementById("xAxisScale").value =
+                        "quantitative";
+                    await document.getElementById("xAxisScale").onchange();
+                    testSamplePlotStateAfterBoxplot(
+                        "Metadata1",
+                        "nominal",
+                        "Sample ID"
+                    );
+                });
             });
         });
     });
