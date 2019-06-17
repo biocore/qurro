@@ -78,58 +78,6 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             });
         });
 
-        describe("Updating feature rank colors", function() {
-            it("Works for single-feature selections", function() {
-                rrv.newFeatureHigh = { "Feature ID": "FH" };
-                rrv.newFeatureLow = { "Feature ID": "FL" };
-                chai.assert.equal(
-                    "Numerator",
-                    rrv.updateRankColorSingle({ "Feature ID": "FH" })
-                );
-                chai.assert.equal(
-                    "Denominator",
-                    rrv.updateRankColorSingle({ "Feature ID": "FL" })
-                );
-                chai.assert.equal(
-                    "None",
-                    rrv.updateRankColorSingle({ "Feature ID": "FN" })
-                );
-                // Test "both" case
-                rrv.newFeatureLow = { "Feature ID": "FH" };
-                chai.assert.equal(
-                    "Both",
-                    rrv.updateRankColorSingle({ "Feature ID": "FH" })
-                );
-            });
-
-            it("Works for multi-feature selections", function() {
-                rrv.topFeatures = [
-                    { "Feature ID": "Feature1" },
-                    { "Feature ID": "Feature2" },
-                    { "Feature ID": "Feature3" }
-                ];
-                rrv.botFeatures = [
-                    { "Feature ID": "Feature3" },
-                    { "Feature ID": "Feature4" }
-                ];
-                chai.assert.equal(
-                    "Numerator",
-                    rrv.updateRankColorMulti({ "Feature ID": "Feature1" })
-                );
-                chai.assert.equal(
-                    "Denominator",
-                    rrv.updateRankColorMulti({ "Feature ID": "Feature4" })
-                );
-                chai.assert.equal(
-                    "None",
-                    rrv.updateRankColorMulti({ "Feature ID": "FeatureN" })
-                );
-                chai.assert.equal(
-                    "Both",
-                    rrv.updateRankColorMulti({ "Feature ID": "Feature3" })
-                );
-            });
-        });
         describe("Identifying samples with a valid metadata field value", function() {
             function testOnMetadata1AndX(expectedInvalidSampleIDs) {
                 var observedInvalidSampleIDs = rrv.getInvalidSampleIDs(
