@@ -22,7 +22,8 @@ requirejs.config({
         test_rrvdisplay_update_feature_color:
             "tests/test_rrvdisplay_update_feature_color",
         test_rrvdisplay_getinvalidsampleids:
-            "tests/test_rrvdisplay_getinvalidsampleids"
+            "tests/test_rrvdisplay_getinvalidsampleids",
+        test_rrvdisplay_destroy: "tests/test_rrvdisplay_destroy"
     },
     shim: {
         // Mocha shim based on
@@ -60,7 +61,8 @@ requirejs(
         "test_rrvdisplay_compute_balance",
         "test_rrvdisplay_update_feature_text_dom",
         "test_rrvdisplay_update_feature_color",
-        "test_rrvdisplay_getinvalidsampleids"
+        "test_rrvdisplay_getinvalidsampleids",
+        "test_rrvdisplay_destroy"
     ],
     function(
         display,
@@ -81,7 +83,8 @@ requirejs(
         test_rrvdisplay_compute_balance,
         test_rrvdisplay_update_feature_text_dom,
         test_rrvdisplay_update_feature_color,
-        test_rrvdisplay_getinvalidsampleids
+        test_rrvdisplay_getinvalidsampleids,
+        test_rrvdisplay_destroy
     ) {
         // Enables checking for global variables created while running tests
         mocha.checkLeaks();
