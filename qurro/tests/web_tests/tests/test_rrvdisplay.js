@@ -28,6 +28,16 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             rrv = getNewRRVDisplay();
             await rrv.makePlots();
         }
+        async function testXAxisCategoricalToQuantitative() {
+            var xScaleEle = document.getElementById("xAxisScale");
+            xScaleEle.value = "quantitative";
+            await xScaleEle.onchange();
+            chai.assert.equal(
+                "quantitative",
+                rrv.samplePlotJSON.encoding.x.type
+            );
+            chai.assert.notExists(rrv.samplePlotJSON.encoding.x.axis);
+        }
         before(async function() {
             rrv = getNewRRVDisplay();
             dataName = rrv.samplePlotJSON.data.name;
@@ -817,21 +827,12 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             describe("Changing the x-axis scale type used on the sample plot", function() {
                 // TODO test filters, tooltips, etc.
                 var xScaleEle = document.getElementById("xAxisScale");
-                async function testCategoricalToQuantitative() {
-                    xScaleEle.value = "quantitative";
-                    await xScaleEle.onchange();
-                    chai.assert.equal(
-                        "quantitative",
-                        rrv.samplePlotJSON.encoding.x.type
-                    );
-                    chai.assert.notExists(rrv.samplePlotJSON.encoding.x.axis);
-                }
                 it(
                     "Works properly for basic case of (non-boxplot) categorical -> quantitative",
-                    testCategoricalToQuantitative
+                    testXAxisCategoricalToQuantitative
                 );
                 it("Works properly for basic case of quantitative -> (non-boxplot) categorical", async function() {
-                    await testCategoricalToQuantitative();
+                    await testXAxisCategoricalToQuantitative();
                     xScaleEle.value = "nominal";
                     await xScaleEle.onchange();
                     chai.assert.equal(
@@ -884,7 +885,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             describe("Changing the color scale type used on the sample plot", function() {
                 var colorScaleEle = document.getElementById("colorScale");
 
-                // Analogous to testCategoricalToQuantitative() above for the
+                // Analogous to testXAxisCategoricalToQuantitative() above for the
                 // x-axis scale stuff. Possible TODO: merge this function with
                 // that? (Might be more trouble than it's worth, though.)
                 async function testChangeScaleType(newScaleType) {
@@ -927,22 +928,74 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             });
         });
         describe("Boxplot functionality", function() {
-            describe("Changing to a boxplot by changing the x-axis scale type to categorical", function() {
-                it("Works properly");
-                it("Removes tooltips");
+            beforeEach(async function() {
+                await resetRRVDisplay(rrv);
             });
-            describe("Changing to a boxplot by checking the boxplot checkbox", function() {
-                it("Works properly");
-                it("Removes tooltips");
+            async function testSwitchToBoxplot(currXField) {
+                document.getElementById("boxplotCheckbox").click();
+                var xScaleEle = document.getElementById("xAxisScale");
+                xScaleEle.value = "nominal";
+                await xScaleEle.onchange();
+                // Now the sample plot should be a boxplot
+                chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
+                chai.assert.exists(rrv.samplePlotJSON.mark.median);
+                chai.assert.equal(
+                    "#000000",
+                    rrv.samplePlotJSON.mark.median.color
+                );
+                // In "boxplot mode", the color controls should be disabled
+                testing_utilities.assertEnabled("colorField", false);
+                testing_utilities.assertEnabled("colorScale", false);
+                // Also, the color field encoding should match the x-axis
+                // field encoding and be nominal
+                chai.assert.equal(
+                    currXField,
+                    rrv.samplePlotJSON.encoding.x.field
+                );
+                chai.assert.equal(
+                    currXField,
+                    rrv.samplePlotJSON.encoding.color.field
+                );
+                chai.assert.equal(
+                    "nominal",
+                    rrv.samplePlotJSON.encoding.color.type
+                );
+            }
+            describe("Changing to a boxplot...", function() {
+                it("...By checking the boxplot checkbox", async function() {
+                    await testSwitchToBoxplot("Metadata1");
+                });
+                it("...By changing the x-axis scale type to categorical", async function() {
+                    // change the x-axis scale from categorical to
+                    // quantitative. Then check the boxplot checkbox (which
+                    // won't change anything yet, since the x-axis scale is
+                    // quantitative). Now, when we change the x-axis back to a
+                    // categorical scale, we should be in boxplot mode.
+                    await testXAxisCategoricalToQuantitative();
+                    await testSwitchToBoxplot("Metadata1");
+                    // Test that changing the x-axis field also updates the
+                    // color field
+                    document.getElementById("xAxisField").value = "Sample ID";
+                    await document.getElementById("xAxisField").onchange();
+                    // Test that color field stuff was updated correctly
+                    chai.assert.equal(
+                        "Sample ID",
+                        rrv.samplePlotJSON.encoding.x.field
+                    );
+                    chai.assert.equal(
+                        "Sample ID",
+                        rrv.samplePlotJSON.encoding.color.field
+                    );
+                    chai.assert.equal(
+                        "nominal",
+                        rrv.samplePlotJSON.encoding.color.type
+                    );
+                });
             });
-            describe("Changing from a boxplot by changing the x-axis scale type to quantitative", function() {
-                it("Works properly");
-                // NOTE/TODO: ensure that #148 on GitHub is addressed
-                it("Adds tooltips");
-            });
-            describe("Changing from a boxplot by unchecking the boxplot checkbox", function() {
-                it("Works properly");
-                it("Adds tooltips");
+            describe("Changing from a boxplot...", function() {
+                // NOTE/TODO: ensure that #148 on GitHub is addressed?
+                it("...By unchecking the boxplot checkbox");
+                it("...By changing the x-axis scale type to quantitative");
             });
         });
     });
