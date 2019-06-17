@@ -1,9 +1,12 @@
 # Contributing to Qurro's codebase
 
-If you'd like to make changes to Qurro's codebase, here's how you'd do that.
-**Note that these are very in-progress instructions** -- if you have any
-questions, feel free to file an issue in this repository or email the Qurro
-development team.
+If you'd like to make changes to Qurro's codebase, then first off --
+thanks a ton! This document describes (briefly) how you'd go about doing this.
+
+**Note that these are very in-progress instructions.** If you have any
+questions on things that were missed/unclear here, feel free to file an issue
+in this repository or email the Qurro development team
+([mfedarko@ucsd.edu](mailto:mfedarko@ucsd.edu)).
 
 ## Setting up a development environment
 
