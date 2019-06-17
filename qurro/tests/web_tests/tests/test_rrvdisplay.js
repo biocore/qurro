@@ -535,9 +535,9 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     document.getElementById("xAxisScale").value =
                         "quantitative";
                     await document.getElementById("xAxisScale").onchange();
-                    testSamplePlotStateAfterBoxplot(
+                    await testSamplePlotStateAfterBoxplot(
                         "Metadata1",
-                        "nominal",
+                        "quantitative",
                         "Sample ID"
                     );
                 });
