@@ -1,4 +1,9 @@
-define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
+define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
+    dom_utils,
+    mocha,
+    chai,
+    testing_utilities
+) {
     describe("Various general DOM utilities", function() {
         var getChildValuesFromSelect = function(selectID) {
             var ele = document.getElementById(selectID);
@@ -70,31 +75,22 @@ define(["dom_utils", "mocha", "chai"], function(dom_utils, mocha, chai) {
             });
         });
 
-        var assertEnabled = function(selectID, isEnabled) {
-            var ele = document.getElementById(selectID);
-            if (!isEnabled) {
-                chai.assert.isTrue(ele.disabled);
-            } else {
-                chai.assert.isFalse(ele.disabled);
-            }
-        };
-
         describe("Changing the enabled status of an element", function() {
             it("Properly disables elements", function() {
                 dom_utils.changeElementsEnabled(
                     ["qurro_enabled_test", "qurro_enabled_test2"],
                     false
                 );
-                assertEnabled("qurro_enabled_test", false);
-                assertEnabled("qurro_enabled_test2", false);
+                testing_utilities.assertEnabled("qurro_enabled_test", false);
+                testing_utilities.assertEnabled("qurro_enabled_test2", false);
             });
             it("Properly enables elements", function() {
                 dom_utils.changeElementsEnabled(
                     ["qurro_enabled_test", "qurro_enabled_test2"],
                     true
                 );
-                assertEnabled("qurro_enabled_test", true);
-                assertEnabled("qurro_enabled_test2", true);
+                testing_utilities.assertEnabled("qurro_enabled_test", true);
+                testing_utilities.assertEnabled("qurro_enabled_test2", true);
             });
         });
 

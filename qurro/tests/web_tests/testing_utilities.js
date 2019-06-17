@@ -29,5 +29,16 @@ define(["chai"], function(chai) {
         );
     }
 
-    return {getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray, checkHeaders: checkHeaders};
+    /* Asserts that a given DOM element (by ID) is enabled or is disabled. */
+    function assertEnabled(selectID, isEnabled) {
+        var ele = document.getElementById(selectID);
+        if (!isEnabled) {
+            chai.assert.isTrue(ele.disabled);
+        } else {
+            chai.assert.isFalse(ele.disabled);
+        }
+    };
+
+
+    return {getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray, checkHeaders: checkHeaders, assertEnabled: assertEnabled};
 });
