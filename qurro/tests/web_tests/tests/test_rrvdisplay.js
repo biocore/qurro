@@ -301,11 +301,42 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
             describe("Changing the bar width", function() {
-                describe("Changing the bar width to a constant size", function() {
-                    it("Works properly");
+                async function triggerBarSizeUpdate(newValue) {
+                    document.getElementById("barSize").value = newValue;
+                    await document.getElementById("barSize").onchange();
+                }
+                it("Changing the bar width to a constant size updates JSON and DOM properly", async function() {
+                    await triggerBarSizeUpdate("3");
+                    chai.assert.equal(
+                        3,
+                        rrv.rankPlotJSON.encoding.x.scale.rangeStep
+                    );
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("barSizeWarning")
+                            .classList.contains("invisible")
+                    );
                 });
-                describe("Changing the bar width to fit to the display", function() {
-                    it("Works properly");
+                describe("Changing the bar width to fit to the rank plot width", function() {
+                    it("Works properly in basic case", async function() {
+                        await triggerBarSizeUpdate("fit");
+                        // We have 5 features in this test rank plot JSON, and
+                        // the rank plot width is set to 400. 400 / 5 = 80.
+                        chai.assert.equal(
+                            80,
+                            rrv.rankPlotJSON.encoding.x.scale.rangeStep
+                        );
+                        chai.assert.isTrue(
+                            document
+                                .getElementById("barSizeWarning")
+                                .classList.contains("invisible")
+                        );
+                    });
+                    // TODO: we can test this by using another set of test
+                    // JSONs here (e.g. the sleep apnea test data).
+                    it(
+                        "Un-hides a warning element when the bar size is less than 1 pixel"
+                    );
                 });
             });
         });
