@@ -359,7 +359,8 @@ def validate_sample_stats_test_sample_plot_json(sample_json):
         elif sample["Sample ID"] == "Sample5":
             assert sample["Metadata1"] == "13"
             assert sample["Metadata2"] == "'14'"
-            assert sample["Metadata3"] == "15"
+            # missing values should end up as Nones
+            assert sample["Metadata3"] is None
         elif sample["Sample ID"] == "Sample6":
             assert sample["Metadata1"] == "Missing: not provided"
             assert sample["Metadata2"] == "17"
