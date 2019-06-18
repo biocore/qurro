@@ -132,9 +132,7 @@ def plot_jsons_equal(json1, json2):
     return json1_c == json2_c
 
 
-def try_to_replace_line_json(
-    line, json_type, curr_json, new_json, json_prefix=""
-):
+def try_to_replace_line_json(line, json_type, new_json, json_prefix=""):
     """Attempts to replace a JSON declaration if it's on the line.
 
        Parameters
@@ -153,11 +151,9 @@ def try_to_replace_line_json(
           One of "rank", "sample", or "count". Other values will result in a
           ValueError being thrown.
 
-       curr_json: dict or None
-          The current json of this "type" in the file.
-
        new_json: dict
-          A tentative JSON to try replacing curr_json with.
+          A JSON to try replacing the current variable declaration (if present)
+          on the input line with.
 
        json_prefix: str (default value: "")
           An optional prefix that will be appended to any JSON names we try to
@@ -193,15 +189,14 @@ def try_to_replace_line_json(
     prefixToReplace = prefixToReplace.format(json_prefix)
 
     if line.lstrip().startswith(prefixToReplace):
-        if not plot_jsons_equal(curr_json, new_json):
-            return (
-                (
-                    line[: line.index("{")]
-                    + json.dumps(new_json, sort_keys=True)
-                    + ";\n"
-                ),
-                True,
-            )
+        return (
+            (
+                line[: line.index("{")]
+                + json.dumps(new_json, sort_keys=True)
+                + ";\n"
+            ),
+            True,
+        )
     return line, False
 
 
@@ -239,6 +234,18 @@ def replace_js_plot_json_definitions(
     curr_rank_plot_json, curr_sample_plot_json, curr_count_json = get_jsons(
         input_file_loc, return_nones=True
     )
+
+    # These "diff" boolean variables indicate which of the JSONs are candidates
+    # to be replaced.
+    diff_rp = not plot_jsons_equal(curr_rank_plot_json, rank_plot_json)
+    diff_sp = not plot_jsons_equal(curr_sample_plot_json, sample_plot_json)
+    diff_c = not plot_jsons_equal(curr_count_json, count_json)
+
+    # If straight-up we know that all of the JSONs are equal, then we won't
+    # write anything out. Just return 1 immediately.
+    if not diff_rp and not diff_sp and not diff_c:
+        return 1
+
     output_file_contents = ""
     at_least_one_plot_changed = False
     with open(input_file_loc, "r") as input_file_obj:
@@ -247,20 +254,17 @@ def replace_js_plot_json_definitions(
         for line in input_file_obj:
             output_line = line
             changed_yet = False
-            output_line, changed_yet = try_to_replace_line_json(
-                line, "rank", curr_rank_plot_json, rank_plot_json, json_prefix
-            )
-            if not changed_yet:
+            if diff_rp:
                 output_line, changed_yet = try_to_replace_line_json(
-                    line,
-                    "sample",
-                    curr_sample_plot_json,
-                    sample_plot_json,
-                    json_prefix,
+                    line, "rank", rank_plot_json, json_prefix
                 )
-            if not changed_yet:
+            if diff_sp and not changed_yet:
                 output_line, changed_yet = try_to_replace_line_json(
-                    line, "count", curr_count_json, count_json, json_prefix
+                    line, "sample", sample_plot_json, json_prefix
+                )
+            if diff_c and not changed_yet:
+                output_line, changed_yet = try_to_replace_line_json(
+                    line, "count", count_json, json_prefix
                 )
             if changed_yet:
                 at_least_one_plot_changed = True
