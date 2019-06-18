@@ -7,8 +7,99 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
+from os.path import join
 import pytest
-from qurro._plot_utils import plot_jsons_equal, try_to_replace_line_json
+from qurro._plot_utils import (
+    get_jsons,
+    plot_jsons_equal,
+    try_to_replace_line_json,
+)
+
+
+def test_get_jsons():
+    idir = join("qurro", "tests", "input", "plot_json_tests")
+    # Test various cases where not all JSONs (rank plot, sample plot, counts)
+    # are available. In these cases, we'd expect a ValueError to be thrown
+    # (assuming the return_nones parameter of get_jsons() remains False).
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "empty_file.js"))
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "both.js"))
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "only_rp.js"))
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "only_sp.js"))
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "only_cp.js"))
+
+    # Test basic case -- all JSONs are in a file
+    assert ({}, {}, {}) == get_jsons(join(idir, "all.js"))
+    # Test that the contents are being processed correctly
+    rpj, spj, cj = get_jsons(join(idir, "all_full.js"))
+    assert rpj == {
+        "a": "b",
+        "data": {"name": "asdf"},
+        "datasets": {"asdf": {"1": 2}},
+    }
+    assert spj == {
+        "c": "d",
+        "data": {"name": "what"},
+        "datasets": {"what": {"3": 4}},
+    }
+    assert cj == {"a": {"b": 0, "c": 2}, "d": {"b": 0, "c": 2}}
+
+    # Test that as_dict=False returns string versions of the JSONs
+    assert ("{}", "{}", "{}") == get_jsons(join(idir, "all.js"), as_dict=False)
+
+    rpj, spj, cj = get_jsons(join(idir, "all_full.js"), as_dict=False)
+    assert rpj == (
+        '{"a": "b", "data": {"name": "asdf"}, '
+        '"datasets": {"asdf": {"1": 2}}}'
+    )
+    assert spj == (
+        '{"c": "d", "data": {"name": "what"}, '
+        '"datasets": {"what": {"3": 4}}}'
+    )
+    assert cj == '{"a": {"b": 0, "c": 2}, "d": {"b": 0, "c": 2}}'
+
+    # Test that return_nones=True prevents ValueErrors from not-present
+    # JSONs, and also that it works in concert with as_dict=False
+    assert (None, None, None) == get_jsons(
+        join(idir, "empty_file.js"), return_nones=True
+    )
+    assert (None, None, None) == get_jsons(
+        join(idir, "empty_file.js"), as_dict=False, return_nones=True
+    )
+    assert ({}, {}, None) == get_jsons(
+        join(idir, "both.js"), return_nones=True
+    )
+    assert ("{}", "{}", None) == get_jsons(
+        join(idir, "both.js"), as_dict=False, return_nones=True
+    )
+    assert ({}, None, None) == get_jsons(
+        join(idir, "only_rp.js"), return_nones=True
+    )
+    assert ("{}", None, None) == get_jsons(
+        join(idir, "only_rp.js"), as_dict=False, return_nones=True
+    )
+    assert (None, {}, None) == get_jsons(
+        join(idir, "only_sp.js"), return_nones=True
+    )
+    assert (None, "{}", None) == get_jsons(
+        join(idir, "only_sp.js"), as_dict=False, return_nones=True
+    )
+    assert (None, None, {}) == get_jsons(
+        join(idir, "only_cp.js"), return_nones=True
+    )
+    assert (None, None, "{}") == get_jsons(
+        join(idir, "only_cp.js"), as_dict=False, return_nones=True
+    )
+
+    # Test that return_nones=True doesn't do anything when all JSONs present
+    assert ({}, {}, {}) == get_jsons(join(idir, "all.js"), return_nones=True)
+    assert ("{}", "{}", "{}") == get_jsons(
+        join(idir, "all.js"), return_nones=True, as_dict=False
+    )
 
 
 def test_plot_jsons_equal():
