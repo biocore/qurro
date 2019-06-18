@@ -13,6 +13,7 @@ from qurro._plot_utils import (
     get_jsons,
     plot_jsons_equal,
     try_to_replace_line_json,
+    replace_js_plot_json_definitions,
 )
 
 
@@ -30,7 +31,7 @@ def test_get_jsons():
     with pytest.raises(ValueError):
         get_jsons(join(idir, "only_sp.js"))
     with pytest.raises(ValueError):
-        get_jsons(join(idir, "only_cp.js"))
+        get_jsons(join(idir, "only_c.js"))
 
     # Test basic case -- all JSONs are in a file
     assert ({}, {}, {}) == get_jsons(join(idir, "all.js"))
@@ -89,10 +90,10 @@ def test_get_jsons():
         join(idir, "only_sp.js"), as_dict=False, return_nones=True
     )
     assert (None, None, {}) == get_jsons(
-        join(idir, "only_cp.js"), return_nones=True
+        join(idir, "only_c.js"), return_nones=True
     )
     assert (None, None, "{}") == get_jsons(
-        join(idir, "only_cp.js"), as_dict=False, return_nones=True
+        join(idir, "only_c.js"), as_dict=False, return_nones=True
     )
 
     # Test that return_nones=True doesn't do anything when all JSONs present
@@ -198,3 +199,76 @@ def test_try_to_replace_line_json():
     # Check that an invalid json type causes an error to be raised
     with pytest.raises(ValueError):
         try_to_replace_line_json(prefix_sample_line, "superinvalid", {}, {})
+
+
+def test_replace_js_plot_json_definitions():
+    idir = join("qurro", "tests", "input", "plot_json_tests")
+    oloc = join(idir, "replace_test_output.js")
+
+    def validate_oloc(empty=False):
+        with open(oloc, "r") as output_fobj:
+            output_lines = output_fobj.readlines()
+            if empty:
+                assert output_lines[0] == "var rankPlotJSON = {};\n"
+                assert output_lines[1] == "var samplePlotJSON = {};\n"
+                assert output_lines[2] == "var countJSON = {};\n"
+            else:
+                assert (
+                    output_lines[0] == 'var rankPlotJSON = {"test1": "r"};\n'
+                )
+                assert (
+                    output_lines[1] == 'var samplePlotJSON = {"test2": "s"};\n'
+                )
+                assert output_lines[2] == 'var countJSON = {"test3": "c"};\n'
+
+    test_inputs = [{"test1": "r"}, {"test2": "s"}, {"test3": "c"}]
+    # Test that the basic case works (all JSONs are in the input file)
+    exit_code = replace_js_plot_json_definitions(
+        join(idir, "all.js"), *test_inputs, output_file_loc=oloc
+    )
+    # The exit code should be 0, since changes should have been made.
+    assert exit_code == 0
+    validate_oloc()
+
+    # Test that when no changes would be made, the exit code is 1.
+    exit_code = replace_js_plot_json_definitions(
+        oloc, *test_inputs, output_file_loc=oloc
+    )
+    assert exit_code == 1
+    validate_oloc()
+
+    # Test that things work properly when no output_file_loc is provided (i.e.
+    # the input file is overwritten)
+    exit_code = replace_js_plot_json_definitions(oloc, {}, {}, {})
+    # We just changed things, so the exit code should be 0.
+    assert exit_code == 0
+    validate_oloc(empty=True)
+
+    # Test that prefixes are handled properly.
+    exit_code = replace_js_plot_json_definitions(
+        join(idir, "spcp_prefix.js"), *test_inputs, output_file_loc=oloc
+    )
+    # Since we didn't specify a prefix, only the JSON plot definition *without*
+    # a prefix -- rankPlotJSON -- should be modified. The other definitions
+    # should remain empty.
+    assert exit_code == 0
+    with open(oloc, "r") as output_fobj:
+        output_lines = output_fobj.readlines()
+        assert output_lines[0] == 'var rankPlotJSON = {"test1": "r"};\n'
+        assert output_lines[1] == "var asdfsamplePlotJSON = {};\n"
+        assert output_lines[2] == "var asdfcountJSON = {};\n"
+
+    exit_code = replace_js_plot_json_definitions(
+        join(idir, "spcp_prefix.js"),
+        *test_inputs,
+        json_prefix="asdf",
+        output_file_loc=oloc
+    )
+    # Now, things should be flipped -- only the definitions with a prefix
+    # (sample plot and count JSON) should be modified.
+    assert exit_code == 0
+    with open(oloc, "r") as output_fobj:
+        output_lines = output_fobj.readlines()
+        assert output_lines[0] == "var rankPlotJSON = {};\n"
+        assert output_lines[1] == 'var asdfsamplePlotJSON = {"test2": "s"};\n'
+        assert output_lines[2] == 'var asdfcountJSON = {"test3": "c"};\n'
