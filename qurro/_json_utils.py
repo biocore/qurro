@@ -67,8 +67,8 @@ def get_jsons(main_js_loc, as_dict=True, return_nones=False):
         for line in mf:
             # Use strip() to trim off starting and trailing whitespace; use the
             # first position in the slice to ignore the
-            # "var [rank/sample]PlotJSON = " stuff; use the second position in
-            # the slice (-1) to remove the trailing semicolon
+            # "var [rankPlot/samplePlot/count]JSON = " stuff; use the second
+            # position in the slice (-1) to remove the trailing semicolon
             if line.lstrip().startswith("var rankPlotJSON = "):
                 rank_plot_json_str = line.strip()[19:-1]
             elif line.lstrip().startswith("var samplePlotJSON = "):
@@ -83,7 +83,9 @@ def get_jsons(main_js_loc, as_dict=True, return_nones=False):
         or count_json_str is None
     ):
         if not return_nones:
-            raise ValueError("Plot JSONs not found in {}.".format(main_js_loc))
+            raise ValueError(
+                "At least one JSON not found in {}.".format(main_js_loc)
+            )
 
     if as_dict:
 
@@ -102,15 +104,17 @@ def get_jsons(main_js_loc, as_dict=True, return_nones=False):
         return rank_plot_json_str, sample_plot_json_str, count_json_str
 
 
-def jsons_equal(json1, json2):
-    """Determines if two (optionally Vega-Lite) JSON objects are effectively
-       equal.
+def plot_jsons_equal(json1, json2):
+    """Determines if two Vega-Lite JSON objects (dicts) are effectively equal.
 
        This attempts to "standardize" the name assigned by Altair to the
        datasets (which is somehow based on a hash of the input dataset).
        I've noticed that this can vary even when the data is otherwise
        similar, if the two JSONs only differ by this name then this will
        consider them equal.
+
+       DON'T USE THIS FUNCTION WITH NON-VEGA-LITE JSON OBJECTS -- instead, just
+       use something like the == operator.
     """
     try:
         dn1 = json1["data"]["name"]
@@ -239,9 +243,11 @@ def replace_js_json_definitions(
 
     # These "diff" boolean variables indicate which of the JSONs are candidates
     # to be replaced.
-    diff_rp = not jsons_equal(curr_rank_plot_json, rank_plot_json)
-    diff_sp = not jsons_equal(curr_sample_plot_json, sample_plot_json)
-    diff_c = not jsons_equal(curr_count_json, count_json)
+    diff_rp = not plot_jsons_equal(curr_rank_plot_json, rank_plot_json)
+    diff_sp = not plot_jsons_equal(curr_sample_plot_json, sample_plot_json)
+    # Since the count JSON isn't a Vega-Lite JSON, we need to just compare it
+    # normally using the != operator.
+    diff_c = curr_count_json != count_json
 
     # If straight-up we know that all of the JSONs are equal, then we won't
     # write anything out. Just return 1 immediately.

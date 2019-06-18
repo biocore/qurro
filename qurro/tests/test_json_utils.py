@@ -11,7 +11,7 @@ from os.path import join
 import pytest
 from qurro._json_utils import (
     get_jsons,
-    jsons_equal,
+    plot_jsons_equal,
     try_to_replace_line_json,
     replace_js_json_definitions,
 )
@@ -103,23 +103,25 @@ def test_get_jsons():
     )
 
 
-def test_jsons_equal():
+def test_plot_jsons_equal():
 
-    assert jsons_equal(None, None)
-    assert jsons_equal({}, {})
-    assert not jsons_equal({"a": "b"}, {"a": "c"})
-    assert not jsons_equal(None, {})
-    assert not jsons_equal({}, None)
-    assert not jsons_equal({"a": "b"}, {})
-    assert not jsons_equal({"a": "b", "data": {"name": "asdf"}}, {"a": "b"})
-    # The dataset name should be explicitly ignored by jsons_equal().
+    assert plot_jsons_equal(None, None)
+    assert plot_jsons_equal({}, {})
+    assert not plot_jsons_equal({"a": "b"}, {"a": "c"})
+    assert not plot_jsons_equal(None, {})
+    assert not plot_jsons_equal({}, None)
+    assert not plot_jsons_equal({"a": "b"}, {})
+    assert not plot_jsons_equal(
+        {"a": "b", "data": {"name": "asdf"}}, {"a": "b"}
+    )
+    # The dataset name should be explicitly ignored by plot_jsons_equal().
     # Of course, if the actual data is different, the specs aren't equal.
-    assert not jsons_equal(
+    assert not plot_jsons_equal(
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
         {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {2: 1}}},
     )
     # Sanity test -- check that a spec is equal to itself
-    assert jsons_equal(
+    assert plot_jsons_equal(
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
     )
@@ -128,7 +130,7 @@ def test_jsons_equal():
     # "diff", respectively).
     a = {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}}
     b = {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {1: 2}}}
-    assert jsons_equal(a, b)
+    assert plot_jsons_equal(a, b)
     # And, while we're at it, check that this function doesn't overwrite its
     # inputs when standardizing data names. The distinct data names should be
     # preserved.
