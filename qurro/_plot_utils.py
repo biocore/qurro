@@ -132,16 +132,97 @@ def plot_jsons_equal(json1, json2):
     return json1_c == json2_c
 
 
+def try_to_replace_line_json(
+    line, jsonType, curr_json, new_json, json_prefix=""
+):
+    """Attempts to replace a JSON declaration if it's on the line.
+
+       Parameters
+       ----------
+       line: str
+          A line from a JavaScript code file. It's assumed that, if it declares
+          a plot JSON, this declaration will only take up one line (i.e. it
+          will be of the form
+          "[whitespace?]var [JSON prefix?][JSON name] = {JSON contents};").
+
+          If a replacement is made, everything on and after the { in this line
+          will be replaced with the contents of the new JSON, followed by
+          ";\n".
+
+       jsonType: str
+          One of "rank", "sample", or "count". Other values will result in a
+          ValueError being thrown.
+
+       curr_json: dict or None
+          The current json of this "type" in the file.
+
+       new_json: dict
+          A tentative JSON to try replacing curr_json with.
+
+       json_prefix: str (default value: "")
+          An optional prefix that will be appended to any JSON names we try to
+          replace. If this is anything but "", this *won't replace normal JSON
+          lines* (e.g. "var rankPlotJSON = {") -- instead, this will only
+          replace lines with the given prefix (e.g. if the prefix is "SST",
+          then only JSON lines of the format "var SSTrankPlotJSON = {" will be
+          replaced.
+
+       Returns
+       -------
+       (line, replacement_made): str, bool
+          If no replacement was made, replacement_made will be False and line
+          will just equal to the input line.
+
+          If a replacement was made, replacement_made will be True and line
+          will be equal to the new line with the JSON replaced.
+    """
+
+    prefixToReplace = ""
+    if jsonType == "rank":
+        prefixToReplace = "var {}rankPlotJSON = {{"
+    elif jsonType == "sample":
+        prefixToReplace = "var {}samplePlotJSON = {{"
+    elif jsonType == "count":
+        prefixToReplace = "var {}countJSON = {{"
+    else:
+        raise ValueError(
+            "Invalid jsonType argument. Must be 'rank', "
+            "'sample', or 'count'."
+        )
+
+    prefixToReplace = prefixToReplace.format(json_prefix)
+
+    if line.lstrip().startswith(prefixToReplace):
+        if not plot_jsons_equal(curr_json, new_json):
+            return (
+                (
+                    line[: line.index("{")]
+                    + json.dumps(new_json, sort_keys=True)
+                    + ";\n"
+                ),
+                True,
+            )
+    return line, False
+
+
 def replace_js_plot_json_definitions(
     input_file_loc,
     rank_plot_json,
     sample_plot_json,
     count_json,
     output_file_loc=None,
+    json_prefix="",
 ):
     """Writes a version of the input JS file with plot JSON(s) changed.
 
        If output_file_loc is None, the input_file_loc will be overwritten.
+
+       You can provide an arbitrary string (well, at least one without any
+       whitespace) to ensure that only JSON declarations that start with that
+       prefix will be overwritten. For example, you can pass
+       json_prefix="SST" to ensure that "var SSTrankPlotJSON = {" lines
+       will have their JSONs replaced, but "var rankPlotJSON = {" lines won't
+       be replaced.
 
        If neither plot JSON is different, this won't write anything to the
        output file (or the input file, if output_file_loc is None). This
@@ -165,33 +246,24 @@ def replace_js_plot_json_definitions(
         # plot JSONs with the actual JSON.
         for line in input_file_obj:
             output_line = line
-            # TODO Stop reusing all of this code -- make another function!
-            if line.lstrip().startswith("var rankPlotJSON = {"):
-                if not plot_jsons_equal(curr_rank_plot_json, rank_plot_json):
-                    output_line = (
-                        output_line[: output_line.index("{")]
-                        + json.dumps(rank_plot_json, sort_keys=True)
-                        + ";\n"
-                    )
-                    at_least_one_plot_changed = True
-            elif line.lstrip().startswith("var samplePlotJSON = {"):
-                if not plot_jsons_equal(
-                    curr_sample_plot_json, sample_plot_json
-                ):
-                    output_line = (
-                        output_line[: output_line.index("{")]
-                        + json.dumps(sample_plot_json, sort_keys=True)
-                        + ";\n"
-                    )
-                    at_least_one_plot_changed = True
-            elif line.lstrip().startswith("var countJSON = {"):
-                if not plot_jsons_equal(curr_count_json, count_json):
-                    output_line = (
-                        output_line[: output_line.index("{")]
-                        + json.dumps(count_json, sort_keys=True)
-                        + ";\n"
-                    )
-                    at_least_one_plot_changed = True
+            changed_yet = False
+            output_line, changed_yet = try_to_replace_line_json(
+                line, "rank", curr_rank_plot_json, rank_plot_json, json_prefix
+            )
+            if not changed_yet:
+                output_line, changed_yet = try_to_replace_line_json(
+                    line,
+                    "sample",
+                    curr_sample_plot_json,
+                    sample_plot_json,
+                    json_prefix,
+                )
+            if not changed_yet:
+                output_line, changed_yet = try_to_replace_line_json(
+                    line, "count", curr_count_json, count_json, json_prefix
+                )
+            if changed_yet:
+                at_least_one_plot_changed = True
             output_file_contents += output_line
 
     if at_least_one_plot_changed:
@@ -221,3 +293,5 @@ if __name__ == "__main__":
             sample_plot_json,
             count_json,
         )
+        # TODO use json_prefix arg of replace_js_plot_json_definitions to
+        # replace "SST" plot definitions for the #92 integration test
