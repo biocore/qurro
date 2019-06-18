@@ -9,16 +9,16 @@
 
 from os.path import join
 import pytest
-from qurro._plot_utils import (
+from qurro._json_utils import (
     get_jsons,
-    plot_jsons_equal,
+    jsons_equal,
     try_to_replace_line_json,
-    replace_js_plot_json_definitions,
+    replace_js_json_definitions,
 )
 
 
 def test_get_jsons():
-    idir = join("qurro", "tests", "input", "plot_json_tests")
+    idir = join("qurro", "tests", "input", "json_tests")
     # Test various cases where not all JSONs (rank plot, sample plot, counts)
     # are available. In these cases, we'd expect a ValueError to be thrown
     # (assuming the return_nones parameter of get_jsons() remains False).
@@ -103,25 +103,23 @@ def test_get_jsons():
     )
 
 
-def test_plot_jsons_equal():
+def test_jsons_equal():
 
-    assert plot_jsons_equal(None, None)
-    assert plot_jsons_equal({}, {})
-    assert not plot_jsons_equal({"a": "b"}, {"a": "c"})
-    assert not plot_jsons_equal(None, {})
-    assert not plot_jsons_equal({}, None)
-    assert not plot_jsons_equal({"a": "b"}, {})
-    assert not plot_jsons_equal(
-        {"a": "b", "data": {"name": "asdf"}}, {"a": "b"}
-    )
-    # The dataset name should be explicitly ignored by plot_jsons_equal().
+    assert jsons_equal(None, None)
+    assert jsons_equal({}, {})
+    assert not jsons_equal({"a": "b"}, {"a": "c"})
+    assert not jsons_equal(None, {})
+    assert not jsons_equal({}, None)
+    assert not jsons_equal({"a": "b"}, {})
+    assert not jsons_equal({"a": "b", "data": {"name": "asdf"}}, {"a": "b"})
+    # The dataset name should be explicitly ignored by jsons_equal().
     # Of course, if the actual data is different, the specs aren't equal.
-    assert not plot_jsons_equal(
+    assert not jsons_equal(
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
         {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {2: 1}}},
     )
     # Sanity test -- check that a spec is equal to itself
-    assert plot_jsons_equal(
+    assert jsons_equal(
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
         {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}},
     )
@@ -130,7 +128,7 @@ def test_plot_jsons_equal():
     # "diff", respectively).
     a = {"a": "b", "data": {"name": "asdf"}, "datasets": {"asdf": {1: 2}}}
     b = {"a": "b", "data": {"name": "diff"}, "datasets": {"diff": {1: 2}}}
-    assert plot_jsons_equal(a, b)
+    assert jsons_equal(a, b)
     # And, while we're at it, check that this function doesn't overwrite its
     # inputs when standardizing data names. The distinct data names should be
     # preserved.
@@ -197,8 +195,8 @@ def test_try_to_replace_line_json():
         try_to_replace_line_json(prefix_sample_line, "superinvalid", {})
 
 
-def test_replace_js_plot_json_definitions():
-    idir = join("qurro", "tests", "input", "plot_json_tests")
+def test_replace_js_json_definitions():
+    idir = join("qurro", "tests", "input", "json_tests")
     oloc = join(idir, "replace_test_output.js")
 
     def validate_oloc(empty=False):
@@ -219,7 +217,7 @@ def test_replace_js_plot_json_definitions():
 
     test_inputs = [{"test1": "r"}, {"test2": "s"}, {"test3": "c"}]
     # Test that the basic case works (all JSONs are in the input file)
-    exit_code = replace_js_plot_json_definitions(
+    exit_code = replace_js_json_definitions(
         join(idir, "all.js"), *test_inputs, output_file_loc=oloc
     )
     # The exit code should be 0, since changes should have been made.
@@ -227,7 +225,7 @@ def test_replace_js_plot_json_definitions():
     validate_oloc()
 
     # Test that when no changes would be made, the exit code is 1.
-    exit_code = replace_js_plot_json_definitions(
+    exit_code = replace_js_json_definitions(
         oloc, *test_inputs, output_file_loc=oloc
     )
     assert exit_code == 1
@@ -235,13 +233,13 @@ def test_replace_js_plot_json_definitions():
 
     # Test that things work properly when no output_file_loc is provided (i.e.
     # the input file is overwritten)
-    exit_code = replace_js_plot_json_definitions(oloc, {}, {}, {})
+    exit_code = replace_js_json_definitions(oloc, {}, {}, {})
     # We just changed things, so the exit code should be 0.
     assert exit_code == 0
     validate_oloc(empty=True)
 
     # Test that prefixes are handled properly.
-    exit_code = replace_js_plot_json_definitions(
+    exit_code = replace_js_json_definitions(
         join(idir, "spcp_prefix.js"), *test_inputs, output_file_loc=oloc
     )
     # Since we didn't specify a prefix, only the JSON plot definition *without*
@@ -254,7 +252,7 @@ def test_replace_js_plot_json_definitions():
         assert output_lines[1] == "var asdfsamplePlotJSON = {};\n"
         assert output_lines[2] == "var asdfcountJSON = {};\n"
 
-    exit_code = replace_js_plot_json_definitions(
+    exit_code = replace_js_json_definitions(
         join(idir, "spcp_prefix.js"),
         *test_inputs,
         json_prefix="asdf",

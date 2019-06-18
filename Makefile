@@ -22,8 +22,8 @@ pytest:
 	python3 -B -m pytest qurro/tests -s --cov qurro
 
 jstest:
-	@# Re-update specs for JS tests
-	python3 qurro/_plot_utils.py
+	@# Re-update specs for JS tests by running qurro/_json_utils.py as a script
+	python3 qurro/_json_utils.py
 	nyc instrument qurro/support_files/js/ qurro/tests/web_tests/instrumented_js/
 	mocha-headless-chrome -f qurro/tests/web_tests/index.html -c js_coverage.json
 

@@ -22,7 +22,7 @@ from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
-from qurro._plot_utils import replace_js_plot_json_definitions
+from qurro._json_utils import replace_js_json_definitions
 from qurro._metadata_utils import replace_nan, validate_df, escape_columns
 
 
@@ -363,9 +363,9 @@ def gen_sample_plot(table, metadata):
 
     # Very minor thing -- sort the samples by their IDs. This should ensure
     # that the sample plot output is deterministic -- and, therefore, when
-    # running qurro._plot_utils to see if we need to update the specs in
-    # the JS, qurro._plot_utils.plot_jsons_equal() should be True
-    # unless we actually change something in the actual spec details.
+    # running qurro._json_utils to see if we need to update the specs in
+    # the JS, qurro._json_utils.jsons_equal() should be True unless we actually
+    # change something in the actual JSON details.
     sample_metadata.sort_values(by=["Sample ID"], inplace=True)
 
     # Create sample plot chart Vega-Lite spec using Altair.
@@ -469,7 +469,7 @@ def gen_visualization(
     # create JS code that loads these JSON files in main.js
     main_loc = os.path.join(support_files_loc, "main.js")
     output_loc = os.path.join(output_dir, "main.js")
-    exit_code = replace_js_plot_json_definitions(
+    exit_code = replace_js_json_definitions(
         main_loc,
         rank_plot_json,
         sample_plot_json,
