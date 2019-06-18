@@ -133,7 +133,7 @@ def plot_jsons_equal(json1, json2):
 
 
 def try_to_replace_line_json(
-    line, jsonType, curr_json, new_json, json_prefix=""
+    line, json_type, curr_json, new_json, json_prefix=""
 ):
     """Attempts to replace a JSON declaration if it's on the line.
 
@@ -149,7 +149,7 @@ def try_to_replace_line_json(
           will be replaced with the contents of the new JSON, followed by
           ";\n".
 
-       jsonType: str
+       json_type: str
           One of "rank", "sample", or "count". Other values will result in a
           ValueError being thrown.
 
@@ -178,15 +178,15 @@ def try_to_replace_line_json(
     """
 
     prefixToReplace = ""
-    if jsonType == "rank":
+    if json_type == "rank":
         prefixToReplace = "var {}rankPlotJSON = {{"
-    elif jsonType == "sample":
+    elif json_type == "sample":
         prefixToReplace = "var {}samplePlotJSON = {{"
-    elif jsonType == "count":
+    elif json_type == "count":
         prefixToReplace = "var {}countJSON = {{"
     else:
         raise ValueError(
-            "Invalid jsonType argument. Must be 'rank', "
+            "Invalid json_type argument. Must be 'rank', "
             "'sample', or 'count'."
         )
 
