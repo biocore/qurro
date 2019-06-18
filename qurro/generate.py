@@ -362,10 +362,10 @@ def gen_sample_plot(table, metadata):
     sample_metadata.reset_index(inplace=True)
 
     # Very minor thing -- sort the samples by their IDs. This should ensure
-    # that the sample plot output is deterministic -- and, therefore, when
-    # running qurro._json_utils to see if we need to update the specs in
-    # the JS, qurro._json_utils.jsons_equal() should be True unless we actually
-    # change something in the actual JSON details.
+    # that the sample plot output is deterministic.
+    # NOTE: this is probably unnecessary due to the use of sort_keys in
+    # _json_utils.try_to_replace_line_json(). Double-check if we can remove
+    # this.
     sample_metadata.sort_values(by=["Sample ID"], inplace=True)
 
     # Create sample plot chart Vega-Lite spec using Altair.
