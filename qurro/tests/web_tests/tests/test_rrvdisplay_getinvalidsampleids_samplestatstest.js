@@ -21,6 +21,42 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         after(async function() {
             await rrv.destroy(true, true, true);
         });
-        it("Works properly");
+        it("Sample metadata values are passed from python to JSON to JS correctly", function() {
+            var sampleArray = rrv.samplePlotJSON.datasets[dataName];
+            chai.assert.equal(6, sampleArray.length);
+
+            // Sample1
+            chai.assert.equal("1", sampleArray[0].Metadata1);
+            chai.assert.equal("2", sampleArray[0].Metadata2);
+            chai.assert.equal("NaN", sampleArray[0].Metadata3);
+
+            // Sample2
+            chai.assert.equal("Infinity", sampleArray[1].Metadata1);
+            chai.assert.equal("null", sampleArray[1].Metadata2);
+            chai.assert.equal("6", sampleArray[1].Metadata3);
+
+            // Sample3
+            chai.assert.equal("7", sampleArray[2].Metadata1);
+            chai.assert.equal("8", sampleArray[2].Metadata2);
+            chai.assert.equal(null, sampleArray[2].Metadata3);
+
+            // Sample5 (Sample4 was dropped)
+            chai.assert.equal("13", sampleArray[3].Metadata1);
+            chai.assert.equal("'14'", sampleArray[3].Metadata2);
+            chai.assert.equal(null, sampleArray[3].Metadata3);
+
+            // Sample6
+            chai.assert.equal(
+                "Missing: not provided",
+                sampleArray[4].Metadata1
+            );
+            chai.assert.equal("17", sampleArray[4].Metadata2);
+            chai.assert.equal("18", sampleArray[4].Metadata3);
+
+            // Sample7
+            chai.assert.equal("19", sampleArray[5].Metadata1);
+            chai.assert.equal("20", sampleArray[5].Metadata2);
+            chai.assert.equal("21", sampleArray[5].Metadata3);
+        });
     });
 });

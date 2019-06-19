@@ -370,3 +370,5 @@ def validate_sample_stats_test_sample_plot_json(sample_json):
             # surrounding whitespace should be stripped
             assert sample["Metadata2"] == "20"
             assert sample["Metadata3"] == "21"
+        else:
+            raise ValueError("Invalid sample ID found in S.S.T. JSON")
