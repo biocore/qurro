@@ -703,6 +703,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var colorType = this.samplePlotJSON.encoding.color.type;
 
             var filterString = "datum.qurro_balance != null";
+            // NOTE: if the current x and color fields are the same, there will
+            // be some redundancy in filterString. Might be worth addressing
+            // this in the future, but shouldn't be a big deal -- Vega* doesn't
+            // seem to mind.
             filterString += " && " + datumXField + " != null";
             filterString += " && " + datumColorField + " != null";
 
