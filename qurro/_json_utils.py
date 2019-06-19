@@ -292,18 +292,32 @@ def replace_js_json_definitions(
 
 
 if __name__ == "__main__":
-    """Update JSON definitions for the Qurro web tests."""
+    """Update JSON definitions for the Qurro web tests.
+
+       Most of the JSON definitions in the web tests are taken from the
+       python "matching test" output. This is just because this is a small,
+       simple dataset that's easy to work with.
+
+       However, we use the json_prefix argument of
+       replace_js_json_definitions() to also send some other python tests'
+       output to those tests that refer to these JSONs.
+    """
     test_dir = os.path.join("qurro", "tests", "web_tests", "tests")
     rrv_js_tests = filter(lambda f: f.endswith(".js"), os.listdir(test_dir))
-    rank_plot_json, sample_plot_json, count_json = get_jsons(
+
+    mt_rpj, mt_spj, mt_cj = get_jsons(
         os.path.join("docs", "demos", "matching_test", "main.js")
     )
+    sst_rpj, sst_spj, sst_cj = get_jsons(
+        os.path.join("docs", "demos", "sample_stats_test", "main.js")
+    )
     for js_test_file in rrv_js_tests:
+        js_test_file_path = os.path.join(test_dir, js_test_file)
+        # Replace JSONs without special prefixes with the matching test JSONs.
+        replace_js_json_definitions(js_test_file_path, mt_rpj, mt_spj, mt_cj)
+        # Replace JSONs with the "SST" prefix with the sample stats test JSONs.
+        # This is done in order to create an "integration" test for #92, where
+        # the output from python is tested both in python and in JavaScript.
         replace_js_json_definitions(
-            os.path.join(test_dir, js_test_file),
-            rank_plot_json,
-            sample_plot_json,
-            count_json,
+            js_test_file_path, sst_rpj, sst_spj, sst_cj, json_prefix="SST"
         )
-        # TODO use json_prefix arg of replace_js_json_definitions to
-        # replace "SST" plot definitions for the #92 integration test
