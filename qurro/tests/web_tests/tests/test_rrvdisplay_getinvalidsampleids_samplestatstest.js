@@ -7,9 +7,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     // prettier-ignore
     var SSTcountJSON = {"Taxon1": {"Sample1": 0.0, "Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0, "Sample7": 0.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample1": 0.0, "Sample2": 0.0, "Sample3": 1.0, "Sample5": 2.0, "Sample6": 0.0, "Sample7": 0.0}};
 
-    describe("Sample dropping stats integration test", function() {
+    describe('Sample metadata values in JSON, "samples shown" statistics, and sample plot filtering', function() {
         var rrv, dataName;
-        before(async function() {
+        async function resetRRVDisplay() {
             rrv = new display.RRVDisplay(
                 SSTrankPlotJSON,
                 SSTsamplePlotJSON,
@@ -17,8 +17,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             );
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
-        });
-        after(async function() {
+        }
+        beforeEach(resetRRVDisplay);
+        afterEach(async function() {
             await rrv.destroy(true, true, true);
         });
         it("Sample metadata values are passed from python to JSON to JS correctly", function() {
@@ -57,6 +58,75 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.equal("19", sampleArray[5].Metadata1);
             chai.assert.equal("20", sampleArray[5].Metadata2);
             chai.assert.equal("21", sampleArray[5].Metadata3);
+        });
+        describe("Sample plot filters are properly set", function() {
+            // NOTE: if we get around to removing the redundancy in the
+            // filters generated when x-axis and color fields are equal,
+            // these tests will need to be changed accordingly.
+            it("When both x-axis and color are categorical", async function() {
+                // Just once, test the "starting" filters
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata1"] != null',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                // Try changing the color field to Metadata2, and verify that
+                // the filters are updated accordingly
+                document.getElementById("colorField").value = "Metadata2";
+                await document.getElementById("colorField").onchange();
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata2"] != null',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                // Try changing the x-axis field to Sample ID, and verify that
+                // the filters are again updated accordingly
+                document.getElementById("xAxisField").value = "Sample ID";
+                await document.getElementById("xAxisField").onchange();
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Sample ID"] != null && ' +
+                        'datum["Metadata2"] != null',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+            });
+            //it("When x-axis is quantitative and color is categorical", async function() {
+            //    document.getElementById("xAxisScale").value = "quantitative";
+            //    await document.getElementById("xAxisScale").onchange();
+            //    chai.assert.equal(
+            //        "datum.qurro_balance != null && " +
+            //            'datum["Metadata1"] != null && ' +
+            //            'datum["Metadata1"] != null && ' +
+            //            'isFinite(toNumber(datum["Metadata1"]))',
+            //        rrv.samplePlotJSON.transform[0].filter
+            //    );
+
+            //    // Change color field and verify filters updated accordingly
+            //    document.getElementById("colorField").value = "Metadata2";
+            //    await document.getElementById("colorField").onchange();
+            //    chai.assert.equal(
+            //        "datum.qurro_balance != null && " +
+            //            'datum["Metadata1"] != null && ' +
+            //            'datum["Metadata2"] != null && ' +
+            //            'isFinite(toNumber(datum["Metadata1"]))',
+            //        rrv.samplePlotJSON.transform[0].filter
+            //    );
+
+            //    // Change x-axis field and verify filters updated accordingly
+            //    document.getElementById("xAxisField").value = "Sample ID";
+            //    await document.getElementById("xAxisField").onchange();
+            //    chai.assert.equal(
+            //        "datum.qurro_balance != null && " +
+            //            'datum["Sample ID"] != null && ' +
+            //            'datum["Metadata2"] != null && ' +
+            //            'isFinite(toNumber(datum["Sample ID"]))',
+            //        rrv.samplePlotJSON.transform[0].filter
+            //    );
+            //});
         });
     });
 });
