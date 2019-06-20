@@ -79,9 +79,6 @@ def filter_unextreme_features(
 ) -> None:
     """Returns copies of the table and ranks with "unextreme" features removed.
 
-       Also removes samples from the table that, after removing "unextreme"
-       features, don't contain any of the remaining features.
-
        Parameters
        ----------
 
@@ -128,10 +125,8 @@ def filter_unextreme_features(
 
        If (extreme_feature_count * 2) is greater than or equal to the total
        number of features in the ranks DataFrame, this won't do any filtering
-       at all. (It won't even filter out empty samples, in the case that the
-       input table already contained empty samples.) In this case, a warning
-       message will be printed from this function, and the given table and
-       ranks inputs will be returned.
+       at all. In this case, a warning message will be printed from this
+       function, and the given table and ranks inputs will be returned.
     """
 
     logging.debug('Starting to filter "unextreme" features.')
@@ -187,13 +182,10 @@ def filter_unextreme_features(
 
     filtered_table.filter(filter_biom_table, axis="observation")
 
-    # Finally, filter now-empty samples from the BIOM table.
-    filtered_table.remove_empty(axis="sample")
-
     logging.debug("Output table has shape {}.".format(filtered_table.shape))
     logging.debug(
         "Output feature ranks have shape {}.".format(filtered_ranks.shape)
     )
-    logging.debug("Done with filtering.")
+    logging.debug("Done with filtering unextreme features.")
 
     return filtered_table, filtered_ranks

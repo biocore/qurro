@@ -52,23 +52,24 @@ def test_filtering_basic():
         assert filtered_table.exists(fid, axis="observation")
     for fid in ["F3", "F4", "F5", "F6"]:
         assert not filtered_table.exists(fid, axis="observation")
-    # Check that all samples -- except for the one empty one -- were preserved.
-    for sid in ["S1", "S2", "S4", "S5"]:
+    # Check that all samples were preserved.
+    # (The removal of empty features is done *after*
+    # filter_unextreme_features() is called in normal Qurro execution, so we
+    # should expect all samples -- even empty ones -- to remain here.
+    for sid in ["S1", "S2", "S3", "S4", "S5"]:
         assert filtered_table.exists(sid, axis="sample")
-    for sid in ["S3"]:
-        assert not filtered_table.exists(sid, axis="sample")
     # Check that the appropriate data is left in the table.
     assert_array_equal(
-        filtered_table.data("F1", axis="observation"), [0, 1, 3, 4]
+        filtered_table.data("F1", axis="observation"), [0, 1, 0, 3, 4]
     )
     assert_array_equal(
-        filtered_table.data("F2", axis="observation"), [5, 6, 8, 9]
+        filtered_table.data("F2", axis="observation"), [5, 6, 0, 8, 9]
     )
     assert_array_equal(
-        filtered_table.data("F7", axis="observation"), [30, 31, 33, 34]
+        filtered_table.data("F7", axis="observation"), [30, 31, 0, 33, 34]
     )
     assert_array_equal(
-        filtered_table.data("F8", axis="observation"), [35, 36, 38, 39]
+        filtered_table.data("F8", axis="observation"), [35, 36, 0, 38, 39]
     )
 
     expected_filtered_ranks = DataFrame(

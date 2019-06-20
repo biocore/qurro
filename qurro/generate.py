@@ -88,12 +88,24 @@ def process_input(
     if feature_metadata is not None:
         feature_metadata = replace_nan(feature_metadata)
 
-    # NOTE although we always call filter_unextreme_features(), no filtering is
+    # NOTE although we always call filter_unextreme_features(), filtering isn't
     # necessarily done (depending on the value of extreme_feature_count and the
     # contents of the table/ranks).
     filtered_table, filtered_ranks = filter_unextreme_features(
         biom_table, feature_ranks, extreme_feature_count
     )
+
+    # Filter now-empty samples from the BIOM table.
+    table_adjective = " "
+    if extreme_feature_count is None:
+        table_adjective = " filtered "
+    logging.debug(
+        "Attempting to remove empty samples from the{}BIOM table.".format(
+            table_adjective
+        )
+    )
+    filtered_table.remove_empty(axis="sample")
+
     logging.debug("Creating a SparseDataFrame from the BIOM table.")
 
     # Old versions of BIOM accidentally produce an effectively-dense DataFrame
