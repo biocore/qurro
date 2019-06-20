@@ -138,6 +138,13 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata1"]))',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "x")
+                );
+                chai.assert.empty(
+                    rrv.getInvalidSampleIDs("Metadata1", "color")
+                );
 
                 // Change color field and verify filters updated accordingly
                 await changeEncoding("color", "Metadata2");
@@ -148,6 +155,13 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata1"]))',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "x")
+                );
+                chai.assert.empty(
+                    rrv.getInvalidSampleIDs("Metadata2", "color")
+                );
 
                 // Change x-axis field and verify filters updated accordingly
                 await changeEncoding("xAxis", "Sample ID");
@@ -157,6 +171,20 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'datum["Metadata2"] != null && ' +
                         'isFinite(toNumber(datum["Sample ID"]))',
                     rrv.samplePlotJSON.transform[0].filter
+                );
+                chai.assert.sameMembers(
+                    [
+                        "Sample1",
+                        "Sample2",
+                        "Sample3",
+                        "Sample5",
+                        "Sample6",
+                        "Sample7"
+                    ],
+                    rrv.getInvalidSampleIDs("Sample ID", "x")
+                );
+                chai.assert.empty(
+                    rrv.getInvalidSampleIDs("Metadata2", "color")
                 );
             });
             it("When x-axis is categorical and color is quantitative", async function() {
