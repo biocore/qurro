@@ -140,6 +140,78 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.transform[0].filter
                 );
             });
+            it("When x-axis is categorical and color is quantitative", async function() {
+                await changeEncoding("color", "quantitative", true);
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata1"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                // Change x-axis field and verify filters updated accordingly
+                await changeEncoding("xAxis", "Metadata2");
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata2"] != null && ' +
+                        'datum["Metadata1"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                // Change color field and verify filters updated accordingly
+                await changeEncoding("color", "Metadata3");
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata2"] != null && ' +
+                        'datum["Metadata3"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata3"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+            });
+            it("When both x-axis and color are quantitative", async function() {
+                await changeEncoding("color", "quantitative", true);
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata1"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                await changeEncoding("xAxis", "quantitative", true);
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata1"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"])) && ' +
+                        'isFinite(toNumber(datum["Metadata1"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                // Change color field and verify filters updated accordingly
+                await changeEncoding("color", "Metadata3");
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata3"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"])) && ' +
+                        'isFinite(toNumber(datum["Metadata3"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+
+                // Change x-axis field and verify filters updated accordingly
+                await changeEncoding("xAxis", "Metadata2");
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata2"] != null && ' +
+                        'datum["Metadata3"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata2"])) && ' +
+                        'isFinite(toNumber(datum["Metadata3"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+            });
         });
     });
 });
