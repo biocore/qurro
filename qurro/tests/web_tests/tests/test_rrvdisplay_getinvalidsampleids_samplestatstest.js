@@ -196,6 +196,11 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata1"]))',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                chai.assert.empty(rrv.getInvalidSampleIDs("Metadata1", "x"));
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "color")
+                );
 
                 // Change x-axis field and verify filters updated accordingly
                 await changeEncoding("xAxis", "Metadata2");
@@ -206,15 +211,32 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata1"]))',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                chai.assert.empty(rrv.getInvalidSampleIDs("Metadata2", "x"));
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "color")
+                );
 
                 // Change color field and verify filters updated accordingly
-                await changeEncoding("color", "Metadata3");
+                await changeEncoding("color", "Sample ID");
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Metadata2"] != null && ' +
-                        'datum["Metadata3"] != null && ' +
-                        'isFinite(toNumber(datum["Metadata3"]))',
+                        'datum["Sample ID"] != null && ' +
+                        'isFinite(toNumber(datum["Sample ID"]))',
                     rrv.samplePlotJSON.transform[0].filter
+                );
+                chai.assert.empty(rrv.getInvalidSampleIDs("Metadata2", "x"));
+                chai.assert.sameMembers(
+                    [
+                        "Sample1",
+                        "Sample2",
+                        "Sample3",
+                        "Sample5",
+                        "Sample6",
+                        "Sample7"
+                    ],
+                    rrv.getInvalidSampleIDs("Sample ID", "color")
                 );
             });
             it("When both x-axis and color are quantitative", async function() {
