@@ -19,7 +19,7 @@ in this repository or email the Qurro development team
        Qurro's source code above. Run `pip install -e .[dev]` inside this folder to
        install Qurro along with its normal and development Python dependencies.
     3. Install songbird using `conda install -c conda-forge songbird`. This is
-       required to get Qurro to recognize the `FeatureData[Differential]` type
+       required to get QIIME 2 to recognize the `FeatureData[Differential]` type
        (note that this is a temporary requirement, and should be unnecessary
        after QIIME 2 version 2019.7 is released).
     4. Install the various Node.js requirements for testing Qurro's JavaScript
@@ -39,7 +39,8 @@ If these commands succeed, then you can start making changes to Qurro.
 You should check that 1) all the tests pass (i.e. `make test` succeeds),
 and 2) the code is properly formatted (i.e. `make stylecheck` succeeds). If
 you'd like to fix the code's formatting automatically, you can just run
-`make style`.
+`make style` (some code might require a slight bit of manual tweaking
+afterwards to get things working).
 
 ## Acknowledgements
 
