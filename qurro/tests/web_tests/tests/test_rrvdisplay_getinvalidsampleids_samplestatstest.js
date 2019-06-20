@@ -60,6 +60,24 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
             chai.assert.equal("21", sampleArray[5].Metadata3);
         });
         describe("Sample plot filters are properly set", function() {
+            /* Small helper function. encoding should be "xAxis" or "color",
+             * and newValue should be whatever the new value you want to set
+             * is.
+             *
+             * If isScale is truthy, this will change the "Scale" instead of
+             * "Field" selector (and in this case newValue can be "nominal" or
+             * "quantitative").
+             */
+            async function changeEncoding(encoding, newValue, isScale) {
+                var fieldName;
+                if (isScale) {
+                    fieldName = encoding + "Scale";
+                } else {
+                    fieldName = encoding + "Field";
+                }
+                document.getElementById(fieldName).value = newValue;
+                await document.getElementById(fieldName).onchange();
+            }
             // NOTE: if we get around to removing the redundancy in the
             // filters generated when x-axis and color fields are equal,
             // these tests will need to be changed accordingly.
@@ -74,8 +92,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
 
                 // Try changing the color field to Metadata2, and verify that
                 // the filters are updated accordingly
-                document.getElementById("colorField").value = "Metadata2";
-                await document.getElementById("colorField").onchange();
+                await changeEncoding("color", "Metadata2");
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Metadata1"] != null && ' +
@@ -85,8 +102,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
 
                 // Try changing the x-axis field to Sample ID, and verify that
                 // the filters are again updated accordingly
-                document.getElementById("xAxisField").value = "Sample ID";
-                await document.getElementById("xAxisField").onchange();
+                await changeEncoding("xAxis", "Sample ID");
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Sample ID"] != null && ' +
@@ -95,8 +111,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
             });
             it("When x-axis is quantitative and color is categorical", async function() {
-                document.getElementById("xAxisScale").value = "quantitative";
-                await document.getElementById("xAxisScale").onchange();
+                await changeEncoding("xAxis", "quantitative", true);
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Metadata1"] != null && ' +
@@ -106,8 +121,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
 
                 // Change color field and verify filters updated accordingly
-                document.getElementById("colorField").value = "Metadata2";
-                await document.getElementById("colorField").onchange();
+                await changeEncoding("color", "Metadata2");
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Metadata1"] != null && ' +
@@ -117,8 +131,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
 
                 // Change x-axis field and verify filters updated accordingly
-                document.getElementById("xAxisField").value = "Sample ID";
-                await document.getElementById("xAxisField").onchange();
+                await changeEncoding("xAxis", "Sample ID");
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Sample ID"] != null && ' +
