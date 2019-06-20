@@ -11,9 +11,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         var rrv, dataName;
         async function resetRRVDisplay() {
             rrv = new display.RRVDisplay(
-                SSTrankPlotJSON,
-                SSTsamplePlotJSON,
-                SSTcountJSON
+                JSON.parse(JSON.stringify(SSTrankPlotJSON)),
+                JSON.parse(JSON.stringify(SSTsamplePlotJSON)),
+                JSON.parse(JSON.stringify(SSTcountJSON))
             );
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
@@ -94,39 +94,39 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                     rrv.samplePlotJSON.transform[0].filter
                 );
             });
-            //it("When x-axis is quantitative and color is categorical", async function() {
-            //    document.getElementById("xAxisScale").value = "quantitative";
-            //    await document.getElementById("xAxisScale").onchange();
-            //    chai.assert.equal(
-            //        "datum.qurro_balance != null && " +
-            //            'datum["Metadata1"] != null && ' +
-            //            'datum["Metadata1"] != null && ' +
-            //            'isFinite(toNumber(datum["Metadata1"]))',
-            //        rrv.samplePlotJSON.transform[0].filter
-            //    );
+            it("When x-axis is quantitative and color is categorical", async function() {
+                document.getElementById("xAxisScale").value = "quantitative";
+                await document.getElementById("xAxisScale").onchange();
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata1"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
 
-            //    // Change color field and verify filters updated accordingly
-            //    document.getElementById("colorField").value = "Metadata2";
-            //    await document.getElementById("colorField").onchange();
-            //    chai.assert.equal(
-            //        "datum.qurro_balance != null && " +
-            //            'datum["Metadata1"] != null && ' +
-            //            'datum["Metadata2"] != null && ' +
-            //            'isFinite(toNumber(datum["Metadata1"]))',
-            //        rrv.samplePlotJSON.transform[0].filter
-            //    );
+                // Change color field and verify filters updated accordingly
+                document.getElementById("colorField").value = "Metadata2";
+                await document.getElementById("colorField").onchange();
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Metadata1"] != null && ' +
+                        'datum["Metadata2"] != null && ' +
+                        'isFinite(toNumber(datum["Metadata1"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
 
-            //    // Change x-axis field and verify filters updated accordingly
-            //    document.getElementById("xAxisField").value = "Sample ID";
-            //    await document.getElementById("xAxisField").onchange();
-            //    chai.assert.equal(
-            //        "datum.qurro_balance != null && " +
-            //            'datum["Sample ID"] != null && ' +
-            //            'datum["Metadata2"] != null && ' +
-            //            'isFinite(toNumber(datum["Sample ID"]))',
-            //        rrv.samplePlotJSON.transform[0].filter
-            //    );
-            //});
+                // Change x-axis field and verify filters updated accordingly
+                document.getElementById("xAxisField").value = "Sample ID";
+                await document.getElementById("xAxisField").onchange();
+                chai.assert.equal(
+                    "datum.qurro_balance != null && " +
+                        'datum["Sample ID"] != null && ' +
+                        'datum["Metadata2"] != null && ' +
+                        'isFinite(toNumber(datum["Sample ID"]))',
+                    rrv.samplePlotJSON.transform[0].filter
+                );
+            });
         });
     });
 });
