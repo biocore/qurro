@@ -23,6 +23,7 @@ def run_integration_test(
     expected_unsupported_features=0,
     expect_all_unsupported_samples=False,
     q2_table_biom_format="BIOMV210Format",
+    filter_unextreme_features_val=None,
 ):
     """Runs qurro, and validates the output somewhat."""
 
@@ -57,17 +58,18 @@ def run_integration_test(
         if floc is not None:
             feature_metadata = Metadata.load(floc)
 
-        # Now that everything's imported, try running qurro
+        # Now that everything's imported, try running Qurro
         rrv_qzv = q2_action(
             ranks=rank_qza,
             table=table_qza,
             sample_metadata=sample_metadata,
             feature_metadata=feature_metadata,
+            extreme_feature_count=filter_unextreme_features_val,
         )
         # Output the contents of the visualization to out_dir.
         rrv_qzv.visualization.export_data(out_dir)
     else:
-        # Run qurro "standalone" -- i.e. outside of QIIME 2
+        # Run Qurro "standalone" -- i.e. outside of QIIME 2
         runner = CliRunner()
         args = [
             "--ranks",
@@ -81,6 +83,8 @@ def run_integration_test(
         ]
         if floc is not None:
             args += ["--feature-metadata", floc]
+        if filter_unextreme_features_val is not None:
+            args += ["--extreme-feature-count", filter_unextreme_features_val]
         result = runner.invoke(rrvp.plot, args)
         # Validate that the correct exit code and output were recorded
         validate_standalone_result(
