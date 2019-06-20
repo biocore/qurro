@@ -102,6 +102,27 @@ def test_get_jsons():
         join(idir, "all.js"), return_nones=True, as_dict=False
     )
 
+    # Test the json_prefix argument
+    assert (None, {}, {}) == get_jsons(
+        join(idir, "spcp_prefix.js"), return_nones=True, json_prefix="asdf"
+    )
+    assert (None, "{}", "{}") == get_jsons(
+        join(idir, "spcp_prefix.js"),
+        return_nones=True,
+        as_dict=False,
+        json_prefix="asdf",
+    )
+    assert ({}, None, None) == get_jsons(
+        join(idir, "spcp_prefix.js"), return_nones=True
+    )
+    assert ("{}", None, None) == get_jsons(
+        join(idir, "spcp_prefix.js"), as_dict=False, return_nones=True
+    )
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "spcp_prefix.js"))
+    with pytest.raises(ValueError):
+        get_jsons(join(idir, "spcp_prefix.js"), json_prefix="asdf")
+
 
 def test_plot_jsons_equal():
 
