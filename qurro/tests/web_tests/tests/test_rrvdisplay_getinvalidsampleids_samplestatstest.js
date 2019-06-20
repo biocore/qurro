@@ -107,7 +107,9 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 );
                 // Metadata3 has an "empty" value for two samples (Sample3 and
                 // Sample5), so these values get converted to a null in the
-                // sample plot JSON.
+                // sample plot JSON. (Note that the "NaN" value in Metadata3
+                // for Sample1 is just treated as a normal string, so we still
+                // show it here.)
                 chai.assert.empty(rrv.getInvalidSampleIDs("Metadata1", "x"));
                 chai.assert.sameMembers(
                     ["Sample3", "Sample5"],
@@ -248,6 +250,13 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata1"]))',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                // "Infinity" and "Missing: not provided" should be filtered
+                // out for quantitative scales but not categorical scales
+                chai.assert.empty(rrv.getInvalidSampleIDs("Metadata1", "x"));
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "color")
+                );
 
                 await changeEncoding("xAxis", "quantitative", true);
                 chai.assert.equal(
@@ -257,6 +266,14 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata1"])) && ' +
                         'isFinite(toNumber(datum["Metadata1"]))',
                     rrv.samplePlotJSON.transform[0].filter
+                );
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "x")
+                );
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "color")
                 );
 
                 // Change color field and verify filters updated accordingly
@@ -269,6 +286,17 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata3"]))',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample6"],
+                    rrv.getInvalidSampleIDs("Metadata1", "x")
+                );
+                // Now that we're looking at Metadata3 on a quantitative scale,
+                // we exclude both the empty-input values (Sample3 and Sample5)
+                // and the non-numeric values (Sample1).
+                chai.assert.sameMembers(
+                    ["Sample1", "Sample3", "Sample5"],
+                    rrv.getInvalidSampleIDs("Metadata3", "color")
+                );
 
                 // Change x-axis field and verify filters updated accordingly
                 await changeEncoding("xAxis", "Metadata2");
@@ -279,6 +307,15 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'isFinite(toNumber(datum["Metadata2"])) && ' +
                         'isFinite(toNumber(datum["Metadata3"]))',
                     rrv.samplePlotJSON.transform[0].filter
+                );
+                // "null" and "'14'" should be filtered out for quant. scales
+                chai.assert.sameMembers(
+                    ["Sample2", "Sample5"],
+                    rrv.getInvalidSampleIDs("Metadata2", "x")
+                );
+                chai.assert.sameMembers(
+                    ["Sample1", "Sample3", "Sample5"],
+                    rrv.getInvalidSampleIDs("Metadata3", "color")
                 );
             });
         });
