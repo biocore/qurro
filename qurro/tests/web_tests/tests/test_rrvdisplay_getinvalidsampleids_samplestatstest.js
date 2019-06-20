@@ -89,15 +89,29 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                         'datum["Metadata1"] != null',
                     rrv.samplePlotJSON.transform[0].filter
                 );
+                // No actual nulls in Metadata1, so we shouldn't drop any
+                // samples.
+                chai.assert.empty(rrv.getInvalidSampleIDs("Metadata1", "x"));
+                chai.assert.empty(
+                    rrv.getInvalidSampleIDs("Metadata1", "color")
+                );
 
-                // Try changing the color field to Metadata2, and verify that
+                // Try changing the color field to Metadata3, and verify that
                 // the filters are updated accordingly
-                await changeEncoding("color", "Metadata2");
+                await changeEncoding("color", "Metadata3");
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Metadata1"] != null && ' +
-                        'datum["Metadata2"] != null',
+                        'datum["Metadata3"] != null',
                     rrv.samplePlotJSON.transform[0].filter
+                );
+                // Metadata3 has an "empty" value for two samples (Sample3 and
+                // Sample5), so these values get converted to a null in the
+                // sample plot JSON.
+                chai.assert.empty(rrv.getInvalidSampleIDs("Metadata1", "x"));
+                chai.assert.sameMembers(
+                    ["Sample3", "Sample5"],
+                    rrv.getInvalidSampleIDs("Metadata3", "color")
                 );
 
                 // Try changing the x-axis field to Sample ID, and verify that
@@ -106,8 +120,13 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
                         'datum["Sample ID"] != null && ' +
-                        'datum["Metadata2"] != null',
+                        'datum["Metadata3"] != null',
                     rrv.samplePlotJSON.transform[0].filter
+                );
+                chai.assert.empty(rrv.getInvalidSampleIDs("Sample ID", "x"));
+                chai.assert.sameMembers(
+                    ["Sample3", "Sample5"],
+                    rrv.getInvalidSampleIDs("Metadata3", "color")
                 );
             });
             it("When x-axis is quantitative and color is categorical", async function() {
