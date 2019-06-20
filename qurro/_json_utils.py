@@ -238,6 +238,7 @@ def replace_js_json_definitions(
     count_json,
     output_file_loc=None,
     json_prefix="",
+    verbose=False,
 ):
     """Writes a version of the input JS file with JSON(s) changed.
 
@@ -260,6 +261,9 @@ def replace_js_json_definitions(
        extracting the JSON files from generated main.js files. If you change
        the way these variables are written to in the JS, it may cause the
        python tests to fail.
+
+       The "verbose" flag just determines whether or not to print something
+       when trying to go forward with a replacement.
     """
 
     curr_rank_plot_json, curr_sample_plot_json, curr_count_json = get_jsons(
@@ -288,11 +292,12 @@ def replace_js_json_definitions(
     ):
         return 1
 
-    print(
-        "Attempting JSON replacement with prefix {} for {}".format(
-            repr(json_prefix), os.path.basename(input_file_loc)
+    if verbose:
+        print(
+            "Attempting JSON replacement with prefix {} for {}".format(
+                repr(json_prefix), os.path.basename(input_file_loc)
+            )
         )
-    )
 
     output_file_contents = ""
     at_least_one_json_changed = False

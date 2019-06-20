@@ -37,10 +37,17 @@ if __name__ == "__main__":
     for js_test_file in rrv_js_tests:
         js_test_file_path = os.path.join(test_dir, js_test_file)
         # Replace JSONs without special prefixes with the matching test JSONs.
-        replace_js_json_definitions(js_test_file_path, mt_rpj, mt_spj, mt_cj)
+        replace_js_json_definitions(
+            js_test_file_path, mt_rpj, mt_spj, mt_cj, verbose=True
+        )
         # Replace JSONs with the "SST" prefix with the sample stats test JSONs.
         # This is done in order to create an "integration" test for #92, where
         # the output from python is tested both in python and in JavaScript.
         replace_js_json_definitions(
-            js_test_file_path, sst_rpj, sst_spj, sst_cj, json_prefix="SST"
+            js_test_file_path,
+            sst_rpj,
+            sst_spj,
+            sst_cj,
+            json_prefix="SST",
+            verbose=True,
         )
