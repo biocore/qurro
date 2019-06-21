@@ -23,6 +23,7 @@ def run_integration_test(
     expected_unsupported_features=0,
     expect_all_unsupported_samples=False,
     q2_table_biom_format="BIOMV210Format",
+    extreme_feature_count=None,
 ):
     """Runs qurro, and validates the output somewhat."""
 
@@ -63,6 +64,7 @@ def run_integration_test(
             table=table_qza,
             sample_metadata=sample_metadata,
             feature_metadata=feature_metadata,
+            extreme_feature_count=extreme_feature_count,
         )
         # Output the contents of the visualization to out_dir.
         rrv_qzv.visualization.export_data(out_dir)
@@ -81,6 +83,8 @@ def run_integration_test(
         ]
         if floc is not None:
             args += ["--feature-metadata", floc]
+        if extreme_feature_count is not None:
+            args += ["--extreme-feature-count", extreme_feature_count]
         result = runner.invoke(rrvp.plot, args)
         # Validate that the correct exit code and output were recorded
         validate_standalone_result(
@@ -97,8 +101,11 @@ def run_integration_test(
     if expect_all_unsupported_samples or expected_unsupported_features > 0:
         return None, None
     else:
+        # Only validate JSONs if -x wasn't specified (i.e. the passed
+        # extreme feature count is None)
+        validate_jsons = extreme_feature_count is None
         rank_json, sample_json, count_json = validate_main_js(
-            out_dir, rloc, tloc, sloc
+            out_dir, rloc, tloc, sloc, validate_jsons=validate_jsons
         )
         return rank_json, sample_json, count_json
 
@@ -168,7 +175,7 @@ def validate_standalone_result(
         )
 
 
-def validate_main_js(out_dir, rloc, tloc, sloc):
+def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
     """Takes care of extracting JSONs from main.js and validating them.
 
        Parameters
@@ -180,14 +187,22 @@ def validate_main_js(out_dir, rloc, tloc, sloc):
        rloc, tloc, sloc: str
            Paths to the ranks file (either DEICODE or songbird), BIOM table,
            and sample metadata file used as input to qurro.
+
+       validate_jsons: bool
+           If True (default), this calls validate_rank_plot_json() and
+           validate_sample_plot_json(). If False, this will skip that step --
+           this is useful for if the test leaves the JSONs in an unexpected
+           state (e.g. with certain features or samples dropped out due to,
+           say, the -x argument having been passed).
     """
 
     main_loc = os.path.join(out_dir, "main.js")
     rank_json, sample_json, count_json = get_jsons(main_loc)
 
     # Validate plot JSONs
-    validate_rank_plot_json(rloc, rank_json)
-    validate_sample_plot_json(tloc, sloc, sample_json, count_json)
+    if validate_jsons:
+        validate_rank_plot_json(rloc, rank_json)
+        validate_sample_plot_json(tloc, sloc, sample_json, count_json)
 
     return rank_json, sample_json, count_json
 

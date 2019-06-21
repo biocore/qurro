@@ -1,0 +1,31 @@
+{
+    "id": null,
+    "format": "1.0.0",
+    "format_url": "http://biom-format.org",
+    "type": "OTU table",
+    "generated_by": "tweaking the example from http://biom-format.org/documentation/format_versions/biom-1.0.html",
+    "date": "2019-03-25T20:06:00",
+    "rows": [
+            {"id": "Taxon1", "metadata": null},
+            {"id": "Taxon2", "metadata": null},
+            {"id": "Taxon3", "metadata": null},
+            {"id": "Taxon4", "metadata": null},
+            {"id": "Taxon5", "metadata": null}
+        ],
+    "columns": [
+            {"id": "Sample1", "metadata": null},
+            {"id": "Sample2", "metadata": null},
+            {"id": "Sample3", "metadata": null},
+            {"id": "Sample5", "metadata": null},
+            {"id": "Sample6", "metadata": null},
+            {"id": "Sample7", "metadata": null}
+        ],
+    "matrix_type": "dense",
+    "matrix_element_type": "float",
+    "shape": [5, 6],
+    "data":[[0, 0, 0, 4, 5, 6],
+            [6, 0, 0, 2, 1, 0],
+            [2, 0, 4, 4, 3, 2],
+            [1, 0, 0, 1, 1, 1],
+            [0, 0, 0, 2, 0, 0]]
+}

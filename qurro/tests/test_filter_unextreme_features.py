@@ -5,6 +5,7 @@ from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 import pytest
 from qurro._rank_utils import filter_unextreme_features
+from qurro.tests.testing_utilities import run_integration_test
 
 
 def get_test_data():
@@ -139,3 +140,25 @@ def test_filtering_invalid_efc():
 
     with pytest.raises(ValueError):
         filter_unextreme_features(biom_table, ranks, 5.5)
+
+
+def test_empty_samples_integration():
+    params = [
+        "matching_test",
+        "empty_samples_no_efc",
+        "differentials.tsv",
+        "empty_samples.biom",
+        "sample_metadata.txt",
+    ]
+    rpj, spj, cj = run_integration_test(
+        *params, feature_metadata_name="feature_metadata.txt"
+    )
+    params[1] = "empty_samples_yes_efc"
+    # TODO -- look at sample plot json -- verify that just Sample2 dropped
+    rpj, spj, cj = run_integration_test(
+        *params,
+        feature_metadata_name="feature_metadata.txt",
+        extreme_feature_count=1,
+    )
+    # TODO -- look at sample plot json -- verify that Sample2 + 3 dropped
+    # (and verify that most of the features were dropped)
