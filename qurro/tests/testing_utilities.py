@@ -347,6 +347,23 @@ def validate_sample_plot_json(
             assert actual_count == expected_count
 
 
+def get_data_from_sample_plot_json(sample_json):
+    """Given a sample plot JSON dict, returns a dict where each key corresponds
+       to another dict containing all metadata fields for that sample.
+
+       This code is based on the procedure described here:
+       https://stackoverflow.com/a/5236375/10730311
+    """
+    sample_data = {}
+    for sample in sample_json["datasets"][sample_json["data"]["name"]]:
+        # The use of .pop() here means that we remove "Sample ID" from sample.
+        # This prevents redundancy (i.e. "Sample ID" being provided twice for
+        # each sample) in the output.
+        sample_id = sample.pop("Sample ID")
+        sample_data[sample_id] = sample
+    return sample_data
+
+
 def validate_sample_stats_test_sample_plot_json(sample_json):
     """This checks that the sample metadata for this test was perfectly read.
 
