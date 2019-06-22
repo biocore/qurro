@@ -247,7 +247,55 @@ def process_input(
     feature_metadata=None,
     extreme_feature_count=None,
 ):
-    """Processes the input files to Qurro."""
+    """Validates/processes the input files and parameter(s) to Qurro.
+
+       In particular, this function:
+
+       1. Calls validate_df() on all of the input DataFrames passed
+          (feature ranks, sample metadata, feature metadata if passed).
+
+       2. Calls replace_nan() on the metadata DataFrame(s), so that all
+          missing values are represented consistently with a None (which
+          will be represented as a null in JSON/JavaScript).
+
+       3. Calls filter_unextreme_features() using the provided
+          extreme_feature_count. (If it's None, then nothing will be done.)
+
+       4. Filters empty samples from the BIOM table (i.e. samples without any
+          counts for any features). This is purposefully done *after*
+          filter_unextreme_features() is called.
+
+       5. Converts the BIOM table to a SparseDataFrame by calling
+          biom_table_to_sparse_df().
+
+       6. Matches up the table with the feature ranks and sample metadata by
+          calling match_table_and_data().
+
+       7. Converts feature rank column names to strings and escapes them.
+
+       8. Calls merge_feature_metadata() on the feature ranks and feature
+          metadata. (If feature metadata is None, nothing will be done.)
+
+       Returns
+       -------
+       m_sample_metadata: pd.DataFrame
+            Sample metadata, but matched with the table.
+
+       filtered_ranks: pd.DataFrame
+            Feature ranks, post-filtering.
+
+       ranking_ids
+            The ranking columns' names.
+
+       feature_metadata_cols: list
+            The feature metadata columns' names.
+
+       table_t: pd.SparseDataFrame
+            The BIOM table, post matching with the feature ranks and sample
+            metadata. Note the _t suffix in the variable name: this table is
+            actually transposed, so its indices correspond to sample IDs and
+            its columns correspond to feature IDs.
+    """
 
     logging.debug("Starting processing input.")
 
@@ -306,7 +354,6 @@ def process_input(
     # column names stay unique after calling fix_id().)
     filtered_ranks.columns = [str(c) for c in filtered_ranks.columns]
     filtered_ranks = escape_columns(filtered_ranks)
-
     ranking_ids = filtered_ranks.columns
 
     filtered_ranks, feature_metadata_cols = merge_feature_metadata(
@@ -542,13 +589,14 @@ def gen_visualization(
     df_sample_metadata,
     output_dir,
 ):
-    """Creates a Qurro visualization. This function should be callable
-       from both the QIIME 2 and standalone Qurro scripts.
+    """Creates a Qurro visualization.
 
-       Returns:
+       Returns
+       -------
 
-       index_path: a path to the index.html file for the output visualization.
-                   This is needed when calling q2templates.render().
+       index_path: str
+            A path to the index.html file for the output visualization. This is
+            needed when calling q2templates.render().
     """
 
     # https://altair-viz.github.io/user_guide/faq.html#disabling-maxrows

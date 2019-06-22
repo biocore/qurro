@@ -25,7 +25,7 @@ def read_rank_file(file_loc):
 
 
 def ordination_to_df(ordination_file_loc):
-    """Converts an ordination.txt file to a DataFrame of its feature ranks."""
+    """Returns a DataFrame of feature loadings from a skbio ordination file."""
 
     # If this fails, it raises an skbio.io.UnrecognizedFormatError.
     ordination = skbio.OrdinationResults.read(ordination_file_loc)
