@@ -36,6 +36,33 @@ def matchdf(df1, df2):
     return df1.loc[idx], df2.loc[idx]
 
 
+def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
+    """Loads a BIOM table as a pd.SparseDataFrame. Also calls validate_df().
+
+       We need to use a helper function for this because old versions of BIOM
+       accidentally produce an effectively-dense DataFrame when using
+       biom.Table.to_dataframe() -- see
+       https://github.com/biocore/biom-format/issues/808.
+
+       To get around this, we extract the scipy.sparse.csr_matrix data from the
+       BIOM table and directly convert that to a pandas SparseDataFrame.
+    """
+    logging.debug("Creating a SparseDataFrame from BIOM table.")
+    table_sdf = pd.SparseDataFrame(table.matrix_data, default_fill_value=0.0)
+
+    # The csr_matrix doesn't include column/index IDs, so we manually add them
+    # in to the SparseDataFrame.
+    table_sdf.index = table.ids(axis="observation")
+    table_sdf.columns = table.ids(axis="sample")
+
+    # Validate the table DataFrame -- should be ok since we loaded this through
+    # the biom module, but might as well check
+    validate_df(table_sdf, "BIOM table", 2, 1)
+
+    logging.debug("Converted BIOM table to SparseDataFrame.")
+    return table_sdf
+
+
 def match_table_and_data(table, feature_ranks, sample_metadata):
     """Matches feature rankings and then sample metadata to a table.
 
@@ -262,26 +289,7 @@ def process_input(
     )
     filtered_table.remove_empty(axis="sample")
 
-    logging.debug("Creating a SparseDataFrame from the BIOM table.")
-
-    # Old versions of BIOM accidentally produce an effectively-dense DataFrame
-    # when using biom.Table.to_dataframe() (see
-    # https://github.com/biocore/biom-format/issues/808). To get around this,
-    # we extract the scipy.sparse.csr_matrix data from the BIOM table and
-    # directly convert that to a pandas SparseDataFrame.
-    sparse_matrix_data = filtered_table.matrix_data
-    table = pd.SparseDataFrame(sparse_matrix_data, default_fill_value=0.0)
-
-    # The csr_matrix doesn't include column/index IDs, so we manually add them
-    # in to the SparseDataFrame.
-    table.index = filtered_table.ids(axis="observation")
-    table.columns = filtered_table.ids(axis="sample")
-
-    # Validate the table DataFrame -- should be ok since we loaded this through
-    # the biom module, but might as well check
-    validate_df(table, "BIOM table", 2, 1)
-
-    logging.debug("Converted BIOM table to SparseDataFrame.")
+    table = biom_table_to_sparse_df(filtered_table)
 
     # Match up the BIOM table with the feature ranks and sample metadata
     table_t, m_sample_metadata = match_table_and_data(
