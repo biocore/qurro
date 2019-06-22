@@ -14,12 +14,10 @@ test: pytest jstest
 
 # The -B in the invocation of python prevents this from creating pycache
 # miscellany.
-# And -s prevents output capturing (letting us see the results of print
-# statements sprinkled throughout the code, which helps with debugging).
 pytest:
 	@# Use of -f per https://unix.stackexchange.com/a/68096
 	rm -rf docs/demos/*
-	python3 -B -m pytest qurro/tests -s --cov qurro
+	python3 -B -m pytest qurro/tests --cov qurro
 
 jstest:
 	@# Re-update specs for JS tests by running update_js_test_jsons.py
