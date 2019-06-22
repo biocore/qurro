@@ -36,6 +36,162 @@ def matchdf(df1, df2):
     return df1.loc[idx], df2.loc[idx]
 
 
+def match_table_and_data(table, feature_ranks, sample_metadata):
+    """Matches feature rankings and then sample metadata to a table.
+
+       Parameters
+       ----------
+
+       table: pd.DataFrame (or pd.SparseDataFrame)
+            A DataFrame created from a BIOM table. The index of this DataFrame
+            should correspond to observations (i.e. features), and the columns
+            should correspond to samples.
+
+       feature_ranks: pd.DataFrame
+            A DataFrame describing features' "ranks" along ranking(s). The
+            index of this DataFrame should correspond to feature IDs, and the
+            columns should correspond to different rankings' names.
+
+       sample_metadata: pd.DataFrame
+            A DataFrame describing sample metadata. The index of this DataFrame
+            should describe sample IDs, and the columns should correspond to
+            different sample metadata fields' names.
+
+       Returns
+       -------
+
+       (m_table_transpose, m_sample_metadata): both pd.[Sparse]DataFrame
+            Versions of the input table and sample metadata only containing
+            samples shared by both datasets. The input table will also only
+            contain features shared by both the table and the feature ranks,
+            and will be transposed (so now its index will correspond to samples
+            and its columns will correspond to features).
+
+            (None of the features in the feature ranks should be dropped during
+            this operation, so we don't bother returning the feature ranks
+            DataFrame.)
+
+       Raises
+       ------
+
+       If any of the features described in feature_ranks are not present in
+       the table, this will raise a ValueError.
+
+       If all of the samples described in sample_metadata are not present
+       in the table, this will raise a ValueError.
+    """
+    logging.debug("Starting matching table with feature/sample data.")
+    # Match features to BIOM table, and then match samples to BIOM table.
+    # This should bring us to a point where every feature/sample is
+    # supported in the BIOM table. (Note that the input BIOM table might
+    # contain features or samples that are not included in feature_ranks or
+    # sample_metadata, respectively -- this is totally fine. The opposite,
+    # though, is a big no-no.)
+    featurefiltered_table, m_feature_ranks = matchdf(table, feature_ranks)
+    logging.debug("Matching table with feature ranks done.")
+    # Ensure that every ranked feature was present in the BIOM table. Raise an
+    # error if this isn't the case.
+    if m_feature_ranks.shape[0] < feature_ranks.shape[0]:
+        unsupported_feature_ct = (
+            feature_ranks.shape[0] - m_feature_ranks.shape[0]
+        )
+        # making this error message as pretty as possible
+        word = "were"
+        if unsupported_feature_ct == 1:
+            word = "was"
+        raise ValueError(
+            "Of the {} ranked features, {} {} not present in "
+            "the input BIOM table.".format(
+                feature_ranks.shape[0], unsupported_feature_ct, word
+            )
+        )
+
+    m_table_transpose, m_sample_metadata = matchdf(
+        featurefiltered_table.T, sample_metadata
+    )
+    logging.debug("Matching table with sample metadata done.")
+    # Allow for dropped samples (e.g. negative controls), but ensure that at
+    # least one sample is supported by the BIOM table.
+    if m_sample_metadata.shape[0] < 1:
+        raise ValueError(
+            "None of the samples in the sample metadata file "
+            "are present in the input BIOM table."
+        )
+
+    dropped_sample_ct = sample_metadata.shape[0] - m_sample_metadata.shape[0]
+    if dropped_sample_ct > 0:
+        print(
+            "NOTE: {} sample(s) in the sample metadata file were not "
+            "present in the BIOM table, and have been removed from the "
+            "visualization.".format(dropped_sample_ct)
+        )
+    return m_table_transpose, m_sample_metadata
+
+
+def merge_feature_metadata(feature_ranks, feature_metadata=None):
+    """Attempts to merge feature metadata into a feature ranks DataFrame.
+
+       Parameters
+       ----------
+
+       feature_ranks: pd.DataFrame
+            A DataFrame defining feature rankings, where the index corresponds
+            to feature IDs and the columns correspond to ranking names.
+
+       feature_metadata: pd.DataFrame or None
+            A DataFrame defining feature metadata, where the index corresponds
+            to feature IDs and the columns correspond to feature metadata
+            names. It isn't expected that every feature ID be passed.
+
+       Returns
+       -------
+
+       (output_feature_data, feature_metadata_cols): (pd.DataFrame, list)
+            The input feature ranks DataFrame, with any available feature
+            metadata merged in; and a list of any columns in the feature
+            metadata (or [] if the feature metadata was None).
+
+       Raises
+       ------
+
+       ValueError: if column name(s) are shared between the feature ranks and
+                   feature metadata DataFrames. See #55 for context.
+    """
+    # If the user passed in feature metadata corresponding to taxonomy
+    # information, then we use that to update the feature data to include
+    # that metadata. Feature metadata will be represented as additional fields
+    # for each feature in the rank plot. (This can help out in the searching
+    # part of the visualization, but it isn't necessary.)
+    feature_metadata_cols = []
+    if feature_metadata is not None:
+        try:
+            feature_metadata_cols = feature_metadata.columns
+            # Use of suffixes=(False, False) ensures that columns are unique
+            # between feature metadata and feature ranks.
+            output_feature_data = feature_ranks.merge(
+                feature_metadata,
+                how="left",
+                left_index=True,
+                right_index=True,
+                suffixes=(False, False),
+            )
+        except ValueError:
+            # It might be possible to figure out a way to handle this sort of
+            # situation automatically, but unless it becomes a problem I'm ok
+            # with the current solution. See github.com/fedarko/qurro/issues/55
+            print(
+                "Column names for the feature metadata and feature ranks "
+                "should be distinct. Try creating a copy of your feature "
+                "metadata with identical columns renamed, and use that with "
+                "Qurro."
+            )
+            raise
+    else:
+        output_feature_data = feature_ranks
+
+    return output_feature_data, feature_metadata_cols
+
+
 def process_and_generate(
     feature_ranks,
     sample_metadata,
@@ -127,49 +283,13 @@ def process_input(
 
     logging.debug("Converted BIOM table to SparseDataFrame.")
 
-    # Match features to BIOM table, and then match samples to BIOM table.
-    # This should bring us to a point where every feature/sample is
-    # supported in the BIOM table. (Note that the input BIOM table might
-    # contain features or samples that are not included in filtered_ranks or
-    # sample_metadata, respectively -- this is totally fine. The opposite,
-    # though, is a big no-no.)
-    table, V = matchdf(table, filtered_ranks)
-    logging.debug("Matching table with feature ranks done.")
-    # Ensure that every ranked feature was present in the BIOM table. Raise an
-    # error if this isn't the case.
-    if V.shape[0] != filtered_ranks.shape[0]:
-        unsupported_feature_ct = filtered_ranks.shape[0] - V.shape[0]
-        # making this error message as pretty as possible
-        word = "were"
-        if unsupported_feature_ct == 1:
-            word = "was"
-        raise ValueError(
-            "Of the {} ranked features, {} {} not present in "
-            "the input BIOM table.".format(
-                filtered_ranks.shape[0], unsupported_feature_ct, word
-            )
-        )
-
-    table, U = matchdf(table.T, sample_metadata)
-    logging.debug("Matching table with sample metadata done.")
-    # Allow for dropped samples (e.g. negative controls), but ensure that at
-    # least one sample is supported by the BIOM table.
-    if U.shape[0] < 1:
-        raise ValueError(
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
-        )
-
-    dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
-    if dropped_sample_ct > 0:
-        print(
-            "NOTE: {} sample(s) in the sample metadata file were not "
-            "present in the BIOM table, and have been removed from the "
-            "visualization.".format(dropped_sample_ct)
-        )
-
-    # Now that we've matched up the BIOM table with the feature ranks and
-    # sample metadata, we're almost done.
+    # Match up the BIOM table with the feature ranks and sample metadata
+    table_t, m_sample_metadata = match_table_and_data(
+        table, filtered_ranks, sample_metadata
+    )
+    # Note that table_t is transposed (when compared to just "table": its
+    # indices now correspond to samples, and its columns now correspond to
+    # features.
 
     # Before we go through feature metadata: convert all rank column IDs
     # to strings (since Altair gets angry if you pass in ints as column IDs),
@@ -181,38 +301,18 @@ def process_input(
 
     ranking_ids = filtered_ranks.columns
 
-    feature_metadata_cols = []
-    # If the user passed in feature metadata corresponding to taxonomy
-    # information, then we use that to update the feature data to include
-    # that metadata. Feature metadata will be represented as additional fields
-    # for each feature in the rank plot. (This can help out in the searching
-    # part of the visualization, but it isn't necessary.)
-    if feature_metadata is not None:
-        try:
-            feature_metadata_cols = feature_metadata.columns
-            # Use of suffixes=(False, False) ensures that columns are unique
-            # between feature metadata and feature ranks.
-            filtered_ranks = filtered_ranks.merge(
-                feature_metadata,
-                how="left",
-                left_index=True,
-                right_index=True,
-                suffixes=(False, False),
-            )
-        except ValueError:
-            # It might be possible to figure out a way to handle this sort of
-            # situation automatically, but unless it becomes a problem I'm ok
-            # with the current solution.
-            print(
-                "Column names for the feature metadata and feature ranks "
-                "should be distinct. Try creating a copy of your feature "
-                "metadata with identical columns renamed, and use that with "
-                "Qurro."
-            )
-            raise
+    filtered_ranks, feature_metadata_cols = merge_feature_metadata(
+        filtered_ranks, feature_metadata
+    )
 
     logging.debug("Finished input processing.")
-    return U, filtered_ranks, ranking_ids, feature_metadata_cols, table
+    return (
+        m_sample_metadata,
+        filtered_ranks,
+        ranking_ids,
+        feature_metadata_cols,
+        table_t,
+    )
 
 
 def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
@@ -354,14 +454,20 @@ def gen_sample_plot(table, metadata):
     # We know that df_balance and metadata's indices should match up since we
     # already ran matchdf() on the loaded BIOM table and metadata.
     # (Use of (False, False) means that if metadata contains a column called
-    # rankratiovz_balance, this will throw an error.)
-    sample_metadata = pd.merge(
-        df_balance,
-        metadata,
-        left_index=True,
-        right_index=True,
-        suffixes=(False, False),
-    )
+    # qurro_balance, this will throw an error.)
+    try:
+        sample_metadata = pd.merge(
+            df_balance,
+            metadata,
+            left_index=True,
+            right_index=True,
+            suffixes=(False, False),
+        )
+    except ValueError:
+        print(
+            "Sample metadata can't contain any columns called qurro_balance."
+            "Try changing the name of this column."
+        )
 
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
     # First we rename the index "Sample ID", just on the off chance that
