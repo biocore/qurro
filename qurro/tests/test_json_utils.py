@@ -160,6 +160,36 @@ def test_plot_jsons_equal():
     assert b["data"]["name"] == "diff"
     assert "diff" in b["datasets"]
 
+    # Check that ignoring the selector name works.
+    a = {
+        "a": "b",
+        "selection": {"selector010": {2: 3}},
+        "data": {"name": "asdf"},
+        "datasets": {"asdf": {1: 2}},
+    }
+    b = {
+        "a": "b",
+        "selection": {"selector033": {2: 3}},
+        "data": {"name": "asdf"},
+        "datasets": {"asdf": {1: 2}},
+    }
+    assert plot_jsons_equal(a, b)
+
+    # Check that ignoring both selector name and dataset name works.
+    a = {
+        "a": "b",
+        "selection": {"selector010": {2: 3}},
+        "data": {"name": "asdf"},
+        "datasets": {"asdf": {1: 2}},
+    }
+    b = {
+        "a": "b",
+        "selection": {"selector033": {2: 3}},
+        "data": {"name": "diff"},
+        "datasets": {"diff": {1: 2}},
+    }
+    assert plot_jsons_equal(a, b)
+
 
 def test_try_to_replace_line_json():
     # Test various cases where we expect a replacement
