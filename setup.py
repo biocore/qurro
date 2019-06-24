@@ -59,6 +59,7 @@ setup(
     author_email="mfedarko@ucsd.edu",
     maintainer="Qurro development team",
     maintainer_email="mfedarko@ucsd.edu",
+    url="https://github.com/fedarko/qurro",
     packages=find_packages(),
     # Needed in order to ensure that q2/data/* and scripts/data/* are
     # installed (in turn, those are specified in MANIFEST.in).
