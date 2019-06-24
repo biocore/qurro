@@ -360,8 +360,6 @@ def process_input(
     table = biom_table_to_sparse_df(biom_table)
 
     # Match up the table with the feature ranks and sample metadata.
-    # Note that table_t is transposed (when compared to just "table"): its
-    # indices correspond to samples, and its columns correspond to features.
     m_table, m_sample_metadata = match_table_and_data(
         table, feature_ranks, sample_metadata
     )
@@ -369,10 +367,6 @@ def process_input(
     # Note that although we always call filter_unextreme_features(), filtering
     # isn't necessarily always done (whether or not depends on the value of
     # extreme_feature_count and the contents of the table/ranks).
-    #
-    # Also note that we pass in table_t.T (that is, the table is back to the
-    # normal setup of having feature IDs in the index and sample IDs in the
-    # columns).
     filtered_table, filtered_ranks = filter_unextreme_features(
         m_table, feature_ranks, extreme_feature_count
     )
