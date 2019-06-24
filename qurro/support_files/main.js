@@ -21,6 +21,10 @@ requirejs(
         var rankPlotJSON = {};
         var samplePlotJSON = {};
         var countJSON = {};
-        rrv = new display.RRVDisplay(rankPlotJSON, samplePlotJSON, countJSON);
+        new display.RRVDisplay(
+            rankPlotJSON,
+            samplePlotJSON,
+            countJSON
+        ).makePlots();
     }
 );

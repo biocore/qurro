@@ -3,7 +3,9 @@ import numpy as np
 from numpy.testing import assert_array_equal
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
+import pytest
 from qurro._rank_utils import filter_unextreme_features
+from qurro.generate import biom_table_to_sparse_df
 
 
 def get_test_data():
@@ -33,48 +35,46 @@ def get_test_data():
     underlying_table_data[3, 2] = 1.0
     # Finally, use the data to create a BIOM table object.
     biom_table = biom.Table(underlying_table_data, feature_ids, sample_ids)
+    # ...And yeah we're actually making it into a Sparse DF because that's what
+    # I changed filter_unextreme_features() to expect now.
+    # (TODO: simplify this code in the future?)
+    output_table = biom_table_to_sparse_df(biom_table)
 
-    return biom_table, ranks
+    return output_table, ranks
 
 
 def test_filtering_basic():
     """Tests the standard behavior of filter_unextreme_features()."""
 
-    biom_table, ranks = get_test_data()
+    table, ranks = get_test_data()
     filtered_table, filtered_ranks = filter_unextreme_features(
-        biom_table, ranks, 2, print_warning=False
+        table, ranks, 2, print_warning=False
     )
     # Check that the appropriate features/samples were filtered out of the
     # table. NOTE -- I know this is sloppy code. Would like to fix it in the
     # future.
     for fid in ["F1", "F2", "F7", "F8"]:
-        assert filtered_table.exists(fid, axis="observation")
+        assert fid in filtered_table.index
     for fid in ["F3", "F4", "F5", "F6"]:
-        assert not filtered_table.exists(fid, axis="observation")
-    # Check that all samples -- except for the one empty one -- were preserved.
-    for sid in ["S1", "S2", "S4", "S5"]:
-        assert filtered_table.exists(sid, axis="sample")
-    for sid in ["S3"]:
-        assert not filtered_table.exists(sid, axis="sample")
-    # Check that the appropriate data is left in the table.
-    assert_array_equal(
-        filtered_table.data("F1", axis="observation"), [0, 1, 3, 4]
-    )
-    assert_array_equal(
-        filtered_table.data("F2", axis="observation"), [5, 6, 8, 9]
-    )
-    assert_array_equal(
-        filtered_table.data("F7", axis="observation"), [30, 31, 33, 34]
-    )
-    assert_array_equal(
-        filtered_table.data("F8", axis="observation"), [35, 36, 38, 39]
-    )
+        assert fid not in filtered_table.index
+    # Check that all samples were preserved.
+    # (The removal of empty features is done *after*
+    # filter_unextreme_features() is called in normal Qurro execution, so we
+    # should expect all samples -- even empty ones -- to remain here.
+    for sid in ["S1", "S2", "S3", "S4", "S5"]:
+        assert sid in filtered_table.columns
 
+    # Check that the appropriate data is left in the table.
+    assert_array_equal(filtered_table.loc["F1"], [0, 1, 0, 3, 4])
+    assert_array_equal(filtered_table.loc["F2"], [5, 6, 0, 8, 9])
+    assert_array_equal(filtered_table.loc["F7"], [30, 31, 0, 33, 34])
+    assert_array_equal(filtered_table.loc["F8"], [35, 36, 0, 38, 39])
+
+    # Check that the rank filtering worked as expected.
     expected_filtered_ranks = DataFrame(
         {"Rank 0": [1, 2, 7, 8], "Rank 1": [8, 7, 2, 1]},
         index=["F1", "F2", "F7", "F8"],
     )
-    # Check that the rank filtering worked as expected.
     assert_frame_equal(
         filtered_ranks, expected_filtered_ranks, check_like=True
     )
@@ -85,19 +85,19 @@ def test_filtering_large_efc():
        is greater than or equal to the number of ranked features.
     """
 
-    biom_table, ranks = get_test_data()
+    table, ranks = get_test_data()
 
     # The number of ranked features is 8.
     filtered_table, filtered_ranks = filter_unextreme_features(
-        biom_table, ranks, 4, print_warning=False
+        table, ranks, 4, print_warning=False
     )
-    assert biom_table == filtered_table
+    assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
 
     filtered_table, filtered_ranks = filter_unextreme_features(
-        biom_table, ranks, 8, print_warning=False
+        table, ranks, 8, print_warning=False
     )
-    assert biom_table == filtered_table
+    assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
 
 
@@ -107,10 +107,33 @@ def test_filtering_no_efc():
        done).
     """
 
-    biom_table, ranks = get_test_data()
+    table, ranks = get_test_data()
 
     filtered_table, filtered_ranks = filter_unextreme_features(
-        biom_table, ranks, None, print_warning=False
+        table, ranks, None, print_warning=False
     )
-    assert biom_table == filtered_table
+    assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
+
+
+def test_filtering_invalid_efc():
+    """Tests that filter_unextreme_features() throws an error when the
+       extreme feature count is less than 1 and/or not an integer.
+    """
+
+    table, ranks = get_test_data()
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(table, ranks, 0)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(table, ranks, -1)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(table, ranks, -2)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(table, ranks, 1.5)
+
+    with pytest.raises(ValueError):
+        filter_unextreme_features(table, ranks, 5.5)

@@ -8,7 +8,6 @@
 # ----------------------------------------------------------------------------
 
 import logging
-import biom
 import skbio
 import pandas as pd
 
@@ -25,7 +24,7 @@ def read_rank_file(file_loc):
 
 
 def ordination_to_df(ordination_file_loc):
-    """Converts an ordination.txt file to a DataFrame of its feature ranks."""
+    """Returns a DataFrame of feature loadings from a skbio ordination file."""
 
     # If this fails, it raises an skbio.io.UnrecognizedFormatError.
     ordination = skbio.OrdinationResults.read(ordination_file_loc)
@@ -35,26 +34,57 @@ def ordination_to_df(ordination_file_loc):
 def differentials_to_df(differentials_loc):
     """Converts a differential rank TSV file to a DataFrame."""
 
-    differentials = pd.read_csv(differentials_loc, sep="\t", index_col=0)
+    differentials = pd.read_csv(
+        differentials_loc, sep="\t", na_filter=False, dtype=object
+    )
+    # Delay setting index column so we can first load it as an object (this
+    # saves us from situations where the index col would otherwise be read as a
+    # number or something that would mess things up -- read_metadata_file()
+    # does the same sorta thing)
+    differentials.set_index(differentials.columns[0], inplace=True)
+    # Also, we don't bother naming the differentials index (yet). This is
+    # actually needed to make some of the tests pass (which is dumb, I know,
+    # but if I pass check_names=False to assert_frame_equal then the test
+    # doesn't check column names, and I want it to do that...)
+    differentials.index.rename(None, inplace=True)
+
+    # This is slow but it should at least *work as intended.*
+    # If there are any non-numeric differentials, or any NaN differentials, or
+    # any infinity/-infinity differentials (???), then we should raise an
+    # error. This code should do that.
+    for feature_row in differentials.itertuples():
+        for differential in feature_row[1:]:
+            try:
+                fd = float(differential)
+                if pd.isna(fd) or fd == float("inf") or fd == float("-inf"):
+                    raise ValueError
+            except ValueError:
+                raise ValueError(
+                    "Missing / nonnumeric differential(s) found for feature "
+                    "{}".format(feature_row[0])
+                )
+
+    # Now, we should be able to do this freely.
+    for column in differentials.columns:
+        differentials[column] = differentials[column].astype(float)
     return differentials
 
 
 def filter_unextreme_features(
-    table: biom.Table,
+    table: pd.SparseDataFrame,
     ranks: pd.DataFrame,
     extreme_feature_count: int,
     print_warning: bool = True,
 ) -> None:
     """Returns copies of the table and ranks with "unextreme" features removed.
 
-       Also removes samples from the table that, after removing "unextreme"
-       features, don't contain any of the remaining features.
-
        Parameters
        ----------
 
-       table: biom.Table
-            An ordinary BIOM table.
+       table: pd.SparseDataFrame
+            A SparseDataFrame representation of a BIOM table. This can be
+            generated easily from a biom.Table object using
+            qurro._df_utils.biom_table_to_sparse_df().
 
        ranks: pandas.DataFrame
             A DataFrame where the index consists of ranked features' IDs, and
@@ -65,6 +95,7 @@ def filter_unextreme_features(
             An integer representing the number of features from each "end" of
             the feature rankings to preserve in the table. If this is None, the
             input table and ranks will just be returned.
+            This has to be at least 1.
 
        print_warning: bool
             If True, this will print out a warning if (extreme_feature_count *
@@ -74,8 +105,8 @@ def filter_unextreme_features(
        Returns
        -------
 
-       (table, ranks): (biom.Table, pandas.DataFrame)
-            Filtered copies of the input BIOM table and ranks DataFrame.
+       (table, ranks): (pandas.SparseDataFrame, pandas.DataFrame)
+            Filtered copies of the input table and ranks DataFrames.
 
        Behavior
        --------
@@ -95,10 +126,8 @@ def filter_unextreme_features(
 
        If (extreme_feature_count * 2) is greater than or equal to the total
        number of features in the ranks DataFrame, this won't do any filtering
-       at all. (It won't even filter out empty samples, in the case that the
-       input table already contained empty samples.) In this case, a warning
-       message will be printed from this function, and the given table and
-       ranks inputs will be returned.
+       at all. In this case, a warning message will be printed from this
+       function, and the given table and ranks inputs will be returned.
     """
 
     logging.debug('Starting to filter "unextreme" features.')
@@ -106,6 +135,10 @@ def filter_unextreme_features(
     if extreme_feature_count is None:
         logging.debug("No extreme feature count specified; not filtering.")
         return table, ranks
+    elif extreme_feature_count < 1:
+        raise ValueError("Extreme feature count must be at least 1.")
+    elif type(extreme_feature_count) != int:
+        raise ValueError("Extreme feature count must be an integer.")
 
     efc2 = extreme_feature_count * 2
     if efc2 >= len(ranks):
@@ -123,6 +156,7 @@ def filter_unextreme_features(
             print("Therefore, no feature filtering will be done now.")
         return table, ranks
 
+    # OK, we're actually going to do some filtering.
     logging.debug(
         "Will perform filtering with e.f.c. of {}.".format(
             extreme_feature_count
@@ -130,8 +164,6 @@ def filter_unextreme_features(
     )
     logging.debug("Input table has shape {}.".format(table.shape))
     logging.debug("Input feature ranks have shape {}.".format(ranks.shape))
-    # OK, we're actually going to do some filtering.
-    filtered_table = table.copy()
     # We store these features in a set to avoid duplicates -- Python does the
     # hard work here for us
     features_to_preserve = set()
@@ -143,20 +175,12 @@ def filter_unextreme_features(
 
     # Also filter ranks. Fortunately, DataFrame.filter() makes this easy.
     filtered_ranks = ranks.filter(items=features_to_preserve, axis="index")
-
-    # Filter the BIOM table to desired features.
-    def filter_biom_table(values, feature_id, _):
-        return feature_id in features_to_preserve
-
-    filtered_table.filter(filter_biom_table, axis="observation")
-
-    # Finally, filter now-empty samples from the BIOM table.
-    filtered_table.remove_empty(axis="sample")
+    filtered_table = table.filter(items=features_to_preserve, axis="index")
 
     logging.debug("Output table has shape {}.".format(filtered_table.shape))
     logging.debug(
         "Output feature ranks have shape {}.".format(filtered_ranks.shape)
     )
-    logging.debug("Done with filtering.")
+    logging.debug("Done with filtering unextreme features.")
 
     return filtered_table, filtered_ranks

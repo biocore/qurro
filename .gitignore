@@ -67,6 +67,15 @@ tmp_files/*
 # Duplicate .coverage files
 .coverage.*
 
+# Ignore test outputs that we don't want to bother having as demos
+# (this cuts down the size of the repo)
+docs/demos/
+!docs/demos/byrd/
+!docs/demos/sleep_apnea/
+!docs/demos/red_sea/
+!docs/demos/q2_moving_pictures/
+
+# Ignore various outputs from Qurro's JS testing process
 qurro/tests/web_tests/instrumented_js/*
 coverage.xml
 js_coverage.json

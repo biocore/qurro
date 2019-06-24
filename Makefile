@@ -14,23 +14,21 @@ test: pytest jstest
 
 # The -B in the invocation of python prevents this from creating pycache
 # miscellany.
-# And -s prevents output capturing (letting us see the results of print
-# statements sprinkled throughout the code, which helps with debugging).
 pytest:
 	@# Use of -f per https://unix.stackexchange.com/a/68096
 	rm -rf docs/demos/*
-	python3 -B -m pytest qurro/tests -s --cov qurro
+	python3 -B -m pytest qurro/tests --cov qurro
 
 jstest:
-	@# Re-update specs for JS tests
-	python3 qurro/_plot_utils.py
+	@# Re-update specs for JS tests by running update_js_test_jsons.py
+	python3 qurro/tests/update_js_test_jsons.py
 	nyc instrument qurro/support_files/js/ qurro/tests/web_tests/instrumented_js/
 	mocha-headless-chrome -f qurro/tests/web_tests/index.html -c js_coverage.json
 
 # Assumes this is being run from the root directory of the qurro repo
 # (since that's where the .jshintrc is located).
 stylecheck:
-	flake8 qurro/ setup.py
+	flake8 --ignore=E203,W503 qurro/ setup.py
 	black --check -l 79 qurro/ setup.py
 	jshint $(JSLOCS)
 	prettier --check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)

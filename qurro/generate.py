@@ -22,85 +22,16 @@ from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
-from qurro._plot_utils import replace_js_plot_json_definitions
-
-
-def fix_id(fid):
-    """Like escape_id() but a lot lazier."""
-
-    new_id = ""
-    for c in fid:
-        if c == ".":
-            new_id += ":"
-        elif c == "]":
-            new_id += ")"
-        elif c == "[":
-            new_id += "("
-        elif c == "'" or c == '"' or c == "\\":
-            continue
-        else:
-            new_id += c
-    return new_id
-
-
-# def escape_id(fid):
-#     """Escapes certain characters in an ID for a Vega/Vega-Lite spec.
-#
-#        This is in order to prevent Vega-Lite from interpreting stuff from
-#        these IDs, which results in problems.
-#
-#        See https://vega.github.io/vega-lite/docs/field.html for context.
-#     """
-#
-#     # Characters that need to be escaped: ."'\[]
-#     # (JSON doesn't assign special significance to the single-quote (') but
-#     # Vega-Lite does, which is why we escape it anyway.)
-#     spec_char_regex = re.compile("[\.\"\'\\\[\]]")
-#     new_id = ""
-#     for c in fid:
-#         if spec_char_regex.match(c):
-#             new_id += "\\{}".format(c)
-#         else:
-#             new_id += c
-#     return new_id
-
-
-def matchdf(df1, df2):
-    """Filters both DataFrames to just the rows of their shared indices.
-
-       Derived from gneiss.util.match() (https://github.com/biocore/gneiss).
-    """
-
-    idx = set(df1.index) & set(df2.index)
-    return df1.loc[idx], df2.loc[idx]
-
-
-def ensure_df_headers_unique(df, df_name):
-    """Raises an error if the index or columns of the DataFrame aren't unique.
-
-       (If both index and columns are non-unique, the index error will take
-       precedence.)
-
-       If these fields are unique, no errors are raised and nothing (None) is
-       implicitly returned.
-
-       Parameters
-       ----------
-
-       df: pandas.DataFrame
-       df_name: str
-           The "name" of the DataFrame -- this is displayed to the user in the
-           error message thrown if the DataFrame has any non-unique IDs.
-    """
-    if len(df.index.unique()) != df.shape[0]:
-        raise ValueError(
-            "Indices of the {} DataFrame are not" " unique.".format(df_name)
-        )
-
-    if len(df.columns.unique()) != df.shape[1]:
-        raise ValueError(
-            "Columns of the {} DataFrame are not" " unique.".format(df_name)
-        )
+from qurro._json_utils import replace_js_json_definitions
+from qurro._df_utils import (
+    replace_nan,
+    validate_df,
+    escape_columns,
+    biom_table_to_sparse_df,
+    remove_empty_samples,
+    match_table_and_data,
+    merge_feature_metadata,
+)
 
 
 def process_and_generate(
@@ -131,124 +62,118 @@ def process_input(
     feature_metadata=None,
     extreme_feature_count=None,
 ):
-    """Processes the input files to Qurro."""
+    """Validates/processes the input files and parameter(s) to Qurro.
+
+       In particular, this function
+
+       1. Calls validate_df() on all of the input DataFrames passed
+          (feature ranks, sample metadata, feature metadata if passed).
+
+       2. Calls replace_nan() on the metadata DataFrame(s), so that all
+          missing values are represented consistently with a None (which
+          will be represented as a null in JSON/JavaScript).
+
+       3. Converts the BIOM table to a SparseDataFrame by calling
+          biom_table_to_sparse_df().
+
+       4. Matches up the table with the feature ranks and sample metadata by
+          calling match_table_and_data().
+
+       5. Calls filter_unextreme_features() using the provided
+          extreme_feature_count. (If it's None, then nothing will be done.)
+
+       6. Calls remove_empty_samples() to filter samples without any counts for
+          any features. This is purposefully done *after*
+          filter_unextreme_features() is called.
+
+       7. Converts feature rank column names to strings and escapes them.
+
+       8. Calls merge_feature_metadata() on the feature ranks and feature
+          metadata. (If feature metadata is None, nothing will be done.)
+
+       Returns
+       -------
+       output_metadata: pd.DataFrame
+            Sample metadata, but matched with the table and with empty samples
+            removed.
+
+       filtered_ranks: pd.DataFrame
+            Feature ranks, post-filtering and with feature metadata columns
+            added in.
+
+       ranking_ids
+            The ranking columns' names in filtered_ranks.
+
+       feature_metadata_cols: list
+            The feature metadata columns' names in filtered_ranks.
+
+       output_table: pd.SparseDataFrame
+            The BIOM table, post matching with the feature ranks and sample
+            metadata and with empty samples removed.
+    """
 
     logging.debug("Starting processing input.")
-    # Assert that the feature IDs and sample IDs contain only unique IDs.
-    # (This doesn't check that there aren't any identical IDs between the
-    # feature and sample IDs, but we shouldn't be using sample IDs to query
-    # feature IDs anyway. And besides, I think that should technically be
-    # allowed.)
-    ensure_df_headers_unique(feature_ranks, "feature ranks")
-    logging.debug("Ensured uniqueness of feature ranks.")
-    ensure_df_headers_unique(sample_metadata, "sample metadata")
-    logging.debug("Ensured uniqueness of sample metadata.")
 
-    # NOTE although we always call filter_unextreme_features(), no filtering is
-    # necessarily done (depending on the value of extreme_feature_count and the
-    # contents of the table/ranks).
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        biom_table, feature_ranks, extreme_feature_count
+    validate_df(feature_ranks, "feature ranks", 2, 1)
+    validate_df(sample_metadata, "sample metadata", 1, 1)
+    if feature_metadata is not None:
+        # It's cool if there aren't any features actually described in the
+        # feature metadata (hence why we pass in 0 as the minimum # of rows in
+        # the feature metadata DataFrame), but we still pass it to
+        # validate_df() in order to ensure that:
+        #   1) there's at least one feature metadata column (because
+        #      otherwise the feature metadata is useless)
+        #   2) column names are unique
+        validate_df(feature_metadata, "feature metadata", 0, 1)
+
+    # Replace NaN values (which both _metadata_utils.read_metadata_file() and
+    # qiime2.Metadata use to represent missing values, i.e. ""s) with None --
+    # this is generally easier for us to handle in the JS side of things (since
+    # it'll just be consistently converted to null by json.dumps()).
+    sample_metadata = replace_nan(sample_metadata)
+    if feature_metadata is not None:
+        feature_metadata = replace_nan(feature_metadata)
+
+    table = biom_table_to_sparse_df(biom_table)
+
+    # Match up the table with the feature ranks and sample metadata.
+    m_table, m_sample_metadata = match_table_and_data(
+        table, feature_ranks, sample_metadata
     )
-    logging.debug("Creating a SparseDataFrame from the BIOM table.")
 
-    # Old versions of BIOM accidentally produce an effectively-dense DataFrame
-    # when using biom.Table.to_dataframe() (see
-    # https://github.com/biocore/biom-format/issues/808). To get around this,
-    # we extract the scipy.sparse.csr_matrix data from the BIOM table and
-    # directly convert that to a pandas SparseDataFrame.
-    sparse_matrix_data = filtered_table.matrix_data
-    table = pd.SparseDataFrame(sparse_matrix_data, default_fill_value=0.0)
+    # Note that although we always call filter_unextreme_features(), filtering
+    # isn't necessarily always done (whether or not depends on the value of
+    # extreme_feature_count and the contents of the table/ranks).
+    filtered_table, filtered_ranks = filter_unextreme_features(
+        m_table, feature_ranks, extreme_feature_count
+    )
 
-    # The csr_matrix doesn't include column/index IDs, so we manually add them
-    # in to the SparseDataFrame.
-    table.index = filtered_table.ids(axis="observation")
-    table.columns = filtered_table.ids(axis="sample")
-
-    logging.debug("Converted BIOM table to SparseDataFrame.")
-
-    # Match features to BIOM table, and then match samples to BIOM table.
-    # This should bring us to a point where every feature/sample is
-    # supported in the BIOM table. (Note that the input BIOM table might
-    # contain features or samples that are not included in filtered_ranks or
-    # sample_metadata, respectively -- this is totally fine. The opposite,
-    # though, is a big no-no.)
-    table, V = matchdf(table, filtered_ranks)
-    logging.debug("Matching table with feature ranks done.")
-    # Ensure that every ranked feature was present in the BIOM table. Raise an
-    # error if this isn't the case.
-    if V.shape[0] != filtered_ranks.shape[0]:
-        unsupported_feature_ct = filtered_ranks.shape[0] - V.shape[0]
-        # making this error message as pretty as possible
-        word = "were"
-        if unsupported_feature_ct == 1:
-            word = "was"
-        raise ValueError(
-            "Of the {} ranked features, {} {} not present in "
-            "the input BIOM table.".format(
-                filtered_ranks.shape[0], unsupported_feature_ct, word
-            )
-        )
-
-    table, U = matchdf(table.T, sample_metadata)
-    logging.debug("Matching table with sample metadata done.")
-    # Allow for dropped samples (e.g. negative controls), but ensure that at
-    # least one sample is supported by the BIOM table.
-    if U.shape[0] < 1:
-        raise ValueError(
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
-        )
-
-    dropped_sample_ct = sample_metadata.index.difference(U.index).shape[0]
-    if dropped_sample_ct > 0:
-        print(
-            "NOTE: {} sample(s) in the sample metadata file were not "
-            "present in the BIOM table, and have been removed from the "
-            "visualization.".format(dropped_sample_ct)
-        )
-
-    # Now that we've matched up the BIOM table with the feature ranks and
-    # sample metadata, we're almost done.
+    # Filter now-empty samples from the BIOM table.
+    output_table, output_metadata = remove_empty_samples(
+        filtered_table, m_sample_metadata
+    )
 
     # Before we go through feature metadata: convert all rank column IDs
     # to strings (since Altair gets angry if you pass in ints as column IDs),
-    # and (as a temporary fix for #66) call fix_id() on these column IDs.
-    filtered_ranks.columns = [fix_id(str(c)) for c in filtered_ranks.columns]
+    # and (as a temporary fix for #66) call fix_id() on these column IDs via
+    # escape_columns(). (escape_columns() will also check to make sure that the
+    # column names stay unique after calling fix_id().)
+    filtered_ranks.columns = [str(c) for c in filtered_ranks.columns]
+    filtered_ranks = escape_columns(filtered_ranks)
     ranking_ids = filtered_ranks.columns
 
-    feature_metadata_cols = []
-    # If the user passed in feature metadata corresponding to taxonomy
-    # information, then we use that to update the feature data to include
-    # that metadata. Feature metadata will be represented as additional fields
-    # for each feature in the rank plot. (This can help out in the searching
-    # part of the visualization, but it isn't necessary.)
-    if feature_metadata is not None:
-        try:
-            feature_metadata_cols = feature_metadata.columns
-            # Use of suffixes=(False, False) ensures that columns are unique
-            # between feature metadata and feature ranks.
-            filtered_ranks = filtered_ranks.merge(
-                feature_metadata,
-                how="left",
-                left_index=True,
-                right_index=True,
-                suffixes=(False, False),
-            )
-        except ValueError:
-            # It might be possible to figure out a way to handle this sort of
-            # situation automatically, but unless it becomes a problem I'm ok
-            # with the current solution.
-            print(
-                "Column names for the feature metadata and feature ranks "
-                "should be distinct. Try creating a copy of your feature "
-                "metadata with identical columns renamed, and use that with "
-                "Qurro."
-            )
-            raise
+    filtered_ranks, feature_metadata_cols = merge_feature_metadata(
+        filtered_ranks, feature_metadata
+    )
 
     logging.debug("Finished input processing.")
-    return U, filtered_ranks, ranking_ids, feature_metadata_cols, table
+    return (
+        output_metadata,
+        filtered_ranks,
+        ranking_ids,
+        feature_metadata_cols,
+        output_table,
+    )
 
 
 def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
@@ -388,16 +313,22 @@ def gen_sample_plot(table, metadata):
     # At this point, df_balance is a DataFrame with its index as sample IDs
     # and one column ("qurro_balance", which is solely NaNs).
     # We know that df_balance and metadata's indices should match up since we
-    # already ran matchdf() on the loaded BIOM table and metadata.
+    # already matched the BIOM table and metadata.
     # (Use of (False, False) means that if metadata contains a column called
-    # rankratiovz_balance, this will throw an error.)
-    sample_metadata = pd.merge(
-        df_balance,
-        metadata,
-        left_index=True,
-        right_index=True,
-        suffixes=(False, False),
-    )
+    # qurro_balance, this will throw an error.)
+    try:
+        sample_metadata = pd.merge(
+            df_balance,
+            metadata,
+            left_index=True,
+            right_index=True,
+            suffixes=(False, False),
+        )
+    except ValueError:
+        print(
+            "Sample metadata can't contain any columns called qurro_balance."
+            "Try changing the name of this column."
+        )
 
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
     # First we rename the index "Sample ID", just on the off chance that
@@ -410,10 +341,10 @@ def gen_sample_plot(table, metadata):
     sample_metadata.reset_index(inplace=True)
 
     # Very minor thing -- sort the samples by their IDs. This should ensure
-    # that the sample plot output is deterministic -- and, therefore, when
-    # running qurro._plot_utils to see if we need to update the specs in
-    # the JS, qurro._plot_utils.plot_jsons_equal() should be True
-    # unless we actually change something in the actual spec details.
+    # that the sample plot output is deterministic.
+    # NOTE: this is probably unnecessary due to the use of sort_keys in
+    # _json_utils.try_to_replace_line_json(). Double-check if we can remove
+    # this.
     sample_metadata.sort_values(by=["Sample ID"], inplace=True)
 
     # Create sample plot chart Vega-Lite spec using Altair.
@@ -426,7 +357,11 @@ def gen_sample_plot(table, metadata):
         )
         .mark_circle()
         .encode(
-            alt.X("qurro_balance", type="quantitative"),
+            alt.X(
+                default_metadata_col,
+                type="nominal",
+                axis=alt.Axis(labelAngle=-45),
+            ),
             alt.Y(
                 "qurro_balance",
                 title="log(Numerator / Denominator)",
@@ -460,14 +395,17 @@ def gen_visualization(
     df_sample_metadata,
     output_dir,
 ):
-    """Creates a Qurro visualization. This function should be callable
-       from both the QIIME 2 and standalone Qurro scripts.
+    """Creates a Qurro visualization.
 
-       Returns:
+       Returns
+       -------
 
-       index_path: a path to the index.html file for the output visualization.
-                   This is needed when calling q2templates.render().
+       index_path: str
+            A path to the index.html file for the output visualization. This is
+            needed when calling q2templates.render().
     """
+
+    table_t = processed_table.T
 
     # https://altair-viz.github.io/user_guide/faq.html#disabling-maxrows
     alt.data_transformers.enable("default", max_rows=None)
@@ -475,9 +413,7 @@ def gen_visualization(
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
     logging.debug("Generating sample plot JSON.")
-    sample_plot_json, count_json = gen_sample_plot(
-        processed_table, df_sample_metadata
-    )
+    sample_plot_json, count_json = gen_sample_plot(table_t, df_sample_metadata)
     logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
@@ -513,7 +449,7 @@ def gen_visualization(
     # create JS code that loads these JSON files in main.js
     main_loc = os.path.join(support_files_loc, "main.js")
     output_loc = os.path.join(output_dir, "main.js")
-    exit_code = replace_js_plot_json_definitions(
+    exit_code = replace_js_json_definitions(
         main_loc,
         rank_plot_json,
         sample_plot_json,

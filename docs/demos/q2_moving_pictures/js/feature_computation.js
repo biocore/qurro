@@ -123,7 +123,7 @@ define(function() {
             // If the current feature metadata value is null / otherwise not
             // text-searchable, trySearchable() returns null (which will cause
             // textToRankArray() to return [], which will cause
-            // existsIntersection() to return false quickly.
+            // existsIntersection() to return false quickly).
             ranksOfFeatureMetadata = textToRankArray(
                 trySearchable(featureRowList[ti][featureMetadataField])
             );
@@ -178,15 +178,11 @@ define(function() {
         }
     }
 
-    /* Vega-Lite doesn't filter out infinities (caused by taking log(0)
-     * or of log(0)/log(0), etc.) by default. If left unchecked, this leads to
-     * weird and not-useful charts due to the presence of infinities.
+    /* We set the balance for samples with an abundance of <= 0 in either
+     * the top or bottom of the log ratio as null.
      *
-     * To get around this, we preemptively set the balance for samples with an
-     * abundance of <= 0 in either the top or bottom of the log ratio as NaN.
-     *
-     * (Vega-Lite does filter out NaNs and nulls if the invalidValues config
-     * property is true [which is default]).
+     * RRVDisplay.updateSamplePlotFilters() should ensure that samples with
+     * a null log ratio are filtered out of the sample plot.
      */
     function computeBalance(topValue, botValue) {
         if (typeof topValue !== "number" || typeof botValue !== "number") {
@@ -195,10 +191,11 @@ define(function() {
             );
         }
         if (topValue <= 0 || botValue <= 0) {
-            return NaN;
+            return null;
         }
         return Math.log(topValue) - Math.log(botValue);
     }
+
     return {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,

@@ -1,15 +1,9 @@
-define(["feature_computation", "mocha", "chai"], function(
+define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
     feature_computation,
     mocha,
-    chai
+    chai,
+    testing_utilities
 ) {
-    function getFeatureIDsFromObjectArray(objArray) {
-        var outputFeatureIDs = [];
-        for (var i = 0; i < objArray.length; i++) {
-            outputFeatureIDs.push(objArray[i]["Feature ID"]);
-        }
-        return outputFeatureIDs;
-    }
     var rankPlotSkeleton = {
         data: { name: "dataName" },
         datasets: { dataName: [], qurro_feature_metadata_ordering: [] }
@@ -69,7 +63,7 @@ define(["feature_computation", "mocha", "chai"], function(
         describe('"Text"-mode searching', function() {
             it("Correctly searches through feature IDs", function() {
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
                             "lol",
@@ -80,7 +74,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     lolMatches
                 );
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
                             "Feature",
@@ -95,7 +89,7 @@ define(["feature_computation", "mocha", "chai"], function(
             it("Correctly searches through feature metadata fields", function() {
                 // Default text search ignores taxonomic ranks (i.e. semicolons)
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "Staphylococcus",
@@ -106,7 +100,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     staphTextMatches
                 );
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "Bacteria",
@@ -117,7 +111,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     bacteriaMatches
                 );
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "Caudovirales",
@@ -129,7 +123,7 @@ define(["feature_computation", "mocha", "chai"], function(
                 );
                 // Only respects taxonomic ranks if the user forces it
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             ";Staphylococcus;",
@@ -200,7 +194,7 @@ define(["feature_computation", "mocha", "chai"], function(
                 // searching methods shouldn't look at Feature 7's Taxonomy
                 // value.
                 chai.assert.sameMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "null",
@@ -215,7 +209,7 @@ define(["feature_computation", "mocha", "chai"], function(
         describe('"Rank"-mode searching', function() {
             it("Finds matching features based on full, exact taxonomic rank", function() {
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "Staphylococcus",
@@ -228,7 +222,7 @@ define(["feature_computation", "mocha", "chai"], function(
                     ["Feature 2", "Feature 3"]
                 );
                 chai.assert.sameOrderedMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "Bacilli",
@@ -262,43 +256,40 @@ define(["feature_computation", "mocha", "chai"], function(
                     )
                 );
             });
-            it("Doesn't find anything if inputText is empty or contains only whitespace", function() {
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        "",
-                        "Feature ID",
-                        "rank"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "",
-                        "Taxonomy",
-                        "rank"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        " \n \t ",
-                        "Feature ID",
-                        "rank"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        " \n \t ",
-                        "Taxonomy",
-                        "rank"
-                    )
-                );
+            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characers", function() {
+                /* Just a helper function to alleviate redundant code here.
+                 *
+                 * Asserts that filterFeatures() with the given input text is
+                 * empty. Tries this on both rpJSON1 and rpJSON2, with the
+                 * "Feature ID" field for rpJSON1 and the "Taxonomy" field for
+                 * rpJSON2.
+                 */
+                function assertEmpty(inputText) {
+                    var jsonList = [rpJSON1, rpJSON2];
+                    var fmList = ["Feature ID", "Taxonomy"];
+
+                    for (var i = 0; i < jsonList.length; i++) {
+                        chai.assert.isEmpty(
+                            feature_computation.filterFeatures(
+                                jsonList[i],
+                                inputText,
+                                fmList[i],
+                                "rank"
+                            )
+                        );
+                    }
+                }
+                assertEmpty("");
+                assertEmpty(" \n \t ");
+                assertEmpty(",,,,");
+                assertEmpty(";;;;");
+                assertEmpty(",; \t ;;");
+                assertEmpty("  ,; \t ;;\n");
+                assertEmpty("\n ,; \t ;;\n");
             });
             it("Ignores actual null values", function() {
                 chai.assert.sameMembers(
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON2,
                             "null",
@@ -530,7 +521,7 @@ define(["feature_computation", "mocha", "chai"], function(
         describe("Various filterFeatures() logistics", function() {
             it("Throws an error when nonexistent feature metadata field passed", function() {
                 chai.assert.throws(function() {
-                    getFeatureIDsFromObjectArray(
+                    testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
                             "I'm the input text!",

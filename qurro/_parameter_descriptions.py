@@ -8,7 +8,8 @@
 
 TABLE = (
     "A BIOM table describing the abundances of the ranked features in "
-    "samples."
+    "samples. Note that samples without any observed features will be "
+    "removed from the Qurro visualization."
 )
 
 EXTREME_FEATURE_COUNT = (
@@ -17,10 +18,9 @@ EXTREME_FEATURE_COUNT = (
     "This is useful when dealing with huge datasets (e.g. with "
     "BIOM tables exceeding 1 million entries), for which "
     "running Qurro normally might take a long amount of "
-    "time or crash due to memory limits. "
-    'Additionally, following this feature-filtering step, all "empty" samples '
-    "(i.e. those containing zeroes for every remaining feature) will be "
-    "removed from the visualization."
+    "time or crash due to memory limits. This value must be at least 1, and "
+    "must be an integer. Note that samples without any observed features "
+    "after this filtering step will be removed from the Qurro visualization."
 )
 
 ASSUME_GNPS_FEATURE_METADATA = (

@@ -18,8 +18,8 @@ from qurro._rank_utils import read_rank_file
 from qurro._metadata_utils import (
     read_metadata_file,
     read_gnps_feature_metadata_file,
-    escape_columns,
 )
+from qurro._df_utils import escape_columns
 
 
 @click.command()

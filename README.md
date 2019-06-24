@@ -6,6 +6,8 @@
 
 [![Build Status](https://travis-ci.org/fedarko/qurro.svg?branch=master)](https://travis-ci.org/fedarko/qurro) [![codecov](https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/qurro)
 
+(Pronounced "churro.")
+
 Qurro visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
 [DEICODE](https://github.com/biocore/DEICODE). It facilitates viewing

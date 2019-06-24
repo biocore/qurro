@@ -31,6 +31,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * DOM elements configurable in the class constructor, but I don't
          * think that would be super useful unless you want to embed
          * qurro' web interface in a bunch of other environments.)
+         *
+         * You need to call this.makePlots() to actually make this interactive
+         * / show things.
          */
         constructor(rankPlotJSON, samplePlotJSON, countJSON) {
             // Used for selections of log ratios between single features (via
@@ -50,16 +53,31 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Used when searching through features.
             this.feature_ids = Object.keys(this.feature_cts);
 
-            // This is a list of all sample IDs. As of now, we don't have a
-            // strong need to store this in memory so we only define it in the
-            // scope of the constructor function.
-            var sampleIDs = this.feature_cts[this.feature_ids[0]];
+            // Just a list of all sample IDs.
+            var sampleIDs = Object.keys(this.feature_cts[this.feature_ids[0]]);
             // Used when letting the user know how many samples are present in
             // the sample plot.
             // Note that we need to use Object.keys() in order to be able to
             // figure out how many entries are in the sampleIDs list; see
             // https://stackoverflow.com/a/6700/10730311
-            this.sampleCount = Object.keys(sampleIDs).length;
+            this.sampleCount = sampleIDs.length;
+
+            // a mapping from "reason" (i.e. "balance", "xAxis", "color") to
+            // list of dropped sample IDs.
+            //
+            // "balance" maps to sampleIDs right now because all samples have a
+            // null balance starting off.
+            //
+            // NOTE: xAxis and color might already exclude some samples from
+            // being shown in the default categorical encoding. Their
+            // corresponding lists will be updated in makeSamplePlot(), before
+            // dom_utils.updateMainSampleShownDiv() will be called (so the
+            // nulls will be replaced with actual lists).
+            this.droppedSamples = {
+                balance: sampleIDs,
+                xAxis: null,
+                color: null
+            };
 
             // Set when the sample plot JSON is loaded. Used to populate
             // possible sample plot x-axis/colorization options.
@@ -73,11 +91,29 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
 
-            // Actually create the visualization
+            // Save the JSONs that will be used to create the visualization.
             this.rankPlotJSON = rankPlotJSON;
             this.samplePlotJSON = samplePlotJSON;
-            this.makePlots();
+        }
 
+        /* Calls makeRankPlot() and makeSamplePlot(), and waits for them to
+         * finish before hiding the loadingMessage.
+         *
+         * The structure of the async/await usage here is based on the
+         * concurrentStart() example on
+         * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function.
+         */
+        async makePlots() {
+            // Note that this will fail if either makePlot function fails with
+            // an error. This should be ok for Qurro's purposes, though.
+            await Promise.all([this.makeRankPlot(), this.makeSamplePlot()]);
+            this.setUpDOM();
+            document
+                .getElementById("loadingMessage")
+                .classList.add("invisible");
+        }
+
+        setUpDOM() {
             // All DOM elements that we disable/enable when switching to/from
             // "boxplot mode." We disable these when in "boxplot mode" because
             // Vega-Lite gets grumpy when you try to apply colors to a boxplot
@@ -87,9 +123,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.colorEles = ["colorField", "colorScale"];
             // Set up relevant DOM bindings
             var display = this;
+            // NOTE: can probably update a few of these callbacks to just refer
+            // to te original function?
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
-                multiFeatureButton: function() {
-                    display.updateSamplePlotMulti();
+                multiFeatureButton: async function() {
+                    await display.updateSamplePlotMulti();
                 },
                 exportDataButton: function() {
                     display.exportData();
@@ -97,35 +135,30 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             });
             this.elementsWithOnChangeBindings = dom_utils.setUpDOMBindings(
                 {
-                    xAxisField: function() {
-                        display.updateSamplePlotField("xAxis");
+                    xAxisField: async function() {
+                        await display.updateSamplePlotField("xAxis");
                     },
-                    colorField: function() {
-                        display.updateSamplePlotField("color");
+                    colorField: async function() {
+                        await display.updateSamplePlotField("color");
                     },
-                    xAxisScale: function() {
-                        display.updateSamplePlotScale("xAxis");
+                    xAxisScale: async function() {
+                        await display.updateSamplePlotScale("xAxis");
                     },
-                    colorScale: function() {
-                        display.updateSamplePlotScale("color");
+                    colorScale: async function() {
+                        await display.updateSamplePlotScale("color");
                     },
-                    rankField: function() {
-                        display.updateRankField();
+                    rankField: async function() {
+                        await display.updateRankField();
                     },
-                    barSize: function() {
-                        display.updateRankPlotBarSize(true);
+                    barSize: async function() {
+                        await display.updateRankPlotBarSize(true);
                     },
-                    boxplotCheckbox: function() {
-                        display.updateSamplePlotBoxplot();
+                    boxplotCheckbox: async function() {
+                        await display.updateSamplePlotBoxplot();
                     }
                 },
                 "onchange"
             );
-        }
-
-        makePlots() {
-            this.makeRankPlot();
-            this.makeSamplePlot();
         }
 
         makeRankPlot(notFirstTime) {
@@ -136,7 +169,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.rankOrdering,
                     this.rankOrdering[0]
                 );
-                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
+                // NOTE: we use .slice() to make a copy of the initial array so
+                // that when we unshift "Feature ID" onto
+                // this.featureMetadataFields, the original array (in the rank
+                // plot JSON) isn't modified.
+                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering.slice();
                 // Just so that we have something to search by, even if no
                 // actual feature metadata was passed.
                 // Note that in JS, .unshift() adds to the beginning (not end)
@@ -158,6 +195,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // ranked features (e.g. the matching test) -- in these cases,
                 // fitting actually increases the bar sizes to be reasonable to
                 // view/select.
+                // TODO: make this a separate func so we can unit-test it
                 if (
                     this.feature_ids.length <=
                     this.rankPlotJSON.config.view.width
@@ -176,7 +214,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var parentDisplay = this;
             // We specify a "custom" theme which matches with the
             // "custom"-theme tooltip CSS.
-            vegaEmbed("#rankPlot", this.rankPlotJSON, {
+            return vegaEmbed("#rankPlot", this.rankPlotJSON, {
                 downloadFileName: "rank_plot",
                 tooltip: { theme: "custom" }
             }).then(function(result) {
@@ -239,14 +277,53 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 );
             }
             this.updateSamplePlotTooltips();
+            this.updateSamplePlotFilters();
+
+            this.updateFieldDroppedSampleStats("x");
+            this.updateFieldDroppedSampleStats("color");
+            dom_utils.updateMainSampleShownDiv(
+                this.droppedSamples,
+                this.sampleCount
+            );
+
             // NOTE: Use of "patch" based on
             // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
-            vegaEmbed("#samplePlot", this.samplePlotJSON, {
+            return vegaEmbed("#samplePlot", this.samplePlotJSON, {
                 downloadFileName: "sample_plot"
             }).then(function(result) {
                 parentDisplay.samplePlotView = result.view;
             });
+        }
+
+        /* Finds the invalid sample IDs for a given encoding, updates the
+         * corresponding <div>, and then updates this.droppedSamples.
+         *
+         * The input "encoding" should be either "x" or "color". In the future,
+         * if other encodings in the sample plot are variable (e.g. size?), it
+         * shouldn't be too difficult to update this function to support these.
+         */
+        updateFieldDroppedSampleStats(encoding) {
+            var divID, reason;
+            if (encoding === "x") {
+                divID = "xAxisSamplesDroppedDiv";
+                reason = "xAxis";
+            } else if (encoding === "color") {
+                divID = "colorSamplesDroppedDiv";
+                reason = "color";
+            }
+            var invalidSampleIDs = this.getInvalidSampleIDs(
+                this.samplePlotJSON.encoding[encoding].field,
+                encoding
+            );
+            dom_utils.updateSampleDroppedDiv(
+                invalidSampleIDs,
+                this.sampleCount,
+                divID,
+                reason,
+                this.samplePlotJSON.encoding[encoding].field
+            );
+            this.droppedSamples[reason] = invalidSampleIDs;
         }
 
         // Given a "row" of data about a rank, return its new classification depending
@@ -301,22 +378,22 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
-        updateRankField() {
+        async updateRankField() {
             var newRank = document.getElementById("rankField").value;
             this.rankPlotJSON.encoding.y.field = newRank;
             // NOTE that this assumes that the rank plot only has one transform
             // being used, and that it's a "rank" window transform. (This is a
             // reasonable assumption, since we generate the rank plot.)
             this.rankPlotJSON.transform[0].sort[0].field = newRank;
-            this.remakeRankPlot();
+            await this.remakeRankPlot();
         }
 
-        remakeRankPlot() {
+        async remakeRankPlot() {
             this.destroy(true, false, false);
-            this.makeRankPlot(true);
+            await this.makeRankPlot(true);
         }
 
-        updateRankPlotBarSize(callRemakeRankPlot) {
+        async updateRankPlotBarSize(callRemakeRankPlot) {
             var newSizeType = document.getElementById("barSize").value;
             var newBarSize;
             if (newSizeType === "fit") {
@@ -338,75 +415,80 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     .classList.add("invisible");
             }
             if (callRemakeRankPlot) {
-                this.remakeRankPlot();
+                await this.remakeRankPlot();
             }
         }
 
-        changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
+        async changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
-            var numSamplesWithNaNBalance = 0;
-            this.samplePlotView
-                .change(
-                    dataName,
-                    vega.changeset().modify(
-                        /* Calculate the new balance for each sample.
-                         *
-                         * For reference, the use of modify() here is based on
-                         * https://github.com/vega/vega/issues/1028#issuecomment-334295328
-                         * (This is where I learned that
-                         * vega.changeset().modify() existed.)
-                         * Also, vega.truthy is a utility function: it just
-                         * returns true.
-                         */
-                        vega.truthy,
-                        "qurro_balance",
-                        // function to run to determine what the new balances are
-                        function(sampleRow) {
-                            var sampleBalance = updateBalanceFunc.call(
-                                parentDisplay,
-                                sampleRow
-                            );
-                            // We use Number.isNaN() instead of isNaN() because
-                            // the latter can have weird undesirable behavior.
-                            if (Number.isNaN(sampleBalance)) {
-                                numSamplesWithNaNBalance++;
-                            }
-                            return sampleBalance;
+            var nullBalanceSampleIDs = [];
+
+            var samplePlotViewChanged = this.samplePlotView.change(
+                dataName,
+                vega.changeset().modify(
+                    /* Calculate the new balance for each sample.
+                     *
+                     * For reference, the use of modify() here is based on
+                     * https://github.com/vega/vega/issues/1028#issuecomment-334295328
+                     * (This is where I learned that
+                     * vega.changeset().modify() existed.)
+                     * Also, vega.truthy is a utility function: it just
+                     * returns true.
+                     */
+                    vega.truthy,
+                    "qurro_balance",
+                    // function to run to determine what the new balances are
+                    function(sampleRow) {
+                        var sampleBalance = updateBalanceFunc.call(
+                            parentDisplay,
+                            sampleRow
+                        );
+                        if (sampleBalance === null) {
+                            nullBalanceSampleIDs.push(sampleRow["Sample ID"]);
                         }
-                    )
+                        return sampleBalance;
+                    }
                 )
-                .run();
-            console.log(
-                String(numSamplesWithNaNBalance) +
-                    " / " +
-                    String(this.sampleCount) +
-                    " sample(s) dropped due to NaN balance."
             );
+
             // Update rank plot based on the new log ratio
-            // Storing this within changeSamplePlot() is a (weak) safeguard that
-            // changes to the state of the sample plot (at least enacted using the UI
-            // controls on the page, not the dev console) also propagate to the rank
-            // plot.
+            // Doing this alongside the change to the sample plot is done so that
+            // the "states" of the plot re: selected features + sample log
+            // ratios are unified.
             var rankDataName = this.rankPlotJSON.data.name;
-            this.rankPlotView
-                .change(
-                    rankDataName,
-                    vega
-                        .changeset()
-                        .modify(vega.truthy, "Classification", function(
-                            rankRow
-                        ) {
-                            return updateRankColorFunc.call(
-                                parentDisplay,
-                                rankRow
-                            );
-                        })
-                )
-                .run();
+            var rankPlotViewChanged = this.rankPlotView.change(
+                rankDataName,
+                vega
+                    .changeset()
+                    .modify(vega.truthy, "Classification", function(rankRow) {
+                        return updateRankColorFunc.call(parentDisplay, rankRow);
+                    })
+            );
+
+            // Change both the plots, and move on when these changes are done.
+            await Promise.all([
+                samplePlotViewChanged.runAsync(),
+                rankPlotViewChanged.runAsync()
+            ]);
+
+            // Now that the plots have been updated, update the dropped sample
+            // count re: the new sample log ratios.
+            this.droppedSamples.balance = nullBalanceSampleIDs;
+            dom_utils.updateMainSampleShownDiv(
+                this.droppedSamples,
+                this.sampleCount
+            );
+
+            dom_utils.updateSampleDroppedDiv(
+                nullBalanceSampleIDs,
+                this.sampleCount,
+                "balanceSamplesDroppedDiv",
+                "balance"
+            );
         }
 
-        updateSamplePlotMulti() {
+        async updateSamplePlotMulti() {
             // Determine which feature metadata field(s) to look at
             var topField = document.getElementById("topSearch").value;
             var botField = document.getElementById("botSearch").value;
@@ -426,7 +508,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            this.changeSamplePlot(
+            await this.changeSamplePlot(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
@@ -434,7 +516,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.updateFeaturesTextDisplays();
         }
 
-        updateSamplePlotSingle() {
+        async updateSamplePlotSingle() {
             if (
                 this.newFeatureLow !== undefined &&
                 this.newFeatureHigh !== undefined
@@ -443,13 +525,33 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.newFeatureLow !== null &&
                     this.newFeatureHigh !== null
                 ) {
-                    var lowsDiffer = this.oldFeatureLow != this.newFeatureLow;
-                    var highsDiffer =
-                        this.oldFeatureHigh != this.newFeatureHigh;
+                    // We wrap this stuff in checks because it's conceivable
+                    // that we've reached this point and oldFeatureLow /
+                    // oldFeatureHigh are still undefined/null. However, we
+                    // expect that at least the new features should be actual
+                    // feature row objects (i.e. with "Feature ID" properties).
+                    var lowsDiffer = true;
+                    var highsDiffer = true;
+                    if (
+                        this.oldFeatureLow !== null &&
+                        this.oldFeatureLow !== undefined
+                    ) {
+                        lowsDiffer =
+                            this.oldFeatureLow["Feature ID"] !=
+                            this.newFeatureLow["Feature ID"];
+                    }
+                    if (
+                        this.oldFeatureHigh !== null &&
+                        this.oldFeatureHigh !== undefined
+                    ) {
+                        highsDiffer =
+                            this.oldFeatureHigh["Feature ID"] !=
+                            this.newFeatureHigh["Feature ID"];
+                    }
                     if (lowsDiffer || highsDiffer) {
                         // Time to update the sample scatterplot regarding new
                         // microbes.
-                        this.changeSamplePlot(
+                        await this.changeSamplePlot(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
@@ -460,9 +562,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         updateFeatureHeaderCounts(topCt, botCt) {
-            document.getElementById("numHeader").innerHTML =
+            document.getElementById("numHeader").textContent =
                 "Numerator Features (" + topCt.toLocaleString() + " selected)";
-            document.getElementById("denHeader").innerHTML =
+            document.getElementById("denHeader").textContent =
                 "Denominator Features (" +
                 botCt.toLocaleString() +
                 " selected)";
@@ -552,23 +654,71 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         updateSamplePlotTooltips() {
-            if (!document.getElementById("boxplotCheckbox").checked) {
-                // NOTE: this should be safe from duplicate entries within
-                // tooltips so long as you don't change the field titles
-                // displayed.
-                this.samplePlotJSON.encoding.tooltip = [
-                    { type: "nominal", field: "Sample ID" },
-                    { type: "quantitative", field: "qurro_balance" },
-                    {
-                        type: this.samplePlotJSON.encoding.x.type,
-                        field: this.samplePlotJSON.encoding.x.field
-                    },
-                    {
-                        type: this.samplePlotJSON.encoding.color.type,
-                        field: this.samplePlotJSON.encoding.color.field
-                    }
-                ];
+            // NOTE: this should be safe from duplicate entries within
+            // tooltips so long as you don't change the field titles
+            // displayed.
+            this.samplePlotJSON.encoding.tooltip = [
+                { type: "nominal", field: "Sample ID" },
+                {
+                    type: "quantitative",
+                    field: "qurro_balance",
+                    title: "Current Log Ratio"
+                },
+                {
+                    type: this.samplePlotJSON.encoding.x.type,
+                    field: this.samplePlotJSON.encoding.x.field
+                },
+                {
+                    type: this.samplePlotJSON.encoding.color.type,
+                    field: this.samplePlotJSON.encoding.color.field
+                }
+            ];
+        }
+
+        /* Modifies the transform property of the sample plot JSON to include a
+         * filter based on the currently-used x-axis and color fields.
+         *
+         * This results of this filter should corroborate the result of
+         * getInvalidSampleIDs(). From testing, it looks like the only other
+         * values that would automatically be filtered out would be NaN /
+         * undefined values, and none of those should show up in the sample
+         * metadata values due to how Qurro's python code processes sample
+         * metadata (replacing all NaN values with None, which gets converted
+         * to null by json.dumps() in python).
+         */
+        updateSamplePlotFilters() {
+            // Figure out the current [x-axis/color] [field/encoding type].
+            // Note that we explicitly wrap the fields in double-quotes, so
+            // even field names with weird characters shouldn't be able to mess
+            // this up.
+            var datumXField =
+                "datum[" +
+                vega.stringValue(this.samplePlotJSON.encoding.x.field) +
+                "]";
+            var datumColorField =
+                "datum[" +
+                vega.stringValue(this.samplePlotJSON.encoding.color.field) +
+                "]";
+            var xType = this.samplePlotJSON.encoding.x.type;
+            var colorType = this.samplePlotJSON.encoding.color.type;
+
+            var filterString = "datum.qurro_balance != null";
+            // NOTE: if the current x and color fields are the same, there will
+            // be some redundancy in filterString. Might be worth addressing
+            // this in the future, but shouldn't be a big deal -- Vega* doesn't
+            // seem to mind.
+            filterString += " && " + datumXField + " != null";
+            filterString += " && " + datumColorField + " != null";
+
+            if (xType === "quantitative") {
+                filterString += " && isFinite(toNumber(" + datumXField + "))";
             }
+            if (colorType === "quantitative") {
+                filterString +=
+                    " && isFinite(toNumber(" + datumColorField + "))";
+            }
+
+            this.samplePlotJSON.transform = [{ filter: filterString }];
         }
 
         /* Update color so that color encoding matches the x-axis encoding
@@ -583,7 +733,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.samplePlotJSON.encoding.color.type = "nominal";
         }
 
-        updateSamplePlotField(vizAttribute) {
+        async updateSamplePlotField(vizAttribute) {
             if (vizAttribute === "xAxis") {
                 this.samplePlotJSON.encoding.x.field = document.getElementById(
                     "xAxisField"
@@ -599,15 +749,83 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "colorField"
                 ).value;
             }
-            this.remakeSamplePlot();
+            await this.remakeSamplePlot();
         }
 
-        remakeSamplePlot() {
+        async remakeSamplePlot() {
             // Clear out the sample plot. NOTE that I'm not sure if this is
             // 100% necessary, but it's probs a good idea to prevent memory
             // waste.
             this.destroy(false, true, false);
-            this.makeSamplePlot(true);
+            await this.makeSamplePlot(true);
+        }
+
+        /* Iterates through every sample in the sample plot JSON and
+         * looks at the sample's fieldName field. Returns a list of "invalid"
+         * sample IDs -- i.e. those that, based on the current field and
+         * corresponding encoding (e.g. "color" or "x"), can't be displayed in
+         * the sample plot even if their other properties (balance, other
+         * encodings) are valid.
+         *
+         * The "validity" of a sample is computed via the following checks:
+         * 1. The sample's fieldName field must not be null
+         *    (we don't bother explicitly checking for NaN, "", strings
+         *    containing only whitespace, and undefined since they should never
+         *    be included in the sample metadata JSON produced by Qurro's python
+         *    code)
+         * 2. If the corresponding encoding type is quantitative, the sample's
+         *    fieldName field must be a finite number (as determined by
+         *    isFinite(vega.toNumber(f)), where f is the field value). This
+         *    accounts for Infinities/NaNs in the data, which shouldn't appear
+         *    literally in the dataset but could potentially sneak in as
+         *    strings (e.g. "Infinity", "-Infinity", "NaN") -- we'd display
+         *    these strings normally for a nominal encoding, but for a
+         *    quantitative encoding we filter them out.
+         */
+        getInvalidSampleIDs(fieldName, correspondingEncoding) {
+            var dataName = this.samplePlotJSON.data.name;
+            var currFieldVal;
+            var currSampleID;
+            var invalidSampleIDs = [];
+            for (
+                var i = 0;
+                i < this.samplePlotJSON.datasets[dataName].length;
+                i++
+            ) {
+                currFieldVal = this.samplePlotJSON.datasets[dataName][i][
+                    fieldName
+                ];
+                currSampleID = this.samplePlotJSON.datasets[dataName][i][
+                    "Sample ID"
+                ];
+                if (currFieldVal !== null) {
+                    if (
+                        this.samplePlotJSON.encoding[correspondingEncoding]
+                            .type === "quantitative"
+                    ) {
+                        if (!isFinite(vega.toNumber(currFieldVal))) {
+                            // scale is quantitative and this isn't a valid
+                            // numerical value
+                            invalidSampleIDs.push(currSampleID);
+                        }
+                        // If the above check passed (i.e. this value
+                        // is "numerical"), then we'll just continue on in
+                        // the loop without adding it to invalidSampleIDs.
+                    }
+                    // We don't include an "else" branch here, because this
+                    // part is only reached if the current encoding is nominal
+                    // (in which case we know this sample ID is valid, so we
+                    // don't do anything with it).
+                    // NOTE: this *assumes* that the scale is either
+                    // quantitative or nominal. If it's something like temporal
+                    // then this will get messed up, and we'll need to do
+                    // something else to address it.
+                } else {
+                    // currFieldVal *is* null.
+                    invalidSampleIDs.push(currSampleID);
+                }
+            }
+            return invalidSampleIDs;
         }
 
         /* Changes the scale type of either the x-axis or colorization in the
@@ -615,7 +833,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * literally reload the Vega-Lite specification with the new scale
          * type in order to make these changes take effect.
          */
-        updateSamplePlotScale(vizAttribute) {
+        async updateSamplePlotScale(vizAttribute) {
             if (vizAttribute === "xAxis") {
                 var newScale = document.getElementById("xAxisScale").value;
                 this.samplePlotJSON.encoding.x.type = newScale;
@@ -637,17 +855,17 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "colorScale"
                 ).value;
             }
-            this.remakeSamplePlot();
+            await this.remakeSamplePlot();
         }
 
-        updateSamplePlotBoxplot() {
+        async updateSamplePlotBoxplot() {
             // We only bother changing up anything if the sample plot x-axis
             // is currently categorical.
             if (this.samplePlotJSON.encoding.x.type === "nominal") {
                 if (document.getElementById("boxplotCheckbox").checked) {
-                    this.changeSamplePlotToBoxplot(true);
+                    await this.changeSamplePlotToBoxplot(true);
                 } else {
-                    this.changeSamplePlotFromBoxplot(true);
+                    await this.changeSamplePlotFromBoxplot(true);
                 }
             }
         }
@@ -667,7 +885,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * was already using a categorical x-axis scale, and they just clicked
          * the "use boxplots" checkbox.
          */
-        changeSamplePlotToBoxplot(callRemakeSamplePlot) {
+        async changeSamplePlotToBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "boxplot";
             // Make the middle tick of the boxplot black. This makes boxes for
             // which only one sample is available show up on the white
@@ -675,9 +893,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.samplePlotJSON.mark.median = { color: "#000000" };
             dom_utils.changeElementsEnabled(this.colorEles, false);
             this.setColorForBoxplot();
-            delete this.samplePlotJSON.encoding.tooltip;
             if (callRemakeSamplePlot) {
-                this.remakeSamplePlot();
+                await this.remakeSamplePlot();
             }
         }
 
@@ -688,18 +905,17 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * callRemakeSamplePlot works the same way as in
          * changeSamplePlotToBoxplot().
          */
-        changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
+        async changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
             dom_utils.changeElementsEnabled(this.colorEles, true);
             // No need to explicitly adjust color or tooltips here; tooltips
-            // will be auto-added in updateSamplePlotTooltips() (since it will
-            // detect that boxplot mode is off, and therefore try to add
-            // tooltips), and color should have been kept up-to-date every time
-            // the field was changed while boxplot mode was going on (as well
-            // as at the start of boxplot mode), in setColorForBoxplot().
+            // will be auto-added in updateSamplePlotTooltips(), and color
+            // should have been kept up-to-date every time the field was
+            // changed while boxplot mode was going on (as well as at the
+            // start of boxplot mode), in setColorForBoxplot().
             if (callRemakeSamplePlot) {
-                this.remakeSamplePlot();
+                await this.remakeSamplePlot();
             }
         }
 
@@ -711,7 +927,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var dataName = samplePlotSpec.data.name;
             var mdCols = Object.keys(samplePlotSpec.datasets[dataName][0]);
             if (mdCols.length > 0) {
-                return mdCols;
+                return mdCols.filter(function(mdColName) {
+                    return mdColName !== "qurro_balance";
+                });
             } else {
                 throw new Error(
                     "No metadata columns identified. Something seems " +
@@ -841,9 +1059,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * a .tsv file for further analysis of these data.
          *
          * If no points have been "drawn" on the sample plot -- i.e. they all
-         * have a qurro_balance attribute of null, NaN, or undefined,
-         * due to either no log ratio being selected or the current log ratio
-         * being NaN for all samples -- then this just returns an empty string.
+         * have a qurro_balance attribute of null -- then this just returns an
+         * empty string.
          */
         getSamplePlotData(currMetadataField) {
             var outputTSV = "Sample_ID\tLog_Ratio";
@@ -859,18 +1076,17 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
-            var data = this.samplePlotView.data(dataName);
+            // (Note that changeSamplePlot() causes updates to samples'
+            // qurro_balance properties, so we don't have to use the
+            // samplePlotView)
+            var data = this.samplePlotJSON.datasets[dataName];
             var currBalance;
             var currSampleID;
             var currMetadataValue;
             var atLeastOnePointDrawn = false;
             for (var i = 0; i < data.length; i++) {
                 currBalance = data[i].qurro_balance;
-                if (
-                    !Number.isNaN(currBalance) &&
-                    currBalance !== null &&
-                    currBalance !== undefined
-                ) {
+                if (currBalance !== null) {
                     atLeastOnePointDrawn = true;
                     currSampleID = RRVDisplay.quoteTSVFieldIfNeeded(
                         data[i]["Sample ID"]
@@ -910,17 +1126,21 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 dom_utils.clearDiv("samplePlot");
             }
             if (clearOtherStuff) {
-                // Clear the "features text" displays
-                this.updateFeaturesTextDisplays(false, true);
                 // Clear the bindings of bound DOM elements
                 for (
                     var i = 0;
                     i < this.elementsWithOnClickBindings.length;
                     i++
                 ) {
+                    // Based on https://stackoverflow.com/a/53357610/10730311.
+                    // Setting .onclick = undefined just straight-up doesn't
+                    // work for some reason (even after you do that, the
+                    // onclick property is null instead of undefined).
+                    // So setting to null is needed in order for a testable way
+                    // to "unset" the .onclick property.
                     document.getElementById(
                         this.elementsWithOnClickBindings[i]
-                    ).onclick = undefined;
+                    ).onclick = null;
                 }
                 for (
                     var j = 0;
@@ -929,7 +1149,43 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 ) {
                     document.getElementById(
                         this.elementsWithOnChangeBindings[j]
-                    ).onchange = undefined;
+                    ).onchange = null;
+                }
+                // Reset various UI elements to their "default" states
+
+                // Clear the "features text" displays
+                this.updateFeaturesTextDisplays(false, true);
+
+                // Clear <select>s populated with field information from this
+                // RRVDisplay's JSONs
+                dom_utils.clearDiv("rankField");
+                dom_utils.clearDiv("topSearch");
+                dom_utils.clearDiv("botSearch");
+                dom_utils.clearDiv("xAxisField");
+                dom_utils.clearDiv("colorField");
+
+                // Un-check the boxplot checkbox
+                document.getElementById("boxplotCheckbox").checked = false;
+
+                // Set search types to "text"
+                document.getElementById("topSearchType").value = "text";
+                document.getElementById("botSearchType").value = "text";
+
+                // Clear search input fields
+                document.getElementById("topText").value = "";
+                document.getElementById("botText").value = "";
+
+                // Set scale type and bar width <select>s to default values
+                document.getElementById("xAxisScale").value = "nominal";
+                document.getElementById("colorScale").value = "nominal";
+                document.getElementById("barSize").value = "1";
+
+                // Clear sample dropped stats divs and set them invisible
+                for (var s = 0; s < dom_utils.statDivs.length; s++) {
+                    dom_utils.clearDiv(dom_utils.statDivs[s]);
+                    document
+                        .getElementById(dom_utils.statDivs[s])
+                        .classList.add("invisible");
                 }
             }
         }

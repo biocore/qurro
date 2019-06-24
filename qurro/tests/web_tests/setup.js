@@ -8,12 +8,24 @@ requirejs.config({
         "vega-embed": "../../support_files/vendor/vega-embed.min",
         mocha: "vendor/mocha",
         chai: "vendor/chai",
+        testing_utilities: "testing_utilities",
         test_compute_balance: "tests/test_compute_balance",
         test_dom_utils: "tests/test_dom_utils",
         test_filter_features: "tests/test_filter_features",
         test_identify_metadata_columns: "tests/test_identify_metadata_columns",
         test_data_export: "tests/test_data_export",
-        test_rrvdisplay: "tests/test_rrvdisplay"
+        test_rrvdisplay: "tests/test_rrvdisplay",
+        test_rrvdisplay_compute_balance:
+            "tests/test_rrvdisplay_compute_balance",
+        test_rrvdisplay_update_feature_text_dom:
+            "tests/test_rrvdisplay_update_feature_text_dom",
+        test_rrvdisplay_update_feature_color:
+            "tests/test_rrvdisplay_update_feature_color",
+        test_rrvdisplay_getinvalidsampleids:
+            "tests/test_rrvdisplay_getinvalidsampleids",
+        test_rrvdisplay_getinvalidsampleids_samplestatstest:
+            "tests/test_rrvdisplay_getinvalidsampleids_samplestatstest",
+        test_rrvdisplay_destroy: "tests/test_rrvdisplay_destroy"
     },
     shim: {
         // Mocha shim based on
@@ -41,12 +53,19 @@ requirejs(
         "vega-embed",
         "mocha",
         "chai",
+        "testing_utilities",
         "test_compute_balance",
         "test_dom_utils",
         "test_filter_features",
         "test_identify_metadata_columns",
         "test_data_export",
-        "test_rrvdisplay"
+        "test_rrvdisplay",
+        "test_rrvdisplay_compute_balance",
+        "test_rrvdisplay_update_feature_text_dom",
+        "test_rrvdisplay_update_feature_color",
+        "test_rrvdisplay_getinvalidsampleids",
+        "test_rrvdisplay_getinvalidsampleids_samplestatstest",
+        "test_rrvdisplay_destroy"
     ],
     function(
         display,
@@ -57,12 +76,19 @@ requirejs(
         vegaEmbed,
         mocha,
         chai,
+        testing_utilities,
         test_compute_balance,
         test_dom_utils,
         test_filter_features,
         test_identify_metadata_columns,
         test_data_export,
-        test_rrvdisplay
+        test_rrvdisplay,
+        test_rrvdisplay_compute_balance,
+        test_rrvdisplay_update_feature_text_dom,
+        test_rrvdisplay_update_feature_color,
+        test_rrvdisplay_getinvalidsampleids,
+        test_rrvdisplay_getinvalidsampleids_samplestatstest,
+        test_rrvdisplay_destroy
     ) {
         // Enables checking for global variables created while running tests
         mocha.checkLeaks();

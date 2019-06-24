@@ -6,7 +6,9 @@ from qiime2 import Artifact, Metadata
 from qiime2.plugins import qurro as q2qurro
 import qurro.scripts._plot as rrvp
 from qurro._rank_utils import read_rank_file
-from qurro._plot_utils import get_jsons
+from qurro._metadata_utils import read_metadata_file
+from qurro._df_utils import replace_nan
+from qurro._json_utils import get_jsons
 
 
 def run_integration_test(
@@ -21,6 +23,8 @@ def run_integration_test(
     expected_unsupported_samples=0,
     expected_unsupported_features=0,
     expect_all_unsupported_samples=False,
+    q2_table_biom_format="BIOMV210Format",
+    extreme_feature_count=None,
 ):
     """Runs qurro, and validates the output somewhat."""
 
@@ -47,7 +51,9 @@ def run_integration_test(
             )
         # Import all of these files as Q2 artifacts or metadata.
         rank_qza = Artifact.import_data(q2_rank_type, rloc)
-        table_qza = Artifact.import_data("FeatureTable[Frequency]", tloc)
+        table_qza = Artifact.import_data(
+            "FeatureTable[Frequency]", tloc, view_type=q2_table_biom_format
+        )
         sample_metadata = Metadata.load(sloc)
         feature_metadata = None
         if floc is not None:
@@ -59,6 +65,7 @@ def run_integration_test(
             table=table_qza,
             sample_metadata=sample_metadata,
             feature_metadata=feature_metadata,
+            extreme_feature_count=extreme_feature_count,
         )
         # Output the contents of the visualization to out_dir.
         rrv_qzv.visualization.export_data(out_dir)
@@ -77,6 +84,8 @@ def run_integration_test(
         ]
         if floc is not None:
             args += ["--feature-metadata", floc]
+        if extreme_feature_count is not None:
+            args += ["--extreme-feature-count", extreme_feature_count]
         result = runner.invoke(rrvp.plot, args)
         # Validate that the correct exit code and output were recorded
         validate_standalone_result(
@@ -93,8 +102,11 @@ def run_integration_test(
     if expect_all_unsupported_samples or expected_unsupported_features > 0:
         return None, None
     else:
+        # Only validate JSONs if -x wasn't specified (i.e. the passed
+        # extreme feature count is None)
+        validate_jsons = extreme_feature_count is None
         rank_json, sample_json, count_json = validate_main_js(
-            out_dir, rloc, tloc, sloc
+            out_dir, rloc, tloc, sloc, validate_jsons=validate_jsons
         )
         return rank_json, sample_json, count_json
 
@@ -164,7 +176,7 @@ def validate_standalone_result(
         )
 
 
-def validate_main_js(out_dir, rloc, tloc, sloc):
+def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
     """Takes care of extracting JSONs from main.js and validating them.
 
        Parameters
@@ -176,14 +188,22 @@ def validate_main_js(out_dir, rloc, tloc, sloc):
        rloc, tloc, sloc: str
            Paths to the ranks file (either DEICODE or songbird), BIOM table,
            and sample metadata file used as input to qurro.
+
+       validate_jsons: bool
+           If True (default), this calls validate_rank_plot_json() and
+           validate_sample_plot_json(). If False, this will skip that step --
+           this is useful for if the test leaves the JSONs in an unexpected
+           state (e.g. with certain features or samples dropped out due to,
+           say, the -x argument having been passed).
     """
 
     main_loc = os.path.join(out_dir, "main.js")
     rank_json, sample_json, count_json = get_jsons(main_loc)
 
     # Validate plot JSONs
-    validate_rank_plot_json(rloc, rank_json)
-    validate_sample_plot_json(tloc, sloc, sample_json, count_json)
+    if validate_jsons:
+        validate_rank_plot_json(rloc, rank_json)
+        validate_sample_plot_json(tloc, sloc, sample_json, count_json)
 
     return rank_json, sample_json, count_json
 
@@ -277,7 +297,7 @@ def validate_sample_plot_json(
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
-    sample_metadata = Metadata.load(metadata_loc).to_dataframe()
+    sample_metadata = replace_nan(read_metadata_file(metadata_loc))
     for sample in sample_json["datasets"][dn]:
 
         sample_id = sample["Sample ID"]
@@ -285,8 +305,19 @@ def validate_sample_plot_json(
         for metadata_col in sample_metadata.columns:
             expected_md = sample_metadata.at[sample_id, metadata_col]
             actual_md = sample[metadata_col]
+
             try:
-                assert expected_md == actual_md
+                # Either these values are equal, *or* this was a QIIME 2
+                # integration test (in which case the metadata files were
+                # loaded as qiime2.Metadata objects) and certain columns'
+                # values have been treated as numeric (which is fine, but this
+                # might result in some things like a value of 53 being
+                # interpreted as a value of 53.0 to qiime2.Metadata -- this
+                # isn't a problem, so if the first check of equality fails we
+                # try a looser check using approx() and float().
+                assert expected_md == actual_md or float(
+                    expected_md
+                ) == approx(float(actual_md))
             except AssertionError:
                 # quick and dirty hack to actually give useful information when
                 # something goes wrong
@@ -315,3 +346,62 @@ def validate_sample_plot_json(
             actual_count = count_json[feature_id][sample_id]
             expected_count = table.get_value_by_ids(feature_id, sample_id)
             assert actual_count == expected_count
+
+
+def get_data_from_sample_plot_json(sample_json):
+    """Given a sample plot JSON dict, returns a dict where each key corresponds
+       to another dict containing all metadata fields for that sample.
+
+       This code is based on the procedure described here:
+       https://stackoverflow.com/a/5236375/10730311
+    """
+    sample_data = {}
+    for sample in sample_json["datasets"][sample_json["data"]["name"]]:
+        # The use of .pop() here means that we remove "Sample ID" from sample.
+        # This prevents redundancy (i.e. "Sample ID" being provided twice for
+        # each sample) in the output.
+        sample_id = sample.pop("Sample ID")
+        sample_data[sample_id] = sample
+    return sample_data
+
+
+def validate_sample_stats_test_sample_plot_json(sample_json):
+    """This checks that the sample metadata for this test was perfectly read.
+
+       This should already be guaranteed due to the Qurro python metadata tests
+       and validate_sample_plot_json() being done during
+       run_integration_test(), but we might as well be extra safe.
+    """
+    dn = sample_json["data"]["name"]
+    for sample in sample_json["datasets"][dn]:
+        if sample["Sample ID"] == "Sample1":
+            assert sample["Metadata1"] == "1"
+            assert sample["Metadata2"] == "2"
+            assert sample["Metadata3"] == "NaN"
+        elif sample["Sample ID"] == "Sample2":
+            # These special values should be read as just normal strings
+            assert sample["Metadata1"] == "Infinity"
+            assert sample["Metadata2"] == "null"
+            assert sample["Metadata3"] == "6"
+        elif sample["Sample ID"] == "Sample3":
+            assert sample["Metadata1"] == "7"
+            assert sample["Metadata2"] == "8"
+            # all-whitespace should evaluate to just an empty value ("", which
+            # is represented in the output JSON as None --> null in JS)
+            assert sample["Metadata3"] is None
+        elif sample["Sample ID"] == "Sample5":
+            assert sample["Metadata1"] == "13"
+            assert sample["Metadata2"] == "'14'"
+            # missing values should end up as Nones
+            assert sample["Metadata3"] is None
+        elif sample["Sample ID"] == "Sample6":
+            assert sample["Metadata1"] == "Missing: not provided"
+            assert sample["Metadata2"] == "17"
+            assert sample["Metadata3"] == "18"
+        elif sample["Sample ID"] == "Sample7":
+            assert sample["Metadata1"] == "19"
+            # surrounding whitespace should be stripped
+            assert sample["Metadata2"] == "20"
+            assert sample["Metadata3"] == "21"
+        else:
+            raise ValueError("Invalid sample ID found in S.S.T. JSON")

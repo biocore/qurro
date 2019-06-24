@@ -9,7 +9,8 @@
 
 import logging
 import pandas as pd
-from qurro.generate import fix_id, ensure_df_headers_unique
+import numpy as np
+from io import StringIO
 
 
 def get_q2_comment_lines(md_file_loc):
@@ -28,11 +29,19 @@ def get_q2_comment_lines(md_file_loc):
          that doesn't start with "#q2:". Currently, "#q2:types" is the only Q2
          "comment directive" available, but ostensibly this could detect future
          Q2 comment directives.
+        -This checks if md_file_loc is of type StringIO. If so, this will
+         handle it properly (iterating over it directly); otherwise, this
+         assumes that md_file_loc is an actual filename, and this will open
+         it using open().
+         (I realize that ideally this wouldn't have to do any type checking,
+         but it's either this or do a bunch of weird refactoring to get my test
+         code working.)
     """
-    q2_lines = []
-    with open(md_file_loc, "r") as md_file_obj:
+
+    def iterate_over_file_obj_lines(file_obj):
+        q2_lines = []
         line_num = 0
-        for line in md_file_obj:
+        for line in file_obj:
             # Don't check for a #q2: comment on the first line of the file,
             # since the first line (should) define the file header.
             if line_num > 0:
@@ -44,48 +53,69 @@ def get_q2_comment_lines(md_file_loc):
                     # with "#q2:", we stop checking.
                     break
             line_num += 1
-    return q2_lines
+        return q2_lines
+
+    if type(md_file_loc) == StringIO:
+        q2_lines = iterate_over_file_obj_lines(md_file_loc)
+        # HACK: Allow us to read through this StringIO again --
+        # https://stackoverflow.com/a/27261215/10730311
+        # Note that we're only ever bothering with StringIOs here during test
+        # code, so this weirdness should be ignored during normal operation of
+        # Qurro.
+        md_file_loc.seek(0)
+        return q2_lines
+    else:
+        with open(md_file_loc, "r") as md_file_obj:
+            return iterate_over_file_obj_lines(md_file_obj)
 
 
 def read_metadata_file(md_file_loc):
     """Reads in a metadata file using pandas.read_csv().
 
-       One slightly strange thing is that pandas.read_csv() interprets
-       columns containing all values of True / False as booleans. This
-       causes problems down the line, since these values are converted to
-       true / false (note the lowercase) when using them in JavaScript.
-
-       To ensure consistency with QIIME 2's metadata guidelines (which only
-       consider numeric and categorical types), we convert all values in
-       columns labelled with the bool type to strings. This preserves the
-       "case" of True / False, and should result in predictable outcomes.
+       This treats all metadata values (including the index column) as
+       strings, due to the use of dtype=object.
     """
     q2_lines = get_q2_comment_lines(md_file_loc)
     metadata_df = pd.read_csv(
-        md_file_loc, index_col=0, sep="\t", na_filter=False, skiprows=q2_lines
+        md_file_loc,
+        sep="\t",
+        na_values=[""],
+        keep_default_na=False,
+        dtype=object,
+        skiprows=q2_lines,
     )
 
-    bool_cols = metadata_df.select_dtypes(include=[bool]).columns
-    if len(bool_cols) > 0:
-        type_conv_dict = {col: str for col in bool_cols}
-        metadata_df = metadata_df.astype(type_conv_dict)
+    # Take care of leading/trailing whitespace
+    for column in metadata_df.columns:
+        # Strip surrounding whitespace from each value
+        # This mimics how QIIME 2 ignores this whitespace
+        metadata_df[column] = metadata_df[column].str.strip()
+    # Sorta the opposite of replace_nan(). Find all of the ""s resulting from
+    # removing values with just-whitespace, and convert them to NaNs.
+    metadata_df.where(metadata_df != "", np.NaN, inplace=True)
 
-    # Ensure that the first column in the metadata file is treated as a string.
-    # This is needed to ensure that matching sample/feature IDs works.
-    metadata_df.index = metadata_df.index.astype(str)
+    # If there are any NaNs in the first column (that will end up being the
+    # index column), then the user supplied at least one empty ID
+    # (remember that we just converted all ""s to NaNs).
+    #
+    # This is obviously terrible, so just raise an error (this sort of
+    # situation also results in an error from qiime2.Metadata).
+    if metadata_df[metadata_df.columns[0]].isna().any():
+        raise ValueError("Empty ID found in metadata file.")
 
+    # Instead of passing index_col=0 to pd.read_csv(), we delay setting the
+    # first column as the index until after we've read in the metadata file.
+    #
+    # This is because, as of writing, pandas doesn't set the dtype of the
+    # index_col (see https://stackoverflow.com/a/35058538/10730311 for a good
+    # explanation) -- so if we don't delay setting the index column, then it
+    # won't necessarily be read as an object dtype. This can have bad results
+    # (e.g. the sample IDs start with 0s, and those 0s will be removed by
+    # pandas).
+    #
+    # This workaround should address this.
+    metadata_df.set_index(metadata_df.columns[0], inplace=True)
     return metadata_df
-
-
-def escape_columns(df):
-    """Calls fix_id() on each of the column names of the DF."""
-    new_cols = []
-    for col in df.columns:
-        new_cols.append(fix_id(col))
-    df.columns = new_cols
-    # Ensure that this didn't make the column names non-unique
-    ensure_df_headers_unique(df, "escape_columns() DataFrame")
-    return df
 
 
 def get_truncated_feature_id(full_feature_id):

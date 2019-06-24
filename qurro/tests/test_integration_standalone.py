@@ -1,4 +1,7 @@
-from qurro.tests.testing_utilities import run_integration_test
+from qurro.tests.testing_utilities import (
+    run_integration_test,
+    validate_sample_stats_test_sample_plot_json,
+)
 
 
 def test_byrd():
@@ -47,3 +50,22 @@ def test_red_sea():
         "redsea_metadata.txt",
         feature_metadata_name="feature_metadata.txt",
     )
+
+
+def test_sample_dropping_stats():
+    """Tests Qurro's JSON generation on a dataset with weird sample
+       metadata.
+
+       The output from this test will be used in JS tests -- this verifies that
+       both the python and JS parts of Qurro can handle weird metadata
+       appropriately.
+    """
+    rank_json, sample_json, count_json = run_integration_test(
+        "sample_stats_test",
+        "sample_stats_test",
+        "differentials.tsv",
+        "sst.biom",
+        "sample_metadata.txt",
+        expected_unsupported_samples=1,
+    )
+    validate_sample_stats_test_sample_plot_json(sample_json)
