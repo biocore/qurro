@@ -55,6 +55,7 @@ setup(
     license="BSD",
     description=description,
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Qurro development team",
     author_email="mfedarko@ucsd.edu",
     maintainer="Qurro development team",
