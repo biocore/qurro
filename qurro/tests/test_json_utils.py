@@ -175,16 +175,31 @@ def test_plot_jsons_equal():
     }
     assert plot_jsons_equal(a, b)
 
-    # Check that ignoring both selector name and dataset name works.
+    # Check that ignoring both selector name and dataset name works, as well as
+    # with a more detailed selection object.
+    # The "selection" blocks here were taken straight from Altair output (from
+    # a Qurro sample plot's JSON).
     a = {
         "a": "b",
-        "selection": {"selector010": {2: 3}},
+        "selection": {
+            "selector020": {
+                "bind": "scales",
+                "encodings": ["x", "y"],
+                "type": "interval",
+            }
+        },
         "data": {"name": "asdf"},
         "datasets": {"asdf": {1: 2}},
     }
     b = {
         "a": "b",
-        "selection": {"selector033": {2: 3}},
+        "selection": {
+            "selector022": {
+                "bind": "scales",
+                "encodings": ["x", "y"],
+                "type": "interval",
+            }
+        },
         "data": {"name": "diff"},
         "datasets": {"diff": {1: 2}},
     }
