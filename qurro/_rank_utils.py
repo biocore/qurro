@@ -84,7 +84,7 @@ def filter_unextreme_features(
        table: pd.SparseDataFrame
             A SparseDataFrame representation of a BIOM table. This can be
             generated easily from a biom.Table object using
-            qurro.generate.biom_table_to_sparse_df().
+            qurro._df_utils.biom_table_to_sparse_df().
 
        ranks: pandas.DataFrame
             A DataFrame where the index consists of ranked features' IDs, and
