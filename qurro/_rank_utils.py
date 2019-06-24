@@ -8,7 +8,6 @@
 # ----------------------------------------------------------------------------
 
 import logging
-import biom
 import skbio
 import pandas as pd
 
@@ -72,7 +71,7 @@ def differentials_to_df(differentials_loc):
 
 
 def filter_unextreme_features(
-    table: biom.Table,
+    table: pd.SparseDataFrame,
     ranks: pd.DataFrame,
     extreme_feature_count: int,
     print_warning: bool = True,
@@ -82,8 +81,10 @@ def filter_unextreme_features(
        Parameters
        ----------
 
-       table: biom.Table
-            An ordinary BIOM table.
+       table: pd.SparseDataFrame
+            A SparseDataFrame representation of a BIOM table. This can be
+            generated easily from a biom.Table object using
+            qurro.generate.biom_table_to_sparse_df().
 
        ranks: pandas.DataFrame
             A DataFrame where the index consists of ranked features' IDs, and
@@ -104,8 +105,8 @@ def filter_unextreme_features(
        Returns
        -------
 
-       (table, ranks): (biom.Table, pandas.DataFrame)
-            Filtered copies of the input BIOM table and ranks DataFrame.
+       (table, ranks): (pandas.SparseDataFrame, pandas.DataFrame)
+            Filtered copies of the input table and ranks DataFrames.
 
        Behavior
        --------
@@ -155,6 +156,7 @@ def filter_unextreme_features(
             print("Therefore, no feature filtering will be done now.")
         return table, ranks
 
+    # OK, we're actually going to do some filtering.
     logging.debug(
         "Will perform filtering with e.f.c. of {}.".format(
             extreme_feature_count
@@ -162,8 +164,6 @@ def filter_unextreme_features(
     )
     logging.debug("Input table has shape {}.".format(table.shape))
     logging.debug("Input feature ranks have shape {}.".format(ranks.shape))
-    # OK, we're actually going to do some filtering.
-    filtered_table = table.copy()
     # We store these features in a set to avoid duplicates -- Python does the
     # hard work here for us
     features_to_preserve = set()
@@ -175,12 +175,7 @@ def filter_unextreme_features(
 
     # Also filter ranks. Fortunately, DataFrame.filter() makes this easy.
     filtered_ranks = ranks.filter(items=features_to_preserve, axis="index")
-
-    # Filter the BIOM table to desired features.
-    def filter_biom_table(values, feature_id, _):
-        return feature_id in features_to_preserve
-
-    filtered_table.filter(filter_biom_table, axis="observation")
+    filtered_table = table.filter(items=features_to_preserve, axis="index")
 
     logging.debug("Output table has shape {}.".format(filtered_table.shape))
     logging.debug(

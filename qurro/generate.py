@@ -63,6 +63,43 @@ def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
     return table_sdf
 
 
+def remove_empty_samples(table_sdf, sample_metadata_df):
+    """Removes samples with 0 counts for every feature from the table and
+       sample metadata DataFrame.
+
+       This should be called *after* matching the table with the sample
+       metadata -- we assume that the columns of the table DataFrame are
+       equivalent to the indices of the sample metadata DataFrame.
+
+       This will raise a ValueError if, after removing empty samples, either
+       the table's columns or the metadata's indices are empty (this will
+       happen in the case where all of the samples in these DataFrames are
+       empty).
+    """
+    logging.debug("Attempting to remove empty samples.")
+    table_df_equal_to_zero = table_sdf == 0
+    nonempty_samples = []
+    for sample in table_sdf.columns:
+        if not table_df_equal_to_zero[sample].all():
+            nonempty_samples.append(sample)
+
+    filtered_table = table_sdf.filter(items=nonempty_samples, axis="columns")
+    filtered_metadata = sample_metadata_df.filter(
+        items=nonempty_samples, axis="index"
+    )
+
+    if len(filtered_table.columns) < 1 or len(filtered_metadata.index) < 1:
+        raise ValueError("Found all empty samples with current features.")
+
+    sample_diff = len(table_sdf.columns) - len(filtered_table.columns)
+    if sample_diff > 0:
+        logging.debug("Removed {} empty sample(s).".format(sample_diff))
+    else:
+        logging.debug("Couldn't find any empty samples.")
+
+    return filtered_table, filtered_metadata
+
+
 def match_table_and_data(table, feature_ranks, sample_metadata):
     """Matches feature rankings and then sample metadata to a table.
 
@@ -87,12 +124,10 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
        Returns
        -------
 
-       (m_table_transpose, m_sample_metadata): both pd.[Sparse]DataFrame
+       (m_table, m_sample_metadata): both pd.[Sparse]DataFrame
             Versions of the input table and sample metadata only containing
-            samples shared by both datasets. The input table will also only
-            contain features shared by both the table and the feature ranks,
-            and will be transposed (so now its index will correspond to samples
-            and its columns will correspond to features).
+            samples shared by both datasets. The table will also only contain
+            features shared by both the table and the feature ranks.
 
             (None of the features in the feature ranks should be dropped during
             this operation, so we don't bother returning the feature ranks
@@ -152,7 +187,10 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             "present in the BIOM table, and have been removed from the "
             "visualization.".format(dropped_sample_ct)
         )
-    return m_table_transpose, m_sample_metadata
+    # We return the transpose of the transposed table, so the table should have
+    # the same "orientation" (i.e. columns are samples, rows (indices) are
+    # features) as the input table.
+    return m_table_transpose.T, m_sample_metadata
 
 
 def merge_feature_metadata(feature_ranks, feature_metadata=None):
@@ -249,7 +287,7 @@ def process_input(
 ):
     """Validates/processes the input files and parameter(s) to Qurro.
 
-       In particular, this function:
+       In particular, this function
 
        1. Calls validate_df() on all of the input DataFrames passed
           (feature ranks, sample metadata, feature metadata if passed).
@@ -258,18 +296,18 @@ def process_input(
           missing values are represented consistently with a None (which
           will be represented as a null in JSON/JavaScript).
 
-       3. Calls filter_unextreme_features() using the provided
-          extreme_feature_count. (If it's None, then nothing will be done.)
-
-       4. Filters empty samples from the BIOM table (i.e. samples without any
-          counts for any features). This is purposefully done *after*
-          filter_unextreme_features() is called.
-
-       5. Converts the BIOM table to a SparseDataFrame by calling
+       3. Converts the BIOM table to a SparseDataFrame by calling
           biom_table_to_sparse_df().
 
-       6. Matches up the table with the feature ranks and sample metadata by
+       4. Matches up the table with the feature ranks and sample metadata by
           calling match_table_and_data().
+
+       5. Calls filter_unextreme_features() using the provided
+          extreme_feature_count. (If it's None, then nothing will be done.)
+
+       6. Calls remove_empty_samples() to filter samples without any counts for
+          any features. This is purposefully done *after*
+          filter_unextreme_features() is called.
 
        7. Converts feature rank column names to strings and escapes them.
 
@@ -278,23 +316,23 @@ def process_input(
 
        Returns
        -------
-       m_sample_metadata: pd.DataFrame
-            Sample metadata, but matched with the table.
+       output_metadata: pd.DataFrame
+            Sample metadata, but matched with the table and with empty samples
+            removed.
 
        filtered_ranks: pd.DataFrame
-            Feature ranks, post-filtering.
+            Feature ranks, post-filtering and with feature metadata columns
+            added in.
 
        ranking_ids
-            The ranking columns' names.
+            The ranking columns' names in filtered_ranks.
 
        feature_metadata_cols: list
-            The feature metadata columns' names.
+            The feature metadata columns' names in filtered_ranks.
 
-       table_t: pd.SparseDataFrame
+       output_table: pd.SparseDataFrame
             The BIOM table, post matching with the feature ranks and sample
-            metadata. Note the _t suffix in the variable name: this table is
-            actually transposed, so its indices correspond to sample IDs and
-            its columns correspond to feature IDs.
+            metadata and with empty samples removed.
     """
 
     logging.debug("Starting processing input.")
@@ -319,33 +357,30 @@ def process_input(
     if feature_metadata is not None:
         feature_metadata = replace_nan(feature_metadata)
 
-    # NOTE although we always call filter_unextreme_features(), filtering isn't
-    # necessarily done (depending on the value of extreme_feature_count and the
-    # contents of the table/ranks).
+    table = biom_table_to_sparse_df(biom_table)
+
+    # Match up the table with the feature ranks and sample metadata.
+    # Note that table_t is transposed (when compared to just "table"): its
+    # indices correspond to samples, and its columns correspond to features.
+    m_table, m_sample_metadata = match_table_and_data(
+        table, feature_ranks, sample_metadata
+    )
+
+    # Note that although we always call filter_unextreme_features(), filtering
+    # isn't necessarily always done (whether or not depends on the value of
+    # extreme_feature_count and the contents of the table/ranks).
+    #
+    # Also note that we pass in table_t.T (that is, the table is back to the
+    # normal setup of having feature IDs in the index and sample IDs in the
+    # columns).
     filtered_table, filtered_ranks = filter_unextreme_features(
-        biom_table, feature_ranks, extreme_feature_count
+        m_table, feature_ranks, extreme_feature_count
     )
 
     # Filter now-empty samples from the BIOM table.
-    table_adjective = " "
-    if extreme_feature_count is None:
-        table_adjective = " filtered "
-    logging.debug(
-        "Attempting to remove empty samples from the{}BIOM table.".format(
-            table_adjective
-        )
+    output_table, output_metadata = remove_empty_samples(
+        filtered_table, m_sample_metadata
     )
-    filtered_table.remove_empty(axis="sample")
-
-    table = biom_table_to_sparse_df(filtered_table)
-
-    # Match up the BIOM table with the feature ranks and sample metadata
-    table_t, m_sample_metadata = match_table_and_data(
-        table, filtered_ranks, sample_metadata
-    )
-    # Note that table_t is transposed (when compared to just "table": its
-    # indices now correspond to samples, and its columns now correspond to
-    # features.
 
     # Before we go through feature metadata: convert all rank column IDs
     # to strings (since Altair gets angry if you pass in ints as column IDs),
@@ -362,11 +397,11 @@ def process_input(
 
     logging.debug("Finished input processing.")
     return (
-        m_sample_metadata,
+        output_metadata,
         filtered_ranks,
         ranking_ids,
         feature_metadata_cols,
-        table_t,
+        output_table,
     )
 
 
@@ -599,15 +634,15 @@ def gen_visualization(
             needed when calling q2templates.render().
     """
 
+    table_t = processed_table.T
+
     # https://altair-viz.github.io/user_guide/faq.html#disabling-maxrows
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
     logging.debug("Generating sample plot JSON.")
-    sample_plot_json, count_json = gen_sample_plot(
-        processed_table, df_sample_metadata
-    )
+    sample_plot_json, count_json = gen_sample_plot(table_t, df_sample_metadata)
     logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
