@@ -66,11 +66,11 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        "altair >= 3.0",
+        "altair >= 3.1.0",
         "biom-format[hdf5]",
         "click",
-        "numpy",
-        "pandas >= 0.20.0",
+        "numpy >= 1.12.0",
+        "pandas >= 0.20.1",
         "scikit-bio > 0.5.3",
     ],
     # Based on how Altair splits up its requirements:

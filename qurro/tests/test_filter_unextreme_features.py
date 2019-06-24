@@ -1,6 +1,5 @@
 import biom
-import numpy as np
-from numpy.testing import assert_array_equal
+from numpy import arange
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 import pytest
@@ -23,11 +22,11 @@ def get_test_data():
     # Based on the BIOM docs' example of initialization using a np ndarray --
     # http://biom-format.org/documentation/table_objects.html#examples
     #
-    # np.arange(40) generates a numpy ndarray that just goes from 0 to 39 (i.e.
+    # arange(40) generates a numpy ndarray that just goes from 0 to 39 (i.e.
     # contains 40 numbers). We reshape this ndarray to give it a sort of
     # "tabular" structure (a 2-D array containing 8 arrays, each with 5
     # numbers).
-    underlying_table_data = np.arange(40).reshape(8, 5)
+    underlying_table_data = arange(40).reshape(8, 5)
     # Set the third sample in the data to contain all zeros, except for a
     # count for F4 (so we can test what this function does with so-called
     # "empty" samples after filtering out F4).
@@ -65,10 +64,10 @@ def test_filtering_basic():
         assert sid in filtered_table.columns
 
     # Check that the appropriate data is left in the table.
-    assert_array_equal(filtered_table.loc["F1"], [0, 1, 0, 3, 4])
-    assert_array_equal(filtered_table.loc["F2"], [5, 6, 0, 8, 9])
-    assert_array_equal(filtered_table.loc["F7"], [30, 31, 0, 33, 34])
-    assert_array_equal(filtered_table.loc["F8"], [35, 36, 0, 38, 39])
+    assert list(filtered_table.loc["F1"]) == [0, 1, 0, 3, 4]
+    assert list(filtered_table.loc["F2"]) == [5, 6, 0, 8, 9]
+    assert list(filtered_table.loc["F7"]) == [30, 31, 0, 33, 34]
+    assert list(filtered_table.loc["F8"]) == [35, 36, 0, 38, 39]
 
     # Check that the rank filtering worked as expected.
     expected_filtered_ranks = DataFrame(
