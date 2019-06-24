@@ -13,78 +13,6 @@ import numpy as np
 from io import StringIO
 
 
-def ensure_df_headers_unique(df, df_name):
-    """Raises an error if the index or columns of the DataFrame aren't unique.
-
-       (If both index and columns are non-unique, the index error will take
-       precedence.)
-
-       If these fields are unique, no errors are raised and nothing (None) is
-       implicitly returned.
-
-       Parameters
-       ----------
-
-       df: pandas.DataFrame
-       df_name: str
-           The "name" of the DataFrame -- this is displayed to the user in the
-           error message thrown if the DataFrame has any non-unique IDs.
-    """
-    if len(df.index.unique()) != df.shape[0]:
-        raise ValueError(
-            "Indices of the {} DataFrame are not" " unique.".format(df_name)
-        )
-
-    if len(df.columns.unique()) != df.shape[1]:
-        raise ValueError(
-            "Columns of the {} DataFrame are not" " unique.".format(df_name)
-        )
-
-
-def validate_df(df, name, min_row_ct, min_col_ct):
-    """Does some basic validation on the DataFrame.
-
-       1. Calls ensure_df_headers_unique() to ensure that index and column
-          names are unique.
-       2. Checks that the DataFrame has at least min_row_ct rows.
-       3. Checks that the DataFrame has at least min_col_ct columns.
-    """
-    ensure_df_headers_unique(df, name)
-    logging.debug("Ensured uniqueness of {}.".format(name))
-    if df.shape[0] < min_row_ct:
-        raise ValueError(
-            "Less than {} rows found in the {}.".format(min_row_ct, name)
-        )
-    if df.shape[1] < min_col_ct:
-        raise ValueError(
-            "Less than {} columns found in the {}.".format(min_col_ct, name)
-        )
-
-
-def fix_id(fid):
-    """As a temporary measure, escapes certain special characters in a name.
-
-       Right now, a measure like this is required to make Vega* work properly
-       with various field names.
-
-       See https://github.com/vega/vega-lite/issues/4965.
-    """
-
-    new_id = ""
-    for c in fid:
-        if c == ".":
-            new_id += ":"
-        elif c == "]":
-            new_id += ")"
-        elif c == "[":
-            new_id += "("
-        elif c == "'" or c == '"' or c == "\\":
-            new_id += "|"
-        else:
-            new_id += c
-    return new_id
-
-
 def get_q2_comment_lines(md_file_loc):
     """Returns a list of line numbers in the file that start with "#q2:".
 
@@ -188,31 +116,6 @@ def read_metadata_file(md_file_loc):
     # This workaround should address this.
     metadata_df.set_index(metadata_df.columns[0], inplace=True)
     return metadata_df
-
-
-def replace_nan(df, new_nan_val=None):
-    """Replaces all occurrences of NaN values in the DataFrame with a specified
-       value.
-
-       Note that this solution seems to result in the DataFrame's columns'
-       dtypes being changed to object. (This shouldn't change much due to how
-       we handle metadata files, though.)
-
-       Based on the solution described here:
-       https://stackoverflow.com/a/14163209/10730311
-    """
-    return df.where(df.notna(), new_nan_val)
-
-
-def escape_columns(df):
-    """Calls fix_id() on each of the column names of the DF."""
-    new_cols = []
-    for col in df.columns:
-        new_cols.append(fix_id(col))
-    df.columns = new_cols
-    # Ensure that this didn't make the column names non-unique
-    ensure_df_headers_unique(df, "escape_columns() DataFrame")
-    return df
 
 
 def get_truncated_feature_id(full_feature_id):

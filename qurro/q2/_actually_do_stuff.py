@@ -8,7 +8,7 @@
 import logging
 import q2templates
 from qurro.generate import process_and_generate
-from qurro._metadata_utils import escape_columns
+from qurro._df_utils import escape_columns
 
 
 def create_q2_visualization(
