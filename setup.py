@@ -61,8 +61,8 @@ setup(
     maintainer_email="mfedarko@ucsd.edu",
     url="https://github.com/fedarko/qurro",
     packages=find_packages(),
-    # Needed in order to ensure that q2/data/* and scripts/data/* are
-    # installed (in turn, those are specified in MANIFEST.in).
+    # Needed in order to ensure that support_files/*, etc. are installed (in
+    # turn, these files are specified in MANIFEST.in).
     # See https://python-packaging.readthedocs.io/en/latest/non-code-files.html
     # for details.
     include_package_data=True,
