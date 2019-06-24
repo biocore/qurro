@@ -9,15 +9,14 @@
 # Generates two JSON files: one for a rank plot and one for a sample
 # scatterplot of log ratios.
 #
-# A lot of the code for processing input data in this file was based on code
-# by Jamie Morton, some of which is now located in ipynb/Figure3.ipynb in
+# A lot of the code for processing input data in Qurro was based on code by
+# Jamie Morton, some of which is now located in ipynb/Figure3.ipynb in
 # https://github.com/knightlab-analyses/reference-frames.
 # ----------------------------------------------------------------------------
 
 import os
 import logging
 
-# import re
 from shutil import copyfile, copytree
 import pandas as pd
 import altair as alt
