@@ -34,7 +34,7 @@ interactive demos using real datasets.
 
 ### Screenshot: Visualizing KEGG orthologs in metagenomic data from the Red Sea
 
-![Screenshot showing a Qurro visualization of ranked features (which in this dataset correspond to KEGG orthologs) and a scatterplot plot of the log ratio of certain features' abundances in samples (the log ratio is on the y-axis; the x-axis is set to the temperature associated with the sample, and samples are colorized according to their "Oxygen" field. Features are selected in the log ratio based on their assigned "cluster"; the numerator consists of features in cluster 3, and the denominator consists of features in cluster 8. The feature rankings, which were computed by Songbird, are relative to the "Oxygen" sample metadata field.](https://github.com/fedarko/qurro/blob/master/screenshots/redsea_data.png)
+<img width="100%" src="https://raw.githubusercontent.com/fedarko/qurro/master/screenshots/redsea_data.png" alt="Screenshot showing a Qurro visualization of ranked features (which in this dataset correspond to KEGG orthologs) and a scatterplot plot of the log ratio of certain features' abundances in samples (the log ratio is on the y-axis; the x-axis is set to the temperature associated with the sample, and samples are colorized according to their 'Oxygen' field. Features are selected in the log ratio based on their assigned 'cluster'; the numerator consists of features in cluster 3, and the denominator consists of features in cluster 8. The feature rankings, which were computed by Songbird, are relative to the 'Oxygen' sample metadata field." />
 
 This visualization (which uses data from
 [this study](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/), with ranks
