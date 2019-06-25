@@ -120,6 +120,7 @@ instead installed alongside Qurro).
 - [Altair](https://altair-viz.github.io/)
 - [biom-format](http://biom-format.org/)
 - [click](https://palletsprojects.com/p/click/)
+- [NumPy](https://www.numpy.org/)
 - [pandas](https://pandas.pydata.org/)
 - [scikit-bio](http://scikit-bio.org/)
 
