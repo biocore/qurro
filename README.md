@@ -46,6 +46,7 @@ online [here](https://fedarko.github.io/qurro/demos/red_sea/index.html).
 You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 
 ```
+pip install numpy
 pip install qurro
 ```
 
