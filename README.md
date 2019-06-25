@@ -43,10 +43,10 @@ online [here](https://fedarko.github.io/qurro/demos/red_sea/index.html).
 
 ## Installation and Usage
 
-The following command will install the most up-to-date version of Qurro:
+You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 
 ```
-pip install git+https://github.com/fedarko/qurro.git
+pip install qurro
 ```
 
 A python version of at least 3.5 is required to use Qurro.
