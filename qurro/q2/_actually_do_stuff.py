@@ -27,6 +27,8 @@ def create_q2_visualization(
     df_sample_metadata = escape_columns(sample_metadata.to_dataframe())
     logging.debug("Converted metadata to DataFrames.")
 
+    feature_ranks = escape_columns(feature_ranks)
+
     index_path = process_and_generate(
         feature_ranks,
         df_sample_metadata,

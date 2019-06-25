@@ -10,17 +10,20 @@
 import logging
 import skbio
 import pandas as pd
+from qurro._df_utils import escape_columns
 
 
 def read_rank_file(file_loc):
     """Converts an input file of ranks to a DataFrame."""
 
     if file_loc.endswith(".tsv"):
-        return differentials_to_df(file_loc)
+        rank_df = differentials_to_df(file_loc)
     else:
         # ordination_to_df() will raise an appropriate error if it can't
         # process this file.
-        return ordination_to_df(file_loc)
+        rank_df = ordination_to_df(file_loc)
+
+    return escape_columns(rank_df)
 
 
 def ordination_to_df(ordination_file_loc):

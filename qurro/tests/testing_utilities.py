@@ -1,3 +1,4 @@
+import copy
 import os
 from pytest import approx
 from click.testing import CliRunner
@@ -245,7 +246,7 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
 
     # TODO check that feature metadata annotations were properly applied to the
     # features. Will need the feature metadata file location to be passed here
-    reference_features = read_rank_file(input_ranks_loc)
+    ref_feature_ranks = read_rank_file(input_ranks_loc)
     # Validate some basic properties of the plot
     # (This is all handled by Altair, so these property tests aren't
     # exhaustive; they're mainly intended to verify that a general plot
@@ -256,35 +257,32 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
     dn = rank_json["data"]["name"]
     # Check that we have the same count of ranked features as in the
     # input ranks file (no ranked features should be dropped during the
-    # generation process -- there's an assertion in the code that checks
-    # for this, actually)
-    assert len(rank_json["datasets"][dn]) == len(reference_features)
-    # Loop over every rank included in this JSON file.
-    # TODO could probably make this more efficient with vectorized operations,
-    # apply(), or something.
-    rank_ordering = rank_json["datasets"]["qurro_rank_ordering"]
-    for feature in rank_json["datasets"][dn]:
-        feature_id = feature["Feature ID"]
-        # Identify corresponding "reference" feature in the original data.
-        #
-        # We already should have asserted in the generation code that the
-        # feature IDs were unique, so we don't need to worry about
-        # accidentally using the same reference feature twice here.
-        #
-        # Also, we use .loc[feature ID] here in order to access a row of
-        # the DataFrame. Because just straight indexing the DataFrame gives
-        # you the column.
-        reference_feature_series = reference_features.loc[feature_id]
+    # generation process unless -x is passed, which it isn't in any of these
+    # integration tests)
+    assert len(rank_json["datasets"][dn]) == len(ref_feature_ranks)
 
-        # Each rank value between the JSON and reference feature should
-        # match.
-        # We use pytest's approx class to get past floating point
-        # imprecisions. Note that we just leave this at the default for
-        # approx, so if this starts failing then adjusting the tolerances
-        # in approx() might be needed.
-        for r in range(len(rank_ordering)):
-            actual_rank_val = reference_feature_series[r]
-            assert actual_rank_val == approx(feature[rank_ordering[r]])
+    # Loop over every feature in the reference feature ranks. Check that each
+    # feature's corresponding rank data in the rank plot JSON matches.
+    rank_ordering = rank_json["datasets"]["qurro_rank_ordering"]
+    rank_json_feature_data = get_data_from_plot_json(
+        rank_json, id_field="Feature ID"
+    )
+
+    for ref_feature_id in ref_feature_ranks.index:
+        # Check to make sure that this feature ID is actually in the rank plot
+        # JSON
+        assert ref_feature_id in rank_json_feature_data
+        # Get the corresponding feature's ranking information stored in the
+        # rank plot JSON
+        json_feature_data = rank_json_feature_data[ref_feature_id]
+
+        for ranking in rank_ordering:
+            # We use pytest's approx class to get past floating point
+            # imprecisions. Note that we just leave this at the default for
+            # approx, so if this starts failing then adjusting the tolerances
+            # in approx() might be needed.
+            actual_rank_val = ref_feature_ranks[ranking][ref_feature_id]
+            assert actual_rank_val == approx(json_feature_data[ranking])
 
 
 def validate_sample_plot_json(
@@ -348,21 +346,23 @@ def validate_sample_plot_json(
             assert actual_count == expected_count
 
 
-def get_data_from_sample_plot_json(sample_json):
-    """Given a sample plot JSON dict, returns a dict where each key corresponds
-       to another dict containing all metadata fields for that sample.
+def get_data_from_plot_json(plot_json, id_field="Sample ID"):
+    """Given a plot JSON dict, returns a dict where each key corresponds
+       to another dict containing all metadata fields for that [sample /
+       feature].
 
        This code is based on the procedure described here:
        https://stackoverflow.com/a/5236375/10730311
     """
-    sample_data = {}
-    for sample in sample_json["datasets"][sample_json["data"]["name"]]:
-        # The use of .pop() here means that we remove "Sample ID" from sample.
-        # This prevents redundancy (i.e. "Sample ID" being provided twice for
-        # each sample) in the output.
-        sample_id = sample.pop("Sample ID")
-        sample_data[sample_id] = sample
-    return sample_data
+    plot_json_copy = copy.deepcopy(plot_json)
+    data = {}
+    for datum in plot_json_copy["datasets"][plot_json_copy["data"]["name"]]:
+        # The use of .pop() here means that we remove the ID field from the
+        # datum. This prevents redundancy (i.e. "Sample ID" being provided
+        # twice for each sample) in the output.
+        datum_id = datum.pop(id_field)
+        data[datum_id] = datum
+    return data
 
 
 def validate_sample_stats_test_sample_plot_json(sample_json):

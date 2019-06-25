@@ -25,7 +25,6 @@ from qurro._json_utils import replace_js_json_definitions
 from qurro._df_utils import (
     replace_nan,
     validate_df,
-    escape_columns,
     biom_table_to_sparse_df,
     remove_empty_samples,
     match_table_and_data,
@@ -85,9 +84,7 @@ def process_input(
           any features. This is purposefully done *after*
           filter_unextreme_features() is called.
 
-       7. Converts feature rank column names to strings and escapes them.
-
-       8. Calls merge_feature_metadata() on the feature ranks and feature
+       7. Calls merge_feature_metadata() on the feature ranks and feature
           metadata. (If feature metadata is None, nothing will be done.)
 
        Returns
@@ -152,13 +149,7 @@ def process_input(
         filtered_table, m_sample_metadata
     )
 
-    # Before we go through feature metadata: convert all rank column IDs
-    # to strings (since Altair gets angry if you pass in ints as column IDs),
-    # and (as a temporary fix for #66) call fix_id() on these column IDs via
-    # escape_columns(). (escape_columns() will also check to make sure that the
-    # column names stay unique after calling fix_id().)
-    filtered_ranks.columns = [str(c) for c in filtered_ranks.columns]
-    filtered_ranks = escape_columns(filtered_ranks)
+    # Save a list of ranking IDs (before we add in feature metadata)
     ranking_ids = filtered_ranks.columns
 
     filtered_ranks, feature_metadata_cols = merge_feature_metadata(
