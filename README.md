@@ -98,6 +98,12 @@ Although this method doesn't require you to manually select features on the
 rank plot, the rank plot is still updated to indicate the features used in the
 log ratios.
 
+## Citing Qurro
+
+A manuscript describing Qurro is in preparation. In the meantime, you can cite
+the DOI of Qurro's source code (provided by Zenodo). See
+[this link](https://doi.org/10.5281/zenodo.3257763) for citation instructions.
+
 ## Acknowledgements
 
 ### Dependencies
