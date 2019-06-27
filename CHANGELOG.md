@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.1.1 (in development)
+## Qurro 0.2.0 (in development)
 ### Features added
 - The color schemes used in the sample plot are now modifiable! All of the
   color schemes described
