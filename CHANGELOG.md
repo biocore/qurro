@@ -3,8 +3,8 @@
 ## Qurro 0.1.1 (in development)
 ### Features added
 - Feature loading names (in Qurro plots produced from DEICODE biplots) are now
-  clearer: instead of being labelled "0", "1", "2", etc., the loadings are now
-  labelled "Axis 1", "Axis 2", "Axis 3", etc.
+  clearer: instead of being labelled `0`, `1`, `2`, etc., the loadings are now
+  labelled `Axis 1`, `Axis 2`, `Axis 3`, etc.
   ([#145](https://github.com/fedarko/qurro/issues/145))
 ### Backward-incompatible changes
 ### Bug fixes
