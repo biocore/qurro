@@ -9,6 +9,7 @@ import qiime2
 import skbio
 import pandas as pd
 import biom
+from .._rank_utils import rename_loadings
 from ._actually_do_stuff import create_q2_visualization
 
 
@@ -49,7 +50,7 @@ def unsupervised_rank_plot(
 
     create_q2_visualization(
         output_dir,
-        ranks.features,
+        rename_loadings(ranks.features),
         table,
         sample_metadata,
         feature_metadata,

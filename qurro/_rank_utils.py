@@ -26,12 +26,27 @@ def read_rank_file(file_loc):
     return escape_columns(rank_df)
 
 
+def rename_loadings(loadings_df):
+    """Renames a DataFrame of loadings to say "Axis 1", "Axis 2", etc.
+
+       This should match what Emperor does in its visualizations.
+    """
+
+    loadings_df_copy = loadings_df.copy()
+    new_column_names = []
+    for n in range(1, len(loadings_df_copy.columns) + 1):
+        new_column_names.append("Axis {}".format(n))
+    loadings_df_copy.columns = new_column_names
+    return loadings_df_copy
+
+
 def ordination_to_df(ordination_file_loc):
     """Returns a DataFrame of feature loadings from a skbio ordination file."""
 
     # If this fails, it raises an skbio.io.UnrecognizedFormatError.
     ordination = skbio.OrdinationResults.read(ordination_file_loc)
-    return ordination.features
+
+    return rename_loadings(ordination.features)
 
 
 def differentials_to_df(differentials_loc):

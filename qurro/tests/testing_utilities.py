@@ -1,4 +1,5 @@
 import copy
+from itertools import zip_longest
 import os
 from pytest import approx
 from click.testing import CliRunner
@@ -276,13 +277,22 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
         # rank plot JSON
         json_feature_data = rank_json_feature_data[ref_feature_id]
 
-        for ranking in rank_ordering:
+        # Note that we allow for mismatches in ranking names between the
+        # reference and JSON feature rank data -- instead, we compare based on
+        # the *order* of the feature rankings (aka the order of the columns in
+        # either the feature differentials or ordination feature loadings).
+        # This is fine, because we may want to rename certain rankings' names
+        # (e.g. the axes in DEICODE's feature loadings, which default to just
+        # 0, 1, 2)
+        for ref_ranking, json_ranking in zip_longest(
+            ref_feature_ranks.columns, rank_ordering
+        ):
             # We use pytest's approx class to get past floating point
             # imprecisions. Note that we just leave this at the default for
             # approx, so if this starts failing then adjusting the tolerances
             # in approx() might be needed.
-            actual_rank_val = ref_feature_ranks[ranking][ref_feature_id]
-            assert actual_rank_val == approx(json_feature_data[ranking])
+            actual_rank_val = ref_feature_ranks[ref_ranking][ref_feature_id]
+            assert actual_rank_val == approx(json_feature_data[json_ranking])
 
 
 def validate_sample_plot_json(
