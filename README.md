@@ -4,7 +4,11 @@
 <img width="40%" src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/images/logos/qurro_logo.png" alt="Qurro logo" />
 </div>
 
-[![Build Status](https://travis-ci.org/fedarko/qurro.svg?branch=master)](https://travis-ci.org/fedarko/qurro) [![codecov](https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg)](https://codecov.io/gh/fedarko/qurro) [![DOI](https://zenodo.org/badge/158270494.svg)](https://zenodo.org/badge/latestdoi/158270494)
+<div align="center">
+<a href="https://travis-ci.org/fedarko/qurro"><img src="https://travis-ci.org/fedarko/qurro.svg?branch=master" alt="Build Status" /></a>
+<a href="https://codecov.io/gh/fedarko/qurro"><img src="https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
+<a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
+</div>
 
 (Pronounced "churro.")
 
