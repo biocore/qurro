@@ -155,6 +155,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     },
                     boxplotCheckbox: async function() {
                         await display.updateSamplePlotBoxplot();
+                    },
+                    catColorScheme: async function() {
+                        await display.updateSamplePlotColorScheme("category");
+                    },
+                    quantColorScheme: async function() {
+                        await display.updateSamplePlotColorScheme("ramp");
                     }
                 },
                 "onchange"
@@ -826,6 +832,30 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 }
             }
             return invalidSampleIDs;
+        }
+
+        async updateSamplePlotColorScheme(scaleRangeType) {
+            var newScheme;
+            var changesCurrentPlot = false;
+            if (scaleRangeType === "category") {
+                newScheme = document.getElementById("catColorScheme").value;
+                changesCurrentPlot =
+                    this.samplePlotJSON.encoding.color.type === "nominal";
+            } else if (scaleRangeType === "ramp") {
+                newScheme = document.getElementById("quantColorScheme").value;
+                changesCurrentPlot =
+                    this.samplePlotJSON.encoding.color.type === "quantitative";
+            } else {
+                throw new Error(
+                    "Unrecognized scale range type specified:" + scaleRangeType
+                );
+            }
+            this.samplePlotJSON.config.range[scaleRangeType].scheme = newScheme;
+            // Only remake the sample plot if the new color scheme would effect
+            // the currently displayed colors in the sample plot.
+            if (changesCurrentPlot) {
+                await this.remakeSamplePlot();
+            }
         }
 
         /* Changes the scale type of either the x-axis or colorization in the

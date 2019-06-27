@@ -35,6 +35,90 @@
             <option value="nominal"></option>
             <option value="quantitative"></option>
         </select>
+
+        <label id="catColorSchemeLabel" for="catColorScheme"
+            >Categorical color scheme</label
+        >
+        <select id="catColorScheme">
+            <option value="accent">accent</option>
+            <option value="category10">category10</option>
+            <option value="category20">category20</option>
+            <option value="category20b">category20b</option>
+            <option value="category20c">category20c</option>
+            <option value="dark2">dark2</option>
+            <option value="paired">paired</option>
+            <option value="pastel1">pastel1</option>
+            <option value="pastel2">pastel2</option>
+            <option value="set1">set1</option>
+            <option value="set2">set2</option>
+            <option value="set3">set3</option>
+            <option value="tableau10" selected="true">tableau10</option>
+            <option value="tableau20">tableau20</option>
+        </select>
+        <label id="quantColorSchemeLabel" for="quantColorScheme"
+            >Quantitative color scheme</label
+        >
+        <select id="quantColorScheme">
+            <optgroup label="Sequential Single-Hue">
+                <option value="blues" selected="true">blues</option>
+                <option value="tealblues">tealblues</option>
+                <option value="teals">teals</option>
+                <option value="greens">greens</option>
+                <option value="browns">browns</option>
+                <option value="oranges">oranges</option>
+                <option value="reds">reds</option>
+                <option value="purples">purples</option>
+                <option value="warmgreys">warmgreys</option>
+                <option value="greys">greys</option>
+            </optgroup>
+            <optgroup label="Sequential Multi-Hue">
+                <option value="viridis">viridis</option>
+                <option value="magma">magma</option>
+                <option value="inferno">inferno</option>
+                <option value="plasma">plasma</option>
+                <option value="bluegreen">bluegreen</option>
+                <option value="bluepurple">bluepurple</option>
+                <option value="goldgreen">goldgreen</option>
+                <option value="goldorange">goldorange</option>
+                <option value="goldred">goldred</option>
+                <option value="greenblue">greenblue</option>
+                <option value="orangered">orangered</option>
+                <option value="purplebluegreen">purplebluegreen</option>
+                <option value="purpleblue">purpleblue</option>
+                <option value="purplered">purplered</option>
+                <option value="redpurple">redpurple</option>
+                <option value="yellowgreenblue">yellowgreenblue</option>
+                <option value="yellowgreen">yellowgreen</option>
+                <option value="yelloworangebrown">yelloworangebrown</option>
+                <option value="yelloworangered">yelloworangered</option>
+                <option value="darkblue">darkblue</option>
+                <option value="darkgold">darkgold</option>
+                <option value="darkgreen">darkgreen</option>
+                <option value="darkmulti">darkmulti</option>
+                <option value="darkred">darkred</option>
+                <option value="lightgreyred">lightgreyred</option>
+                <option value="lightgreyteal">lightgreyteal</option>
+                <option value="lightmulti">lightmulti</option>
+                <option value="lightorange">lightorange</option>
+                <option value="lighttealblue">lighttealblue</option>
+            </optgroup>
+            <optgroup label="Diverging">
+                <option value="blueorange">blueorange</option>
+                <option value="brownbluegreen">brownbluegreen</option>
+                <option value="purplegreen">purplegreen</option>
+                <option value="pinkyellowgreen">pinkyellowgreen</option>
+                <option value="purpleorange">purpleorange</option>
+                <option value="redblue">redblue</option>
+                <option value="redgrey">redgrey</option>
+                <option value="redyellowblue">redyellowblue</option>
+                <option value="redyellowgreen">redyellowgreen</option>
+                <option value="spectral">spectral</option>
+            </optgroup>
+            <optgroup label="Cyclical">
+                <option value="rainbow">rainbow</option>
+                <option value="sinebow">sinebow</option>
+            </optgroup>
+        </select>
         <input type="checkbox" id="boxplotCheckbox" />
         <button id="multiFeatureButton"></button>
         <button id="exportDataButton"></button>

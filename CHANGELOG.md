@@ -2,6 +2,12 @@
 
 ## Qurro 0.1.1 (in development)
 ### Features added
+- The color schemes used in the sample plot are now modifiable! All of the
+  color schemes described
+  [in the Vega documentation](https://vega.github.io/vega/docs/schemes/), as of
+  writing, should be usable.
+  ([#158](https://github.com/fedarko/qurro/issues/158))
+
 - Feature loading names (in Qurro plots produced from DEICODE biplots) are now
   clearer: instead of being labelled `0`, `1`, `2`, etc., the loadings are now
   labelled `Axis 1`, `Axis 2`, `Axis 3`, etc.
