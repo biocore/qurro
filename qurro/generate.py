@@ -360,6 +360,10 @@ def gen_sample_plot(table, metadata):
             color=alt.Color(default_metadata_col, type="nominal"),
             tooltip=["Sample ID", "qurro_balance"],
         )
+        .configure_range(
+            ramp=alt.SchemeConfig(scheme="blues"),
+            category=alt.SchemeConfig(scheme="tableau10"),
+        )
         .configure_axis(labelBound=True)
         .interactive()
     )
