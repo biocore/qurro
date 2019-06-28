@@ -870,6 +870,22 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankPlotJSON.encoding.color.scale.range[1] = newColorScheme[0];
             this.rankPlotJSON.encoding.color.scale.range[2] = newColorScheme[1];
             this.rankPlotJSON.encoding.color.scale.range[3] = newColorScheme[2];
+            // Change the border color of .num and .den elements
+            // Based on https://www.w3.org/wiki/Dynamic_style_-_manipulating_CSS_with_JavaScript#Accessing_style_sheets
+            // TODO: assign unique ID to this stylesheet, then every time we
+            // get to this function first check if this sorta stylesheet exists
+            // and if so destroy it before re-adding it. This way we can ensure
+            // that we're always up to date with the new style without adding 5
+            // billion copies of the same style if the user keeps switching
+            // around rank plot colorschemes
+            var newCSS = document.createElement("style");
+            newCSS.innerHTML =
+                ".num { border-color: " +
+                newColorScheme[0] +
+                "; }\n.den { border-color: " +
+                newColorScheme[1] +
+                "; }";
+            document.body.appendChild(newCSS);
             await this.remakeRankPlot();
         }
 
