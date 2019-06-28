@@ -266,7 +266,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
         });
-        describe("Modifying rank plot field/size", function() {
+        describe("Modifying rank plot field/size/color", function() {
             beforeEach(async function() {
                 await resetRRVDisplay(rrv);
             });
@@ -336,6 +336,32 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // JSONs here (e.g. the sleep apnea test data).
                     it(
                         "Un-hides a warning element when the bar size is less than 1 pixel"
+                    );
+                });
+            });
+            describe("Changing the rank plot color scheme", function() {
+                it("Updating works properly", async function() {
+                    document.getElementById("rankPlotColorScheme").value =
+                        "#5fa2c8,#daa520,#029e73";
+                    await document
+                        .getElementById("rankPlotColorScheme")
+                        .onchange();
+                    chai.assert.equal(
+                        "#5fa2c8",
+                        rrv.rankPlotJSON.encoding.color.scale.range[1]
+                    );
+                    chai.assert.equal(
+                        "#daa520",
+                        rrv.rankPlotJSON.encoding.color.scale.range[2]
+                    );
+                    chai.assert.equal(
+                        "#029e73",
+                        rrv.rankPlotJSON.encoding.color.scale.range[3]
+                    );
+                    // Check to make sure the background color wasn't changed
+                    chai.assert.equal(
+                        "#e0e0e0",
+                        rrv.rankPlotJSON.encoding.color.scale.range[0]
                     );
                 });
             });
