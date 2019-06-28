@@ -2,10 +2,7 @@
 
 ## Qurro 0.2.0 (in development)
 ### Features added
-- The color schemes used in the sample plot are now modifiable! All of the
-  color schemes described
-  [in the Vega documentation](https://vega.github.io/vega/docs/schemes/), as of
-  writing, should be usable.
+- The color schemes used in the sample plot and rank plot are now customizable!
   ([#158](https://github.com/fedarko/qurro/issues/158))
 
 - Feature loading names (in Qurro plots produced from DEICODE biplots) are now
