@@ -12,6 +12,8 @@
 ### Backward-incompatible changes
 ### Bug fixes
 ### Performance enhancements
+- Removed an unused JS file from Qurro's `support_files/`. This change should
+  decrease the size of Qurro's generated visualizations by a small amount.
 ### Miscellaneous 
 - Added citation instructions and some small documentation fixes to the README
 - Fixed a typo in the license (forgot to update this when we renamed the tool
