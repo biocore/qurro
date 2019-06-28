@@ -24,6 +24,29 @@
                     <select id="rankField"> </select>
                 </div>
                 <div class="centeredBlock">
+                    <label for="rankPlotColorScheme">Color scheme</label>
+                    <select id="rankPlotColorScheme">
+                        <!-- Just normal web colors, with the exception of
+                            "Purple" (which is a bit lighter than the "Purple"
+                             web color).
+                             See https://en.wikipedia.org/wiki/Web_colors.
+                        -->
+                        <option value="#f00,#00f,#949"
+                            >Red, Blue, Purple</option
+                        >
+                        <!-- These colors were taken directly from Figure 3a in
+                             the Songbird paper (Morton/Marotz et al. 2019).
+                        -->
+                        <option value="#5fa2c8,#daa520,#029e73"
+                            >Blue, Gold, Green (Songbird paper)</option
+                        >
+                        <!-- Just normal web colors. -->
+                        <option value="#ff0,#f00,#ff8c00"
+                            >Yellow, Red, Orange</option
+                        >
+                    </select>
+                </div>
+                <div class="centeredBlock">
                     <label for="barSize">Bar width</label>
                     <select id="barSize">
                         <option value="1"

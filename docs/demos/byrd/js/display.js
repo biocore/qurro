@@ -161,6 +161,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     },
                     quantColorScheme: async function() {
                         await display.updateSamplePlotColorScheme("ramp");
+                    },
+                    rankPlotColorScheme: async function() {
+                        await display.updateRankPlotColorScheme();
                     }
                 },
                 "onchange"
@@ -856,6 +859,16 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             if (changesCurrentPlot) {
                 await this.remakeSamplePlot();
             }
+        }
+
+        async updateRankPlotColorScheme() {
+            var newColorScheme = document
+                .getElementById("rankPlotColorScheme")
+                .value.split(",");
+            this.rankPlotJSON.encoding.color.scale.range[1] = newColorScheme[0];
+            this.rankPlotJSON.encoding.color.scale.range[2] = newColorScheme[1];
+            this.rankPlotJSON.encoding.color.scale.range[3] = newColorScheme[2];
+            await this.remakeRankPlot();
         }
 
         /* Changes the scale type of either the x-axis or colorization in the
