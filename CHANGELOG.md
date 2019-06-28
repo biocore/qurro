@@ -19,6 +19,7 @@
 - Fixed a typo in the license (forgot to update this when we renamed the tool
   to "Qurro" a few weeks ago)
 - Cleaned up some of Qurro's basic documentation (in its `setup.py`, etc.).
+- Updated the screenshot used in the README.
 
 ## Qurro 0.1.0 (June 25, 2019)
 - Released the first version of Qurro [on PyPI](https://pypi.org/project/qurro/)!
