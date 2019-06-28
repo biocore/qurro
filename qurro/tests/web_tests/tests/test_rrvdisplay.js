@@ -366,7 +366,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
         });
-        describe("Modifying sample plot fields/scales", function() {
+        describe("Modifying sample plot fields/scales/colorschemes", function() {
             beforeEach(async function() {
                 await resetRRVDisplay(rrv);
             });
@@ -502,6 +502,30 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     await testChangeScaleType("quantitative");
                     await testChangeScaleType("nominal");
                 });
+            });
+            describe("Changing the sample plot color schemes", function() {
+                it("Changing the categorical color scheme works properly", async function() {
+                    document.getElementById("catColorScheme").value = "accent";
+                    await document.getElementById("catColorScheme").onchange();
+                    chai.assert.equal(
+                        "accent",
+                        rrv.samplePlotJSON.config.range.category.scheme
+                    );
+                });
+                it("Changing the quantitative color scheme works properly", async function() {
+                    document.getElementById("quantColorScheme").value =
+                        "viridis";
+                    await document
+                        .getElementById("quantColorScheme")
+                        .onchange();
+                    chai.assert.equal(
+                        "viridis",
+                        rrv.samplePlotJSON.config.range.ramp.scheme
+                    );
+                });
+                it(
+                    "updateSamplePlotColorScheme() throws an error for unrecognized scale range types"
+                );
             });
         });
         describe("Boxplot functionality", function() {
