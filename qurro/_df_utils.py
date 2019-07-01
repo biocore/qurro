@@ -250,6 +250,7 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             )
         )
 
+    logging.debug("Starting matching table with sample metadata.")
     m_table_transpose, m_sample_metadata = matchdf(
         featurefiltered_table.T, sample_metadata
     )
