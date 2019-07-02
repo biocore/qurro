@@ -145,45 +145,38 @@ def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
     return table_sdf
 
 
-def remove_empty_samples(table_sdf, sample_metadata_df):
-    """Removes samples with 0 counts for every feature from the table and
-       sample metadata DataFrame.
+def remove_empty_samples(biom_table):
+    """Removes samples with 0 counts for every feature from a BIOM table.
 
-       This should be called *after* matching the table with the sample
-       metadata -- we assume that the columns of the table DataFrame are
-       equivalent to the indices of the sample metadata DataFrame.
-
-       This will raise a ValueError if, after removing empty samples, either
-       the table's columns or the metadata's indices are empty (this will
-       happen in the case where all of the samples in these DataFrames are
-       empty).
+       This will raise a ValueError if, after removing empty samples, the
+       table's columns are empty (this will happen if all of the samples in
+       the table are empty).
     """
     logging.debug("Attempting to remove empty samples.")
-    table_df_equal_to_zero = table_sdf == 0
-    nonempty_samples = []
-    for sample in table_sdf.columns:
-        if not table_df_equal_to_zero[sample].all():
-            nonempty_samples.append(sample)
+    filtered_table = biom_table.remove_empty(axis="sample", inplace=False)
 
-    filtered_table = table_sdf.filter(items=nonempty_samples, axis="columns")
-    filtered_metadata = sample_metadata_df.filter(
-        items=nonempty_samples, axis="index"
-    )
-
-    if len(filtered_table.columns) < 1 or len(filtered_metadata.index) < 1:
+    if filtered_table.shape[1] < 1:
         raise ValueError("Found all empty samples with current features.")
 
-    sample_diff = len(table_sdf.columns) - len(filtered_table.columns)
+    sample_diff = filtered_table.shape[1] - biom_table.shape[1]
     if sample_diff > 0:
         logging.debug("Removed {} empty sample(s).".format(sample_diff))
     else:
-        logging.debug("Couldn't find any empty samples.")
+        logging.debug("Couldn't find any empty samples to remove.")
 
-    return filtered_table, filtered_metadata
+    return filtered_table
 
 
 def match_table_and_data(table, feature_ranks, sample_metadata):
     """Matches feature rankings and then sample metadata to a table.
+
+       This should bring us to a point where every specified feature/sample is
+       supported in the output table DataFrame.
+
+       Note that the input table here might contain features or samples that
+       are not included in feature_ranks or sample_metadata, respectively --
+       this is totally fine. However, errors may be raised if the opposite is
+       true; see the "Raises" section below for details.
 
        Parameters
        ----------
@@ -225,12 +218,11 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
        in the table, this will raise a ValueError.
     """
     logging.debug("Starting matching table with feature/sample data.")
-    # Match features to BIOM table, and then match samples to BIOM table.
-    # This should bring us to a point where every feature/sample is
-    # supported in the BIOM table. (Note that the input BIOM table might
-    # contain features or samples that are not included in feature_ranks or
-    # sample_metadata, respectively -- this is totally fine. The opposite,
-    # though, is a big no-no.)
+    # NOTE: if we actually did filtering in filter_unextreme_features, then
+    # this is an unnecessary step. TODO: make note of this and avoid this
+    # unnecessary operation in that case?
+    logging.debug("Starting matching table with feature rankings.")
+
     featurefiltered_table, m_feature_ranks = matchdf(table, feature_ranks)
     logging.debug("Matching table with feature ranks done.")
     # Ensure that every ranked feature was present in the BIOM table. Raise an
@@ -244,8 +236,8 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
         if unsupported_feature_ct == 1:
             word = "was"
         raise ValueError(
-            "Of the {} ranked features, {} {} not present in "
-            "the input BIOM table.".format(
+            "Of {} ranked features, {} {} not present in "
+            "the BIOM table.".format(
                 feature_ranks.shape[0], unsupported_feature_ct, word
             )
         )
@@ -260,7 +252,7 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     if m_sample_metadata.shape[0] < 1:
         raise ValueError(
             "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
+            "are present in the BIOM table."
         )
 
     dropped_sample_ct = sample_metadata.shape[0] - m_sample_metadata.shape[0]

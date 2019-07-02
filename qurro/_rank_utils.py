@@ -8,6 +8,7 @@
 # ----------------------------------------------------------------------------
 
 import logging
+import biom
 import skbio
 import pandas as pd
 from qurro._df_utils import escape_columns
@@ -89,7 +90,7 @@ def differentials_to_df(differentials_loc):
 
 
 def filter_unextreme_features(
-    table: pd.SparseDataFrame,
+    table: biom.Table,
     ranks: pd.DataFrame,
     extreme_feature_count: int,
     print_warning: bool = True,
@@ -99,10 +100,10 @@ def filter_unextreme_features(
        Parameters
        ----------
 
-       table: pd.SparseDataFrame
-            A SparseDataFrame representation of a BIOM table. This can be
-            generated easily from a biom.Table object using
-            qurro._df_utils.biom_table_to_sparse_df().
+       table: biom.Table
+            A BIOM table for the dataset.
+            This checks to make sure that the remaining "extreme" features are
+            all in the table -- if not, then this throws a ValueError.
 
        ranks: pandas.DataFrame
             A DataFrame where the index consists of ranked features' IDs, and
@@ -123,8 +124,8 @@ def filter_unextreme_features(
        Returns
        -------
 
-       (table, ranks): (pandas.SparseDataFrame, pandas.DataFrame)
-            Filtered copies of the input table and ranks DataFrames.
+       (table, ranks): (biom.Table, pandas.DataFrame)
+            Filtered copies of the input BIOM table and feature ranking DF.
 
        Behavior
        --------
@@ -182,6 +183,7 @@ def filter_unextreme_features(
     )
     logging.debug("Input table has shape {}.".format(table.shape))
     logging.debug("Input feature ranks have shape {}.".format(ranks.shape))
+
     # We store these features in a set to avoid duplicates -- Python does the
     # hard work here for us
     features_to_preserve = set()
@@ -193,7 +195,26 @@ def filter_unextreme_features(
 
     # Also filter ranks. Fortunately, DataFrame.filter() makes this easy.
     filtered_ranks = ranks.filter(items=features_to_preserve, axis="index")
-    filtered_table = table.filter(items=features_to_preserve, axis="index")
+
+    # Filter the BIOM table to desired features.
+    def filter_biom_table(values, feature_id, _):
+        return feature_id in features_to_preserve
+
+    filtered_table = table.filter(
+        filter_biom_table, axis="observation", inplace=False
+    )
+
+    # Since Qurro filters unextreme features before matching the table with the
+    # feature ranks, there's the possibility that all of the features that we
+    # filtered the table to are not actually *present* in the table. So we need
+    # to quickly verify that the table contains all of the "extreme" features.
+    table_feature_ct = filtered_table.shape[0]
+    ranks_feature_ct = len(filtered_ranks.index)
+    if table_feature_ct < ranks_feature_ct:
+        raise ValueError(
+            '{} "extreme" ranked feature(s) were not present in '
+            "the input BIOM table.".format(ranks_feature_ct - table_feature_ct)
+        )
 
     logging.debug("Output table has shape {}.".format(filtered_table.shape))
     logging.debug(

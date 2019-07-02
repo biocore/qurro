@@ -130,36 +130,34 @@ def process_input(
     if feature_metadata is not None:
         feature_metadata = replace_nan(feature_metadata)
 
-    table = biom_table_to_sparse_df(biom_table)
-
-    # Match up the table with the feature ranks and sample metadata.
-    m_table, m_sample_metadata = match_table_and_data(
-        table, feature_ranks, sample_metadata
-    )
-
     # Note that although we always call filter_unextreme_features(), filtering
     # isn't necessarily always done (whether or not depends on the value of
     # extreme_feature_count and the contents of the table/ranks).
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        m_table, feature_ranks, extreme_feature_count
+    filtered_biom_table, filtered_ranks = filter_unextreme_features(
+        biom_table, feature_ranks, extreme_feature_count
     )
 
     # Filter now-empty samples from the BIOM table.
-    output_table, output_metadata = remove_empty_samples(
-        filtered_table, m_sample_metadata
+    filtered_biom_table = remove_empty_samples(filtered_biom_table)
+
+    unmatched_table = biom_table_to_sparse_df(filtered_biom_table)
+
+    # Match up the table with the feature ranks and sample metadata.
+    output_table, output_metadata = match_table_and_data(
+        unmatched_table, filtered_ranks, sample_metadata
     )
 
     # Save a list of ranking IDs (before we add in feature metadata)
     ranking_ids = filtered_ranks.columns
 
-    filtered_ranks, feature_metadata_cols = merge_feature_metadata(
+    output_ranks, feature_metadata_cols = merge_feature_metadata(
         filtered_ranks, feature_metadata
     )
 
     logging.debug("Finished input processing.")
     return (
         output_metadata,
-        filtered_ranks,
+        output_ranks,
         ranking_ids,
         feature_metadata_cols,
         output_table,
