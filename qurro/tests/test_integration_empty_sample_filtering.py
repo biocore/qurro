@@ -53,23 +53,38 @@ def test_empty_sample_integration_extreme_feature_count():
 
 
 def test_all_empty_samples_post_filtering():
-    table, metadata = get_test_data()
+    _, feature_ids, sample_ids = get_test_data()
     # Based on the version of get_test_data() in test_filter_unextreme_features
     # (TODO: unify all of these into a single method that returns a table,
-    # metadata, and feature ranks)
+    # metadata, and feature ranks?)
     ranks = DataFrame(
         {
             "Rank 0": [1, 2, 3, 4, 5, 6, 7, 8],
             "Rank 1": [8, 7, 6, 5, 4, 3, 2, 1],
         },
-        index=list(table.index)[:],
+        index=feature_ids,
     )
     # Modify the table so that each sample isn't empty, but *is* empty if you
     # filter the table to extreme features (which will be F1, F2, F7, and F8).
-    table["Sample1"] = [0, 0, 1, 1, 1, 1, 0, 0]
-    table["Sample2"] = [0, 0, 2, 2, 2, 2, 0, 0]
-    table["Sample3"] = [0, 0, 3, 3, 3, 3, 0, 0]
-    table["Sample4"] = [0, 0, 4, 4, 4, 4, 0, 0]
+    table = DataFrame(
+        {
+            "Sample1": [0, 0, 1, 1, 1, 1, 0, 0],
+            "Sample2": [0, 0, 2, 2, 2, 2, 0, 0],
+            "Sample3": [0, 0, 3, 3, 3, 3, 0, 0],
+            "Sample4": [0, 0, 4, 4, 4, 4, 0, 0],
+        },
+        index=feature_ids,
+    )
+
+    metadata = DataFrame(
+        {
+            "Metadata1": [0, 0, 0, 1],
+            "Metadata2": [0, 0, 0, 0],
+            "Metadata3": [1, 2, 3, 4],
+            "Metadata4": [8, 7, 6, 5],
+        },
+        index=sample_ids,
+    )
 
     # HACK: since process_input() expects a BIOM table, we need to convert the
     # table DF into a numpy array in order to create a BIOM table from it.

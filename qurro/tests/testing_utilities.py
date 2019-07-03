@@ -130,6 +130,8 @@ def validate_standalone_result(
           The number of samples expected to be unsupported in the BIOM table.
           Defaults to 0 (i.e. all samples are expected to be supported).
 
+          (Currently unused.)
+
        expect_all_unsupported_samples: bool
           Whether or not to expect *all* samples to be unsupported in the BIOM
           table. Defaults to False (i.e. at least one sample is expected to be
@@ -152,9 +154,8 @@ def validate_standalone_result(
         word = "were"
         if expected_unsupported_features == 1:
             word = "was"
-        expected_message = (
-            "{} {} not present in the input BIOM "
-            "table.".format(expected_unsupported_features, word)
+        expected_message = "{} {} not present in the BIOM table.".format(
+            expected_unsupported_features, word
         )
         # Checking .stderr didn't seem to work for me, so to check the text of
         # the ValueError we just use its .args property (which should contain
@@ -164,8 +165,8 @@ def validate_standalone_result(
         assert result.exit_code != 0
         assert type(result.exception) == ValueError
         expected_message = (
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
+            "Couldn't find any (non-empty) samples from the sample metadata "
+            "file in the BIOM table."
         )
         assert expected_message == result.exc_info[1].args[0]
     else:
@@ -173,9 +174,6 @@ def validate_standalone_result(
         # *Maybe* a warning about unsupported samples, but we know that at
         # least one sample should be supported (so rrv can still work).
         assert result.exit_code == 0
-        validate_samples_supported_output(
-            result.output, expected_unsupported_samples
-        )
 
 
 def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
@@ -208,31 +206,6 @@ def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
         validate_sample_plot_json(tloc, sloc, sample_json, count_json)
 
     return rank_json, sample_json, count_json
-
-
-def validate_samples_supported_output(output, expected_unsupported_samples):
-    """Checks that the correct message has been based on BIOM sample support.
-
-       Parameters
-       ----------
-       output: str
-          All of the printed output from running qurro.
-          This can be obtained as result.output, if result is the return value
-          of click's CliRunner.invoke().
-
-       expected_unsupported_samples: int
-          The number of samples expected to be unsupported in the BIOM table.
-          If 0, expects all samples to be supported.
-    """
-    if expected_unsupported_samples > 0:
-        expected_msg = (
-            "NOTE: {} sample(s) in the sample metadata file were "
-            "not present in the BIOM table, and have been "
-            "removed from the visualization.".format(
-                expected_unsupported_samples
-            )
-        )
-        assert expected_msg in output
 
 
 def basic_vegalite_json_validation(json_obj):
