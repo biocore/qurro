@@ -26,7 +26,7 @@ from qurro._df_utils import (
     replace_nan,
     validate_df,
     biom_table_to_sparse_df,
-    remove_empty_samples,
+    remove_empty,
     match_table_and_data,
     merge_feature_metadata,
 )
@@ -75,8 +75,8 @@ def process_input(
           using the provided extreme_feature_count. (If it's None, then nothing
           will be done.)
 
-       4. Calls remove_empty_samples() to filter samples without any counts for
-          any features from the BIOM table. This is purposefully done *after*
+       4. Calls remove_empty() to filter empty samples and features from the
+          BIOM table. This is purposefully done *after*
           filter_unextreme_features() is called.
 
        5. Converts the BIOM table to a SparseDataFrame by calling
@@ -145,7 +145,7 @@ def process_input(
     )
 
     # 4. Filter (now-)empty samples from the BIOM table.
-    filtered_biom_table = remove_empty_samples(feature_filtered_biom_table)
+    filtered_biom_table = remove_empty(feature_filtered_biom_table)
 
     # 5. Convert the BIOM table to a SparseDataFrame.
     unmatched_table = biom_table_to_sparse_df(filtered_biom_table)

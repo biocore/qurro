@@ -145,24 +145,34 @@ def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
     return table_sdf
 
 
-def remove_empty_samples(biom_table):
-    """Removes samples with 0 counts for every feature from a BIOM table.
+def remove_empty(biom_table):
+    """Removes "empty" samples and features from a BIOM table.
 
        This will raise a ValueError if, after removing empty samples, the
        table's columns are empty (this will happen if all of the samples in
        the table are empty).
     """
-    logging.debug("Attempting to remove empty samples.")
-    filtered_table = biom_table.remove_empty(axis="sample", inplace=False)
+    # TODO make this also somehow alter the ranks so that these are removed
+    # from there? (so matching doesn't fail?)
+    # And while we're at it we should maybe also do the same thing for sample
+    # metadata tbh.
+    logging.debug("Attempting to remove empty samples and features.")
+    filtered_table = biom_table.remove_empty(inplace=False)
+
+    if filtered_table.shape[0] < 1:
+        raise ValueError("All of the current features in the table are empty.")
 
     if filtered_table.shape[1] < 1:
         raise ValueError("Found all empty samples with current features.")
 
-    sample_diff = filtered_table.shape[1] - biom_table.shape[1]
-    if sample_diff > 0:
-        logging.debug("Removed {} empty sample(s).".format(sample_diff))
-    else:
-        logging.debug("Couldn't find any empty samples to remove.")
+    for name, idx in (("feature", 0), ("sample", 1)):
+        diff = filtered_table.shape[idx] - biom_table.shape[idx]
+        if diff > 0:
+            logging.debug("Removed {} empty {}(s).".format(name, diff))
+        else:
+            logging.debug(
+                "Couldn't find any empty {}s to remove.".format(name)
+            )
 
     return filtered_table
 

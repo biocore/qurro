@@ -9,7 +9,7 @@ from qurro._df_utils import (
     ensure_df_headers_unique,
     validate_df,
     replace_nan,
-    remove_empty_samples,
+    remove_empty,
 )
 
 
@@ -241,7 +241,7 @@ def test_replace_nan():
 
 
 def get_test_data():
-    """Returns test data for the remove_empty_samples() tests."""
+    """Returns test data for the remove_empty() tests."""
     feature_ids = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"]
     sample_ids = ["Sample1", "Sample2", "Sample3", "Sample4"]
     table_data = np.array(
@@ -255,8 +255,8 @@ def get_test_data():
     return table_data, feature_ids, sample_ids
 
 
-def test_remove_empty_samples_basic():
-    """Tests remove_empty_samples() in the simple cases of removing 0, 1, and 2
+def test_remove_empty_basic():
+    """Tests remove_empty() in the simple cases of removing 0, 1, and 2
        empty sample(s).
     """
 
@@ -264,7 +264,7 @@ def test_remove_empty_samples_basic():
     data, fids, sids = get_test_data()
     table = biom.Table(data, fids, sids)
     # Check that, when none of the samples are empty, nothing is changed.
-    ftable = remove_empty_samples(table).to_dataframe()
+    ftable = remove_empty(table).to_dataframe()
     assert_frame_equal(ftable, table.to_dataframe())
 
     # TRY REMOVING 1 SAMPLE
@@ -272,7 +272,7 @@ def test_remove_empty_samples_basic():
     data[0][2] = 0
     table = biom.Table(data, fids, sids)
     # Check that just the one empty sample (Sample3) was removed.
-    ftable = remove_empty_samples(table).to_dataframe()
+    ftable = remove_empty(table).to_dataframe()
     assert_array_equal(ftable["Sample1"], data[:, 0])
     assert_array_equal(ftable["Sample2"], data[:, 1])
     assert_array_equal(ftable["Sample4"], data[:, 3])
@@ -284,7 +284,7 @@ def test_remove_empty_samples_basic():
     # Now, zero out Sample4 (it only has one count in F4)
     data[3][3] = 0
     table = biom.Table(data, fids, sids)
-    ftable = remove_empty_samples(table).to_dataframe()
+    ftable = remove_empty(table).to_dataframe()
     assert_array_equal(ftable["Sample1"], data[:, 0])
     assert_array_equal(ftable["Sample2"], data[:, 1])
     assert "Sample3" not in ftable.columns
@@ -293,10 +293,10 @@ def test_remove_empty_samples_basic():
     assert len(ftable.index) == len(fids) == 8
 
 
-def test_remove_empty_samples_allempty():
-    """Tests remove_empty_samples() when all samples in the table are empty."""
+def test_remove_empty_allempty():
+    """Tests remove_empty() when all samples in the table are empty."""
 
     _, feature_ids, sample_ids = get_test_data()
     table = biom.Table(np.zeros(32).reshape(8, 4), feature_ids, sample_ids)
     with pytest.raises(ValueError):
-        remove_empty_samples(table)
+        remove_empty(table)
