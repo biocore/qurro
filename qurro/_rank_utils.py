@@ -191,9 +191,15 @@ def filter_unextreme_features(
         features_to_preserve |= set(upper_extrema)
         features_to_preserve |= set(lower_extrema)
 
-    # Also filter ranks. Fortunately, DataFrame.filter() makes this easy.
-    filtered_ranks = ranks.filter(items=features_to_preserve, axis="index")
-    filtered_table = table.filter(items=features_to_preserve, axis="index")
+    # Now, we actually filter the feature ranks and table. We do this using
+    # .loc[]. I benchmarked it, and .loc was about 1.77x as fast as .filter --
+    # >>> df = pd.SparseDataFrame(np.zeros(34000000).reshape(17000, 2000))
+    # >>> %timeit df.loc[set([16990, 8983, 8982])]
+    # 460 ms +/- 17.6 ms per loop
+    # >>> %timeit df.filter(items=set([16990, 8983, 8982]), axis="index")
+    # 818 ms +/- 25.6 ms per loop
+    filtered_ranks = ranks.loc[features_to_preserve]
+    filtered_table = table.loc[features_to_preserve]
 
     logging.debug("Output table has shape {}.".format(filtered_table.shape))
     logging.debug(
