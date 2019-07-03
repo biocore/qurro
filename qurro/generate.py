@@ -71,18 +71,19 @@ def process_input(
           missing values are represented consistently with a None (which
           will be represented as a null in JSON/JavaScript).
 
-       3. Converts the BIOM table to a SparseDataFrame by calling
+       3. Calls filter_unextreme_features() on the BIOM table and feature ranks
+          using the provided extreme_feature_count. (If it's None, then nothing
+          will be done.)
+
+       4. Calls remove_empty_samples() to filter samples without any counts for
+          any features from the BIOM table. This is purposefully done *after*
+          filter_unextreme_features() is called.
+
+       5. Converts the BIOM table to a SparseDataFrame by calling
           biom_table_to_sparse_df().
 
-       4. Matches up the table with the feature ranks and sample metadata by
-          calling match_table_and_data().
-
-       5. Calls filter_unextreme_features() using the provided
-          extreme_feature_count. (If it's None, then nothing will be done.)
-
-       6. Calls remove_empty_samples() to filter samples without any counts for
-          any features. This is purposefully done *after*
-          filter_unextreme_features() is called.
+       6. Matches up the table SparseDataFrame with the feature ranks and
+          sample metadata DataFrames by calling match_table_and_data().
 
        7. Calls merge_feature_metadata() on the feature ranks and feature
           metadata. (If feature metadata is None, nothing will be done.)
@@ -90,26 +91,28 @@ def process_input(
        Returns
        -------
        output_metadata: pd.DataFrame
-            Sample metadata, but matched with the table and with empty samples
-            removed.
+            Sample metadata, but matched with the table (i.e. empty and/or
+            unsupported-in-the-table samples have been removed).
 
-       filtered_ranks: pd.DataFrame
-            Feature ranks, post-filtering and with feature metadata columns
-            added in.
+       output_ranks: pd.DataFrame
+            Feature ranks, post-filtering (if specified) and with feature
+            metadata columns added in.
 
        ranking_ids
-            The ranking columns' names in filtered_ranks.
+            The ranking columns' names in output_ranks.
 
        feature_metadata_cols: list
-            The feature metadata columns' names in filtered_ranks.
+            The feature metadata columns' names in output_ranks.
 
        output_table: pd.SparseDataFrame
-            The BIOM table, post matching with the feature ranks and sample
-            metadata and with empty samples removed.
+            The BIOM table, after filtering extreme features (if specified),
+            after removing empty samples, and after matching with the feature
+            ranks and sample metadata.
     """
 
     logging.debug("Starting processing input.")
 
+    # 1. Validate DataFrames.
     validate_df(feature_ranks, "feature ranks", 2, 1)
     validate_df(sample_metadata, "sample metadata", 1, 1)
     if feature_metadata is not None:
@@ -122,27 +125,39 @@ def process_input(
         #   2) column names are unique
         validate_df(feature_metadata, "feature metadata", 0, 1)
 
-    # Replace NaN values (which both _metadata_utils.read_metadata_file() and
-    # qiime2.Metadata use to represent missing values, i.e. ""s) with None --
-    # this is generally easier for us to handle in the JS side of things (since
-    # it'll just be consistently converted to null by json.dumps()).
+    # 2. Replace NaN with None in metadata DataFrames.
+    #
+    # Both _metadata_utils.read_metadata_file() and qiime2.Metadata use NaN
+    # to represent missing values, i.e. ""s. Using None is generally easier for
+    # us to handle in the JS side of things (since it'll just be consistently
+    # converted to null by json.dumps()).
     sample_metadata = replace_nan(sample_metadata)
     if feature_metadata is not None:
         feature_metadata = replace_nan(feature_metadata)
 
+    # 3. Call filter_unextreme_features().
+    #
     # Note that although we always call filter_unextreme_features(), filtering
     # isn't necessarily always done (whether or not depends on the value of
     # extreme_feature_count and the contents of the table/ranks).
-    filtered_biom_table, filtered_ranks = filter_unextreme_features(
+    feature_filtered_biom_table, filtered_ranks = filter_unextreme_features(
         biom_table, feature_ranks, extreme_feature_count
     )
 
-    # Filter now-empty samples from the BIOM table.
-    filtered_biom_table = remove_empty_samples(filtered_biom_table)
+    # 4. Filter (now-)empty samples from the BIOM table.
+    filtered_biom_table = remove_empty_samples(feature_filtered_biom_table)
 
+    # 5. Convert the BIOM table to a SparseDataFrame.
     unmatched_table = biom_table_to_sparse_df(filtered_biom_table)
 
-    # Match up the table with the feature ranks and sample metadata.
+    # 6. Match up the table with the feature ranks and sample metadata.
+    #
+    # Note that we delay doing this until we've already done some filtering --
+    # this is because matching the indices of two DataFrames can be a
+    # computationally expensive operation if both DFs' indices are really
+    # large. For gigantic datasets with indices that are on the order of
+    # hundreds of thousands, it makes things faster to do filtering before
+    # matching.
     output_table, output_metadata = match_table_and_data(
         unmatched_table, filtered_ranks, sample_metadata
     )
@@ -150,6 +165,7 @@ def process_input(
     # Save a list of ranking IDs (before we add in feature metadata)
     ranking_ids = filtered_ranks.columns
 
+    # 7. Merge feature metadata (if passed) into feature rankings data.
     output_ranks, feature_metadata_cols = merge_feature_metadata(
         filtered_ranks, feature_metadata
     )

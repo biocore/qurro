@@ -178,6 +178,10 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
        this is totally fine. However, errors may be raised if the opposite is
        true; see the "Raises" section below for details.
 
+       This function assumes that "table" has been filtered to have unextreme
+       features removed (if requested), and has also had empty samples removed
+       afterwards.
+
        Parameters
        ----------
 
@@ -251,15 +255,15 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     # least one sample is supported by the BIOM table.
     if m_sample_metadata.shape[0] < 1:
         raise ValueError(
-            "None of the samples in the sample metadata file "
-            "are present in the BIOM table."
+            "Couldn't find any (non-empty) samples from the sample metadata "
+            "file in the BIOM table."
         )
 
     dropped_sample_ct = sample_metadata.shape[0] - m_sample_metadata.shape[0]
     if dropped_sample_ct > 0:
-        print(
-            "NOTE: {} sample(s) in the sample metadata file were not "
-            "present in the BIOM table, and have been removed from the "
+        logging.warning(
+            "NOTE: {} sample(s) in the sample metadata file were either empty "
+            "or not present in the BIOM table, and have been removed from the "
             "visualization.".format(dropped_sample_ct)
         )
     # We return the transpose of the transposed table, so the table should have
