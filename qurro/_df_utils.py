@@ -308,11 +308,6 @@ def merge_feature_metadata(feature_ranks, feature_metadata=None):
        ValueError: if column name(s) are shared between the feature ranks and
                    feature metadata DataFrames. See #55 for context.
     """
-    # If the user passed in feature metadata corresponding to taxonomy
-    # information, then we use that to update the feature data to include
-    # that metadata. Feature metadata will be represented as additional fields
-    # for each feature in the rank plot. (This can help out in the searching
-    # part of the visualization, but it isn't necessary.)
     feature_metadata_cols = []
     if feature_metadata is not None:
         try:
@@ -326,6 +321,7 @@ def merge_feature_metadata(feature_ranks, feature_metadata=None):
                 right_index=True,
                 suffixes=(False, False),
             )
+            output_feature_data = replace_nan(output_feature_data)
         except ValueError:
             # It might be possible to figure out a way to handle this sort of
             # situation automatically, but unless it becomes a problem I'm ok
