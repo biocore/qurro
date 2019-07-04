@@ -7,6 +7,7 @@ from qurro._df_utils import (
     validate_df,
     replace_nan,
     remove_empty_samples,
+    merge_feature_metadata,
 )
 
 
@@ -255,3 +256,52 @@ def test_remove_empty_samples_allempty():
     table["Sample4"] = np.zeros(len(table.index))
     with pytest.raises(ValueError):
         ftable, fmetadata = remove_empty_samples(table, metadata)
+
+
+def test_merge_feature_metadata():
+
+    ranks = DataFrame({"R1": [1, 2], "R2": [2, 1]}, index=["F1", "F2"])
+    fm = DataFrame(
+        {"FM1": [None, None], "FM2": [1, 2], "FM3": [8, 7]}, index=["F1", "F2"]
+    )
+    # When feature metadata is None, the ranks DF should stay the same.
+    result = merge_feature_metadata(ranks, None)
+    assert_frame_equal(ranks, result[0])
+    assert result[1] == []
+
+    # Check that this works properly in the normal case
+    expected = ranks.copy()
+    expected["FM1"] = [None, None]
+    expected["FM2"] = [1, 2]
+    expected["FM3"] = [8, 7]
+    result = merge_feature_metadata(ranks, fm)
+    assert_frame_equal(expected, result[0], check_dtype=False)
+    assert (result[1] == ["FM1", "FM2", "FM3"]).all()
+
+    # Check that this works properly when not all features match up exactly
+    # (F3 isn't in ranks, and F2 isn't in fm. So F2 should just have None for
+    # all feature metadata fields.)
+    fm.index = ["F1", "F3"]
+    expected = ranks.copy()
+    expected["FM1"] = [None, None]
+    expected["FM2"] = [1, None]
+    expected["FM3"] = [8, None]
+    result = merge_feature_metadata(ranks, fm)
+    assert_frame_equal(expected, result[0], check_dtype=False)
+    assert (result[1] == ["FM1", "FM2", "FM3"]).all()
+
+    # Check that this works properly when no features match up exactly
+    fm.index = ["F3", "F4"]
+    expected = ranks.copy()
+    expected["FM1"] = [None, None]
+    expected["FM2"] = [None, None]
+    expected["FM3"] = [None, None]
+    result = merge_feature_metadata(ranks, fm)
+    assert_frame_equal(expected, result[0], check_dtype=False)
+    assert (result[1] == ["FM1", "FM2", "FM3"]).all()
+
+    # Check that this raises an error if feature metadata and ranking columns
+    # are not distinct
+    fm.columns = ["FM1", "R2", "FM3"]
+    with pytest.raises(ValueError):
+        merge_feature_metadata(ranks, fm)
