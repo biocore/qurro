@@ -222,7 +222,7 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
        If all of the samples described in sample_metadata are not present
        in the table, this will raise a ValueError.
     """
-    logging.debug("Starting matching table with feature rankings.")
+    logging.debug("Starting matching table with feature ranks.")
     featurefiltered_table, m_feature_ranks = table.align(
         feature_ranks, axis="index", join="inner"
     )
