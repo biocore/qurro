@@ -25,7 +25,8 @@
 - Added citation instructions and some small documentation fixes to the README
 - Fixed a typo in the license (forgot to update this when we renamed the tool
   to "Qurro" a few weeks ago)
-- Cleaned up some of Qurro's basic documentation (in its `setup.py`, etc.).
+- Cleaned up/updated some of Qurro's basic documentation (in its `setup.py`,
+  example Jupyter Notebooks, etc.).
 - Updated the screenshot used in the README.
 - Various improvements to Qurro's code and tests.
 
