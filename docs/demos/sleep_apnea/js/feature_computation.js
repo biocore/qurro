@@ -95,18 +95,23 @@ define(function() {
 
     /* Given a list of feature "rows", a string of input "ranks," and a feature
      * metadata field, returns a list of all features that contain a taxonomic
-     * rank that matches a rank in the input.
+     * rank that matches a rank in the input. (The input(s) and things being
+     * searched for don't actually have to refer to taxonomic ranks, but this
+     * functionality was designed for use with taxonomy strings -- the problem
+     * it addresses is when one taxonomic rank contains another rank's name,
+     * e.g. "Staphylococcus_phage" showing up in normal search results for
+     * "Staphylococcus".)
      *
      * First, we throw the input text through textToRankArray() above to
-     * get a list of taxonomic ranks in the input.
+     * get a list of separated text fragments in the input.
      *
      * Next, we go through the features one-by-one. Each feature's value for
-     * the specified feature metadata field will be split up by semicolons
-     * into an array. We then search for exact matches (not just
+     * the specified feature metadata field will be split up using
+     * textToRankArray(). We then search for exact matches (not just
      * "does this contain the input text," like in textFilterFeatures(), but
      * "is this exactly equal to the input text?"), and return a list of
-     * all features where at least one taxonomic rank matched the input
-     * rank(s).
+     * all features where at least one separated text fragment matched the
+     * input text fragment(s).
      */
     function rankFilterFeatures(
         featureRowList,

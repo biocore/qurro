@@ -22,6 +22,10 @@
 - Removed an unused JS file from Qurro's `support_files/`. This change should
   decrease the size of Qurro's generated visualizations by a small amount.
 ### Miscellaneous 
+- Changed the search type menus to be a bit more clear about what they're doing
+  under the hood:
+    - `contains the text` --> `contains the exact text`
+    - `contains the exact taxonomic rank(s)` --> `contains the exact separated text fragment(s)`
 - Added citation instructions and some small documentation fixes to the README
 - Fixed a typo in the license (forgot to update this when we renamed the tool
   to "Qurro" a few weeks ago)
