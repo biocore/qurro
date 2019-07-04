@@ -11,16 +11,6 @@ import logging
 import pandas as pd
 
 
-def matchdf(df1, df2):
-    """Filters both DataFrames to just the rows of their shared indices.
-
-       Derived from gneiss.util.match() (https://github.com/biocore/gneiss).
-    """
-
-    idx = set(df1.index) & set(df2.index)
-    return df1.loc[idx], df2.loc[idx]
-
-
 def ensure_df_headers_unique(df, df_name):
     """Raises an error if the index or columns of the DataFrame aren't unique.
 
@@ -193,6 +183,14 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             should correspond to observations (i.e. features), and the columns
             should correspond to samples.
 
+            Note that the input BIOM table might contain features or samples
+            that are not included in feature_ranks or sample_metadata,
+            respectively -- this is totally fine. The opposite, though, is
+            where things get to be a problem: if any of the features in
+            feature_ranks are not present in the table, or if all of the
+            samples in sample_metadata are not in the table, then this will
+            raise errors.
+
        feature_ranks: pd.DataFrame
             A DataFrame describing features' "ranks" along ranking(s). The
             index of this DataFrame should correspond to feature IDs, and the
@@ -224,14 +222,10 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
        If all of the samples described in sample_metadata are not present
        in the table, this will raise a ValueError.
     """
-    logging.debug("Starting matching table with feature/sample data.")
-    # Match features to BIOM table, and then match samples to BIOM table.
-    # This should bring us to a point where every feature/sample is
-    # supported in the BIOM table. (Note that the input BIOM table might
-    # contain features or samples that are not included in feature_ranks or
-    # sample_metadata, respectively -- this is totally fine. The opposite,
-    # though, is a big no-no.)
-    featurefiltered_table, m_feature_ranks = matchdf(table, feature_ranks)
+    logging.debug("Starting matching table with feature rankings.")
+    featurefiltered_table, m_feature_ranks = table.align(
+        feature_ranks, axis="index", join="inner"
+    )
     logging.debug("Matching table with feature ranks done.")
     # Ensure that every ranked feature was present in the BIOM table. Raise an
     # error if this isn't the case.
@@ -250,10 +244,23 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             )
         )
 
-    m_table_transpose, m_sample_metadata = matchdf(
-        featurefiltered_table.T, sample_metadata
+    # We transpose the sample metadata instead of the actual table because
+    # transposing in pandas, at least from some personal testing, can be really
+    # expensive for huge (EMP-scale) DataFrames. Since sample metadata will
+    # generally be smaller than the actual table, we transpose that.
+    logging.debug(
+        "Temporarily transposing sample metadata to make matching easier."
+    )
+    sample_metadata_transposed = sample_metadata.T
+    logging.debug("Transposing done.")
+    logging.debug("Starting matching table with (tranposed) sample metadata.")
+    m_table, m_sample_metadata_transposed = featurefiltered_table.align(
+        sample_metadata_transposed, axis="columns", join="inner"
     )
     logging.debug("Matching table with sample metadata done.")
+    logging.debug("Transposing sample metadata again to reset it.")
+    m_sample_metadata = m_sample_metadata_transposed.T
+    logging.debug("Transposing done.")
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
     if m_sample_metadata.shape[0] < 1:
@@ -269,10 +276,7 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             "present in the BIOM table, and have been removed from the "
             "visualization.".format(dropped_sample_ct)
         )
-    # We return the transpose of the transposed table, so the table should have
-    # the same "orientation" (i.e. columns are samples, rows (indices) are
-    # features) as the input table.
-    return m_table_transpose.T, m_sample_metadata
+    return m_table, m_sample_metadata
 
 
 def merge_feature_metadata(feature_ranks, feature_metadata=None):
