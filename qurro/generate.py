@@ -150,6 +150,7 @@ def process_input(
     )
 
     # Save a list of ranking IDs (before we add in feature metadata)
+    # TODO: just have merge_feature_metadata() give us this?
     ranking_ids = filtered_ranks.columns
 
     filtered_ranks, feature_metadata_cols = merge_feature_metadata(
@@ -290,35 +291,20 @@ def gen_sample_plot(table, metadata):
     JSON describing altair.Chart for the sample plot.
     """
 
+    sample_metadata = metadata.copy()
+
     # Used to set color
-    default_metadata_col = metadata.columns[0]
+    default_metadata_col = sample_metadata.columns[0]
 
     # Since we don't bother setting a default log ratio, we set the balance for
-    # every sample to NaN so that Altair will filter them out (producing an
-    # empty scatterplot by default, which makes sense). I guess None would
-    # also work here.
-    # TODO just make a new column in a vectorized operation, no need to merge
-    balance = pd.Series(index=table.index).fillna(float("nan"))
-    df_balance = pd.DataFrame({"qurro_balance": balance})
-    # At this point, df_balance is a DataFrame with its index as sample IDs
-    # and one column ("qurro_balance", which is solely NaNs).
-    # We know that df_balance and metadata's indices should match up since we
-    # already matched the BIOM table and metadata.
-    # (Use of (False, False) means that if metadata contains a column called
-    # qurro_balance, this will throw an error.)
-    try:
-        sample_metadata = pd.merge(
-            df_balance,
-            metadata,
-            left_index=True,
-            right_index=True,
-            suffixes=(False, False),
-        )
-    except ValueError:
-        print(
+    # every sample to None so that Vega* will filter them out (producing an
+    # empty scatterplot by default, which makes sense).
+    if "qurro_balance" in sample_metadata.columns:
+        raise ValueError(
             "Sample metadata can't contain any columns called qurro_balance."
             "Try changing the name of this column."
         )
+    sample_metadata["qurro_balance"] = None
 
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
     # First we rename the index "Sample ID", just on the off chance that
@@ -353,12 +339,12 @@ def gen_sample_plot(table, metadata):
                 axis=alt.Axis(labelAngle=-45),
             ),
             alt.Y(
-                "qurro_balance",
+                "qurro_balance:Q",
                 title="log(Numerator / Denominator)",
                 type="quantitative",
             ),
             color=alt.Color(default_metadata_col, type="nominal"),
-            tooltip=["Sample ID", "qurro_balance"],
+            tooltip=["Sample ID:N", "qurro_balance:Q"],
         )
         .configure_range(
             ramp=alt.SchemeConfig(scheme="blues"),
