@@ -283,8 +283,8 @@ def gen_sample_plot(table, metadata):
 
     Arguments:
 
-    table: pandas DataFrame describing feature abundances for each sample.
-    metadata: pandas DataFrame describing metadata for each sample.
+    table: (Sparse)DataFrame representation of the processed BIOM table.
+    metadata: DataFrame describing metadata for each sample.
 
     Returns:
 
@@ -364,7 +364,12 @@ def gen_sample_plot(table, metadata):
     # contains sample metadata), and 2) the feature counts per sample (which
     # will be stored separately from the sample plot JSON in order to not hit
     # performance too terribly).
-    return sample_chart_dict, table.to_dict()
+    # TODO: There isn't really a need for us to take the transpose of the table
+    # here, aside from that just being the format we expect the count JSON to
+    # be in in the tests/JS side of things. In theory it should be doable to
+    # just reverse this, so that we don't have to deal with the costs of taking
+    # the transpose of the table here.
+    return sample_chart_dict, table.T.to_dict()
 
 
 def gen_visualization(
@@ -385,15 +390,15 @@ def gen_visualization(
             needed when calling q2templates.render().
     """
 
-    table_t = processed_table.T
-
     # https://altair-viz.github.io/user_guide/faq.html#disabling-maxrows
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
     logging.debug("Generating sample plot JSON.")
-    sample_plot_json, count_json = gen_sample_plot(table_t, df_sample_metadata)
+    sample_plot_json, count_json = gen_sample_plot(
+        processed_table, df_sample_metadata
+    )
     logging.debug("Finished generating both plots.")
     os.makedirs(output_dir, exist_ok=True)
     # copy files for the visualization
