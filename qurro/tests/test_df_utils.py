@@ -6,7 +6,7 @@ from qurro._df_utils import (
     ensure_df_headers_unique,
     validate_df,
     replace_nan,
-    remove_empty_samples,
+    remove_empty_samples_and_features,
     merge_feature_metadata,
 )
 
@@ -170,9 +170,10 @@ def test_replace_nan():
 
 
 def get_test_data():
-    """Returns a test table and metadata DataFrame.
+    """Returns test table, metadata, and ranks DataFrames.
 
-       Mostly copied from get_test_data() in test_filter_unextreme_features.
+       Mostly based on/copied from get_test_data() in
+       test_filter_unextreme_features.
     """
     feature_ids = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"]
     table = DataFrame(
@@ -193,27 +194,39 @@ def get_test_data():
         },
         index=list(table.columns)[:],
     )
-    return table, metadata
+    ranks = DataFrame(
+        {
+            "Rank 0": [1, 2, 3, 4, 5, 6, 7, 8],
+            "Rank 1": [8, 7, 6, 5, 4, 3, 2, 1],
+        },
+        index=list(table.index)[:],
+    )
+    return table, metadata, ranks
 
 
-def test_remove_empty_samples_basic():
-    """Tests remove_empty_samples() in the simple cases of removing 0, 1, and 2
-       empty sample(s).
+def test_remove_empty_samples_and_features_samples():
+    """Tests remove_empty_samples_and_features() in the simple cases of
+       removing 0, 1, and 2 empty sample(s).
     """
 
     # TRY REMOVING 0 SAMPLES
-    table, metadata = get_test_data()
+    table, metadata, ranks = get_test_data()
     # Check that, when none of the samples are empty, nothing is changed.
-    ftable, fmetadata = remove_empty_samples(table, metadata)
+    ftable, fmetadata, franks = remove_empty_samples_and_features(
+        table, metadata, ranks
+    )
     assert_frame_equal(ftable, table)
     assert_frame_equal(fmetadata, metadata)
+    assert_frame_equal(franks, ranks)
 
     # TRY REMOVING 1 SAMPLE
     # Zero out Sample3 (it only has one count, for F1)
     table["Sample3"]["F1"] = 0
     # Check that just the one empty sample (Sample3) was removed, from both the
     # table and the sample metadata.
-    ftable, fmetadata = remove_empty_samples(table, metadata)
+    ftable, fmetadata, franks = remove_empty_samples_and_features(
+        table, metadata, ranks
+    )
     assert_series_equal(ftable["Sample1"], table["Sample1"])
     assert_series_equal(ftable["Sample2"], table["Sample2"])
     assert_series_equal(ftable["Sample4"], table["Sample4"])
@@ -228,10 +241,14 @@ def test_remove_empty_samples_basic():
     assert len(fmetadata.index) == 3
     assert len(fmetadata.columns) == len(metadata.columns) == 4
 
+    assert_frame_equal(franks, ranks)
+
     # TRY REMOVING 2 SAMPLES
     # Now, zero out Sample4 (it only has one count in F4)
     table["Sample4"]["F4"] = 0
-    ftable, fmetadata = remove_empty_samples(table, metadata)
+    ftable, fmetadata, franks = remove_empty_samples_and_features(
+        table, metadata, ranks
+    )
     assert_series_equal(ftable["Sample1"], table["Sample1"])
     assert_series_equal(ftable["Sample2"], table["Sample2"])
     assert "Sample3" not in ftable.columns
@@ -245,17 +262,92 @@ def test_remove_empty_samples_basic():
     assert "Sample4" not in fmetadata.index
     assert len(fmetadata.index) == 2
 
+    assert_frame_equal(franks, ranks)
 
-def test_remove_empty_samples_allempty():
-    """Tests remove_empty_samples() when all samples in the table are empty."""
 
-    table, metadata = get_test_data()
+def test_remove_empty_samples_and_features_features():
+    """Tests remove_empty_samples_and_features() in the simple cases of
+       removing 1 and then 2 empty feature(s).
+    """
+
+    table, metadata, ranks = get_test_data()
+    # Zero out F8
+    table.loc["F8"] = 0
+    ftable, fmetadata, franks = remove_empty_samples_and_features(
+        table, metadata, ranks
+    )
+    assert_frame_equal(fmetadata, metadata)
+    # Check that F8 was removed from the table and ranks
+
+    def check(new, old):
+        assert_frame_equal(new.iloc[0:7], old.iloc[0:7])
+        assert "F8" not in new.index
+        assert len(new.index) == 7
+
+    check(ftable, table)
+    check(franks, ranks)
+
+    # Zero out F6, also
+    table.loc["F6"] = 0
+    ftable, fmetadata, franks = remove_empty_samples_and_features(
+        table, metadata, ranks
+    )
+    assert_frame_equal(fmetadata, metadata)
+    # Check that F1 through F5 (and F7) are still the same
+
+    def check2(new, old):
+        assert_frame_equal(new.iloc[0:5], old.iloc[0:5])
+        assert_series_equal(new.loc["F7"], old.loc["F7"])
+        assert "F6" not in new.index
+        assert len(new.index) == 6
+
+    check2(ftable, table)
+    check2(franks, ranks)
+
+
+def test_remove_empty_samples_and_features_both():
+    """Tests remove_empty_samples_and_features() when both samples and features
+       are empty.
+    """
+
+    table, metadata, ranks = get_test_data()
+    # Zero out F8 and F7
+    table.loc["F8"] = 0
+    table.loc["F7"] = 0
+    # Zero out Sample2 and Sample4
+    table["Sample2"] = 0
+    table["Sample4"] = 0
+    ftable, fmetadata, franks = remove_empty_samples_and_features(
+        table, metadata, ranks
+    )
+
+    assert "F8" not in ftable.index
+    assert "F7" not in ftable.index
+    assert "F8" not in franks.index
+    assert "F7" not in franks.index
+    assert "Sample2" not in ftable.columns
+    assert "Sample4" not in ftable.columns
+    assert "Sample2" not in fmetadata.index
+    assert "Sample4" not in fmetadata.index
+    assert_frame_equal(
+        ftable, table[set(["Sample1", "Sample3"])].iloc[0:6], check_like=True
+    )
+    assert_frame_equal(
+        fmetadata, metadata.loc[set(["Sample1", "Sample3"])], check_like=True
+    )
+    assert_frame_equal(franks, ranks.iloc[0:6])
+
+
+def test_remove_empty_samples_and_features_allempty():
+    """Tests remove_empty_samples_and_features() on an empty table."""
+
+    table, metadata, ranks = get_test_data()
     table["Sample1"] = np.zeros(len(table.index))
     table["Sample2"] = np.zeros(len(table.index))
     table["Sample3"] = np.zeros(len(table.index))
     table["Sample4"] = np.zeros(len(table.index))
     with pytest.raises(ValueError):
-        ftable, fmetadata = remove_empty_samples(table, metadata)
+        remove_empty_samples_and_features(table, metadata, ranks)
 
 
 def test_merge_feature_metadata():

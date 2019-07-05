@@ -26,7 +26,7 @@ from qurro._df_utils import (
     replace_nan,
     validate_df,
     biom_table_to_sparse_df,
-    remove_empty_samples,
+    remove_empty_samples_and_features,
     match_table_and_data,
     merge_feature_metadata,
 )
@@ -80,8 +80,8 @@ def process_input(
        5. Calls filter_unextreme_features() using the provided
           extreme_feature_count. (If it's None, then nothing will be done.)
 
-       6. Calls remove_empty_samples() to filter samples without any counts for
-          any features. This is purposefully done *after*
+       6. Calls remove_empty_samples_and_features() to filter empty samples
+          (and features). This is purposefully done *after*
           filter_unextreme_features() is called.
 
        7. Calls merge_feature_metadata() on the feature ranks and feature
@@ -93,15 +93,15 @@ def process_input(
             Sample metadata, but matched with the table and with empty samples
             removed.
 
-       filtered_ranks: pd.DataFrame
+       output_ranks: pd.DataFrame
             Feature ranks, post-filtering and with feature metadata columns
             added in.
 
        ranking_ids
-            The ranking columns' names in filtered_ranks.
+            The ranking columns' names in output_ranks.
 
        feature_metadata_cols: list
-            The feature metadata columns' names in filtered_ranks.
+            The feature metadata columns' names in output_ranks.
 
        output_table: pd.SparseDataFrame
             The BIOM table, post matching with the feature ranks and sample
@@ -144,23 +144,23 @@ def process_input(
         m_table, feature_ranks, extreme_feature_count
     )
 
-    # Filter now-empty samples from the BIOM table.
-    output_table, output_metadata = remove_empty_samples(
-        filtered_table, m_sample_metadata
+    # Filter now-empty samples (and empty features) from the BIOM table.
+    output_table, output_metadata, u_ranks = remove_empty_samples_and_features(
+        filtered_table, m_sample_metadata, filtered_ranks
     )
 
     # Save a list of ranking IDs (before we add in feature metadata)
     # TODO: just have merge_feature_metadata() give us this?
-    ranking_ids = filtered_ranks.columns
+    ranking_ids = u_ranks.columns
 
-    filtered_ranks, feature_metadata_cols = merge_feature_metadata(
-        filtered_ranks, feature_metadata
+    output_ranks, feature_metadata_cols = merge_feature_metadata(
+        u_ranks, feature_metadata
     )
 
     logging.debug("Finished input processing.")
     return (
         output_metadata,
-        filtered_ranks,
+        output_ranks,
         ranking_ids,
         feature_metadata_cols,
         output_table,
