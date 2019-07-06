@@ -19,6 +19,8 @@
 ### Performance enhancements
 - Significant speedups on how the input data is filtered and matched.
   ([#172](https://github.com/fedarko/qurro/issues/172))
+- Now, empty features are removed from Qurro visualizations (in addition to
+  empty samples). This has affected the Byrd et al. demo.
 - Removed an unused JS file from Qurro's `support_files/`. This change should
   decrease the size of Qurro's generated visualizations by a small amount.
 ### Miscellaneous 

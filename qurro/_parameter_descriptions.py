@@ -8,8 +8,8 @@
 
 TABLE = (
     "A BIOM table describing the abundances of the ranked features in "
-    "samples. Note that samples without any observed features will be "
-    "removed from the Qurro visualization."
+    "samples. Note that empty samples and features will be removed from the "
+    "Qurro visualization."
 )
 
 EXTREME_FEATURE_COUNT = (
