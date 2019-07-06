@@ -9,7 +9,11 @@ from qiime2.plugins import qurro as q2qurro
 import qurro.scripts._plot as rrvp
 from qurro._rank_utils import read_rank_file
 from qurro._metadata_utils import read_metadata_file
-from qurro._df_utils import replace_nan
+from qurro._df_utils import (
+    replace_nan,
+    match_table_and_data,
+    biom_table_to_sparse_df,
+)
 from qurro._json_utils import get_jsons
 
 
@@ -204,7 +208,7 @@ def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
 
     # Validate plot JSONs
     if validate_jsons:
-        validate_rank_plot_json(rloc, rank_json)
+        validate_rank_plot_json(tloc, sloc, rloc, rank_json)
         validate_sample_plot_json(tloc, sloc, sample_json, count_json)
 
     return rank_json, sample_json, count_json
@@ -242,12 +246,27 @@ def basic_vegalite_json_validation(json_obj):
     assert json_obj["$schema"].endswith(".json")
 
 
-def validate_rank_plot_json(input_ranks_loc, rank_json):
+def validate_rank_plot_json(
+    biom_table_loc, metadata_loc, input_ranks_loc, rank_json
+):
     """Ensure that the rank plot JSON makes sense."""
 
     # TODO check that feature metadata annotations were properly applied to the
     # features. Will need the feature metadata file location to be passed here
+
     ref_feature_ranks = read_rank_file(input_ranks_loc)
+
+    # Load the table as a Sparse DF, and then match it up with the sample
+    # metadata. This is needed in order to ensure that the table only describes
+    # samples in the sample metadata.
+    # (And the reason we do *that* is so that, when we're trying to figure out
+    # if a feature is "empty," we can just compute the sum of that feature's
+    # row in the table -- which we couldn't do if the table contained samples
+    # that would be filtered out in Qurro.)
+    table = biom_table_to_sparse_df(load_table(biom_table_loc))
+    sample_metadata = read_metadata_file(metadata_loc)
+    table, _ = match_table_and_data(table, ref_feature_ranks, sample_metadata)
+
     # Validate some basic properties of the plot
     # (This is all handled by Altair, so these property tests aren't
     # exhaustive; they're mainly intended to verify that a general plot
@@ -255,12 +274,6 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
     assert rank_json["mark"] == "bar"
     assert rank_json["title"] == "Feature Ranks"
     basic_vegalite_json_validation(rank_json)
-    dn = rank_json["data"]["name"]
-    # Check that we have the same count of ranked features as in the
-    # input ranks file (no ranked features should be dropped during the
-    # generation process unless -x is passed, which it isn't in any of these
-    # integration tests)
-    assert len(rank_json["datasets"][dn]) == len(ref_feature_ranks)
 
     # Loop over every feature in the reference feature ranks. Check that each
     # feature's corresponding rank data in the rank plot JSON matches.
@@ -270,6 +283,13 @@ def validate_rank_plot_json(input_ranks_loc, rank_json):
     )
 
     for ref_feature_id in ref_feature_ranks.index:
+        # If this feature is empty, it should have been filtered!
+        if sum(table.loc[ref_feature_id]) == 0:
+            assert ref_feature_id not in rank_json_feature_data
+            continue
+        # ...If this feature isn't empty, though, it shouldn't have been
+        # filtered. (We assume that the user didn't pass in -x in this test.)
+        #
         # Check to make sure that this feature ID is actually in the rank plot
         # JSON
         assert ref_feature_id in rank_json_feature_data
@@ -305,6 +325,11 @@ def validate_sample_plot_json(
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
+    # NOTE: here we make the assumption that all samples are non-empty.
+    # If we start using integration test data with empty samples, then we'll
+    # need to revise this function to do something akin to what
+    # validate_rank_plot_json() does above to ensure that empty features are
+    # filtered out.
     sample_metadata = replace_nan(read_metadata_file(metadata_loc))
     for sample in sample_json["datasets"][dn]:
 
