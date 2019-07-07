@@ -372,3 +372,29 @@ def merge_feature_metadata(feature_ranks, feature_metadata=None):
         output_feature_data = feature_ranks
 
     return output_feature_data, feature_metadata_cols
+
+
+def sparsify_count_dict(count_dict):
+    """Returns a "sparse" representation of a dict of counts data.
+
+       We expect that the input dict is of the format {feature ID: {sample ID:
+       count, sample 2 ID: count, ...}, ...}. In theory you could also totally
+       pass in a transposed dict here (where samples are the "outer layer" of
+       the dict), but the variable names would need to be flipped to make this
+       function make sense. (See #175 on GitHub for context.)
+
+       Anyway, this function returns the input dict, but without references to
+       0-count samples for a given feature. (Since we filter out empty
+       features, we expect that every feature should have at least one sample
+       with a nonzero count of that feature.)
+    """
+    sparse_count_dict = {}
+    for feature_id, sample_counts in count_dict.items():
+        # This will be the new sample_counts dict for this feature ID, but only
+        # containing sample IDs with nonzero counts.
+        fdict = {}
+        for sample_id, count in sample_counts.items():
+            if count != 0:
+                fdict[sample_id] = count
+        sparse_count_dict[feature_id] = fdict
+    return sparse_count_dict

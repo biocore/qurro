@@ -8,6 +8,7 @@ from qurro._df_utils import (
     replace_nan,
     remove_empty_samples_and_features,
     merge_feature_metadata,
+    sparsify_count_dict,
 )
 
 
@@ -397,3 +398,32 @@ def test_merge_feature_metadata():
     fm.columns = ["FM1", "R2", "FM3"]
     with pytest.raises(ValueError):
         merge_feature_metadata(ranks, fm)
+
+
+def test_sparsify_count_dict():
+
+    # Test that it works in basic case
+    test_cts = {
+        "Feature 1": {"Sample 1": 0, "Sample 2": 3, "Sample 3": 0},
+        "Feature 2": {"Sample 1": 2, "Sample 2": 4, "Sample 3": 0},
+    }
+    assert sparsify_count_dict(test_cts) == {
+        "Feature 1": {"Sample 2": 3},
+        "Feature 2": {"Sample 1": 2, "Sample 2": 4},
+    }
+
+    # Test that it works even when the data is inherently dense (i.e. no zeros)
+    test_cts = {
+        "Feature 1": {"Sample 1": 1, "Sample 2": 3, "Sample 3": 5},
+        "Feature 2": {"Sample 1": 2, "Sample 2": 4, "Sample 3": 6},
+    }
+    assert sparsify_count_dict(test_cts) == test_cts
+
+    # Test that it works even when the data is totally sparse
+    # This should never happen, since we filter out empty features, but good to
+    # be sure
+    test_cts = {
+        "Feature 1": {"Sample 1": 0, "Sample 2": 0, "Sample 3": 0},
+        "Feature 2": {"Sample 1": 0, "Sample 2": 0, "Sample 3": 0},
+    }
+    assert sparsify_count_dict(test_cts) == {"Feature 1": {}, "Feature 2": {}}
