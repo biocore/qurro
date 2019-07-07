@@ -27,8 +27,7 @@ from qurro._df_utils import escape_columns
     "-r",
     "--ranks",
     required=True,
-    help="Differentials output from songbird or Ordination output"
-    + " from DEICODE.",
+    help="Feature differentials or a biplot OrdinationResults.",
 )
 @click.option("-t", "--table", required=True, help=TABLE)
 @click.option(
@@ -38,7 +37,14 @@ from qurro._df_utils import escape_columns
     "-sm", "--sample-metadata", required=True, help="Sample metadata file."
 )
 @click.option(
-    "-o", "--output-dir", required=True, help="Location of output files."
+    "-o",
+    "--output-dir",
+    required=True,
+    help=(
+        "Directory to write the HTML/JS/... files defining a Qurro "
+        "visualization to. If this directory already exists, "
+        "files/directories already within it will be overwritten if necessary."
+    ),
 )
 @click.option(
     "-x",

@@ -16,6 +16,11 @@
   Altair. (In practice this wasn't causing any problems, since Altair converts
   NaN values to None values, but Qurro should at least be more internally
   consistent now.)
+- Changed the behavior of how Qurro (when run outside of QIIME 2) writes out
+  files. Now, existing files/directories in the specified `-o`/`--output-dir`
+  will be overwritten if necessary (previously, individual files would be
+  overwritten but directories would cause an error to be thrown).
+  ([#79](https://github.com/fedarko/qurro/issues/79))
 ### Performance enhancements
 - Now, Qurro's JavaScript code uses a sparse representation of the count data
   (previously it used a dense represntation). For inherently sparse datasets
