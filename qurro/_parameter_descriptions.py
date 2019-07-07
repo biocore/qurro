@@ -20,7 +20,9 @@ EXTREME_FEATURE_COUNT = (
     "running Qurro normally might take a long amount of "
     "time or crash due to memory limits. This value must be at least 1, and "
     "must be an integer. Note that samples without any observed features "
-    "after this filtering step will be removed from the Qurro visualization."
+    "after this filtering step will be removed from the Qurro visualization, "
+    "as will features without any observations in samples (even features that "
+    'were not filtered due to being sufficiently "extreme").'
 )
 
 ASSUME_GNPS_FEATURE_METADATA = (
