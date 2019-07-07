@@ -152,54 +152,44 @@ def remove_empty_samples_and_features(
     """
     logging.debug("Attempting to remove empty samples and features.")
 
+    # Filter out empty samples (columns) and features (rows) from the table
+    # This approach based on https://stackoverflow.com/a/21165116/10730311.
+    neq_0 = table_sdf != 0
+    filtered_table = table_sdf.loc[
+        neq_0.any(axis="columns"), neq_0.any(axis="index")
+    ]
+
     # If the table only contains zeros, then attempting to drop all empty
-    # samples and/or features would result in a 0x0 DataFrame. Therefore, we
-    # just raise a ValueError in this case.
-    if (table_sdf == 0).all().all():
+    # samples and/or features results in a 0x0 DataFrame. We raise a ValueError
+    # in this case.
+    if filtered_table.empty:
         raise ValueError("The table is empty.")
 
-    # Filter out empty samples
-    # Basically, we compute each cell in the table table to a bool (True if !=
-    # 0, False if == 0). Then we just find all the columns (samples) with at
-    # least one True value, and filter the table to just those columns.
-    neq_zero = table_sdf != 0
-    nonempty_samples = []
-    for sample in table_sdf.columns:
-        if neq_zero[sample].any():
-            nonempty_samples.append(sample)
-
-    samplefiltered_table = table_sdf.filter(
-        items=nonempty_samples, axis="columns"
-    )
-    filtered_metadata = sample_metadata_df.filter(
-        items=nonempty_samples, axis="index"
-    )
-
-    # Filter out empty features
-    # Same method as above, but operating on rows (features) instead of on
-    # columns (samples).
-    neq_zero = samplefiltered_table != 0
-    nonempty_features = []
-    for feature in samplefiltered_table.index:
-        if neq_zero.loc[feature].any():
-            nonempty_features.append(feature)
-
-    filtered_table = samplefiltered_table.filter(
-        items=nonempty_features, axis="index"
-    )
-    filtered_ranks = feature_ranks_df.filter(
-        items=nonempty_features, axis="index"
-    )
-
     # Let user know about which samples/features may have been dropped, if any.
+    # And, if we filtered out any samples or features, filter the sample
+    # metadata and feature ranks (respectively) to match (this is just done by
+    # aligning them to the filtered table).
+    filtered_metadata = sample_metadata_df
+    filtered_ranks = feature_ranks_df
+
     sample_diff = len(table_sdf.columns) - len(filtered_table.columns)
     if sample_diff > 0:
+        # As with match_table_and_data, we have to transpose the sample
+        # metadata in order to align it with the table (since samples are
+        # stored as columns in the table but as indices in the sample metadata)
+        sm_t = sample_metadata_df.T
+        filtered_metadata = filtered_table.align(
+            sm_t, join="inner", axis="columns"
+        )[1].T
         logging.debug("Removed {} empty sample(s).".format(sample_diff))
     else:
         logging.debug("Couldn't find any empty samples.")
 
     feature_diff = len(table_sdf.index) - len(filtered_table.index)
     if feature_diff > 0:
+        filtered_ranks = filtered_table.align(
+            feature_ranks_df, join="inner", axis="index"
+        )[1]
         logging.debug("Removed {} empty feature(s).".format(feature_diff))
     else:
         logging.debug("Couldn't find any empty features.")

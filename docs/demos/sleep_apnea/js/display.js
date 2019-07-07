@@ -970,7 +970,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             var dataName = samplePlotSpec.data.name;
             var sid;
             for (var s = 0; s < samplePlotSpec.datasets[dataName].length; s++) {
-                sid = samplePlotSpec.datasets[dataName][s]["Sample ID"]
+                sid = samplePlotSpec.datasets[dataName][s]["Sample ID"];
                 if (sid !== undefined) {
                     sampleIDs.push(sid);
                 }
@@ -1059,8 +1059,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
             this.validateSampleID(sampleID);
-            var topCt = this.getCount(this.newFeatureHigh["Feature ID"], sampleID);
-            var botCt = this.getCount(this.newFeatureLow["Feature ID"], sampleID);
+            var topCt = this.getCount(
+                this.newFeatureHigh["Feature ID"],
+                sampleID
+            );
+            var botCt = this.getCount(
+                this.newFeatureLow["Feature ID"],
+                sampleID
+            );
             return feature_computation.computeBalance(topCt, botCt);
         }
 
