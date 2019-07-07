@@ -331,7 +331,7 @@ def test_remove_empty_samples_and_features_both():
     assert "Sample2" not in fmetadata.index
     assert "Sample4" not in fmetadata.index
     assert_frame_equal(
-        ftable, table[set(["Sample1", "Sample3"])].iloc[0:6], check_like=True
+        ftable, table[["Sample1", "Sample3"]].iloc[0:6], check_like=True
     )
     assert_frame_equal(
         fmetadata, metadata.loc[set(["Sample1", "Sample3"])], check_like=True
