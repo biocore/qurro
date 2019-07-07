@@ -17,10 +17,19 @@
   NaN values to None values, but Qurro should at least be more internally
   consistent now.)
 ### Performance enhancements
+- Now, Qurro's JavaScript code uses a sparse representation of the count data
+  (previously it used a dense represntation). For inherently sparse datasets
+  (like many microbiome datasets), this should result in faster loading times
+  in the browser (as well as smaller Qurro visualizations).
+  ([#58](https://github.com/fedarko/qurro/issues/58))
 - Significant speedups on how the input data is filtered and matched.
   ([#172](https://github.com/fedarko/qurro/issues/172))
 - Now, empty features are removed from Qurro visualizations (in addition to
-  empty samples). This has affected the Byrd et al. demo.
+  empty samples). Similarly to the sparsity change above, this should make
+  Qurro visualizations load faster in the browser, decrease their filesizes,
+  and reduce the amount of features on the rank plot (for datasets containing
+  empty features). This has affected the Byrd et al. demo.
+  ([#171](https://github.com/fedarko/qurro/issues/171))
 - Removed an unused JS file from Qurro's `support_files/`. This change should
   decrease the size of Qurro's generated visualizations by a small amount.
 ### Miscellaneous 
