@@ -51,12 +51,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.botFeatures = undefined;
 
             // Used when looking up a feature's count.
-            this.feature_cts = countJSON;
+            this.featureCts = countJSON;
             // Used when searching through features.
-            this.feature_ids = Object.keys(this.feature_cts);
+            this.featureIDs = Object.keys(this.featureCts);
 
             // Just a list of all sample IDs.
-            var sampleIDs = Object.keys(this.feature_cts[this.feature_ids[0]]);
+            var sampleIDs = Object.keys(this.featureCts[this.featureIDs[0]]);
             // Used when letting the user know how many samples are present in
             // the sample plot.
             // Note that we need to use Object.keys() in order to be able to
@@ -208,7 +208,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // view/select.
                 // TODO: make this a separate func so we can unit-test it
                 if (
-                    this.feature_ids.length <=
+                    this.featureIDs.length <=
                     this.rankPlotJSON.config.view.width
                 ) {
                     document.getElementById("barSize").value = "fit";
@@ -411,7 +411,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // Not 100% sure this is optimal.
                 newBarSize =
                     this.rankPlotJSON.config.view.width /
-                    this.feature_ids.length;
+                    this.featureIDs.length;
             } else {
                 newBarSize = parseInt(newSizeType);
             }
@@ -995,7 +995,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * python side of things.)
          */
         validateSampleID(sampleID) {
-            if (this.feature_cts[this.feature_ids[0]][sampleID] === undefined) {
+            if (this.featureCts[this.featureIDs[0]][sampleID] === undefined) {
                 throw new Error("Invalid sample ID: " + sampleID);
             }
         }
@@ -1009,7 +1009,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.validateSampleID(sampleID);
             var abundance = 0;
             for (var t = 0; t < features.length; t++) {
-                abundance += this.feature_cts[features[t]["Feature ID"]][
+                abundance += this.featureCts[features[t]["Feature ID"]][
                     sampleID
                 ];
             }
@@ -1025,10 +1025,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
             this.validateSampleID(sampleID);
-            var topCt = this.feature_cts[this.newFeatureHigh["Feature ID"]][
+            var topCt = this.featureCts[this.newFeatureHigh["Feature ID"]][
                 sampleID
             ];
-            var botCt = this.feature_cts[this.newFeatureLow["Feature ID"]][
+            var botCt = this.featureCts[this.newFeatureLow["Feature ID"]][
                 sampleID
             ];
             return feature_computation.computeBalance(topCt, botCt);
