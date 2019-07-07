@@ -37,6 +37,20 @@
   under the hood:
     - `contains the text` --> `contains the exact text`
     - `contains the exact taxonomic rank(s)` --> `contains the exact separated text fragment(s)`
+- Previously, the `Export currently used data` button would only export
+  information about samples with valid current log ratios (however, samples
+  with invalid metadata fields were still included). This behavior has been
+  changed so that all samples -- regardless of their log ratio or other fields'
+  validity -- are included in the .tsv output.
+  ([#176](https://github.com/fedarko/qurro/issues/176))
+    - Also, the exported sample data will now include field information about
+      the sample plot's current color field in addition to the sample plot's
+      current x-axis field.
+    - Furthermore, redundant fields are now shown in the exported data -- so
+      if you set the x-axis and color fields for the sample plot to both be
+      `Sample ID`, you'll see three `Sample ID` columns in the exported data.
+    - The button's name has also been changed to `Export sample data`, to make
+      its behavior clearer.
 - Added citation instructions and some small documentation fixes to the README
 - Fixed a typo in the license (forgot to update this when we renamed the tool
   to "Qurro" a few weeks ago)
