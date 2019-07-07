@@ -49,6 +49,8 @@
     - Furthermore, redundant fields are now shown in the exported data -- so
       if you set the x-axis and color fields for the sample plot to both be
       `Sample ID`, you'll see three `Sample ID` columns in the exported data.
+    - Note that invalid log ratios (as well as empty/missing metadata fields,
+      as before) will be shown as `null` values in the exported sample data.
     - The button's name has also been changed to `Export sample data`, to make
       its behavior clearer.
 - Added citation instructions and some small documentation fixes to the README
