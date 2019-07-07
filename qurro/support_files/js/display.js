@@ -1094,15 +1094,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * getSamplePlotData().
          */
         exportData() {
-            var currMetadataField = this.samplePlotJSON.encoding.x.field;
-            var tsv = this.getSamplePlotData(currMetadataField);
-            if (tsv.length > 0) {
-                dom_utils.downloadDataURI(
-                    "rrv_sample_plot_data.tsv",
-                    tsv,
-                    true
-                );
-            }
+            var tsv = this.getSamplePlotData(
+                this.samplePlotJSON.encoding.x.field,
+                this.samplePlotJSON.encoding.color.field
+            );
+            dom_utils.downloadDataURI("rrv_sample_plot_data.tsv", tsv, true);
             // Also I guess export feature IDs somehow.
             // TODO go through this.topFeatures and this.botFeatures; convert
             // from two arrays to a string, where each feature is separated by
@@ -1125,6 +1121,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * (https://www.python.org/dev/peps/pep-0305/).
          */
         static quoteTSVFieldIfNeeded(t) {
+            // Use of regex .test() with \s per
+            // https://stackoverflow.com/a/1731200/10730311
             if (typeof t === "string" && /\s|"/g.test(t)) {
                 // If the first argument of .replace() is just a string, only
                 // the first match will be changed. Using a regex with the g
@@ -1143,48 +1141,32 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * have a qurro_balance attribute of null -- then this just returns an
          * empty string.
          */
-        getSamplePlotData(currMetadataField) {
-            var outputTSV = "Sample_ID\tLog_Ratio";
-            var uniqueMetadata = true;
-            if (
-                currMetadataField !== "Sample ID" &&
-                currMetadataField !== "qurro_balance"
-            ) {
-                outputTSV +=
-                    "\t" + RRVDisplay.quoteTSVFieldIfNeeded(currMetadataField);
-            } else {
-                uniqueMetadata = false;
-            }
+        getSamplePlotData(currXField, currColorField) {
+            var outputTSV =
+                '"Sample ID"\tCurrent_Log_Ratio\t' +
+                RRVDisplay.quoteTSVFieldIfNeeded(currXField) +
+                "\t" +
+                RRVDisplay.quoteTSVFieldIfNeeded(currColorField);
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
             // (Note that changeSamplePlot() causes updates to samples'
             // qurro_balance properties, so we don't have to use the
             // samplePlotView)
             var data = this.samplePlotJSON.datasets[dataName];
-            var currBalance;
-            var currSampleID;
-            var currMetadataValue;
-            var atLeastOnePointDrawn = false;
+            var currSampleID, currXValue, currColorValue;
             for (var i = 0; i < data.length; i++) {
-                currBalance = data[i].qurro_balance;
-                if (currBalance !== null) {
-                    atLeastOnePointDrawn = true;
-                    currSampleID = RRVDisplay.quoteTSVFieldIfNeeded(
-                        data[i]["Sample ID"]
-                    );
-                    // Use of regex .test() with \s per
-                    // https://stackoverflow.com/a/1731200/10730311
-                    outputTSV += "\n" + currSampleID + "\t" + currBalance;
-                    if (uniqueMetadata) {
-                        currMetadataValue = RRVDisplay.quoteTSVFieldIfNeeded(
-                            data[i][currMetadataField]
-                        );
-                        outputTSV += "\t" + currMetadataValue;
-                    }
-                }
-            }
-            if (!atLeastOnePointDrawn) {
-                return "";
+                currSampleID = RRVDisplay.quoteTSVFieldIfNeeded(
+                    data[i]["Sample ID"]
+                );
+                outputTSV +=
+                    "\n" + currSampleID + "\t" + String(data[i].qurro_balance);
+                currXValue = RRVDisplay.quoteTSVFieldIfNeeded(
+                    String(data[i][currXField])
+                );
+                currColorValue = RRVDisplay.quoteTSVFieldIfNeeded(
+                    String(data[i][currColorField])
+                );
+                outputTSV += "\t" + currXValue + "\t" + currColorValue;
             }
             return outputTSV;
         }

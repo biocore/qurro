@@ -20,21 +20,41 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
         after(async function() {
             await rrv.destroy(true, true, true);
         });
-        it('Returns "" when no sample points are "drawn"', function() {
-            // set balances to null, mimicking the state of the JSON before any
-            // features have been selected
-            for (
-                var i = 0;
-                i < rrv.samplePlotJSON.datasets[dataName].length;
-                i++
-            ) {
-                rrv.samplePlotJSON.datasets[dataName][i].qurro_balance = null;
-            }
-            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata1"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata2"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("Metadata3"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("qurro_balance"));
-            chai.assert.isEmpty(rrv.getSamplePlotData("Sample ID"));
+        it("Works properly even when all samples' balances are null", function() {
+            before(function() {
+                // set balances to null, mimicking the state of the JSON before any
+                // features have been selected
+                for (
+                    var i = 0;
+                    i < rrv.samplePlotJSON.datasets[dataName].length;
+                    i++
+                ) {
+                    rrv.samplePlotJSON.datasets[dataName][
+                        i
+                    ].qurro_balance = null;
+                }
+            });
+            var expectedTSV =
+                '"Sample ID"\tCurrent_Log_Ratio\tMetadata1\tMetadata1\n' +
+                "Sample1\tnull\t1\t1\n" +
+                "Sample2\tnull\t4\t4\n" +
+                "Sample3\tnull\t7\t7\n" +
+                "Sample5\tnull\t13\t13\n" +
+                "Sample6\tnull\t16\t16\n" +
+                "Sample7\tnull\t19\t19";
+            var outputTSV = rrv.getSamplePlotData("Metadata1", "Metadata1");
+            chai.assert.equal(expectedTSV, outputTSV);
+
+            var expectedTSV2 =
+                '"Sample ID"\tCurrent_Log_Ratio\tMetadata1\t"Sample ID"\n' +
+                "Sample1\tnull\t1\tSample1\n" +
+                "Sample2\tnull\t4\tSample2\n" +
+                "Sample3\tnull\t7\tSample3\n" +
+                "Sample5\tnull\t13\tSample5\n" +
+                "Sample6\tnull\t16\tSample6\n" +
+                "Sample7\tnull\t19\tSample7";
+            var outputTSV2 = rrv.getSamplePlotData("Metadata1", "Sample ID");
+            chai.assert.equal(expectedTSV2, outputTSV2);
         });
         describe("Works properly when balances are directly set", function() {
             /* Update sample plot balances directly.
@@ -51,27 +71,29 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6.5;
                 rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
             });
-            it("Works properly when a normal metadata category set as x-axis", function() {
+            it("Works properly when normal metadata categories used", function() {
                 var expectedTSV =
-                    "Sample_ID\tLog_Ratio\tMetadata1\n" +
-                    "Sample1\t1\t1\n" +
-                    "Sample3\t3\t7\n" +
-                    "Sample6\t6.5\t16\n" +
-                    "Sample7\t7\t19";
-                var outputTSV = rrv.getSamplePlotData("Metadata1");
+                    '"Sample ID"\tCurrent_Log_Ratio\tMetadata1\tMetadata3\n' +
+                    "Sample1\t1\t1\t3\n" +
+                    "Sample2\tnull\t4\t6\n" +
+                    "Sample3\t3\t7\t9\n" +
+                    "Sample5\tnull\t13\t15\n" +
+                    "Sample6\t6.5\t16\t18\n" +
+                    "Sample7\t7\t19\t21";
+                var outputTSV = rrv.getSamplePlotData("Metadata1", "Metadata3");
                 chai.assert.equal(expectedTSV, outputTSV);
             });
-            it("Works properly when qurro_balance or sample ID is set as x-axis", function() {
+            it("Works properly when sample ID is used", function() {
                 var expectedTSV =
-                    "Sample_ID\tLog_Ratio\n" +
-                    "Sample1\t1\n" +
-                    "Sample3\t3\n" +
-                    "Sample6\t6.5\n" +
-                    "Sample7\t7";
-                var outputTSV = rrv.getSamplePlotData("qurro_balance");
+                    '"Sample ID"\tCurrent_Log_Ratio\t"Sample ID"\t"Sample ID"\n' +
+                    "Sample1\t1\tSample1\tSample1\n" +
+                    "Sample2\tnull\tSample2\tSample2\n" +
+                    "Sample3\t3\tSample3\tSample3\n" +
+                    "Sample5\tnull\tSample5\tSample5\n" +
+                    "Sample6\t6.5\tSample6\tSample6\n" +
+                    "Sample7\t7\tSample7\tSample7";
+                var outputTSV = rrv.getSamplePlotData("Sample ID", "Sample ID");
                 chai.assert.equal(expectedTSV, outputTSV);
-                var outputTSV2 = rrv.getSamplePlotData("Sample ID");
-                chai.assert.equal(expectedTSV, outputTSV2);
             });
         });
         // TODO: Ideally we'd test this by selecting features, but this
