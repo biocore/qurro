@@ -65,7 +65,7 @@ Certain characters in column names in the the sample metadata, feature metadata,
 | `.`  | `:`  |
 | `]`  | `)`  |
 | `[`  | `(`  |
-| `'`, `"`, or `\ `  | `|`  |
+| `'`, `"`, or `\ `  | <code>\|</code>  |
 
 This is due to some downstream issues with handling these sorts of characters
 in field names. See [this issue](https://github.com/fedarko/qurro/issues/66)
