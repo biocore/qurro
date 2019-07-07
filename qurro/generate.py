@@ -424,14 +424,11 @@ def gen_visualization(
 
     # Write the plot and count JSONs to main.js so that they're loaded when
     # this Qurro visualization starts up
-    main_loc = os.path.join(support_files_loc, "main.js")
-    output_loc = os.path.join(output_dir, "main.js")
     exit_code = replace_js_json_definitions(
-        main_loc,
+        os.path.join(output_dir, "main.js"),
         rank_plot_json,
         sample_plot_json,
         count_json,
-        output_file_loc=output_loc,
     )
     if exit_code != 0:
         raise ValueError("Wasn't able to replace JSONs and write to main.js.")
