@@ -17,7 +17,7 @@
 import os
 import logging
 
-from shutil import copyfile, copytree
+from distutils.dir_util import copy_tree
 import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
@@ -395,43 +395,35 @@ def gen_visualization(
 
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
-    logging.debug("Generating sample plot JSON.")
+    logging.debug("Generating sample plot (and count data) JSONs.")
     sample_plot_json, count_json = gen_sample_plot(
         processed_table, df_sample_metadata
     )
-    logging.debug("Finished generating both plots.")
-    os.makedirs(output_dir, exist_ok=True)
-    # copy files for the visualization
-    loc_ = os.path.dirname(os.path.realpath(__file__))
-    # NOTE: We can just join loc_ with support_files/, since support_files/ is
-    # located within the same directory as generate.py. Previously (when this
-    # code was contained in q2/_method.py and scripts/_plot.py), I joined loc_
-    # with .. and then with support_files since we had to first navigate up to
-    # the directory containing generate.py and support_files/. Now, we don't
-    # have to do that any more.
-    support_files_loc = os.path.join(loc_, "support_files")
-    index_path = None
-    for file_ in os.listdir(support_files_loc):
-        if file_ != ".DS_Store":
-            copy_func = copyfile
-            # If we hit a directory in support_files/, just copy the entire
-            # directory to our destination using shutil.copytree()
-            if os.path.isdir(os.path.join(support_files_loc, file_)):
-                copy_func = copytree
-            copy_func(
-                os.path.join(support_files_loc, file_),
-                os.path.join(output_dir, file_),
-            )
-        if file_ == "index.html":
-            index_path = os.path.join(output_dir, file_)
+    logging.debug("Finished generating all JSONs.")
 
-    if index_path is None:
-        # This should never happen -- assuming Qurro has been installed
-        # fully, i.e. with a complete set of support_files/ -- but we handle it
-        # here just in case.
-        raise FileNotFoundError("Couldn't find index.html in support_files/")
+    # Copy support_files/ for the Qurro visualization to the output directory
+    # First, identify the location of this particular file (generate.py).
+    curr_loc = os.path.dirname(os.path.realpath(__file__))
+    # Next, join curr_loc with support_files/, since support_files/ is located
+    # within the same directory as this fiile (generate.py).
+    support_files_loc = os.path.join(curr_loc, "support_files")
+    # Finally, actually do the copying (saving the index path for future use)
+    # We explictly ignore files starting with a period, like .DS_STORE. It's ok
+    # if these files make their way into the output directory -- they shouldn't
+    # mess anything up -- but there's no need to include them.
 
-    # create JS code that loads these JSON files in main.js
+    # copy_tree() creates the output directory if it doesn't already exist.
+    # (When Qurro is running as a QIIME 2 plugin, output_dir already exists and
+    # we need to write stuff to it -- this is because output_dir is actually a
+    # temporary folder that QIIME 2 creates.)
+    # NOTE: Use of copy_tree() instead of shutil.copytree() (which throws an
+    # error if output_dir already exists) is based on how
+    # emperor.core.copy_support_files() works.
+    copy_tree(support_files_loc, output_dir)
+    index_path = os.path.join(output_dir, "index.html")
+
+    # Write the plot and count JSONs to main.js so that they're loaded when
+    # this Qurro visualization starts up
     main_loc = os.path.join(support_files_loc, "main.js")
     output_loc = os.path.join(output_dir, "main.js")
     exit_code = replace_js_json_definitions(
