@@ -13,6 +13,7 @@ requirejs.config({
         test_dom_utils: "tests/test_dom_utils",
         test_filter_features: "tests/test_filter_features",
         test_identify_metadata_columns: "tests/test_identify_metadata_columns",
+        test_identify_sample_ids: "tests/test_identify_sample_ids",
         test_data_export: "tests/test_data_export",
         test_rrvdisplay: "tests/test_rrvdisplay",
         test_rrvdisplay_compute_balance:
@@ -58,6 +59,7 @@ requirejs(
         "test_dom_utils",
         "test_filter_features",
         "test_identify_metadata_columns",
+        "test_identify_sample_ids",
         "test_data_export",
         "test_rrvdisplay",
         "test_rrvdisplay_compute_balance",
@@ -81,6 +83,7 @@ requirejs(
         test_dom_utils,
         test_filter_features,
         test_identify_metadata_columns,
+        test_identify_sample_ids,
         test_data_export,
         test_rrvdisplay,
         test_rrvdisplay_compute_balance,

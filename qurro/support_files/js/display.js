@@ -53,22 +53,22 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Used when looking up a feature's count.
             this.featureCts = countJSON;
             // Used when searching through features.
+            // Since we filtered out empty features in the python side of
+            // things, we know that every feature should be represented in the
+            // count JSON's keys.
             this.featureIDs = Object.keys(this.featureCts);
 
             // Just a list of all sample IDs.
-            var sampleIDs = Object.keys(this.featureCts[this.featureIDs[0]]);
+            this.sampleIDs = RRVDisplay.identifySampleIDs(samplePlotJSON);
             // Used when letting the user know how many samples are present in
             // the sample plot.
-            // Note that we need to use Object.keys() in order to be able to
-            // figure out how many entries are in the sampleIDs list; see
-            // https://stackoverflow.com/a/6700/10730311
-            this.sampleCount = sampleIDs.length;
+            this.sampleCount = this.sampleIDs.length;
 
             // a mapping from "reason" (i.e. "balance", "xAxis", "color") to
             // list of dropped sample IDs.
             //
-            // "balance" maps to sampleIDs right now because all samples have a
-            // null balance starting off.
+            // "balance" maps to this.sampleIDs right now because all samples
+            // have a null balance starting off.
             //
             // NOTE: xAxis and color might already exclude some samples from
             // being shown in the default categorical encoding. Their
@@ -76,7 +76,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // dom_utils.updateMainSampleShownDiv() will be called (so the
             // nulls will be replaced with actual lists).
             this.droppedSamples = {
-                balance: sampleIDs,
+                balance: this.sampleIDs,
                 xAxis: null,
                 color: null
             };
@@ -964,6 +964,20 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
+        static identifySampleIDs(samplePlotSpec) {
+            // Like identifyMetadataColumns(), but just finds sample IDs.
+            var sampleIDs = [];
+            var dataName = samplePlotSpec.data.name;
+            var sid;
+            for (var s = 0; s < samplePlotSpec.datasets[dataName].length; s++) {
+                sid = samplePlotSpec.datasets[dataName][s]["Sample ID"];
+                if (sid !== undefined) {
+                    sampleIDs.push(sid);
+                }
+            }
+            return sampleIDs;
+        }
+
         static identifyMetadataColumns(samplePlotSpec) {
             // Given a Vega-Lite sample plot specification, find all the metadata cols.
             // Just uses whatever the first available sample's keys are as a
@@ -995,8 +1009,30 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * python side of things.)
          */
         validateSampleID(sampleID) {
-            if (this.featureCts[this.featureIDs[0]][sampleID] === undefined) {
+            if (!this.sampleIDs.includes(sampleID)) {
                 throw new Error("Invalid sample ID: " + sampleID);
+            }
+        }
+
+        /* Gets count data from the featureCts object. This uses a sparse
+         * storage method, so only samples with a nonzero count for a given
+         * feature are contained in that feature's entry.
+         *
+         * So, if the "entry" for a sample for a feature in featureCts is falsy
+         * (i.e. undefined, but could also be false, 0, "", null, or NaN --
+         * none of these should ever occur in the count JSON but if they do
+         * that should also be indicative of a zero count [1]), then we
+         * consider that sample's count to be 0. Otherwise, we just return the
+         * entry.
+         *
+         * [1] See https://developer.mozilla.org/en-US/docs/Glossary/Truthy
+         */
+        getCount(featureID, sampleID) {
+            var putativeCount = this.featureCts[featureID][sampleID];
+            if (putativeCount) {
+                return putativeCount;
+            } else {
+                return 0;
             }
         }
 
@@ -1009,9 +1045,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.validateSampleID(sampleID);
             var abundance = 0;
             for (var t = 0; t < features.length; t++) {
-                abundance += this.featureCts[features[t]["Feature ID"]][
-                    sampleID
-                ];
+                abundance += this.getCount(features[t]["Feature ID"], sampleID);
             }
             return abundance;
         }
@@ -1025,12 +1059,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         updateBalanceSingle(sampleRow) {
             var sampleID = sampleRow["Sample ID"];
             this.validateSampleID(sampleID);
-            var topCt = this.featureCts[this.newFeatureHigh["Feature ID"]][
+            var topCt = this.getCount(
+                this.newFeatureHigh["Feature ID"],
                 sampleID
-            ];
-            var botCt = this.featureCts[this.newFeatureLow["Feature ID"]][
+            );
+            var botCt = this.getCount(
+                this.newFeatureLow["Feature ID"],
                 sampleID
-            ];
+            );
             return feature_computation.computeBalance(topCt, botCt);
         }
 

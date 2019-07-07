@@ -29,6 +29,7 @@ from qurro._df_utils import (
     remove_empty_samples_and_features,
     match_table_and_data,
     merge_feature_metadata,
+    sparsify_count_dict,
 )
 
 
@@ -360,16 +361,15 @@ def gen_sample_plot(table, metadata):
     # able to successfully use alt.MarkDef in the alt.Chart definition above.)
     sample_chart_dict = sample_chart.to_dict()
     sample_chart_dict["mark"] = {"type": "circle"}
+    # Sparsify the table's count data in order to cut down on the size of
+    # main.js and make the Qurro visualization load faster.
+    count_dict = table.T.to_dict()
+    sparse_count_dict = sparsify_count_dict(count_dict)
     # Return the JSONs as dicts for 1) the sample plot JSON (which only
-    # contains sample metadata), and 2) the feature counts per sample (which
-    # will be stored separately from the sample plot JSON in order to not hit
-    # performance too terribly).
-    # TODO: There isn't really a need for us to take the transpose of the table
-    # here, aside from that just being the format we expect the count JSON to
-    # be in in the tests/JS side of things. In theory it should be doable to
-    # just reverse this, so that we don't have to deal with the costs of taking
-    # the transpose of the table here.
-    return sample_chart_dict, table.T.to_dict()
+    # contains sample metadata), and 2) the sparsified sample counts per
+    # feature (which will be stored separately from the sample plot JSON in
+    # the hopes of not hitting performance too terribly).
+    return sample_chart_dict, sparse_count_dict
 
 
 def gen_visualization(
