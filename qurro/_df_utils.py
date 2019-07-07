@@ -378,6 +378,7 @@ def sparsify_count_dict(count_dict):
        features, we expect that every feature should have at least one sample
        with a nonzero count of that feature.)
     """
+    logging.debug("Sparsifying count data.")
     sparse_count_dict = {}
     for feature_id, sample_counts in count_dict.items():
         # This will be the new sample_counts dict for this feature ID, but only
@@ -387,4 +388,5 @@ def sparsify_count_dict(count_dict):
             if count != 0:
                 fdict[sample_id] = count
         sparse_count_dict[feature_id] = fdict
+    logging.debug("Done sparsifying count data.")
     return sparse_count_dict
