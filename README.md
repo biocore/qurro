@@ -58,11 +58,18 @@ A python version of at least 3.5 is required to use Qurro.
 
 ### Temporary Caveat
 
-**Please make sure that your sample metadata fields do not contain any period or
-square bracket characters (`.[]`).** This is due to Vega-Lite's special treatment
-of these characters. (Eventually Qurro should be able to handle this
-accordingly, but in the meantime this is a necessary fix.) See
-[this issue](https://github.com/fedarko/qurro/issues/66) for context.
+Certain characters in column names in the the sample metadata, feature metadata, and feature differentials (if passed) will be replaced with similar characters:
+
+| Old Character(s) | New Character |
+| ------------- | ------------- |
+| `.`  | `:`  |
+| `]`  | `)`  |
+| `[`  | `(`  |
+| `'`, `"`, or `\ `  | `|`  |
+
+This is due to some downstream issues with handling these sorts of characters
+in field names. See [this issue](https://github.com/fedarko/qurro/issues/66)
+for context.
 
 ### Integration with metabolomics feature metadata
 
