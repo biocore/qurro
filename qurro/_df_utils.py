@@ -411,19 +411,19 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
 
     if "qurro_balance" in sm_cols:
         raise ValueError(
-            "Sample metadata can't contain any columns called qurro_balance."
-            "{}".format(sugg)
+            "Sample metadata can't contain any columns called "
+            '"qurro_balance".{}'.format(sugg)
         )
 
     if "qurro_classification" in fr_cols or "qurro_classification" in fm_cols:
         raise ValueError(
             "Feature rankings/metadata can't contain any columns called "
-            "qurro_classification.{}".format(sugg)
+            '"qurro_classification".{}'.format(sugg)
         )
 
     if len(set(fr_cols) & set(fm_cols)) > 0:
         raise ValueError(
-            "Column names for the feature metadata and feature ranks should "
-            "be distinct. Try creating a copy of your feature metadata with "
+            "Column names for the feature metadata and feature ranks must be "
+            "distinct. Try creating a copy of your feature metadata with "
             "identical columns renamed, and use that with Qurro."
         )
