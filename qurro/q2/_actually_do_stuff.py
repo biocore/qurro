@@ -23,11 +23,15 @@ def create_q2_visualization(
     logging.debug("Starting create_q2_visualization().")
     df_feature_metadata = None
     if feature_metadata is not None:
-        df_feature_metadata = escape_columns(feature_metadata.to_dataframe())
-    df_sample_metadata = escape_columns(sample_metadata.to_dataframe())
+        df_feature_metadata = escape_columns(
+            feature_metadata.to_dataframe(), "feature metadata"
+        )
+    df_sample_metadata = escape_columns(
+        sample_metadata.to_dataframe(), "sample metadata"
+    )
     logging.debug("Converted metadata to DataFrames.")
 
-    feature_ranks = escape_columns(feature_ranks)
+    feature_ranks = escape_columns(feature_ranks, "feature ranks")
 
     index_path = process_and_generate(
         feature_ranks,

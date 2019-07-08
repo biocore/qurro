@@ -93,7 +93,9 @@ def plot(
     logging.debug("Starting the standalone rrv script.")
     loaded_biom = load_table(table)
     logging.debug("Loaded BIOM table.")
-    df_sample_metadata = escape_columns(read_metadata_file(sample_metadata))
+    df_sample_metadata = escape_columns(
+        read_metadata_file(sample_metadata), "sample metadata"
+    )
     feature_ranks = read_rank_file(ranks)
 
     df_feature_metadata = None
@@ -104,7 +106,7 @@ def plot(
             )
         else:
             df_feature_metadata = escape_columns(
-                read_metadata_file(feature_metadata)
+                read_metadata_file(feature_metadata), "feature metadata"
             )
     logging.debug("Read in metadata.")
 

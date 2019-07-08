@@ -83,14 +83,14 @@ def fix_id(fid):
     return new_id
 
 
-def escape_columns(df):
+def escape_columns(df, df_name):
     """Calls str() then fix_id() on each of the column names of the DF."""
     new_cols = []
     for col in df.columns:
         new_cols.append(fix_id(str(col)))
     df.columns = new_cols
     # Ensure that this didn't make the column names non-unique
-    ensure_df_headers_unique(df, "escape_columns() DataFrame")
+    ensure_df_headers_unique(df, df_name)
     return df
 
 

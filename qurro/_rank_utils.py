@@ -23,7 +23,7 @@ def read_rank_file(file_loc):
         # process this file.
         rank_df = ordination_to_df(file_loc)
 
-    return escape_columns(rank_df)
+    return escape_columns(rank_df, "feature ranks")
 
 
 def rename_loadings(loadings_df):
