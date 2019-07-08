@@ -9,6 +9,7 @@
   clearer: instead of being labelled `0`, `1`, `2`, etc., the loadings are now
   labelled `Axis 1`, `Axis 2`, `Axis 3`, etc.
   ([#145](https://github.com/fedarko/qurro/issues/145))
+
 ### Backward-incompatible changes
 ### Bug fixes
 - Ensured that missing feature metadata values, and samples' initial balances
@@ -16,11 +17,13 @@
   Altair. (In practice this wasn't causing any problems, since Altair converts
   NaN values to None values, but Qurro should at least be more internally
   consistent now.)
+
 - Changed the behavior of how Qurro (when run outside of QIIME 2) writes out
   files. Now, existing files/directories in the specified `-o`/`--output-dir`
   will be overwritten if necessary (previously, individual files would be
   overwritten but directories would cause an error to be thrown).
   ([#79](https://github.com/fedarko/qurro/issues/79))
+
 - Previously, the use of certain column names in sample metadata, feature
   metadata, or feature rankings would cause either confusing errors or the loss
   of some metadata/ranking fields in a Qurro visualization. Now, these sorts of
@@ -31,27 +34,36 @@
       shouldn't run into any problems). Since problematic names will now lead
       to an error message explaining what's wrong, there shouldn't be any need
       to worry about this.
+
+- Qurro should now throw an error if an input GNPS feature metadata file
+  doesn't have `parent mass`, `RTConsensus`, and `LibraryID` columns.
+
 ### Performance enhancements
 - Now, Qurro's JavaScript code uses a sparse representation of the count data
   (previously it used a dense represntation). For inherently sparse datasets
   (like many microbiome datasets), this should result in faster loading times
   in the browser (as well as smaller Qurro visualizations).
   ([#58](https://github.com/fedarko/qurro/issues/58))
+
 - Significant speedups on how the input data is filtered and matched.
   ([#172](https://github.com/fedarko/qurro/issues/172))
+
 - Now, empty features are removed from Qurro visualizations (in addition to
   empty samples). Similarly to the sparsity change above, this should make
   Qurro visualizations load faster in the browser, decrease their filesizes,
   and reduce the amount of features on the rank plot (for datasets containing
   empty features). This has affected the Byrd et al. demo.
   ([#171](https://github.com/fedarko/qurro/issues/171))
+
 - Removed an unused JS file from Qurro's `support_files/`. This change should
   decrease the size of Qurro's generated visualizations by a small amount.
+
 ### Miscellaneous 
 - Changed the search type menus to be a bit more clear about what they're doing
   under the hood:
     - `contains the text` --> `contains the exact text`
     - `contains the exact taxonomic rank(s)` --> `contains the exact separated text fragment(s)`
+
 - Previously, the `Export currently used data` button would only export
   information about samples with valid current log ratios (however, samples
   with invalid metadata fields were still included). This behavior has been
@@ -68,12 +80,17 @@
       as before) will be shown as `null` values in the exported sample data.
     - The button's name has also been changed to `Export sample data`, to make
       its behavior clearer.
+
 - Added citation instructions and some small documentation fixes to the README
+
 - Fixed a typo in the license (forgot to update this when we renamed the tool
   to "Qurro" a few weeks ago)
+
 - Cleaned up/updated some of Qurro's basic documentation (in its `setup.py`,
   example Jupyter Notebooks, etc.).
+
 - Updated the screenshot used in the README.
+
 - Various improvements to Qurro's code and tests.
 
 ## Qurro 0.1.0 (June 25, 2019)
