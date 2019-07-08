@@ -207,6 +207,11 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     # (This value will be updated when a feature is selected in the rank plot
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
+    if "qurro_classification" in rank_data.columns:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            "qurro_classification. Try changing the name of this column."
+        )
     rank_data["qurro_classification"] = "None"
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
