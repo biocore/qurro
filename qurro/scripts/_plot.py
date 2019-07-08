@@ -90,7 +90,7 @@ def plot(
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
 
-    logging.debug("Starting the standalone rrv script.")
+    logging.debug("Starting the standalone Qurro script.")
     loaded_biom = load_table(table)
     logging.debug("Loaded BIOM table.")
     df_sample_metadata = escape_columns(
