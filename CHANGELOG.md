@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.2.0 (in development)
+## Qurro 0.2.0 (July 8, 2019)
 ### Features added
 - The color schemes used in the sample plot and rank plot are now customizable!
   ([#158](https://github.com/fedarko/qurro/issues/158))
