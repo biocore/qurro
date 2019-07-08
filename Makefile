@@ -15,8 +15,6 @@ test: pytest jstest
 # The -B in the invocation of python prevents this from creating pycache
 # miscellany.
 pytest:
-	@# Use of -f per https://unix.stackexchange.com/a/68096
-	rm -rf docs/demos/*
 	python3 -B -m pytest qurro/tests --cov qurro
 
 jstest:
