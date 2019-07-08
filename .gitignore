@@ -74,6 +74,11 @@ docs/demos/
 !docs/demos/sleep_apnea/
 !docs/demos/red_sea/
 !docs/demos/q2_moving_pictures/
+# ... that being said, still don't bother including the q2templateassets/
+# files (for any QIIME 2 Qurro outputs). As far as I'm aware, these files
+# aren't used when viewing Qurro visualizations outside of QIIME 2 (even if
+# the visualizations were created using QIIME 2).
+docs/demos/*/q2templateassets/
 
 # Ignore various outputs from Qurro's JS testing process
 qurro/tests/web_tests/instrumented_js/*
