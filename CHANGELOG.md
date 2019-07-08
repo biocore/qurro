@@ -21,6 +21,16 @@
   will be overwritten if necessary (previously, individual files would be
   overwritten but directories would cause an error to be thrown).
   ([#79](https://github.com/fedarko/qurro/issues/79))
+- Previously, the use of certain column names in sample metadata, feature
+  metadata, or feature rankings would cause either confusing errors or the loss
+  of some metadata/ranking fields in a Qurro visualization. Now, these sorts of
+  problematic names will just lead to a clear error message when generating a
+  Qurro visualization.
+    - See [#55](https://github.com/fedarko/qurro/issues/55) for details about
+      which column names cause problems (at this point, most ordinary inputs
+      shouldn't run into any problems). Since problematic names will now lead
+      to an error message explaining what's wrong, there shouldn't be any need
+      to worry about this.
 ### Performance enhancements
 - Now, Qurro's JavaScript code uses a sparse representation of the count data
   (previously it used a dense represntation). For inherently sparse datasets

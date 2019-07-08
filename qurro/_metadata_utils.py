@@ -147,6 +147,24 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
         md_file_loc, sep="\t", na_filter=False, skiprows=q2_lines
     )
 
+    # Basic column validation. TODO: break out into its own function and
+    # unit-test.
+    required_cols = ("parent mass", "RTConsensus", "LibraryID")
+    restricted_cols = ("qurro_trunc_feature_id", "qurro_full_feature_id")
+    for c in required_cols:
+        if c not in metadata_df.columns:
+            raise ValueError(
+                "GNPS feature metadata file must have the following "
+                "columns: {}".format(required_cols)
+            )
+
+    for c in restricted_cols:
+        if c in metadata_df.columns:
+            raise ValueError(
+                "GNPS feature metadata file can't contain columns named: "
+                "{}".format(restricted_cols)
+            )
+
     # Create a feature ID column from the parent mass and RTConsensus cols.
     # Use of .map() here is derived from
     # https://stackoverflow.com/a/22276757/10730311.
@@ -196,7 +214,7 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
     # there are any duplicates (due to two features having the same
     # mass-to-charge ratio and discharge time), our use of verify_integrity
     # here will raise an error accordingly. (That almost certainly won't
-    # happen, # since we already look for indistinguishable truncated feature
+    # happen, since we already look for indistinguishable truncated feature
     # IDs above, but best to be safe until this function is more rigorously
     # tested.)
     metadata_df.set_index(
