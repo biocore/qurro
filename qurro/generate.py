@@ -25,6 +25,7 @@ from qurro._json_utils import replace_js_json_definitions
 from qurro._df_utils import (
     replace_nan,
     validate_df,
+    check_column_names,
     biom_table_to_sparse_df,
     remove_empty_samples_and_features,
     match_table_and_data,
@@ -65,8 +66,9 @@ def process_input(
 
        In particular, this function
 
-       1. Calls validate_df() on all of the input DataFrames passed
-          (feature ranks, sample metadata, feature metadata if passed).
+       1. Calls validate_df() and then check_column_names() on all of the
+          input DataFrames passed (feature ranks, sample metadata, feature
+          metadata if passed).
 
        2. Calls replace_nan() on the metadata DataFrame(s), so that all
           missing values are represented consistently with a None (which
@@ -122,6 +124,8 @@ def process_input(
         #      otherwise the feature metadata is useless)
         #   2) column names are unique
         validate_df(feature_metadata, "feature metadata", 0, 1)
+
+    check_column_names(sample_metadata, feature_ranks, feature_metadata)
 
     # Replace NaN values (which both _metadata_utils.read_metadata_file() and
     # qiime2.Metadata use to represent missing values, i.e. ""s) with None --
@@ -207,11 +211,6 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     # (This value will be updated when a feature is selected in the rank plot
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
-    if "qurro_classification" in rank_data.columns:
-        raise ValueError(
-            "Feature rankings/metadata can't contain any columns called "
-            "qurro_classification. Try changing the name of this column."
-        )
     rank_data["qurro_classification"] = "None"
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
@@ -310,20 +309,12 @@ def gen_sample_plot(table, metadata):
     # Since we don't bother setting a default log ratio, we set the balance for
     # every sample to None so that Vega* will filter them out (producing an
     # empty scatterplot by default, which makes sense).
-    if "qurro_balance" in sample_metadata.columns:
-        raise ValueError(
-            "Sample metadata can't contain any columns called qurro_balance."
-            "Try changing the name of this column."
-        )
     sample_metadata["qurro_balance"] = None
 
     # "Reset the index" -- make the sample IDs a column (on the leftmost side)
-    # First we rename the index "Sample ID", just on the off chance that
-    # there's a metadata column called "index".
-    # NOTE that there shouldn't be a metadata column called Sample ID or
-    # something like that, since that should've been used in the merge with
-    # df_balance above (and "Sample ID" follows the Q2 metadata conventions for
-    # an "Identifier Column" name).
+    # First we rename the index "Sample ID", though. (Note that our use of
+    # check_column_names() means that there shouldn't be any sample metadata
+    # fields named "Sample ID".)
     sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
     sample_metadata.reset_index(inplace=True)
 

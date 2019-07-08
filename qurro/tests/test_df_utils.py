@@ -394,7 +394,8 @@ def test_merge_feature_metadata():
     assert (result[1] == ["FM1", "FM2", "FM3"]).all()
 
     # Check that this raises an error if feature metadata and ranking columns
-    # are not distinct
+    # are not distinct (shouldn't happen if check_column_names() used, but
+    # might as well be careful)
     fm.columns = ["FM1", "R2", "FM3"]
     with pytest.raises(ValueError):
         merge_feature_metadata(ranks, fm)

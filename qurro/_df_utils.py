@@ -335,29 +335,19 @@ def merge_feature_metadata(feature_ranks, feature_metadata=None):
     """
     feature_metadata_cols = []
     if feature_metadata is not None:
-        try:
-            feature_metadata_cols = feature_metadata.columns
-            # Use of suffixes=(False, False) ensures that columns are unique
-            # between feature metadata and feature ranks.
-            output_feature_data = feature_ranks.merge(
-                feature_metadata,
-                how="left",
-                left_index=True,
-                right_index=True,
-                suffixes=(False, False),
-            )
-            output_feature_data = replace_nan(output_feature_data)
-        except ValueError:
-            # It might be possible to figure out a way to handle this sort of
-            # situation automatically, but unless it becomes a problem I'm ok
-            # with the current solution. See github.com/fedarko/qurro/issues/55
-            print(
-                "Column names for the feature metadata and feature ranks "
-                "should be distinct. Try creating a copy of your feature "
-                "metadata with identical columns renamed, and use that with "
-                "Qurro."
-            )
-            raise
+        feature_metadata_cols = feature_metadata.columns
+        # Use of suffixes=(False, False) ensures that columns are unique
+        # between feature metadata and feature ranks.
+        # That should never happen if check_column_names() has been called on
+        # the input DataFrames, but we might as well be careful.
+        output_feature_data = feature_ranks.merge(
+            feature_metadata,
+            how="left",
+            left_index=True,
+            right_index=True,
+            suffixes=(False, False),
+        )
+        output_feature_data = replace_nan(output_feature_data)
     else:
         output_feature_data = feature_ranks
 
@@ -390,3 +380,50 @@ def sparsify_count_dict(count_dict):
         sparse_count_dict[feature_id] = fdict
     logging.debug("Done sparsifying count data.")
     return sparse_count_dict
+
+
+def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
+    """Checks that column names in input data will work properly in Qurro.
+
+       See https://github.com/fedarko/qurro/issues/55 for a list of these
+       restrictions.
+    """
+
+    sugg = " Try changing the name of this column."
+    sm_cols = sample_metadata.columns
+    fr_cols = feature_ranks.columns
+    fm_cols = []
+    if feature_metadata is not None:
+        fm_cols = feature_metadata.columns
+
+    if "Sample ID" in sm_cols:
+        raise ValueError(
+            'Sample metadata can\'t contain any columns called "Sample ID" '
+            "(aside from the first column in the metadata).{}".format(sugg)
+        )
+
+    if "Feature ID" in fr_cols or "Feature ID" in fm_cols:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            '"Feature ID" (aside from the first column in these files).'
+            "{}".format(sugg)
+        )
+
+    if "qurro_balance" in sm_cols:
+        raise ValueError(
+            "Sample metadata can't contain any columns called qurro_balance."
+            "{}".format(sugg)
+        )
+
+    if "qurro_classification" in fr_cols or "qurro_classification" in fm_cols:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            "qurro_classification.{}".format(sugg)
+        )
+
+    if len(set(fr_cols) & set(fm_cols)) > 0:
+        raise ValueError(
+            "Column names for the feature metadata and feature ranks should "
+            "be distinct. Try creating a copy of your feature metadata with "
+            "identical columns renamed, and use that with Qurro."
+        )
