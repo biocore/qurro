@@ -472,7 +472,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 rankDataName,
                 vega
                     .changeset()
-                    .modify(vega.truthy, "Classification", function(rankRow) {
+                    .modify(vega.truthy, "qurro_classification", function(rankRow) {
                         return updateRankColorFunc.call(parentDisplay, rankRow);
                     })
             );

@@ -207,7 +207,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     # (This value will be updated when a feature is selected in the rank plot
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
-    rank_data["Classification"] = "None"
+    rank_data["qurro_classification"] = "None"
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
@@ -241,7 +241,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
             ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
-                "Classification",
+                "qurro_classification",
                 scale=alt.Scale(
                     domain=["None", "Numerator", "Denominator", "Both"],
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
@@ -253,7 +253,11 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
                     title="Current Ranking",
                     type="quantitative",
                 ),
-                "Classification",
+                alt.Tooltip(
+                    field="qurro_classification",
+                    title="Log Ratio Classification",
+                    type="nominal",
+                ),
                 "Feature ID",
                 *feature_metadata_cols,
             ],
@@ -272,7 +276,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     fm_col_ordering = "qurro_feature_metadata_ordering"
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
-    # "Feature ID" and "Classification" columns (as well as any feature
+    # "Feature ID" and "qurro_classification" columns (as well as any feature
     # metadata the user saw fit to pass in).
     rank_chart_json["datasets"][rank_ordering] = list(ranking_ids)
     rank_chart_json["datasets"][fm_col_ordering] = list(feature_metadata_cols)
