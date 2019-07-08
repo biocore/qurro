@@ -137,6 +137,10 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
        with rows in the GNPS metadata file -- the precision of the numbers from
        which GNPS feature IDs are computed varies between the ranks/BIOM table
        and the actual numbers contained in the GNPS metadata file.
+
+       NOTE: this function is experimental and mostly untested. Things like
+       invalid inputs (e.g. non-numeric "parent mass" or "RTConsensus" values)
+       will cause problems.
     """
     # Note that we don't set index_col = 0 -- the columns we care about
     # ("parent mass", "RTConsensus", and "LibraryID"), as far as I know, don't
