@@ -149,21 +149,20 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
 
     # Basic column validation. TODO: break out into its own function and
     # unit-test.
-    required_cols = ("parent mass", "RTConsensus", "LibraryID")
-    restricted_cols = ("qurro_trunc_feature_id", "qurro_full_feature_id")
-    for c in required_cols:
-        if c not in metadata_df.columns:
-            raise ValueError(
-                "GNPS feature metadata file must have the following "
-                "columns: {}".format(required_cols)
-            )
+    required_cols = set(["parent mass", "RTConsensus", "LibraryID"])
+    restricted_cols = set(["qurro_trunc_feature_id", "qurro_full_feature_id"])
+    actual_cols = set(metadata_df.columns)
+    if len(required_cols & actual_cols) < 3:
+        raise ValueError(
+            "GNPS feature metadata file must have the following "
+            "columns: {}".format(required_cols)
+        )
 
-    for c in restricted_cols:
-        if c in metadata_df.columns:
-            raise ValueError(
-                "GNPS feature metadata file can't contain columns named: "
-                "{}".format(restricted_cols)
-            )
+    if len(restricted_cols & actual_cols) > 0:
+        raise ValueError(
+            "GNPS feature metadata file can't contain columns named: "
+            "{}".format(restricted_cols)
+        )
 
     # Create a feature ID column from the parent mass and RTConsensus cols.
     # Use of .map() here is derived from
