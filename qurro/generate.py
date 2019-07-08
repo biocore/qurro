@@ -247,6 +247,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "qurro_classification",
+                title="Log Ratio Classification",
                 scale=alt.Scale(
                     domain=["None", "Numerator", "Denominator", "Both"],
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
