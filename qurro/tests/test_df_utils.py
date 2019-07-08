@@ -9,6 +9,7 @@ from qurro._df_utils import (
     remove_empty_samples_and_features,
     merge_feature_metadata,
     sparsify_count_dict,
+    check_column_names,
 )
 
 
@@ -428,3 +429,100 @@ def test_sparsify_count_dict():
         "Feature 2": {"Sample 1": 0, "Sample 2": 0, "Sample 3": 0},
     }
     assert sparsify_count_dict(test_cts) == {"Feature 1": {}, "Feature 2": {}}
+
+
+def test_check_column_names():
+
+    _, sm, fr = get_test_data()
+    fm = fr.copy()
+    fm.columns = ["FM1", "FM2"]
+
+    # Shouldn't get an error with default col names
+    check_column_names(sm, fr, fm)
+
+    # 1. Check for problematic names in sample metadata columns ("Sample ID",
+    # "qurro_balance")
+
+    sm.columns = ["Metadata1", "Sample ID", "Metadata3", "Metadata4"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"Sample ID"' in str(exception_info.value)
+
+    # Shouldn't get an error with different case
+    sm.columns = ["Metadata1", "sample id", "Metadata3", "Metadata4"]
+    check_column_names(sm, fr, fm)
+
+    sm.columns = ["qurro_balance", "Sample ID", "Metadata3", "Metadata4"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    # Sample ID check has priority in error msg
+    assert '"Sample ID"' in str(exception_info.value)
+
+    sm.columns = ["qurro_balance", "Metadata2", "Metadata3", "Metadata4"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_balance"' in str(exception_info.value)
+
+    # reset sample metadata columns to be sane
+    sm.columns = ["Metadata1", "Metadata2", "Metadata3", "Metadata4"]
+
+    # 2. Check for problematic names in feature ranking columns ("Feature ID",
+    # "qurro_classification")
+
+    fr.columns = ["R1", "Feature ID"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"Feature ID"' in str(exception_info.value)
+
+    # If *both* problematic names are present, the ID one takes precedence
+    # (just because its "if" statement is higher up in the function)
+    # (also this is an arbitrary choice and doesn't really matter that much in
+    # the grand scheme of things but I figure we might as well test this case)
+    # (also if you somehow have both of these column names in a real dataset
+    # then I have a lot of questions)
+    fr.columns = ["Feature ID", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"Feature ID"' in str(exception_info.value)
+
+    fr.columns = ["R1", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_classification"' in str(exception_info.value)
+
+    # reset feature ranking columns to be sane
+    fr.columns = ["R1", "R2"]
+
+    # 3. Check for problematic names in feature metadata columns ("Feature ID",
+    # "qurro_classification")
+    # This is essentially the same stuff as the feature ranking test above.
+
+    fm.columns = ["FM1", "Feature ID"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"Feature ID"' in str(exception_info.value)
+
+    fm.columns = ["Feature ID", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"Feature ID"' in str(exception_info.value)
+
+    fm.columns = ["FM1", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_classification"' in str(exception_info.value)
+
+    # reset feature metadata columns to be sane
+    fm.columns = ["FM1", "FM2"]
+
+    # 4. Check for the case where the feature ranking and feature metadata
+    # columns are not distinct
+    fr.columns = ["FM1", "R2"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert "must be distinct" in str(exception_info.value)
+
+    fr.columns = ["FM1", "FM2"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert "must be distinct" in str(exception_info.value)
