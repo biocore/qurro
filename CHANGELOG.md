@@ -1,5 +1,14 @@
 # Qurro changelog
 
+## Qurro 0.3.0 (in development)
+### Features added
+### Backward-incompatible changes
+### Bug fixes
+### Performance enhancements
+- Removed some unused data from `qurro/tests/`.
+### Miscellaneous
+
+
 ## Qurro 0.2.0 (July 8, 2019)
 ### Features added
 - The color schemes used in the sample plot and rank plot are now customizable!
@@ -58,7 +67,7 @@
 - Removed an unused JS file from Qurro's `support_files/`. This change should
   decrease the size of Qurro's generated visualizations by a small amount.
 
-### Miscellaneous 
+### Miscellaneous
 - Changed the search type menus to be a bit more clear about what they're doing
   under the hood:
     - `contains the text` --> `contains the exact text`
@@ -92,6 +101,7 @@
 - Updated the screenshot used in the README.
 
 - Various improvements to Qurro's code and tests.
+
 
 ## Qurro 0.1.0 (June 25, 2019)
 - Released the first version of Qurro [on PyPI](https://pypi.org/project/qurro/)!
