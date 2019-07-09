@@ -8,15 +8,16 @@
 <a href="https://travis-ci.org/fedarko/qurro"><img src="https://travis-ci.org/fedarko/qurro.svg?branch=master" alt="Build Status" /></a>
 <a href="https://codecov.io/gh/fedarko/qurro"><img src="https://codecov.io/gh/fedarko/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
 <a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
+<p>(Pronounced "churro.")</p>
 </div>
-
-(Pronounced "churro.")
 
 Qurro visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
-[DEICODE](https://github.com/biocore/DEICODE). It facilitates viewing
-a plot of __feature rankings__  alongside a plot showing the
-__log ratios__ of selected features' abundances within samples.
+[DEICODE](https://github.com/biocore/DEICODE). It displays a plot of
+__feature rankings__ (either the differentials produced by a tool like
+songbird, or the loadings in a compositional biplot produced by a tool
+like DEICODE) alongside a plot showing the __log ratios__ of
+selected features' abundances within samples.
 
 Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
