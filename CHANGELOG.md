@@ -7,6 +7,8 @@
 ### Performance enhancements
 - Removed some unused data from `qurro/tests/`.
 ### Miscellaneous
+- Renamed the `Regenerate sample plot` button to say `Regenerate plots` (this
+  name makes more sense).
 
 
 ## Qurro 0.2.0 (July 8, 2019)
