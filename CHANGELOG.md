@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.2.1 (in development)
+## Qurro 0.2.1 (July 10, 2019)
 ### Features added
 ### Backward-incompatible changes
 ### Bug fixes
