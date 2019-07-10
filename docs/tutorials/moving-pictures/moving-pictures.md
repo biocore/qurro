@@ -184,10 +184,10 @@ text `o__Fusobacteriales` in their taxonomy annotations but aren't actually in t
 `o__Fusobacteriales`.
 
 Say a new order is discovered and named _Fusobacteriales2_. (This will almost
-certainly never happen, but you never know.) Since we only care about a
-feature's taxonomy annotation *containing* the text `o__Fusobacteriales`, features that
-were classified as being in `o__Fusobacteriales2` would also get included in
-our searches!
+certainly never happen, but you never know.) Since our search above only
+cares about a feature's taxonomy annotation containing the text
+`o__Fusobacteriales`, features that were classified as being in
+`o__Fusobacteriales2` would also get included in our searches!
 
 In practice, we can account for this by changing the __search type__ (currently
 set to `contains the exact text`) options in Qurro. The
@@ -206,7 +206,7 @@ text search for just `Staphylococcus` will give you both.)
 
 The sample plot's "x-axis" and "color" fields are initially set to an
 arbitrary sample metadata field (in this case, `BarcodeSequence`). This isn't
-super useful, so we can change it to a more interesting metadata field.
+super useful, so we can change these to more interesting metadata fields.
 
 Let's try setting the x-axis to the `Body Site` field and the color to the
 `ReportedAntibioticUsage` field. You can do this using the controls underneath
@@ -234,7 +234,7 @@ bacteria observed, or didn't have either of these bacteria.
 
 Zeroes in either the top or bottom of a log ratio mess things up. The logarithm
 of 0 / x (i.e the logarithm of 0) is undefined, as is the logarithm of x / 0
-(since you straight-up can't divide by 0).
+(since you straight-up can't divide by 0 in the first place).
 
 ## Combining Qurro and Emperor
 
