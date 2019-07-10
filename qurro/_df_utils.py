@@ -385,7 +385,7 @@ def sparsify_count_dict(count_dict):
 def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
     """Checks that column names in input data will work properly in Qurro.
 
-       See https://github.com/fedarko/qurro/issues/55 for a list of these
+       See https://github.com/biocore/qurro/issues/55 for a list of these
        restrictions.
     """
 

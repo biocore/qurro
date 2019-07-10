@@ -60,7 +60,7 @@ setup(
     author_email="mfedarko@ucsd.edu",
     maintainer="Qurro development team",
     maintainer_email="mfedarko@ucsd.edu",
-    url="https://github.com/fedarko/qurro",
+    url="https://github.com/biocore/qurro",
     packages=find_packages(),
     # Needed in order to ensure that support_files/*, etc. are installed (in
     # turn, these files are specified in MANIFEST.in).

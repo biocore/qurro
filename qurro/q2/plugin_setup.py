@@ -30,7 +30,7 @@ except ImportError:
 plugin = qiime2.plugin.Plugin(
     name="qurro",
     version=__version__,
-    website="https://github.com/fedarko/qurro",
+    website="https://github.com/biocore/qurro",
     # citations=[citations['martino-unpublished']],
     short_description=("Plugin for visualizing feature ranks and log ratios."),
     description=(

@@ -1,23 +1,29 @@
 # Qurro changelog
 
-## Qurro 0.3.0 (in development)
+## Qurro 0.2.1 (in development)
 ### Features added
 ### Backward-incompatible changes
 ### Bug fixes
+- Allowed "exact text" searching (the first search option) using just
+  whitespace.
 ### Performance enhancements
 - Removed some unused data from `qurro/tests/`.
 ### Miscellaneous
+- Updated a bunch of links throughout Qurro's code and documentation to point
+  to its new repository home (https://github.com/biocore/qurro).
+- Renamed the `Regenerate sample plot` button to say `Regenerate plots` (this
+  name makes more sense).
 
 
 ## Qurro 0.2.0 (July 8, 2019)
 ### Features added
 - The color schemes used in the sample plot and rank plot are now customizable!
-  ([#158](https://github.com/fedarko/qurro/issues/158))
+  ([#158](https://github.com/biocore/qurro/issues/158))
 
 - Feature loading names (in Qurro plots produced from DEICODE biplots) are now
   clearer: instead of being labelled `0`, `1`, `2`, etc., the loadings are now
   labelled `Axis 1`, `Axis 2`, `Axis 3`, etc.
-  ([#145](https://github.com/fedarko/qurro/issues/145))
+  ([#145](https://github.com/biocore/qurro/issues/145))
 
 ### Backward-incompatible changes
 ### Bug fixes
@@ -31,14 +37,14 @@
   files. Now, existing files/directories in the specified `-o`/`--output-dir`
   will be overwritten if necessary (previously, individual files would be
   overwritten but directories would cause an error to be thrown).
-  ([#79](https://github.com/fedarko/qurro/issues/79))
+  ([#79](https://github.com/biocore/qurro/issues/79))
 
 - Previously, the use of certain column names in sample metadata, feature
   metadata, or feature rankings would cause either confusing errors or the loss
   of some metadata/ranking fields in a Qurro visualization. Now, these sorts of
   problematic names will just lead to a clear error message when generating a
   Qurro visualization.
-    - See [#55](https://github.com/fedarko/qurro/issues/55) for details about
+    - See [#55](https://github.com/biocore/qurro/issues/55) for details about
       which column names cause problems (at this point, most ordinary inputs
       shouldn't run into any problems). Since problematic names will now lead
       to an error message explaining what's wrong, there shouldn't be any need
@@ -52,17 +58,17 @@
   (previously it used a dense represntation). For inherently sparse datasets
   (like many microbiome datasets), this should result in faster loading times
   in the browser (as well as smaller Qurro visualizations).
-  ([#58](https://github.com/fedarko/qurro/issues/58))
+  ([#58](https://github.com/biocore/qurro/issues/58))
 
 - Significant speedups on how the input data is filtered and matched.
-  ([#172](https://github.com/fedarko/qurro/issues/172))
+  ([#172](https://github.com/biocore/qurro/issues/172))
 
 - Now, empty features are removed from Qurro visualizations (in addition to
   empty samples). Similarly to the sparsity change above, this should make
   Qurro visualizations load faster in the browser, decrease their filesizes,
   and reduce the amount of features on the rank plot (for datasets containing
   empty features). This has affected the Byrd et al. demo.
-  ([#171](https://github.com/fedarko/qurro/issues/171))
+  ([#171](https://github.com/biocore/qurro/issues/171))
 
 - Removed an unused JS file from Qurro's `support_files/`. This change should
   decrease the size of Qurro's generated visualizations by a small amount.
@@ -78,7 +84,7 @@
   with invalid metadata fields were still included). This behavior has been
   changed so that all samples -- regardless of their log ratio or other fields'
   validity -- are included in the .tsv output.
-  ([#176](https://github.com/fedarko/qurro/issues/176))
+  ([#176](https://github.com/biocore/qurro/issues/176))
     - Also, the exported sample data will now include field information about
       the sample plot's current color field in addition to the sample plot's
       current x-axis field.
