@@ -4,6 +4,8 @@
 ### Features added
 ### Backward-incompatible changes
 ### Bug fixes
+- Allowed "exact text" searching (the first search option) using just
+  whitespace.
 ### Performance enhancements
 - Removed some unused data from `qurro/tests/`.
 ### Miscellaneous

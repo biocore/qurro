@@ -154,7 +154,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Doesn't find anything if inputText is empty or contains only whitespace", function() {
+            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function() {
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,
@@ -186,6 +186,17 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "Taxonomy",
                         "text"
                     )
+                );
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            " ",
+                            "Feature ID",
+                            "text"
+                        )
+                    ),
+                    inputFeatures
                 );
             });
             it("Ignores actual null values", function() {
