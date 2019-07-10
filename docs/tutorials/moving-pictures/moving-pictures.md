@@ -128,7 +128,7 @@ Recall that we'd like to analyze the log ratios between features' abundances.
 In Qurro, "selecting features" lets us define a __log ratio__ between multiple
 features' abundances in each sample.
 
-There are a few ways of doing this in Qurro:
+There are two main ways of doing this in Qurro:
 
 - One way is just by clicking on the rank plot twice. The first click sets
   the numerator feature for a log ratio, and the second click sets the
