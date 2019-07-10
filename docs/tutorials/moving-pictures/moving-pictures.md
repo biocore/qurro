@@ -138,9 +138,9 @@ There are a few ways of doing this in Qurro:
   features with taxonomy annotations containing the text `o__Fusobacteriales` over all
   features with taxonomy annotations containing the text `o__Pseudomonadales`.
     - This is equivalent to the log ratio of all ranked features in the order
-      [_Fusobacteriales_](https://en.wikipedia.org/wiki/Fusobacteria) over all
+      [_Fusobacteriales_](https://en.wikipedia.org/wiki/Fusobacteriales) over all
       ranked features in the order
-      [_Pseudomonadales_](observe://en.wikipedia.org/wiki/Pseudomonadales)).
+      [_Pseudomonadales_](https://en.wikipedia.org/wiki/Pseudomonadales).
     - In this case -- where an arbitrary of features can be in the numerator
       and denominator of the log ratio -- the log ratio is computed for a given
       sample by summing the feature abundances of the numerator features,
