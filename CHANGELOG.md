@@ -1,12 +1,14 @@
 # Qurro changelog
 
-## Qurro 0.3.0 (in development)
+## Qurro 0.2.1 (in development)
 ### Features added
 ### Backward-incompatible changes
 ### Bug fixes
 ### Performance enhancements
 - Removed some unused data from `qurro/tests/`.
 ### Miscellaneous
+- Updated a bunch of links throughout Qurro's code and documentation to point
+  to its new repository home (https://github.com/biocore/qurro).
 - Renamed the `Regenerate sample plot` button to say `Regenerate plots` (this
   name makes more sense).
 
