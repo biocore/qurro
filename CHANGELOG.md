@@ -1,5 +1,17 @@
 # Qurro changelog
 
+## Qurro 0.3.0
+### Features added
+### Backward-incompatible changes
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+- Updated the "README.txt" file located in the Byrd et al. test data folder to
+  make it clearer that the differentials used here are equivalent to those used
+  in the Morton/Marotz et al. 2019 analysis
+  (https://github.com/knightlab-analyses/reference-frames).
+
+
 ## Qurro 0.2.1 (July 10, 2019)
 ### Features added
 ### Backward-incompatible changes
