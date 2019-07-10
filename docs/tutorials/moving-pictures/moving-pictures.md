@@ -238,8 +238,10 @@ of 0 / x (i.e the logarithm of 0) is undefined, as is the logarithm of x / 0
 
 ## Combining Qurro and Emperor
 
-If you followed the DEICODE tutorial, you might remember seeing a biplot.
-(`biplot.qzv`). Here, we'll use this biplot as a way to select features in Qurro.
+If you followed the DEICODE tutorial, you might remember visualizing the output
+biplot in Emperor (this is the `biplot.qzv` visualization that we downloaded
+earlier). Here, we'll use this visualized biplot as a way to select features
+in Qurro.
 
 ### Selecting features directly from a biplot
 
