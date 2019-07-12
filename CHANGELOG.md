@@ -5,6 +5,13 @@
 - Feature ranking values (i.e. differentials or loadings) are now shown in the
   tooltips for individual features in the rank plot.
   ([#186](https://github.com/biocore/qurro/issues/186))
+- Added feature rankings as searchable fields in the "Selecting Features"
+  controls.
+- Added numeric searching: now you can search through numeric feature metadata or
+  feature rankings using basic comparison operators. (Non-numeric input search
+  text will result in a warning dialog, and non-numeric feature metadata values
+  for the specified field will just be ignored in searching.)
+  ([#141](https://github.com/biocore/qurro/issues/141))
 - Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
