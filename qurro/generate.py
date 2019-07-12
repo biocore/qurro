@@ -275,6 +275,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
                 ),
                 "Feature ID",
                 *feature_metadata_cols,
+                *ranking_ids,
             ],
         )
         .configure_axis(

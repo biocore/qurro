@@ -2,6 +2,10 @@
 
 ## Qurro 0.3.0
 ### Features added
+- Feature ranking values (i.e. differentials or loadings) are now shown in the
+  tooltips for individual features in the rank plot.
+  ([#186](https://github.com/biocore/qurro/issues/186))
+- Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
 ### Performance enhancements
@@ -10,6 +14,8 @@
   make it clearer that the differentials used here are equivalent to those used
   in the Morton/Marotz et al. 2019 analysis
   (https://github.com/knightlab-analyses/reference-frames).
+- Various updates to Qurro's code and documentation.
+  ([#184](https://github.com/biocore/qurro/issues/184))
 
 
 ## Qurro 0.2.1 (July 10, 2019)
