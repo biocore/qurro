@@ -483,49 +483,54 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
-        describe("trySearchable()", function() {
+        describe("tryTextSearchable()", function() {
             it("Doesn't modify strings", function() {
                 chai.assert.equal(
-                    feature_computation.trySearchable("abc"),
+                    feature_computation.tryTextSearchable("abc"),
                     "abc"
                 );
                 chai.assert.equal(
-                    feature_computation.trySearchable("   Viruses   "),
+                    feature_computation.tryTextSearchable("   Viruses   "),
                     "   Viruses   "
                 );
                 chai.assert.equal(
-                    feature_computation.trySearchable(
+                    feature_computation.tryTextSearchable(
                         "   Viruses;Caudovirales;some third thing goes here   "
                     ),
                     "   Viruses;Caudovirales;some third thing goes here   "
                 );
                 chai.assert.equal(
-                    feature_computation.trySearchable("null"),
+                    feature_computation.tryTextSearchable("null"),
                     "null"
                 );
             });
             it("Converts numbers to strings", function() {
                 chai.assert.equal(
-                    feature_computation.trySearchable(3.14),
+                    feature_computation.tryTextSearchable(3.14),
                     "3.14"
                 );
-                chai.assert.equal(feature_computation.trySearchable(5), "5");
+                chai.assert.equal(
+                    feature_computation.tryTextSearchable(5),
+                    "5"
+                );
             });
             it("Returns null when a non-string + non-number passed in", function() {
-                chai.assert.isNull(feature_computation.trySearchable([3]));
+                chai.assert.isNull(feature_computation.tryTextSearchable([3]));
                 chai.assert.isNull(
-                    feature_computation.trySearchable([3, 4, 5])
+                    feature_computation.tryTextSearchable([3, 4, 5])
                 );
                 chai.assert.isNull(
-                    feature_computation.trySearchable(["a", "b", "c"])
+                    feature_computation.tryTextSearchable(["a", "b", "c"])
                 );
-                chai.assert.isNull(feature_computation.trySearchable(["a"]));
                 chai.assert.isNull(
-                    feature_computation.trySearchable({ abc: "def" })
+                    feature_computation.tryTextSearchable(["a"])
                 );
-                chai.assert.isNull(feature_computation.trySearchable(null));
                 chai.assert.isNull(
-                    feature_computation.trySearchable(undefined)
+                    feature_computation.tryTextSearchable({ abc: "def" })
+                );
+                chai.assert.isNull(feature_computation.tryTextSearchable(null));
+                chai.assert.isNull(
+                    feature_computation.tryTextSearchable(undefined)
                 );
             });
         });

@@ -85,10 +85,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // possible sample plot x-axis/colorization options.
             this.metadataCols = undefined;
 
-            // Ordered list of all ranks
+            // Ordered list of all feature ranking fields
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
+            // Ordered list of all feature metadata + feature ranking fields
+            // (starting with "Feature ID"). These are used to populate the
+            // <select>s where the user can choose what field to search by.
+            this.featureFields = undefined;
 
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
@@ -182,22 +186,30 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 );
                 // NOTE: we use .slice() to make a copy of the initial array so
                 // that when we unshift "Feature ID" onto
-                // this.featureMetadataFields, the original array (in the rank
+                // this.featureFields, the original array (in the rank
                 // plot JSON) isn't modified.
                 this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering.slice();
-                // Just so that we have something to search by, even if no
-                // actual feature metadata was passed.
-                // Note that in JS, .unshift() adds to the beginning (not end)
-                // of an array.
+                // Add "Feature ID" to the beginning of the feature metadata
+                // fields list.
                 this.featureMetadataFields.unshift("Feature ID");
+
+                // featureFields is a superset of featureMetadataFields that
+                // includes all feature ranking fields. featureMetadataFields
+                // is used for providing information about selected features,
+                // while featureFields is used for searching.
+                this.featureFields = this.featureMetadataFields.concat(
+                    this.rankOrdering
+                );
+                // ...And here, we populate the topSearch and botSearch
+                // <select>s with featureFields.
                 dom_utils.populateSelect(
                     "topSearch",
-                    this.featureMetadataFields,
+                    this.featureFields,
                     "Feature ID"
                 );
                 dom_utils.populateSelect(
                     "botSearch",
-                    this.featureMetadataFields,
+                    this.featureFields,
                     "Feature ID"
                 );
                 // Figure out which bar size type to default to.
@@ -502,7 +514,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         async updateSamplePlotMulti() {
-            // Determine which feature metadata field(s) to look at
+            // Determine which feature field(s) (Feature ID, anything in the
+            // feature metadata, anything in the feature rankings) to look at
             var topField = document.getElementById("topSearch").value;
             var botField = document.getElementById("botSearch").value;
             var topSearchType = document.getElementById("topSearchType").value;
