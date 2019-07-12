@@ -6,14 +6,22 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
 ) {
     var rankPlotSkeleton = {
         data: { name: "dataName" },
-        datasets: { dataName: [], qurro_feature_metadata_ordering: [] }
+        datasets: {
+            dataName: [],
+            qurro_feature_metadata_ordering: [],
+            qurro_rank_ordering: []
+        }
     };
-    describe("Filtering lists of features based on text searching", function() {
+    describe("Filtering lists of features based on text/number searching", function() {
         var rpJSON1 = JSON.parse(JSON.stringify(rankPlotSkeleton));
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 1" });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Featurelol 2" });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 3" });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 4|lol" });
+        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 1", n: 1.2 });
+        rpJSON1.datasets.dataName.push({ "Feature ID": "Featurelol 2", n: 2 });
+        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 3", n: 3.0 });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Feature 4|lol",
+            n: 4.5
+        });
+        rpJSON1.datasets.qurro_rank_ordering.push("n");
         var inputFeatures = [
             "Feature 1",
             "Featurelol 2",
@@ -309,6 +317,49 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         )
                     ),
                     ["Feature 6"]
+                );
+            });
+        });
+        describe("Basic number-based searching", function() {
+            it('Less than (< or "lt") finds features < a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            3.2,
+                            "n",
+                            "lt"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 3"]
+                );
+                // Test that even equal values are excluded
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3",
+                            "n",
+                            "lt"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(rpJSON1, 1.0, "n", "lt")
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "5",
+                            "n",
+                            "lt"
+                        )
+                    ),
+                    inputFeatures
                 );
             });
         });
