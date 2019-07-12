@@ -362,6 +362,110 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     inputFeatures
                 );
             });
+            it('Greater than (> or "gt") finds features > a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            3.2,
+                            "n",
+                            "gt"
+                        )
+                    ),
+                    ["Feature 4|lol"]
+                );
+                // Test that even equal values are excluded
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3",
+                            "n",
+                            "gt"
+                        )
+                    ),
+                    ["Feature 4|lol"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(rpJSON1, 4.5, "n", "gt")
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "0",
+                            "n",
+                            "gt"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
+            it('Less than or equal (<= or "lte") finds features <= a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            3,
+                            "n",
+                            "lte"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 3"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        1.17,
+                        "n",
+                        "lte"
+                    )
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "4.5",
+                            "n",
+                            "lte"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
+            it('Greater than or equal (>= or "gte") finds features >= a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            2,
+                            "n",
+                            "gte"
+                        )
+                    ),
+                    ["Featurelol 2", "Feature 3", "Feature 4|lol"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(rpJSON1, 5.0, "n", "gte")
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "1.20000",
+                            "n",
+                            "gte"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
         });
         describe("existsIntersection()", function() {
             it("Returns true if an intersection exists", function() {
