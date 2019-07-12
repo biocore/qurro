@@ -173,24 +173,34 @@ def process_input(
 
 
 def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
-    """Generates altair.Chart object describing the rank plot.
+    """Uses Altair to generate a JSON Vega-Lite spec for the rank plot.
 
-    Arguments:
+    Parameters
+    ----------
 
     V: pd.DataFrame
-        feature ranks
+        DataFrame containing feature rank (and feature metadata, if applicable)
+        information. (Indices correspond to features, and columns correspond
+        to feature ranking or feature metadata fields.)
+
+        This should have already been matched with the BIOM table, filtered (if
+        -x passed), had empty features removed, etc.
 
     ranking_ids: pd.Index
-        IDs of the actual "ranking" columns in V (since V can include
-        feature metadata)
+        IDs of the actual "feature ranking" columns in V.
 
     feature_metadata_cols: pd.Index or list
-        IDs of the feature metadata columns in V (if no such IDs present, an
-        empty list should be passed)
+        IDs of the "feature metadata" columns in V (if there wasn't any
+        feature metadata provided, this can just be an empty list).
 
-    Returns:
+    Returns
+    -------
 
-    JSON describing a Vega-Lite specification for the rank plot.
+    rank_chart_json: dict
+        A dict version of the alt.Chart for the rank plot, with
+        qurro_rank_ordering and qurro_feature_metadata_ordering datasets
+        added in indicating which columns describe feature rankings and
+        which describe feature metadata.
     """
 
     rank_data = V.copy()
@@ -288,19 +298,25 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     return rank_chart_json
 
 
-def gen_sample_plot(table, metadata):
-    """Generates altair.Chart object describing the sample scatterplot.
+def gen_sample_plot(metadata):
+    """Uses Altair to generate a JSON Vega-Lite spec for the sample plot.
 
-    Arguments:
+    Parameters
+    ----------
 
-    table: (Sparse)DataFrame representation of the processed BIOM table.
-    metadata: DataFrame describing metadata for each sample.
+    metadata: pd.DataFrame
+        DataFrame containing sample metadata information. (Indices correspond
+        to samples, and columns correspond to sample metadata fields.)
 
-    Returns:
+        This should have already been matched with the BIOM table, had empty
+        samples removed, etc.
 
-    JSON describing altair.Chart for the sample plot.
+    Returns
+    -------
+
+    sample_chart_json: dict
+        A dict version of the alt.Chart for the sample plot.
     """
-
     sample_metadata = metadata.copy()
 
     # Used to set color
@@ -362,15 +378,7 @@ def gen_sample_plot(table, metadata):
     # able to successfully use alt.MarkDef in the alt.Chart definition above.)
     sample_chart_dict = sample_chart.to_dict()
     sample_chart_dict["mark"] = {"type": "circle"}
-    # Sparsify the table's count data in order to cut down on the size of
-    # main.js and make the Qurro visualization load faster.
-    count_dict = table.T.to_dict()
-    sparse_count_dict = sparsify_count_dict(count_dict)
-    # Return the JSONs as dicts for 1) the sample plot JSON (which only
-    # contains sample metadata), and 2) the sparsified sample counts per
-    # feature (which will be stored separately from the sample plot JSON in
-    # the hopes of not hitting performance too terribly).
-    return sample_chart_dict, sparse_count_dict
+    return sample_chart_dict
 
 
 def gen_visualization(
@@ -381,7 +389,7 @@ def gen_visualization(
     df_sample_metadata,
     output_dir,
 ):
-    """Creates a Qurro visualization.
+    """Creates a Qurro visualization from already-processed-and-validated data.
 
        Returns
        -------
@@ -396,10 +404,10 @@ def gen_visualization(
 
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
-    logging.debug("Generating sample plot (and count data) JSONs.")
-    sample_plot_json, count_json = gen_sample_plot(
-        processed_table, df_sample_metadata
-    )
+    logging.debug("Generating sample plot JSON.")
+    sample_plot_json = gen_sample_plot(df_sample_metadata)
+    logging.debug("Generating count data JSON.")
+    count_json = sparsify_count_dict(processed_table.T.to_dict())
     logging.debug("Finished generating all JSONs.")
 
     # Copy support_files/ for the Qurro visualization to the output directory
