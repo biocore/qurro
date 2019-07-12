@@ -584,21 +584,13 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
             });
-            it("Returns [] when inputText.trim().length is 0", function() {
+            it("Returns [] when inputText.length is 0", function() {
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "",
                         "Feature ID",
                         "text"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "  \r            \t \n     ",
-                        "Taxonomy",
-                        "rank"
                     )
                 );
             });
