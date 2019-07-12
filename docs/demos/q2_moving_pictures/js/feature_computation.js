@@ -161,7 +161,7 @@ define(function() {
             throw new Error("featureMetadataField not found in data");
         } else if (searchType !== "text" && searchType !== "rank") {
             throw new Error('searchType must be either "text" or "rank"');
-        } else if (inputText.trim().length === 0) {
+        } else if (inputText.length === 0) {
             return [];
         }
 
