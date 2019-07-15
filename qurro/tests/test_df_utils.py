@@ -467,19 +467,22 @@ def test_check_column_names():
     sm.columns = ["Metadata1", "Metadata2", "Metadata3", "Metadata4"]
 
     # 2. Check for problematic names in feature ranking columns ("Feature ID",
-    # "qurro_classification")
+    # "qurro_classification", "qurro_x")
 
     fr.columns = ["R1", "Feature ID"]
     with pytest.raises(ValueError) as exception_info:
         check_column_names(sm, fr, fm)
     assert '"Feature ID"' in str(exception_info.value)
 
-    # If *both* problematic names are present, the ID one takes precedence
-    # (just because its "if" statement is higher up in the function)
+    # If multiple problematic names are present, the ID one takes precedence,
+    # then the _classification one, then the _x one.
+    # (this is just set by the order of "if" statements in
+    # check_column_names().)
     # (also this is an arbitrary choice and doesn't really matter that much in
-    # the grand scheme of things but I figure we might as well test this case)
-    # (also if you somehow have both of these column names in a real dataset
-    # then I have a lot of questions)
+    # the grand scheme of things but I figure we might as well test these cases
+    # because it's easy to do so.)
+    # (also if you somehow have some or all of these column names in a real
+    # dataset then I have a lot of questions)
     fr.columns = ["Feature ID", "qurro_classification"]
     with pytest.raises(ValueError) as exception_info:
         check_column_names(sm, fr, fm)
@@ -489,6 +492,21 @@ def test_check_column_names():
     with pytest.raises(ValueError) as exception_info:
         check_column_names(sm, fr, fm)
     assert '"qurro_classification"' in str(exception_info.value)
+
+    fr.columns = ["qurro_x", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_classification"' in str(exception_info.value)
+
+    fr.columns = ["qurro_x", "R2"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_x"' in str(exception_info.value)
+
+    fr.columns = ["qurro_x", "Feature ID"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"Feature ID"' in str(exception_info.value)
 
     # reset feature ranking columns to be sane
     fr.columns = ["R1", "R2"]

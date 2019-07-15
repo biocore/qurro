@@ -421,6 +421,12 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
             '"qurro_classification".{}'.format(sugg)
         )
 
+    if "qurro_x" in fr_cols or "qurro_x" in fm_cols:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            '"qurro_x".{}'.format(sugg)
+        )
+
     if len(set(fr_cols) & set(fm_cols)) > 0:
         raise ValueError(
             "Column names for the feature metadata and feature ranks must be "
