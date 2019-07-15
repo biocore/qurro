@@ -14,14 +14,28 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
     };
     describe("Filtering lists of features based on text/number searching", function() {
         var rpJSON1 = JSON.parse(JSON.stringify(rankPlotSkeleton));
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 1", n: 1.2 });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Featurelol 2", n: 2 });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 3", n: 3.0 });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Feature 1",
+            n: 1.2,
+            x: null
+        });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Featurelol 2",
+            n: 2,
+            x: "asdf"
+        });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Feature 3",
+            n: 3.0,
+            x: "0"
+        });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 4|lol",
-            n: 4.5
+            n: 4.5,
+            x: "Infinity"
         });
         rpJSON1.datasets.qurro_rank_ordering.push("n");
+        rpJSON1.datasets.qurro_rank_ordering.push("x");
         var inputFeatures = [
             "Feature 1",
             "Featurelol 2",
@@ -326,7 +340,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
-                            3.2,
+                            "3.2",
                             "n",
                             "lt"
                         )
@@ -347,7 +361,12 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
                 // Test case where everything empty
                 chai.assert.isEmpty(
-                    feature_computation.filterFeatures(rpJSON1, 1.0, "n", "lt")
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "1.0",
+                        "n",
+                        "lt"
+                    )
                 );
                 // Test case where everything included
                 chai.assert.sameMembers(
@@ -367,7 +386,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
-                            3.2,
+                            "3.2",
                             "n",
                             "gt"
                         )
@@ -388,7 +407,12 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
                 // Test case where everything empty
                 chai.assert.isEmpty(
-                    feature_computation.filterFeatures(rpJSON1, 4.5, "n", "gt")
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "4.5",
+                        "n",
+                        "gt"
+                    )
                 );
                 // Test case where everything included
                 chai.assert.sameMembers(
@@ -408,7 +432,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
-                            3,
+                            "3",
                             "n",
                             "lte"
                         )
@@ -419,7 +443,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,
-                        1.17,
+                        "1.17",
                         "n",
                         "lte"
                     )
@@ -442,7 +466,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
-                            2,
+                            "2",
                             "n",
                             "gte"
                         )
@@ -451,7 +475,12 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
                 // Test case where everything empty
                 chai.assert.isEmpty(
-                    feature_computation.filterFeatures(rpJSON1, 5.0, "n", "gte")
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "5.0",
+                        "n",
+                        "gte"
+                    )
                 );
                 // Test case where everything included
                 chai.assert.sameMembers(
@@ -464,6 +493,80 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         )
                     ),
                     inputFeatures
+                );
+            });
+            it("Non-finite / non-numeric feature field values are ignored", function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "0",
+                            "x",
+                            "gte"
+                        )
+                    ),
+                    ["Feature 3"]
+                );
+            });
+            it("Non-finite / non-numeric input field values are ignored", function() {
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "null",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "NaN",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "Infinity",
+                        "x",
+                        "lte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "-Infinity",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(rpJSON1, "", "x", "gte")
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "  ",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        " asdf ",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "asdf",
+                        "x",
+                        "gte"
+                    )
                 );
             });
         });
