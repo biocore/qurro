@@ -1,4 +1,4 @@
-define(function() {
+define(["vega"], function(vega) {
     /* Converts a feature field value to a text-searchable type, if possible.
      *
      * If the input is a string, returns the input unchanged.
@@ -41,6 +41,42 @@ define(function() {
         return filteredFeatures;
     }
 
+    /* Given an operator ("lt", "gt", "lte", or "gte"), returns a comparison
+     * function that takes in a single number (i) as input and returns true if:
+     *
+     * "lt":  i <  n
+     * "gt":  i >  n
+     * "lte": i <= n
+     * "gte": i >= n
+     *
+     * Throws an error if operator isn't one of the four possible values listed
+     * above.
+     */
+    function operatorToCompareFunc(operator, n) {
+        if (operator === "lt") {
+            return function(i) {
+                return i < n;
+            };
+        } else if (operator === "gt") {
+            return function(i) {
+                return i > n;
+            };
+        } else if (operator === "lte") {
+            return function(i) {
+                return i <= n;
+            };
+        } else if (operator === "gte") {
+            return function(i) {
+                return i >= n;
+            };
+        } else {
+            throw new Error(
+                "unrecognized operator passed; must be 'lt', " +
+                    "'gt', 'lte', or 'gte'"
+            );
+        }
+    }
+
     /* Given a list of feature "rows", a number, a feature field, and an
      * "operator" string, returns a list of all features where the feature's
      * field value is both numeric and compares to the input number properly.
@@ -60,41 +96,35 @@ define(function() {
         featureField,
         operator
     ) {
+        // Get a comparison function based on the operator and inputNum
+        var compareFunc = operatorToCompareFunc(operator, inputNum);
         var filteredFeatures = [];
-        var currNum;
-        var compareFunc;
-        if (operator === "lt") {
-            compareFunc = function(currNum) {
-                return currNum < inputNum;
-            };
-        } else if (operator === "gt") {
-            compareFunc = function(currNum) {
-                return currNum > inputNum;
-            };
-        } else if (operator === "lte") {
-            compareFunc = function(currNum) {
-                return currNum <= inputNum;
-            };
-        } else if (operator === "gte") {
-            compareFunc = function(currNum) {
-                return currNum >= inputNum;
-            };
-        } else {
-            throw new Error(
-                "unrecognized operator passed; must be 'lt', " +
-                    "'gt', 'lte', or 'gte'"
-            );
-        }
+        var currNum, currVal;
+
+        // Loop through every feature, checking the particular feature field's
+        // values accordingly
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            // Number() returns either a numerical representation of a value or
-            // NaN (if it can't convert it). Therefore, we'll either get a
-            // normal number or NaN, so we can just use Number.isNaN() to
-            // filter out non-numeric values.
-            currNum = Number(featureRowList[ti][featureField]);
-            if (Number.isNaN(currNum)) {
+            currVal = featureRowList[ti][featureField];
+            // This check is basically equivalent to what
+            // RRVDisplay.getInvalidSampleIDs() does. For both sample and
+            // feature metadata values, we know that the input is either a
+            // string/number or a null value.
+            // If this feature's field value is null, or if it isn't a valid
+            // numerical value, then we won't bother calling compareFunc on it.
+            // Otherwise, we'll try that.
+            if (currVal === null) {
                 continue;
-            } else if (compareFunc(currNum)) {
-                filteredFeatures.push(featureRowList[ti]);
+            } else {
+                currNum = vega.toNumber(currVal);
+                if (!isFinite(currNum)) {
+                    continue;
+                }
+                // If we've made it down to here, then this feature field value
+                // is not null and is a valid representation of a number. We
+                // can actually try comparing it.
+                if (compareFunc(currNum)) {
+                    filteredFeatures.push(featureRowList[ti]);
+                }
             }
         }
         return filteredFeatures;
