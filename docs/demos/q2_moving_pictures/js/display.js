@@ -807,6 +807,15 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          *    strings (e.g. "Infinity", "-Infinity", "NaN") -- we'd display
          *    these strings normally for a nominal encoding, but for a
          *    quantitative encoding we filter them out.
+         *
+         *    Note that the normal isFinite() (as opposed to Number.isFinite())
+         *    has a few quirks, including isFinite(null) and isFinite("   ")
+         *    both being true. However, we should avoid these, since we already
+         *    check for null values before calling isFinite(), and since the
+         *    metadata handlers filter out leading/trailing whitespace (so
+         *    inputs like "" or "    " will end up as null in the plot JSONs),
+         *    we should get around these quirks. (See the sample stats test for
+         *    examples of how Qurro's input handling is good in this way.)
          */
         getInvalidSampleIDs(fieldName, correspondingEncoding) {
             var dataName = this.samplePlotJSON.data.name;
