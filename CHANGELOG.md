@@ -17,6 +17,9 @@
   Qurro interface. You can now check the currently installed Qurro version by
   running `qurro --version`. (There's already a `--version` parameter for the
   QIIME 2 Qurro plugin; this can be accessed using `qiime qurro --version`.)
+- Sample metadata fields are now ordered alphabetically (and ignoring case) in
+  the `x-axis field` and `color field` dropdowns in the sample plot controls.
+  ([#76](https://github.com/biocore/qurro/issues/76))
 - Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
