@@ -360,3 +360,25 @@ def replace_js_json_definitions(
     # If this was called on a JS test then this perfectly normal, but if this
     # was called during the execution of Qurro then this is a problem.
     return 1
+
+
+def check_json_dataset_names(json_dict, *restricted_names):
+    """Checks that certain dataset names aren't present in a Vega-Lite JSON.
+
+       This should never really fail, since all of the special dataset names we
+       use internally start with "qurro_" (and Altair generates hashes of the
+       data somehow to use as dataset names). However, this function is here
+       just in the exceedingly rare case that this conflict does actually come
+       up (if so, we can figure out a way around it).
+    """
+
+    if "datasets" not in json_dict:
+        # Should never happen normally but might as well check for this
+        raise ValueError("Input JSON doesn't have any datasets defined")
+
+    intersection = set(json_dict["datasets"].keys()) & set(restricted_names)
+    if len(intersection) > 0:
+        raise ValueError(
+            "Found the following disallowed dataset name(s) in a JSON: "
+            "{}".format(intersection)
+        )

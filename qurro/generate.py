@@ -21,7 +21,10 @@ from distutils.dir_util import copy_tree
 import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
-from qurro._json_utils import replace_js_json_definitions
+from qurro._json_utils import (
+    replace_js_json_definitions,
+    check_json_dataset_names,
+)
 from qurro._df_utils import (
     replace_nan,
     validate_df,
@@ -290,6 +293,8 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "qurro_rank_ordering"
     fm_col_ordering = "qurro_feature_metadata_ordering"
+    check_json_dataset_names(rank_chart_json, rank_ordering, fm_col_ordering)
+
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
     # "Feature ID" and "qurro_classification" columns (as well as any feature
@@ -373,6 +378,8 @@ def gen_sample_plot(metadata):
     sample_chart_dict = sample_chart.to_dict()
     sample_chart_dict["mark"] = {"type": "circle"}
 
+    sm_fields = "qurro_sample_metadata_fields"
+    check_json_dataset_names(sample_chart_dict, sm_fields)
     # Specify an alphabetical ordering for the sample metadata field names.
     # This will be used for populating the x-axis / color field selectors in
     # Qurro's sample plot controls.
@@ -388,9 +395,7 @@ def gen_sample_plot(metadata):
     # y-axis of the sample plot automatically.)
     sorted_md_cols = list(sorted(sample_metadata.columns, key=str.lower))
     sorted_md_cols.remove("qurro_balance")
-    sample_chart_dict["datasets"][
-        "qurro_sample_metadata_fields"
-    ] = sorted_md_cols
+    sample_chart_dict["datasets"][sm_fields] = sorted_md_cols
     return sample_chart_dict
 
 

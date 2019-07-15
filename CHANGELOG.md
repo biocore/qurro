@@ -29,6 +29,12 @@
   ([#183](https://github.com/biocore/qurro/issues/183))
   Before, input datasets with this column name would have caused either the
   loss of this column of data or confusing errors.
+- Previously, there was a small (either almost or entirely impossible) chance
+  that all of the main data within the rank or sample plot JSON could get
+  overwritten due to a collision in the dataset name. Although this should
+  basically never happen anyway, Qurro's code now checks for this scenario and
+  raises an error accordingly.
+  ([#190](https://github.com/biocore/qurro/issues/190))
 ### Performance enhancements
 ### Miscellaneous
 - A clear error is now raised if Qurro is trying to parse a GNPS feature

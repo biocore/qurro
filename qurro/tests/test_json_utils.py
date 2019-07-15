@@ -14,6 +14,7 @@ from qurro._json_utils import (
     plot_jsons_equal,
     try_to_replace_line_json,
     replace_js_json_definitions,
+    check_json_dataset_names,
 )
 
 
@@ -204,6 +205,57 @@ def test_plot_jsons_equal():
         "datasets": {"diff": {1: 2}},
     }
     assert plot_jsons_equal(a, b)
+
+
+def test_check_json_dataset_names():
+    def assert_in_e_info(e_info, *should_be_in):
+        s_val = str(e_info.value)
+        for thing in should_be_in:
+            assert thing in s_val
+
+    # Test weird case where no datasets are present
+    with pytest.raises(ValueError) as exception_info:
+        check_json_dataset_names({})
+    assert_in_e_info(exception_info, "JSON doesn't have any datasets defined")
+
+    # Should succeed if no conflict between restricted_names and the keys
+    # within a["datasets"]
+    a = {"a": "b", "datasets": {"asdf": {1: 2}}}
+    check_json_dataset_names(a, "abc", "ASDF", "a")
+
+    # Should fail if there is a conflict!
+    with pytest.raises(ValueError) as exception_info:
+        check_json_dataset_names(a, "lol", "ok", "but", "asdf")
+    assert_in_e_info(
+        exception_info,
+        "Found the following disallowed dataset name(s)",
+        "asdf",
+    )
+
+    # Also works properly if there are multiple datasets already defined
+    # (shouldn't ever be the case but might as well check)
+    a = {"a": "b", "datasets": {"asdf": {1: 2}, "thing2": {3: 4}}}
+    # (should succeed)
+    check_json_dataset_names(a, "abc", "ASDF", "a", "THING2")
+    # (should fail)
+    with pytest.raises(ValueError) as exception_info:
+        check_json_dataset_names(a, "lol", "thing2", "asdf")
+    assert_in_e_info(
+        exception_info,
+        "Found the following disallowed dataset name(s)",
+        "asdf",
+        "thing2",
+    )
+    # (should also fail)
+    with pytest.raises(ValueError) as exception_info:
+        check_json_dataset_names(a, "lol", "thing2")
+    assert_in_e_info(
+        exception_info,
+        "Found the following disallowed dataset name(s)",
+        "thing2",
+    )
+    # Only the intersection should be reported
+    assert "asdf" not in str(exception_info.value)
 
 
 def test_try_to_replace_line_json():
