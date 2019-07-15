@@ -24,22 +24,90 @@ define(["vega"], function(vega) {
         return elementIDs;
     }
 
-    /* Populates a <select> DOM element with a list of options.
+    /* Adds <option> elements to a parent DOM element.
      *
-     * This will remove any options already present in the <select> first.
+     * For each item "x" in optionList, a new <option> element is created
+     * inside parentElement with a value and name of "x".
      */
-    function populateSelect(selectID, optionList, defaultVal) {
-        if (optionList.length <= 0) {
-            throw new Error("optionList must have at least one value");
-        }
+    function addOptionsToParentElement(optionList, parentElement) {
         var optionEle;
-        var selectEle = document.getElementById(selectID);
-        // Remove any options already present in the <select>
-        clearDiv(selectID);
         for (var m = 0; m < optionList.length; m++) {
             optionEle = document.createElement("option");
             optionEle.value = optionEle.text = optionList[m];
-            selectEle.appendChild(optionEle);
+            parentElement.appendChild(optionEle);
+        }
+    }
+
+    /* Populates a <select> DOM element with a list or object of options.
+     *
+     * This will remove any options already present in the <select> first.
+     *
+     * By default -- if optgroupMap is falsy -- this function assumes that
+     * "options" is just a list of options to add directly to the <select>.
+     *
+     * If optgroupMap is truthy, this assumes that "options" is actually an
+     * object of the form {"g1": ["o1", ...], ..., "gX": ["oX", ...]}.
+     * This will still populate the <select> with all of the options ("o1",
+     * "oX", ...) in these lists, so the behavior will functionally be the
+     * same -- but the keys of the "options" object ("g1", "gX", ...) will be
+     * used to create <optgroup>s surrounding their respective options. (So
+     * "o1" would be an <option> within an <optgroup> labelled "g1" and "oX"
+     * would be an <option> within an <optgroup> labelled "gX", for example.)
+     *
+     * (If one of the <optgroup> names is "standalone", then its children will
+     * be added to the <select> directly. This functionality can be used to
+     * create "global" options that aren't within a specific <optgroup>.)
+     */
+    function populateSelect(selectID, options, defaultVal, optgroupMap) {
+        var optgroups;
+        if (optgroupMap) {
+            optgroups = Object.keys(options);
+            if (optgroups.length <= 0) {
+                throw new Error(
+                    "options must have at least one optgroup specified"
+                );
+            }
+        } else {
+            if (options.length <= 0) {
+                throw new Error("options must have at least one value");
+            }
+        }
+        var optionEle, groupEle;
+        var selectEle = document.getElementById(selectID);
+        // Remove any options already present in the <select>
+        clearDiv(selectID);
+        // Actually populate the <select>
+        if (optgroupMap) {
+            for (var g = 0; g < optgroups.length; g++) {
+                // Ignore empty optgroups. (In practice, this means that
+                // datasets without any specified feature metadata won't have
+                // an empty "Feature Metadata" optgroup shown in the search
+                // field <select>s.)
+                if (options[optgroups[g]].length > 0) {
+                    if (optgroups[g] === "standalone") {
+                        // If we find an optgroups with the label "standalone"
+                        // then we'll just add the option(s) within that label
+                        // to the <select> directly.
+                        addOptionsToParentElement(
+                            options["standalone"],
+                            selectEle
+                        );
+                    } else {
+                        // For all other optgroups, though, actually create an
+                        // <optgroup> element, populate that, then add that to
+                        // the <select>.
+                        groupEle = document.createElement("optgroup");
+                        groupEle.label = optgroups[g];
+                        addOptionsToParentElement(
+                            options[optgroups[g]],
+                            groupEle
+                        );
+                        selectEle.appendChild(groupEle);
+                    }
+                }
+            }
+        } else {
+            addOptionsToParentElement(options, selectEle);
         }
         // Set the default value of the <select>. Note that we escape this
         // value in quotes, just in case it contains a period or some other

@@ -68,20 +68,21 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // Standard case
             // only checking a single feature metadata field here, for my
             // own sanity
-            rrv.featureMetadataFields = ["Feature ID"];
+            rrv.featureMetadataFields = ["f1"];
             rrv.topFeatures = [
-                { "Feature ID": "abc" },
-                { "Feature ID": "def" },
-                { "Feature ID": "ghi" },
-                { "Feature ID": "lmno pqrs" },
-                { "Feature ID": "tuv" }
+                { "Feature ID": "abc", f1: 1 },
+                { "Feature ID": "def", f1: 2 },
+                { "Feature ID": "ghi", f1: 3 },
+                { "Feature ID": "lmno pqrs", f1: 4 },
+                { "Feature ID": "tuv", f1: null }
             ];
             rrv.botFeatures = [
-                { "Feature ID": "asdf" },
-                { "Feature ID": "ghjk" }
+                { "Feature ID": "asdf", f1: null },
+                { "Feature ID": "ghjk", f1: 7 }
             ];
-            var expectedTopText = "abc\ndef\nghi\nlmno pqrs\ntuv";
-            var expectedBotText = "asdf\nghjk";
+            var expectedTopText =
+                "abc / 1\ndef / 2\nghi / 3\nlmno pqrs / 4\ntuv / ";
+            var expectedBotText = "asdf / \nghjk / 7";
             rrv.updateFeaturesTextDisplays();
             chai.assert.equal(
                 document.getElementById("topFeaturesDisplay").value,
@@ -95,8 +96,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // Check case where there's only one feature in a list
             // In this case, the denominator + expected bottom text are the
             // same as before
-            rrv.topFeatures = [{ "Feature ID": "onlyfeature" }];
-            expectedTopText = "onlyfeature";
+            rrv.topFeatures = [{ "Feature ID": "onlyfeature", f1: 100 }];
+            expectedTopText = "onlyfeature / 100";
             rrv.updateFeaturesTextDisplays();
             chai.assert.equal(
                 document.getElementById("topFeaturesDisplay").value,

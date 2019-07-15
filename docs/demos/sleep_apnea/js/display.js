@@ -89,10 +89,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
-            // Ordered list of all feature metadata + feature ranking fields
-            // (starting with "Feature ID"). These are used to populate the
-            // <select>s where the user can choose what field to search by.
-            this.featureFields = undefined;
 
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
@@ -184,33 +180,23 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.rankOrdering,
                     this.rankOrdering[0]
                 );
-                // NOTE: we use .slice() to make a copy of the initial array so
-                // that when we unshift "Feature ID" onto
-                // this.featureFields, the original array (in the rank
-                // plot JSON) isn't modified.
-                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering.slice();
-                // Add "Feature ID" to the beginning of the feature metadata
-                // fields list.
-                this.featureMetadataFields.unshift("Feature ID");
-
-                // featureFields is a superset of featureMetadataFields that
-                // includes all feature ranking fields. featureMetadataFields
-                // is used for providing information about selected features,
-                // while featureFields is used for searching.
-                this.featureFields = this.featureMetadataFields.concat(
-                    this.rankOrdering
-                );
-                // ...And here, we populate the topSearch and botSearch
-                // <select>s with featureFields.
+                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
+                var searchableFields = {
+                    standalone: ["Feature ID"],
+                    "Feature Metadata": this.featureMetadataFields,
+                    "Feature Rankings": this.rankOrdering
+                };
                 dom_utils.populateSelect(
                     "topSearch",
-                    this.featureFields,
-                    "Feature ID"
+                    searchableFields,
+                    "Feature ID",
+                    true
                 );
                 dom_utils.populateSelect(
                     "botSearch",
-                    this.featureFields,
-                    "Feature ID"
+                    searchableFields,
+                    "Feature ID",
+                    true
                 );
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
@@ -613,20 +599,20 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
             var outputText = "";
             var currVal, anotherFieldLeft;
+            // fmFields is just the feature metadata fields, with "Feature ID"
+            // added on at the beginning
+            var fmFields = this.featureMetadataFields.slice();
+            fmFields.unshift("Feature ID");
             for (var i = 0; i < featureRowList.length; i++) {
                 if (i > 0) {
                     outputText += "\n";
                 }
-                // Note that "Feature ID" is included in
-                // this.featureMetadataFields, since we added it in
-                // makeRankPlot() above
-                for (var c = 0; c < this.featureMetadataFields.length; c++) {
-                    currVal = featureRowList[i][this.featureMetadataFields[c]];
+                for (var c = 0; c < fmFields.length; c++) {
+                    currVal = featureRowList[i][fmFields[c]];
                     // If currVal *is* null or undefined, this will look like
                     // / / in the output for this metadata field -- which is
                     // fine.
-                    anotherFieldLeft =
-                        c + 1 < this.featureMetadataFields.length;
+                    anotherFieldLeft = c + 1 < fmFields.length;
                     if (currVal !== null && currVal !== undefined) {
                         outputText += currVal;
                         if (anotherFieldLeft) {
