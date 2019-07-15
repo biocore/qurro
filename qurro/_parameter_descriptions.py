@@ -31,7 +31,7 @@ ASSUME_GNPS_FEATURE_METADATA = (
     'feature\'s ID as "A;B", where A is the mass-to-charge ratio of the '
     'feature (corresponding to the "parent mass" column in the feature '
     "metadata) and B is the discharge time of the feature (corresponding to "
-    'the "RTConsensus" column in the feature metadata). Qurro will '
-    'then only annotate feature IDs with their corresponding "LibraryID" '
-    "column in the feature metadata file."
+    'the "RTConsensus" column in the feature metadata). Qurro will then only '
+    'annotate features with their corresponding "LibraryID" column from the '
+    "feature metadata."
 )
