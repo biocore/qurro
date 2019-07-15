@@ -13,6 +13,10 @@
   feature metadata values for the specified field will just be ignored in
   searching.) ([#141](https://github.com/biocore/qurro/issues/141),
   [#97](https://github.com/biocore/qurro/issues/97))
+- Added a `--version` parameter to the standalone (i.e. outside of QIIME 2)
+  Qurro interface. You can now check the currently installed Qurro version by
+  running `qurro --version`. (There's already a `--version` parameter for the
+  QIIME 2 Qurro plugin; this can be accessed using `qiime qurro --version`.)
 - Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes

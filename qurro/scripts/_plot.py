@@ -20,6 +20,7 @@ from qurro._metadata_utils import (
     read_gnps_feature_metadata_file,
 )
 from qurro._df_utils import escape_columns
+from qurro.__init__ import __version__
 
 
 @click.command()
@@ -65,6 +66,7 @@ from qurro._df_utils import escape_columns
     is_flag=True,
     help="If passed, this will output debug messages.",
 )
+@click.version_option(__version__, prog_name="Qurro")
 def plot(
     ranks: str,
     table: str,
