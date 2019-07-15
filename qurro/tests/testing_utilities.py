@@ -323,6 +323,13 @@ def validate_sample_plot_json(
     basic_vegalite_json_validation(sample_json)
     dn = sample_json["data"]["name"]
 
+    # Assert that sample metadata fields are in alphabetical order, ignoring
+    # case. As in Qurro's code, this solution for sorting this way is based on
+    # this article:
+    # https://www.afternerd.com/blog/python-sort-list/#sort-strings-case-insensitive
+    sm_fields = sample_json["datasets"]["qurro_sample_metadata_fields"]
+    assert sorted(sm_fields, key=str.lower) == sm_fields
+
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.
     # NOTE: here we make the assumption that all samples are non-empty.

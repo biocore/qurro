@@ -283,9 +283,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          */
         makeSamplePlot(notFirstTime) {
             if (!notFirstTime) {
-                this.metadataCols = RRVDisplay.identifyMetadataColumns(
-                    this.samplePlotJSON
-                );
+                this.metadataCols = this.samplePlotJSON.datasets.qurro_sample_metadata_fields;
                 // Note that we set the default metadata fields based on whatever
                 // the JSON has as the defaults.
                 dom_utils.populateSelect(
@@ -989,7 +987,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         static identifySampleIDs(samplePlotSpec) {
-            // Like identifyMetadataColumns(), but just finds sample IDs.
             var sampleIDs = [];
             var dataName = samplePlotSpec.data.name;
             var sid;
@@ -1000,25 +997,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 }
             }
             return sampleIDs;
-        }
-
-        static identifyMetadataColumns(samplePlotSpec) {
-            // Given a Vega-Lite sample plot specification, find all the metadata cols.
-            // Just uses whatever the first available sample's keys are as a
-            // reference. So, uh, if the input sample plot JSON has zero samples, this
-            // will fail. (But that should have been caught in the python script.)
-            var dataName = samplePlotSpec.data.name;
-            var mdCols = Object.keys(samplePlotSpec.datasets[dataName][0]);
-            if (mdCols.length > 0) {
-                return mdCols.filter(function(mdColName) {
-                    return mdColName !== "qurro_balance";
-                });
-            } else {
-                throw new Error(
-                    "No metadata columns identified. Something seems " +
-                        "wrong with the sample plot JSON."
-                );
-            }
         }
 
         /* Checks if a sample ID is actually supported by the count data we

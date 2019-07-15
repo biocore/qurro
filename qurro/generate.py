@@ -372,6 +372,25 @@ def gen_sample_plot(metadata):
     # able to successfully use alt.MarkDef in the alt.Chart definition above.)
     sample_chart_dict = sample_chart.to_dict()
     sample_chart_dict["mark"] = {"type": "circle"}
+
+    # Specify an alphabetical ordering for the sample metadata field names.
+    # This will be used for populating the x-axis / color field selectors in
+    # Qurro's sample plot controls.
+    #
+    # Importantly, this is case insensitive (by default, the json.dumps
+    # sort_keys parameter considers names like "Sample ID" to occur before
+    # names like "age" due to casing -- we use this list to get around this).
+    # Solution based on this article:
+    # https://www.afternerd.com/blog/python-sort-list/#sort-strings-case-insensitive
+    #
+    # Also, we remove qurro_balance from this list because it shouldn't be
+    # exposed to the user in the Qurro interface. (It's already used on the
+    # y-axis of the sample plot automatically.)
+    sorted_md_cols = list(sorted(sample_metadata.columns, key=str.lower))
+    sorted_md_cols.remove("qurro_balance")
+    sample_chart_dict["datasets"][
+        "qurro_sample_metadata_fields"
+    ] = sorted_md_cols
     return sample_chart_dict
 
 
