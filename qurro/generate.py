@@ -335,13 +335,6 @@ def gen_sample_plot(metadata):
     sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
     sample_metadata.reset_index(inplace=True)
 
-    # Very minor thing -- sort the samples by their IDs. This should ensure
-    # that the sample plot output is deterministic.
-    # NOTE: this is probably unnecessary due to the use of sort_keys in
-    # _json_utils.try_to_replace_line_json(). Double-check if we can remove
-    # this.
-    sample_metadata.sort_values(by=["Sample ID"], inplace=True)
-
     # Create sample plot chart Vega-Lite spec using Altair.
     sample_chart = (
         alt.Chart(
