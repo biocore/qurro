@@ -9,9 +9,10 @@
   controls.
 - Added numeric searching: now you can search through numeric feature metadata or
   feature rankings using basic comparison operators. (Non-numeric input search
-  text will result in a warning dialog, and non-numeric feature metadata values
-  for the specified field will just be ignored in searching.)
-  ([#141](https://github.com/biocore/qurro/issues/141))
+  text will result in the search not identifying any features, and non-numeric
+  feature metadata values for the specified field will just be ignored in
+  searching.) ([#141](https://github.com/biocore/qurro/issues/141),
+  [#97](https://github.com/biocore/qurro/issues/97))
 - Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
