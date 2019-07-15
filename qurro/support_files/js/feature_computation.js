@@ -221,7 +221,9 @@ define(["vega"], function(vega) {
 
     /* Returns list of feature data objects (in the rank plot JSON) based
      * on a match of a given feature metadata/ranking field (including Feature
-     * ID) with the input text.
+     * ID) with the input text. The input text must be a string (even numbers
+     * aren't allowed -- the conversion is done later on in this function if a
+     * numeric search type is being used).
      *
      * If inputText is empty (i.e. its length is 0), this returns an empty
      * array.
@@ -262,15 +264,20 @@ define(["vega"], function(vega) {
             searchType === "lte" ||
             searchType === "gte"
         ) {
-            var inputNum = Number(inputText);
-            if (Number.isNaN(inputNum)) {
-                alert(
-                    'Search text "' +
-                        inputText +
-                        '" is not numeric. ' +
-                        "Please enter a valid number, or try using another " +
-                        "search type."
-                );
+            // Check if the input text represents a valid number. First we
+            // trim the input text so stuff like "   " becomes "", then we call
+            // vega.toNumber() on the trimmed input text; this mimics what
+            // Qurro's and QIIME 2's metadata readers do on metadata values.
+            // If the input was only whitespace, it'll be trimmed down to ""
+            // and vega.toNumber() will give null. And if the input is a bunch
+            // of non-numeric text, vega.toNumber() will give NaN.
+            //
+            // ... In any case, this should work pretty well for validating
+            // arbitrary user input here. If the user passed in a valid number,
+            // we'll call numberBasicFilterFeatures(); otherwise, we just bail
+            // out.
+            var inputNum = vega.toNumber(inputText.trim());
+            if (inputNum === null || !isFinite(inputNum)) {
                 return [];
             }
             return numberBasicFilterFeatures(
