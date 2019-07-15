@@ -1,4 +1,4 @@
-define(["vega"], function(vega) {
+define(["./dom_utils"], function(dom_utils) {
     /* Converts a feature field value to a text-searchable type, if possible.
      *
      * If the input is a string, returns the input unchanged.
@@ -115,14 +115,12 @@ define(["vega"], function(vega) {
             if (currVal === null) {
                 continue;
             } else {
-                currNum = vega.toNumber(currVal);
-                if (!isFinite(currNum)) {
-                    continue;
-                }
-                // If we've made it down to here, then this feature field value
-                // is not null and is a valid representation of a number. We
-                // can actually try comparing it.
-                if (compareFunc(currNum)) {
+                // currNum will either be a normal number or NaN, so we can
+                // just test its validity with !isNaN().
+                currNum = dom_utils.getNumberIfValid(currVal);
+                // Only do the comparison if currNum isn't NaN (uses boolean
+                // short-circuiting).
+                if (!isNaN(currNum) && compareFunc(currNum)) {
                     filteredFeatures.push(featureRowList[ti]);
                 }
             }
@@ -264,20 +262,8 @@ define(["vega"], function(vega) {
             searchType === "lte" ||
             searchType === "gte"
         ) {
-            // Check if the input text represents a valid number. First we
-            // trim the input text so stuff like "   " becomes "", then we call
-            // vega.toNumber() on the trimmed input text; this mimics what
-            // Qurro's and QIIME 2's metadata readers do on metadata values.
-            // If the input was only whitespace, it'll be trimmed down to ""
-            // and vega.toNumber() will give null. And if the input is a bunch
-            // of non-numeric text, vega.toNumber() will give NaN.
-            //
-            // ... In any case, this should work pretty well for validating
-            // arbitrary user input here. If the user passed in a valid number,
-            // we'll call numberBasicFilterFeatures(); otherwise, we just bail
-            // out.
-            var inputNum = vega.toNumber(inputText.trim());
-            if (inputNum === null || !isFinite(inputNum)) {
+            var inputNum = dom_utils.getNumberIfValid(inputText);
+            if (isNaN(inputNum)) {
                 return [];
             }
             return numberBasicFilterFeatures(

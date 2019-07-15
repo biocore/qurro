@@ -239,6 +239,39 @@ define(["vega"], function(vega) {
         document.getElementById("downloadHelper").click();
     }
 
+    /* If val is a string or number, this checks that val represents a valid,
+     * finite numerical value (using vega.toNumber() and isFinite()). If so,
+     * this returns that numerical value; otherwise, this returns NaN. (Also
+     * returns NaN if val isn't a string or a number, although I don't think
+     * this should ever happen in the course of regular usage of this
+     * function.)
+     *
+     * This mimics how getInvalidSampleIDs() works (that is, in tandem with
+     * Qurro's and QIIME 2's metadata readers). Input text is trimmed and then
+     * attempted to be converted to a number using vega.toNumber(). Normally,
+     * Number() (and therefore vega.toNumber()) has a silly corner case where
+     * Number("   ") === 0. However, vega.toNumber("") === null, so using
+     * .trim() on the input text (if a string) means that the output of
+     * vega.toNumber() on the trimmed input will be null if the input text only
+     * contains whitespace (and we can detect this and return NaN accordingly).
+     *
+     * This also treats Infinities/NaNs as invalid numbers, which matches the
+     * sample metadata processing behavior.
+     */
+    function getNumberIfValid(val) {
+        if (typeof val === "string") {
+            var nval = vega.toNumber(val.trim());
+            if (nval !== null && isFinite(nval)) {
+                return nval;
+            }
+        } else if (typeof val === "number") {
+            if (isFinite(val)) {
+                return val;
+            }
+        }
+        return NaN;
+    }
+
     // Array of all dropped-sample-statistics <div> IDs.
     // Used in a few places in the codebase, so I'm storing it here.
     var statDivs = [
@@ -257,6 +290,7 @@ define(["vega"], function(vega) {
         unionSize: unionSize,
         updateMainSampleShownDiv: updateMainSampleShownDiv,
         downloadDataURI: downloadDataURI,
+        getNumberIfValid: getNumberIfValid,
         statDivs: statDivs
     };
 });
