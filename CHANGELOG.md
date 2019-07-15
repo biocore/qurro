@@ -16,8 +16,19 @@
 - Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
+- A clear error is now raised if the feature rankings or feature metadata
+  include a column named `qurro_x`. (This column name is used internally by
+  Qurro to sort features in the rank plot.)
+  ([#183](https://github.com/biocore/qurro/issues/183))
+  Before, input datasets with this column name would have caused either the
+  loss of this column of data or confusing errors.
 ### Performance enhancements
 ### Miscellaneous
+- A clear error is now raised if Qurro is trying to parse a GNPS feature
+  metadata file, and the feature rankings include a column named `LibraryID`.
+  This sort of error should already have come up in prior versions of Qurro,
+  but now it will come up a bit earlier (and use a clearer message indicating
+  what's going on).
 - Updated the "README.txt" file located in the Byrd et al. test data folder to
   make it clearer that the differentials used here are equivalent to those used
   in the Morton/Marotz et al. 2019 analysis
