@@ -130,7 +130,7 @@ Recall that we'd like to analyze the log ratios between features' abundances.
 In Qurro, "selecting features" lets us define a __log ratio__ between multiple
 features' abundances in each sample.
 
-There are two main ways of doing this in Qurro:
+There are a few ways of selecting features in Qurro:
 
 - One way is just by clicking on the rank plot twice. The first click sets
   the numerator feature for a log ratio, and the second click sets the
@@ -139,19 +139,26 @@ There are two main ways of doing this in Qurro:
   IDs or metadata. For example, it's possible to construct the log ratio of all
   features with taxonomy annotations containing the text `o__Fusobacteriales` over all
   features with taxonomy annotations containing the text `o__Pseudomonadales`.
-    - This is equivalent to the log ratio of all ranked features in the order
+    - This is equivalent to the log ratio of all ranked features identified as
+      being in the order
       [_Fusobacteriales_](https://en.wikipedia.org/wiki/Fusobacteriales) over all
-      ranked features in the order
+      ranked features identified as being in the order
       [_Pseudomonadales_](https://en.wikipedia.org/wiki/Pseudomonadales).
-    - In this case -- where an arbitrary of features can be in the numerator
+    - In this case -- where an arbitrary number of features can be in the numerator
       and denominator of the log ratio -- the log ratio is computed for a given
       sample by summing the feature abundances of the numerator features,
       summing the feature abundances of the denominator features, and then
-      taking the log ratio of these sums (`log(top sum) - log(bottom sum)`,
-      which is equivalent to `log(top sum / bottom sum)`).
+      taking the log ratio of these sums. Written out as a formula, this is
+      `log(top sum) - log(bottom sum)` (or, [equivalently](https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Using_simpler_operations),
+      `log(top sum / bottom sum)`).
+- You can also select features by searching through their feature rankings or
+  metadata numerically (e.g. you can select all features with a given ranking
+  above a certain threshold). This tutorial won't cover this option, but feel
+  free to try this out in your Qurro plots.
 
-Let's try the second of these options out. In the bottom-right corner of the
-screen -- under the `Numerator` section -- change the feature metadata selector
+Let's try the second of these options (selecting features from a text-search)
+out. In the bottom-right corner of the Qurro visualization -- under the
+`Numerator` section -- change the feature field selector
 (it's the dropdown that comes right after some text that says
 "Filter to features where") to say `Taxon` instead of `Feature ID`. Now copy
 the text `o__Fusobacteriales` into the text box in this section.
@@ -177,7 +184,7 @@ the sample plot should be updated now:
   the selected features' abundances; the x-axis values and colors are set to
   whatever metadata categories you'd like to use.
 
-#### A caveat with basic text searching
+#### A limitation of basic text searching
 
 This is great, but there's one thing to watch out for. Since Qurro only checks
 that a given feature's taxonomy annotation _contains the text_ `o__Fusobacteriales`,
@@ -185,9 +192,10 @@ there's the potential for it to find other features that happen to contain the
 text `o__Fusobacteriales` in their taxonomy annotations but aren't actually in the order
 `o__Fusobacteriales`.
 
-Say a new order is discovered and named _Fusobacteriales2_. (This will almost
-certainly never happen, but you never know.) Since our search above only
-cares about a feature's taxonomy annotation containing the text
+As a silly example, let's say a new order is discovered and named
+_Fusobacteriales2_. (This will almost certainly never happen, but you never
+know.) Since our search above only cares about a feature's taxonomy annotation
+containing the text
 `o__Fusobacteriales`, features that were classified as being in
 `o__Fusobacteriales2` would also get included in our searches!
 
@@ -196,13 +204,15 @@ set to `contains the exact text`) options in Qurro. The
 `contains the exact separated text fragment(s)` setting will split up each
 feature's ID or metadata field at every occurrence of whitespace, commas, or
 semicolons, and then only search against perfect matches of each of those
-"fragments". This would protect us against our hypothetical
+"fragments". This option is useful for searching against matches with taxonomic
+classifications -- it would protect us against our hypothetical
 `o__Fusobacteriales2` scenario.
 
-(In practice this sort of problem is observable when, for example, the features
-being investigated include Viruses in addition to Bacteria: there are plenty of
-_Staphylococcus_ species and plenty of _Staphylococcus_ phages, and a basic
-text search for just `Staphylococcus` will give you both.)
+(This sort of problem is also observable in practice when, for example, the
+features being investigated include Viruses in addition to Bacteria: there
+are plenty of _Staphylococcus_ species and plenty of _Staphylococcus_ phages,
+and a basic text search for just `Staphylococcus` will give you both. Check out
+a Qurro visualization of the [Byrd demo dataset](https://biocore.github.io/qurro/demos/byrd/index.html) for an example of this.)
 
 ### Changing up the sample plot
 
@@ -262,10 +272,11 @@ Move back to the tab or window where you have the Qurro plot open.
 You can paste (using something like ctrl-V or &#8984;-V) the feature ID you just copied
 directly into the numerator or denominator search box, in the bottom right corner of Qurro's interface. You can do this twice
 (once for the numerator and once for the denominator) to create log ratios of
-features directly from the biplot.
+features directly from the biplot. (Make sure to change the feature field
+selector back to `Feature ID`, since we're searching using these feature IDs.)
 
-Now press the `Regenerate plots` button to apply this log ratio to the rank and
-sample plots.
+Now press the `Regenerate plots` button to select these two features, applying
+their log ratio to the rank and sample plots.
 
 #### Hey, wait a second! There are only eight arrows in the biplot, but there are over five hundred features in the feature ranks plot. What gives?
 
@@ -275,23 +286,36 @@ parameter was set to 8, so only 8 arrows (i.e. features) are shown in the
 Emperor visualization of the biplot. Feel free to try rerunning this command
 with a different number of features to show more features in the biplot.
 
+(Emperor's choice of which features to show is based on features' "magnitude
+based on all ... dimensions" -- [see this comment and the surrounding QIIME 2 forum thread](https://forum.qiime2.org/t/how-to-make-pcoa-biplot-in-r-using-q2-deicode-ordination/8377/6) for context.)
+
 ## Epilogue: How do I actually, like, select features in Qurro?
 
 That's a good question! You have a few strategies in choosing what to inspect
-in a Qurro visualization. There isn't a clear "best practice," at least as of
-writing.
+in a Qurro visualization.
 
+### Inspecting highly- or lowly-ranked features
 One strategy (as mentioned in the
 [songbird FAQ](https://github.com/biocore/songbird#faqs), regarding
 differentials) is to "...investigate the top/bottom microbes [features] with
 the highest/lowest ranks."
 
-You can also try picking out features that appear to be strongly associated
-with clustering of your samples in a compositional biplot, as we did with
-Emperor above.
+You can identify these "highest/lowest" ranked features by manually inspecting
+the rank plot (increasing the bar width makes this easier), or by picking out
+features that appear to be strongly associated with clustering of your samples
+in a biplot, as we did with Emperor above.
 
-Other work has been done on this; see, for example,
-[Rivera-Pinto et al. 2018](https://msystems.asm.org/content/3/4/e00053-18.abstract).
+One solid strategy for conducting a log ratio test is looking at particularly
+high- or low-ranked features,
+seeing what taxonomic classifications are used for these features, and using
+those taxonomic classifications to construct more detailed log ratios using
+text searching. Qurro's variety of search options should hopefully make this
+process straightforward.
+
+### Other work
+Other work has been done on this problem; see, for example,
+[selbal](https://github.com/UVic-omics/selbal) (described in [Rivera-Pinto et al. 2018](https://msystems.asm.org/content/3/4/e00053-18.abstract)).
+[Songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) also offers a good review of this process.
 
 ## Acknowledgements
 
