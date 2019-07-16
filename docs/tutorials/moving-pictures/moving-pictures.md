@@ -119,7 +119,7 @@ Let's view `qurro-plot.qzv`, as described above.
 So right away we see two things: on the left a plot of rankings (in this case,
 loadings) for each feature, and on the right a plot of selected features' log
 ratios in samples. In this tutorial these plots will be referred to as the
-_rank plot_ and _sample plot_, respectively.
+__rank plot__ and __sample plot__, respectively.
 
 Since no features are currently selected to be part of a log ratio, these plots
 look pretty empty. So let's select some features!
