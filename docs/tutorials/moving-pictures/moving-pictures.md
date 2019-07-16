@@ -289,12 +289,14 @@ with a different number of features to show more features in the biplot.
 (Emperor's choice of which features to show is based on features' "magnitude
 based on all ... dimensions" -- [see this comment and the surrounding QIIME 2 forum thread](https://forum.qiime2.org/t/how-to-make-pcoa-biplot-in-r-using-q2-deicode-ordination/8377/6) for context.)
 
-## Epilogue: How do I actually, like, select features in Qurro?
+## Epilogue: How should I actually, like, select features in Qurro?
 
-That's a good question! You have a few strategies in choosing what to inspect
-in a Qurro visualization.
+That's a good question! You have lots of strategies in choosing what to inspect
+in a Qurro visualization. This section discusses only a subset of these;
+in the end, Qurro leaves the decision of how to investigate your data up to
+you. We hope it makes this investigation easier, though!
 
-### Inspecting highly- or lowly-ranked features
+### (Semi-)manually inspecting highly- or lowly-ranked features
 One strategy (as mentioned in the
 [songbird FAQ](https://github.com/biocore/songbird#faqs), regarding
 differentials) is to "...investigate the top/bottom microbes [features] with
@@ -314,10 +316,15 @@ process straightforward.
 
 ### Other work on selecting features
 Other work has been done on this problem; see, for example,
-[selbal](https://github.com/UVic-omics/selbal) (described in [Rivera-Pinto et al. 2018](https://msystems.asm.org/content/3/4/e00053-18.abstract)).
+[selbal](https://github.com/UVic-omics/selbal) (described in [Rivera-Pinto et al. 2018](https://msystems.asm.org/content/3/4/e00053-18.abstract)). In theory, you could use the output of selbal as a starting point for playing around with feature selection in a Qurro visualization, but I haven't tried this as of writing.
 
 [Songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) also offers a good review of log ratio analyses (...of course, some of the authors of this paper are also authors of Qurro, so that might not be the most unbiased advice :).
 
 ## Acknowledgements
 
 This tutorial was based on the [DEICODE](https://library.qiime2.org/plugins/deicode/19/) and [QIIME 2](https://docs.qiime2.org/2019.4/tutorials/moving-pictures/) moving pictures tutorials.
+
+## Other Information
+
+- [Qurro's main GitHub repository](https://github.com/biocore/qurro)
+- [Qurro's website; includes a variety of demo visualizations using real data](https://biocore.github.io/qurro/)
