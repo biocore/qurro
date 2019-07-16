@@ -6,8 +6,8 @@
 Qurro visualizes the output from a tool like
 [songbird](https://github.com/biocore/songbird) or
 [DEICODE](https://github.com/biocore/DEICODE). It displays a plot of
-__feature rankings__ (either the differentials produced by a tool like
-songbird, or the loadings in a compositional biplot produced by a tool
+__feature rankings__ (either the feature differentials produced by a tool like
+songbird, or the feature loadings in a compositional biplot produced by a tool
 like DEICODE) alongside a plot showing the __log ratios__ of
 selected features' abundances within samples.
 
@@ -87,9 +87,10 @@ necessary files for this tutorial here:
 
 ## Running Qurro
 
-Since we'll be working with DEICODE output (i.e. a compositional biplot), we'll
-need to use the `qiime qurro unsupervised-rank-plot` command. (The
-`supervised-rank-plot` command is for working with differentials.)
+Since we'll be working with DEICODE output (i.e. feature loadings in a
+compositional biplot), we'll need to use the
+`qiime qurro unsupervised-rank-plot` command. (The `supervised-rank-plot`
+command is for working with feature differentials.)
 
 ```
 qiime qurro unsupervised-rank-plot \
@@ -128,7 +129,8 @@ look pretty empty. So let's select some features!
 
 Recall that we'd like to analyze the log ratios between features' abundances.
 In Qurro, "selecting features" lets us define a __log ratio__ between multiple
-features' abundances in each sample.
+features' abundances in each sample. That is, we can select the numerator and
+denominator feature(s) that make up this log ratio.
 
 There are a few ways of selecting features in Qurro:
 
@@ -152,9 +154,9 @@ There are a few ways of selecting features in Qurro:
       `log(top sum) - log(bottom sum)` (or, [equivalently](https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Using_simpler_operations),
       `log(top sum / bottom sum)`).
 - You can also select features by searching through their feature rankings or
-  metadata numerically (e.g. you can select all features with a given ranking
+  metadata numerically (e.g. you can select all features with a differential
   above a certain threshold). This tutorial won't cover this option, but feel
-  free to try this out in your Qurro plots.
+  free to try this out in Qurro.
 
 Let's try the second of these options (selecting features from a text-search)
 out. In the bottom-right corner of the Qurro visualization -- under the
@@ -216,9 +218,10 @@ a Qurro visualization of the [Byrd demo dataset](https://biocore.github.io/qurro
 
 ### Changing up the sample plot
 
-The sample plot's "x-axis" and "color" fields are initially set to an
-arbitrary sample metadata field (in this case, `BarcodeSequence`). This isn't
-super useful, so we can change these to more interesting metadata fields.
+The sample plot's "x-axis" and "color" fields are initially set to whatever the
+first field was in your sample metadata file (in this case, `BarcodeSequence`).
+This probably isn't super useful, so we can change these to more interesting
+metadata fields.
 
 Let's try setting the x-axis to the `Body Site` field and the color to the
 `ReportedAntibioticUsage` field. You can do this using the controls underneath
