@@ -569,6 +569,29 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     )
                 );
             });
+            describe("operatorToCompareFunc()", function() {
+                it("Passing in an invalid operator results in an error", function() {
+                    // This should never happen since we screen for invalid
+                    // operators in filterFeatures(), but still good to check for
+                    chai.assert.throws(function() {
+                        feature_computation.operatorToCompareFunc("asdf", 3);
+                    }, /unrecognized operator passed/);
+                });
+                it("Passing in a valid operator results in a valid comparison function", function() {
+                    // The other basic numerical comparison operators (lte, gt,
+                    // gte) have already been unit-tested above. This just
+                    // double-checks that operatorToCompareFunc() itself works
+                    // when called manually.
+                    var lt3 = feature_computation.operatorToCompareFunc(
+                        "lt",
+                        3
+                    );
+                    chai.assert.isTrue(lt3(0));
+                    chai.assert.isTrue(lt3(2));
+                    chai.assert.isFalse(lt3(3));
+                    chai.assert.isFalse(lt3(4));
+                });
+            });
         });
         describe("existsIntersection()", function() {
             it("Returns true if an intersection exists", function() {
