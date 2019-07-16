@@ -198,6 +198,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "Feature ID",
                     true
                 );
+                // Clear the "features text" displays
+                this.updateFeaturesTextDisplays(false, true);
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
                 // This is intended to address cases where there are only a few
@@ -572,12 +574,24 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         updateFeatureHeaderCounts(topCt, botCt) {
+            var featureCt = this.featureIDs.length;
+            var featureCtStr = featureCt.toLocaleString();
             document.getElementById("numHeader").textContent =
-                "Numerator Features (" + topCt.toLocaleString() + " selected)";
+                "Numerator Features: " +
+                topCt.toLocaleString() +
+                " / " +
+                featureCtStr +
+                " (" +
+                dom_utils.formatPercentage(topCt, featureCt) +
+                "%) selected";
             document.getElementById("denHeader").textContent =
-                "Denominator Features (" +
+                "Denominator Features: " +
                 botCt.toLocaleString() +
-                " selected)";
+                " / " +
+                featureCtStr +
+                " (" +
+                dom_utils.formatPercentage(botCt, featureCt) +
+                "%) selected";
         }
 
         /* Converts a list of feature "rows" from the rank plot JSON to a

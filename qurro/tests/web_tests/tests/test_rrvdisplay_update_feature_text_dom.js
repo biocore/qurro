@@ -45,7 +45,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 document.getElementById("botFeaturesDisplay").value,
                 "New feature name low / 10 / 3"
             );
-            testing_utilities.checkHeaders(1, 1);
+            testing_utilities.checkHeaders(1, 1, 5);
             // Check it again -- ensure that the updating action overwrites the
             // previous values
             rrv.newFeatureHigh = {
@@ -62,7 +62,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 document.getElementById("botFeaturesDisplay").value,
                 "Thing 2! / / "
             );
-            testing_utilities.checkHeaders(1, 1);
+            testing_utilities.checkHeaders(1, 1, 5);
         });
         it("Works for multi-feature selections", function() {
             // Standard case
@@ -92,7 +92,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 document.getElementById("botFeaturesDisplay").value,
                 expectedBotText
             );
-            testing_utilities.checkHeaders(5, 2);
+            testing_utilities.checkHeaders(5, 2, 5);
             // Check case where there's only one feature in a list
             // In this case, the denominator + expected bottom text are the
             // same as before
@@ -107,7 +107,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 document.getElementById("botFeaturesDisplay").value,
                 expectedBotText
             );
-            testing_utilities.checkHeaders(1, 2);
+            testing_utilities.checkHeaders(1, 2, 5);
             // Check case where lists are empty
             // This could happen if, e.g., both of the user's text queries
             // don't have any results.
@@ -120,7 +120,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             chai.assert.isEmpty(
                 document.getElementById("botFeaturesDisplay").value
             );
-            testing_utilities.checkHeaders(0, 0);
+            testing_utilities.checkHeaders(0, 0, 5);
         });
         it('Clears the "feature text" DOM elements properly', function() {
             // Populate the DOM elements
@@ -129,7 +129,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             rrv.updateFeaturesTextDisplays(true);
             // Just to be super sure, check that the headers were updated
             // correctly
-            testing_utilities.checkHeaders(1, 1);
+            testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing works
             rrv.updateFeaturesTextDisplays(false, true);
             chai.assert.isEmpty(
@@ -138,12 +138,12 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             chai.assert.isEmpty(
                 document.getElementById("botFeaturesDisplay").value
             );
-            testing_utilities.checkHeaders(0, 0);
+            testing_utilities.checkHeaders(0, 0, 5);
             // Repopulate the DOM elements
             rrv.newFeatureHigh = "Thing 1!";
             rrv.newFeatureLow = "Thing 2!";
             rrv.updateFeaturesTextDisplays(true);
-            testing_utilities.checkHeaders(1, 1);
+            testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing is done, even if "single" is true
             // (the "clear" argument takes priority)
             rrv.updateFeaturesTextDisplays(true, true);
@@ -153,7 +153,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             chai.assert.isEmpty(
                 document.getElementById("botFeaturesDisplay").value
             );
-            testing_utilities.checkHeaders(0, 0);
+            testing_utilities.checkHeaders(0, 0, 5);
         });
     });
 });

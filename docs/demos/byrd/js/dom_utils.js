@@ -197,9 +197,6 @@ define(["vega"], function(vega) {
             } else if (dropType === "color") {
                 prefix = "Color: ";
             }
-            // Show the percentage of samples that have to be dropped due to
-            // this reason.
-            var percentage = 100 * (numDroppedSamples / totalSampleCount);
 
             // Figure out the reason we'll be displaying as a justification for
             // why at least this many samples have to be dropped.
@@ -216,13 +213,12 @@ define(["vega"], function(vega) {
             // formatting.
             document.getElementById(divID).textContent =
                 prefix +
-                String(numDroppedSamples) +
+                numDroppedSamples.toLocaleString() +
                 " / " +
-                String(totalSampleCount) +
+                totalSampleCount.toLocaleString() +
                 " samples (" +
-                String(percentage.toFixed(2)) +
-                "%)" +
-                " can't be shown due to having " +
+                formatPercentage(numDroppedSamples, totalSampleCount) +
+                "%) can't be shown due to having " +
                 reason;
             document.getElementById(divID).classList.remove("invisible");
         } else {
@@ -264,6 +260,21 @@ define(["vega"], function(vega) {
         }
     }
 
+    /* Returns a string representation of the input value with two fractional
+     * digits and formatted in the default locale.
+
+     * This essentially mimics the behavior of percentage.toFixed(2), while
+     * still respecting the user's locale. This solution is from
+     * https://stackoverflow.com/a/31581206/10730311.
+     */
+    function formatPercentage(n, total) {
+        var percentage = 100 * (n / total);
+        return percentage.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
     /* Updates a given <div> re: total # of samples shown.
      *
      * Sort of like the opposite of updateSampleDroppedDiv().
@@ -283,13 +294,12 @@ define(["vega"], function(vega) {
         var numSamplesShown = totalSampleCount - unionSize(droppedSamples);
         var divIDInUse = divID === undefined ? "mainSamplesDroppedDiv" : divID;
 
-        var percentage = 100 * (numSamplesShown / totalSampleCount);
         document.getElementById(divIDInUse).textContent =
-            String(numSamplesShown) +
+            numSamplesShown.toLocaleString() +
             " / " +
-            String(totalSampleCount) +
+            totalSampleCount.toLocaleString() +
             " samples (" +
-            String(percentage.toFixed(2)) +
+            formatPercentage(numSamplesShown, totalSampleCount) +
             "%) currently shown.";
         // Just in case this div was set to invisible (i.e. this is the first
         // time it's been updated).
@@ -367,6 +377,7 @@ define(["vega"], function(vega) {
         updateSampleDroppedDiv: updateSampleDroppedDiv,
         unionSize: unionSize,
         updateMainSampleShownDiv: updateMainSampleShownDiv,
+        formatPercentage: formatPercentage,
         downloadDataURI: downloadDataURI,
         getNumberIfValid: getNumberIfValid,
         statDivs: statDivs

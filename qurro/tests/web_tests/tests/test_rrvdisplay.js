@@ -88,7 +88,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 for (var i = 0; i < data.length; i++) {
                     chai.assert.isNull(data[i].qurro_balance);
                 }
-                testing_utilities.checkHeaders(0, 0);
+                testing_utilities.checkHeaders(0, 0, 5);
             }
             describe("Single-feature selections", function() {
                 beforeEach(async function() {
@@ -169,7 +169,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.datasets[dataName][5].qurro_balance
                     );
                     // Check that various DOM elements were properly updated
-                    testing_utilities.checkHeaders(1, 1);
+                    testing_utilities.checkHeaders(1, 1, 5);
                     chai.assert.equal(
                         "2 / 6 samples (33.33%) can't be shown due to having an invalid (i.e. containing zero) log ratio.",
                         document.getElementById("balanceSamplesDroppedDiv")
@@ -241,7 +241,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 it("Properly updates the sample plot balances");
                 it("Properly updates the rank plot classifications");
                 it('Properly updates the "feature text" headers', function() {
-                    testing_utilities.checkHeaders(5, 1);
+                    testing_utilities.checkHeaders(5, 1, 5);
                     chai.assert.sameMembers(
                         [
                             "Taxon1 / / ",
