@@ -91,7 +91,17 @@ available in Qurro's example Jupyter notebooks, which are located
 - [**`songbird_example.ipynb`**](https://github.com/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   demonstrates using [songbird](https://github.com/biocore/songbird) and then using Qurro to visualize songbird's output.
 
-### Interacting with a Qurro visualization
+#### "Moving Pictures" Tutorial
+
+In the style of the QIIME 2 and DEICODE moving pictures tutorials, there is a
+draft moving pictures tutorial (showing how to use Qurro within QIIME 2, and
+how to interact with the generated Qurro visualization) available
+[here](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md).
+This tutorial is still a work in progress, so feel free to contact us if you
+have any outstanding questions (or any suggestions for improving this
+tutorial).
+
+### Brief Description: Interacting with a Qurro visualization
 The two plots (one of feature rankings, and one of samples' log ratios)
 in a Qurro visualization are linked [1]: when a change is made to the
 selected features in a log ratio, both the rank plot and sample plot are
@@ -102,7 +112,7 @@ numerator feature (determined from the first-clicked feature) and a
 new denominator feature (determined from the second-clicked feature) for the
 abundance log ratios in the sample plot.
 
-You can also run textual queries over the various feature IDs in order to
+You can also run queries over the various features in the rank plot in order to
 construct more complicated log ratios (e.g. "the log ratio of the combined
 abundances of all features that contain the text 'X' over the combined
 abundances of all features that contain the text 'Y'").
