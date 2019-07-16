@@ -40,6 +40,9 @@
   ([#190](https://github.com/biocore/qurro/issues/190))
 ### Performance enhancements
 ### Miscellaneous
+- DEICODE ordinations used in demos and test inputs have been rerun with
+  DEICODE version 0.2.3.
+  ([#188](https://github.com/biocore/qurro/issues/188))
 - A clear error is now raised if Qurro is trying to parse a GNPS feature
   metadata file, and the feature rankings include a column named `LibraryID`.
   This sort of error should already have come up in prior versions of Qurro,
