@@ -27,7 +27,6 @@
 - The fractions of selected features out of the total amount of features in the
   rank plot are now displayed in the numerator and denominator "headers."
   ([#187](https://github.com/biocore/qurro/issues/187))
-- Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
 - A clear error is now raised if the feature rankings or feature metadata
@@ -44,6 +43,7 @@
   ([#190](https://github.com/biocore/qurro/issues/190))
 ### Performance enhancements
 ### Miscellaneous
+- Added a draft "Moving Pictures" tutorial.
 - DEICODE ordinations used in demos and test inputs have been rerun with
   DEICODE version 0.2.3.
   ([#188](https://github.com/biocore/qurro/issues/188))

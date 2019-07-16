@@ -224,10 +224,10 @@ This probably isn't super useful, so we can change these to more interesting
 metadata fields.
 
 Let's try setting the x-axis to the `Body Site` field and the color to the
-`ReportedAntibioticUsage` field. You can do this using the controls underneath
+`Subject` field. You can do this using the controls underneath
 the sample plot, on the middle-right side of the Qurro interface.
 
-<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro3.png" alt="Qurro interface screenshot #3. The same log ratio as before is selected, and the x-axis of the sample plot is set to BodySite (with 'left palm' and 'right palm' as values) and the color of each point is set to ReportedAntibioticUsage (mostly 'No', with one 'Yes' value)." />
+<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro3.png" alt="Qurro interface screenshot #3. The same log ratio as before is selected, and the x-axis of the sample plot is set to BodySite (with 'left palm' and 'right palm' as displayed values) and the color of each point is set to Subject (either 'subject-1' or 'subject-2')." />
 
 This is more interesting. Of course, there aren't a lot of samples in the plot,
 and this was a pretty arbitrary log ratio we just selected. So it's hard to
@@ -264,7 +264,10 @@ First, open up the biplot in a new browser tab or window. As with the Qurro plot
 you can do this using `qiime tools view` or by uploading `biplot.qzv` to
 [view.qiime2.org](https://view.qiime2.org/).
 
-<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/biplot.png" alt="Screenshot of the biplot generated in the DEICODE tutorial, visualized in Emperor." />
+Here's a screenshot of the biplot, with samples colored by their `BodySite` and
+features (arrows) colored by their `Taxon`.
+
+<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/emperor1.png" alt="Screenshot of the biplot generated in the DEICODE tutorial, visualized in Emperor." />
 
 Try double-clicking on an arrow in this biplot. You should see a message pop up
 in the bottom left of your screen that says `(copied to clipboard)`, followed
