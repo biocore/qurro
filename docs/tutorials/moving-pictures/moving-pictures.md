@@ -312,10 +312,11 @@ those taxonomic classifications to construct more detailed log ratios using
 text searching. Qurro's variety of search options should hopefully make this
 process straightforward.
 
-### Other work
+### Other work on selecting features
 Other work has been done on this problem; see, for example,
 [selbal](https://github.com/UVic-omics/selbal) (described in [Rivera-Pinto et al. 2018](https://msystems.asm.org/content/3/4/e00053-18.abstract)).
-[Songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) also offers a good review of this process.
+
+[Songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) also offers a good review of log ratio analyses (...of course, some of the authors of this paper are also authors of Qurro, so that might not be the most unbiased advice :).
 
 ## Acknowledgements
 
