@@ -6,7 +6,7 @@
   tooltips for individual features in the rank plot.
   ([#186](https://github.com/biocore/qurro/issues/186))
 - Added feature rankings as searchable fields in the "Selecting Features"
-  controls.
+  controls. ([#97](https://github.com/biocore/qurro/issues/97))
 - Feature metadata fields and feature ranking fields are now grouped under
   `Feature Metadata` or `Feature Ranking` headers in the searchable fields
   dropdowns. ([#191](https://github.com/biocore/qurro/issues/191))
