@@ -10,11 +10,12 @@
 - Feature metadata fields and feature ranking fields are now grouped under
   `Feature Metadata` or `Feature Ranking` headers in the searchable fields
   dropdowns. ([#191](https://github.com/biocore/qurro/issues/191))
-- Added numeric searching: now you can search through numeric feature metadata or
-  feature rankings using basic comparison operators. (Non-numeric input search
-  text will result in the search not identifying any features, and non-numeric
-  feature metadata values for the specified field will just be ignored in
-  searching.) ([#141](https://github.com/biocore/qurro/issues/141),
+- **Added numeric searching**: now you can search through numeric feature
+  metadata or feature rankings using basic comparison operators. (Non-numeric
+  input search text will result in the search not identifying any features,
+  and non-numeric feature metadata values for the specified field will just
+  be ignored in searching.)
+  ([#141](https://github.com/biocore/qurro/issues/141),
   [#97](https://github.com/biocore/qurro/issues/97))
 - Added a `--version` parameter to the standalone (i.e. outside of QIIME 2)
   Qurro interface. You can now check the currently installed Qurro version by
@@ -23,6 +24,8 @@
 - Sample metadata fields are now ordered alphabetically (and ignoring case) in
   the `x-axis field` and `color field` dropdowns in the sample plot controls.
   ([#76](https://github.com/biocore/qurro/issues/76))
+- Displayed the fraction of selected features in the numerator and denominator
+  "headers." ([#187](https://github.com/biocore/qurro/issues/187))
 - Added a "Moving Pictures" tutorial.
 ### Backward-incompatible changes
 ### Bug fixes
