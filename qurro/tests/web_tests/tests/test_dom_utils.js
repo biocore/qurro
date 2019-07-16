@@ -120,7 +120,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             it("Throws an error when passed an empty list", function() {
                 chai.assert.throws(function() {
                     dom_utils.populateSelect(selectID, [], "I'm irrelevant!");
-                });
+                }, /options must have at least one value/);
             });
             it("Creates <optgroup>s when optgroupMap is truthy", function() {
                 var vals = { g1: ["o1", "o2"], g2: ["o3"] };
@@ -145,6 +145,21 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     [{ g1: ["o1", "o2"] }, { g2: ["o3"] }, "o4", "o5"]
                 );
                 assertSelected(selectID, "o3");
+            });
+            it("Throws an error when passed an empty optgroups object", function() {
+                chai.assert.throws(function() {
+                    dom_utils.populateSelect(selectID, {}, "", true);
+                }, /options must have at least one optgroup specified/);
+            });
+            it("Throws an error when passed an optgroups object with all empty children", function() {
+                chai.assert.throws(function() {
+                    dom_utils.populateSelect(
+                        selectID,
+                        { abc: [], def: [] },
+                        "",
+                        true
+                    );
+                }, /options must have at least one child option/);
             });
         });
 

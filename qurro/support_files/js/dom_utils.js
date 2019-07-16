@@ -67,6 +67,16 @@ define(["vega"], function(vega) {
                     "options must have at least one optgroup specified"
                 );
             }
+            var atLeastOneOption = false;
+            for (var i = 0; i < optgroups.length; i++) {
+                if (options[optgroups[i]].length > 0) {
+                    atLeastOneOption = true;
+                    break;
+                }
+            }
+            if (!atLeastOneOption) {
+                throw new Error("options must have at least one child option");
+            }
         } else {
             if (options.length <= 0) {
                 throw new Error("options must have at least one value");
