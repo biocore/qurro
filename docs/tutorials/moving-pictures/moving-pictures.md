@@ -52,7 +52,9 @@ pip install numpy
 pip install qurro
 ```
 
-A python version of at least 3.5 is required to use Qurro.
+A python version of at least 3.5 is required to use Qurro. (You can check this
+by running `conda info | grep python`; if you're in the latest QIIME 2 conda
+environment, you should already be using a good enough version of Python.)
 
 Once you've installed Qurro, let's get QIIME 2 to recognize it. Run the
 following command in a terminal:
