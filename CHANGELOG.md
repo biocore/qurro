@@ -59,6 +59,8 @@
   make it clearer that the differentials used here are equivalent to those used
   in the Morton/Marotz et al. 2019 analysis
   (https://github.com/knightlab-analyses/reference-frames).
+- Removed some unused images from the `screenshots/` directory of Qurro's
+  code repository.
 - Various updates to Qurro's code and documentation.
   ([#184](https://github.com/biocore/qurro/issues/184))
 
