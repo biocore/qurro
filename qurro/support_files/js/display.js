@@ -215,10 +215,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.updateRankPlotBarSize(false);
                 }
             }
-            // Set the y-axis to say "Rank: [rank title]" instead of just
-            // "[rank title]". Makes things a bit clearer.
+            // Set the y-axis to say "Magnitude: [ranking title]" instead of
+            // just "[rank title]". Use of "Magnitude" here is based on
+            // discussion in issue #191.
             this.rankPlotJSON.encoding.y.title =
-                "Rank: " + this.rankPlotJSON.encoding.y.field;
+                "Magnitude: " + this.rankPlotJSON.encoding.y.field;
             // We can use a closure to allow callback functions to access "this"
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.

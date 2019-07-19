@@ -276,7 +276,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     await document.getElementById("rankField").onchange();
                     // Check that the rank plot JSON was updated accordingly:
                     // 1. y-axis field updated
-                    // 2. y-axis title updated to say "Rank: [rank name]"
+                    // 2. y-axis title updated to say "Magnitude: [rank name]"
                     // 3. The lone transform of the rank plot JSON should now
                     //    sort by the new rank field
                     chai.assert.equal(
@@ -284,7 +284,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.rankPlotJSON.encoding.y.field
                     );
                     chai.assert.equal(
-                        "Rank: Rank 1",
+                        "Magnitude: Rank 1",
                         rrv.rankPlotJSON.encoding.y.title
                     );
                     // Sanity check -- verify there's only one transform, and
