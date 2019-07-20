@@ -84,7 +84,7 @@ define(["./dom_utils"], function(dom_utils) {
      * Valid values for "operator" are "lt", "gt", "lte", and "gte"
      * (corresponding to the comparison operators <, >, <=, and >=). Passing
      * anything else for the "operator" argument will result in an error being
-     * thrown.
+     * thrown by operatorToCompareFunc().
      *
      * As an example: if the input features' field values are "asdf",
      * 3, 5, and 10, the inputNum is 6, and the operator is "lt", then this
@@ -299,6 +299,7 @@ define(["./dom_utils"], function(dom_utils) {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,
         textToRankArray: textToRankArray,
+        operatorToCompareFunc: operatorToCompareFunc,
         existsIntersection: existsIntersection,
         tryTextSearchable: tryTextSearchable
     };
