@@ -43,6 +43,9 @@
   ([#190](https://github.com/biocore/qurro/issues/190))
 ### Performance enhancements
 ### Miscellaneous
+- Updated the rank plot's y-axis to say `Magnitude: [ranking name]` instead of
+  `Rank: [ranking name]`.
+  ([#194](https://github.com/biocore/qurro/issues/194))
 - Added a draft "Moving Pictures" tutorial.
 - DEICODE ordinations used in demos and test inputs have been rerun with
   DEICODE version 0.2.3.
