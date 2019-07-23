@@ -33,6 +33,9 @@
     - The range of this slider is 1 pixel per bar to 10 pixels per bar. Note
       that the maximum bar width (when not using the "Fit bar widths" option)
       has been increased from 3 pixels to 10 pixels.
+    - Renamed the `Fit bar widths to display width` option to say `Fit bar
+      widths to the plot's default width?`. This is a more accurate description
+      of what this option does.
 ### Backward-incompatible changes
 ### Bug fixes
 - A clear error is now raised if the feature rankings or feature metadata
@@ -70,6 +73,7 @@
   (https://github.com/knightlab-analyses/reference-frames).
 - Removed some unused images from the `screenshots/` directory of Qurro's
   code repository.
+- Updated the screenshot used in the README.
 - Various other small updates to Qurro's code and documentation.
   ([#184](https://github.com/biocore/qurro/issues/184))
 

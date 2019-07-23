@@ -214,7 +214,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.featureIDs.length <=
                     this.rankPlotJSON.config.view.width
                 ) {
-                    document.getElementById("fitBarSizeCheckbox").checked = true;
+                    document.getElementById(
+                        "fitBarSizeCheckbox"
+                    ).checked = true;
                     this.updateRankPlotBarFitting(false);
                 }
             }
