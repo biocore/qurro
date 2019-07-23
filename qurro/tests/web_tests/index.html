@@ -26,12 +26,8 @@
             >
             <option value="#ff0,#f00,#ff8c00">Yellow, Red, Orange</option>
         </select>
-        <select id="barSize">
-            <option value="1"></option>
-            <option value="2"></option>
-            <option value="3"></option>
-            <option value="fit"></option>
-        </select>
+        <input id="barSizeSlider" type="range" min="1" max="10" value="1" />
+        <input type="checkbox" id="fitBarSizeCheckbox" />
         <p id="barSizeWarning" class="warning plotControlBlock invisible"></p>
         <select id="xAxisField"> </select>
         <select id="colorField"> </select>

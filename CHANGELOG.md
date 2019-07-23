@@ -27,6 +27,12 @@
 - The fractions of selected features out of the total amount of features in the
   rank plot are now displayed in the numerator and denominator "headers."
   ([#187](https://github.com/biocore/qurro/issues/187))
+- Replaced the `Bar width` dropdown with a slider input that lets you easily
+  adjust the bar width (in addition to a checkbox that controls whether or not
+  the bar widths are fitted to the available width).
+    - The range of this slider is 1 pixel per bar to 10 pixels per bar. Note
+      that the maximum bar width (when not using the "Fit bar widths" option)
+      has been increased from 3 pixels to 10 pixels.
 ### Backward-incompatible changes
 ### Bug fixes
 - A clear error is now raised if the feature rankings or feature metadata
@@ -64,7 +70,7 @@
   (https://github.com/knightlab-analyses/reference-frames).
 - Removed some unused images from the `screenshots/` directory of Qurro's
   code repository.
-- Various updates to Qurro's code and documentation.
+- Various other small updates to Qurro's code and documentation.
   ([#184](https://github.com/biocore/qurro/issues/184))
 
 

@@ -14,19 +14,19 @@ define(["display", "dom_utils", "mocha", "chai"], function(
 
     describe("The RRVDisplay destructor (destroy())", function() {
         var rrv;
-        before(async function() {
+        beforeEach(async function() {
             rrv = new display.RRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
                 countJSON
             );
             await rrv.makePlots();
-            rrv.destroy(true, true, true);
         });
 
         // TODO: add tests that leaving certain args as false still lets
         // destroy() work partially?
-        it("Properly clears DOM element bindings", async function() {
+        it("Properly clears DOM element bindings", function() {
+            rrv.destroy(true, true, true);
             for (var i = 0; i < rrv.elementsWithOnClickBindings.length; i++) {
                 chai.assert.isNull(
                     document.getElementById(rrv.elementsWithOnClickBindings[i])
@@ -40,13 +40,15 @@ define(["display", "dom_utils", "mocha", "chai"], function(
                 );
             }
         });
-        it("Properly clears the #rankPlot and #samplePlot divs", async function() {
+        it("Properly clears the #rankPlot and #samplePlot divs", function() {
+            rrv.destroy(true, true, true);
             chai.assert.isEmpty(document.getElementById("rankPlot").innerHTML);
             chai.assert.isEmpty(
                 document.getElementById("samplePlot").innerHTML
             );
         });
-        it("Properly clears the ranking/metadata field <select>s", async function() {
+        it("Properly clears the ranking/metadata field <select>s", function() {
+            rrv.destroy(true, true, true);
             chai.assert.isEmpty(document.getElementById("rankField").innerHTML);
             chai.assert.isEmpty(document.getElementById("topSearch").innerHTML);
             chai.assert.isEmpty(document.getElementById("botSearch").innerHTML);
@@ -58,6 +60,7 @@ define(["display", "dom_utils", "mocha", "chai"], function(
             );
         });
         it("Properly resets other UI elements to their defaults", async function() {
+            // before calling rrv.destroy(), change a few other things
             await document.getElementById("boxplotCheckbox").click();
             document.getElementById("topSearchType").value = "rank";
             document.getElementById("botSearchType").value = "rank";
@@ -71,14 +74,18 @@ define(["display", "dom_utils", "mocha", "chai"], function(
                     .getElementById(dom_utils.statDivs[i])
                     .classList.add("invisible");
             }
-            // TODO: actually call the callback functions (e.g.
-            // updateSamplePlotScale()) to change these? I don't want to do
-            // that just yet b/c it will completely mess with JS code coverage,
-            // but eventually that'd be a good idea.
             document.getElementById("xAxisScale").value = "quantitative";
+            await document.getElementById("xAxisScale").onchange();
+
             document.getElementById("colorScale").value = "quantitative";
-            document.getElementById("barSize").value = "3";
-            await rrv.destroy(true, true, true);
+            await document.getElementById("colorScale").onchange();
+
+            document.getElementById("barSizeSlider").value = "3";
+            await document.getElementById("barSizeSlider").onchange();
+
+            await document.getElementById("fitBarSizeCheckbox").click();
+
+            rrv.destroy(true, true, true);
 
             chai.assert.isFalse(
                 document.getElementById("boxplotCheckbox").checked
@@ -101,7 +108,24 @@ define(["display", "dom_utils", "mocha", "chai"], function(
                 "nominal",
                 document.getElementById("colorScale").value
             );
-            chai.assert.equal("1", document.getElementById("barSize").value);
+            chai.assert.equal(
+                "tableau10",
+                document.getElementById("catColorScheme").value
+            );
+            chai.assert.equal(
+                "blues",
+                document.getElementById("quantColorScheme").value
+            );
+            chai.assert.equal(
+                "1",
+                document.getElementById("barSizeSlider").value
+            );
+            chai.assert.isFalse(
+                document.getElementById("barSizeSlider").disabled
+            );
+            chai.assert.isFalse(
+                document.getElementById("fitBarSizeCheckbox").checked
+            );
 
             for (var s = 0; s < dom_utils.statDivs.length; s++) {
                 chai.assert.isEmpty(

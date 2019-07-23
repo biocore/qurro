@@ -47,21 +47,20 @@
                     </select>
                 </div>
                 <div class="centeredBlock">
-                    <label for="barSize">Bar width</label>
-                    <select id="barSize">
-                        <option value="1"
-                            >Set each bar's width to 1 pixel</option
-                        >
-                        <option value="2"
-                            >Set each bar's width to 2 pixels</option
-                        >
-                        <option value="3"
-                            >Set each bar's width to 3 pixels</option
-                        >
-                        <option value="fit"
-                            >Fit bar widths to display width</option
-                        >
-                    </select>
+                    <label for="barSizeSlider">Bar width</label>
+                    <input
+                        id="barSizeSlider"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="1"
+                    />
+                </div>
+                <div class="centeredBlock">
+                    <label for="fitBarSizeCheckbox"
+                        >Fit bar widths to available width?</label
+                    >
+                    <input type="checkbox" id="fitBarSizeCheckbox" />
                     <p
                         id="barSizeWarning"
                         class="warning centeredBlock invisible marginOnTop"

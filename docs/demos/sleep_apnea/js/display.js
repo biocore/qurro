@@ -152,8 +152,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     rankField: async function() {
                         await display.updateRankField();
                     },
-                    barSize: async function() {
-                        await display.updateRankPlotBarSize(true);
+                    barSizeSlider: async function() {
+                        await display.updateRankPlotBarSizeToSlider(true);
+                    },
+                    fitBarSizeCheckbox: async function() {
+                        await display.updateRankPlotBarFitting(true);
                     },
                     boxplotCheckbox: async function() {
                         await display.updateSamplePlotBoxplot();
@@ -211,8 +214,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.featureIDs.length <=
                     this.rankPlotJSON.config.view.width
                 ) {
-                    document.getElementById("barSize").value = "fit";
-                    this.updateRankPlotBarSize(false);
+                    document.getElementById("fitBarSizeCheckbox").checked = true;
+                    this.updateRankPlotBarFitting(false);
                 }
             }
             // Set the y-axis to say "Magnitude: [ranking title]" instead of
@@ -403,17 +406,43 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             await this.makeRankPlot(true);
         }
 
-        async updateRankPlotBarSize(callRemakeRankPlot) {
-            var newSizeType = document.getElementById("barSize").value;
-            var newBarSize;
-            if (newSizeType === "fit") {
-                // Not 100% sure this is optimal.
-                newBarSize =
+        /* Syncs up the rank plot's bar width with whatever the slider says. */
+        async updateRankPlotBarSizeToSlider(callRemakeRankPlot) {
+            var sliderBarSize = Number(
+                document.getElementById("barSizeSlider").value
+            );
+            await this.updateRankPlotBarSize(sliderBarSize, callRemakeRankPlot);
+        }
+
+        /* Either enables or disables "fitting" the bar widths.
+         *
+         * Adjusts the "disabled" status of the barSizeSlider accordingly --
+         * this prevents users from triggering onchange events while "fitting"
+         * the bar widths is enabled.
+         */
+        async updateRankPlotBarFitting(callRemakeRankPlot) {
+            if (document.getElementById("fitBarSizeCheckbox").checked) {
+                var fittedBarSize =
                     this.rankPlotJSON.config.view.width /
                     this.featureIDs.length;
+                document.getElementById("barSizeSlider").disabled = true;
+                await this.updateRankPlotBarSize(
+                    fittedBarSize,
+                    callRemakeRankPlot
+                );
             } else {
-                newBarSize = parseInt(newSizeType);
+                document.getElementById("barSizeSlider").disabled = false;
+                await this.updateRankPlotBarSizeToSlider(callRemakeRankPlot);
             }
+        }
+
+        /* Remakes the rank plot with the specified bar width (in pixels).
+         *
+         * If newBarSize < 1, this also makes the barSizeWarning element
+         * visible. (If newBarSize >= 1, this will make the barSizeWarning
+         * element invisible.)
+         */
+        async updateRankPlotBarSize(newBarSize, callRemakeRankPlot) {
             this.rankPlotJSON.encoding.x.scale.rangeStep = newBarSize;
             if (newBarSize < 1) {
                 document
@@ -655,6 +684,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             if (clear) {
                 document.getElementById("topFeaturesDisplay").value = "";
                 document.getElementById("botFeaturesDisplay").value = "";
+                // NOTE: this will still include the total number of features
+                // in the headers. Shouldn't be a huge problem; can be changed
+                // if desired.
                 this.updateFeatureHeaderCounts(0, 0);
             } else if (single) {
                 document.getElementById(
@@ -1241,10 +1273,21 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 document.getElementById("topText").value = "";
                 document.getElementById("botText").value = "";
 
-                // Set scale type and bar width <select>s to default values
+                // Set scale type <select>s to default values
                 document.getElementById("xAxisScale").value = "nominal";
                 document.getElementById("colorScale").value = "nominal";
-                document.getElementById("barSize").value = "1";
+
+                // Set color <select>s to default values
+                document.getElementById("catColorScheme").value = "tableau10";
+                document.getElementById("quantColorScheme").value = "blues";
+
+                // Set bar width controls/elements to default values
+                document.getElementById("barSizeSlider").value = "1";
+                document.getElementById("barSizeSlider").disabled = false;
+                document.getElementById("fitBarSizeCheckbox").checked = false;
+                document
+                    .getElementById("barSizeWarning")
+                    .classList.add("invisible");
 
                 // Clear sample dropped stats divs and set them invisible
                 for (var s = 0; s < dom_utils.statDivs.length; s++) {

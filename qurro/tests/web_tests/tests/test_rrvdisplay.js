@@ -302,8 +302,8 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             });
             describe("Changing the bar width", function() {
                 async function triggerBarSizeUpdate(newValue) {
-                    document.getElementById("barSize").value = newValue;
-                    await document.getElementById("barSize").onchange();
+                    document.getElementById("barSizeSlider").value = newValue;
+                    await document.getElementById("barSizeSlider").onchange();
                 }
                 it("Changing the bar width to a constant size updates JSON and DOM properly", async function() {
                     await triggerBarSizeUpdate("3");
@@ -319,13 +319,54 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
                 describe("Changing the bar width to fit to the rank plot width", function() {
                     it("Works properly in basic case", async function() {
-                        await triggerBarSizeUpdate("fit");
+                        // Set bar size to 3 using the slider
+                        await triggerBarSizeUpdate("3");
+                        chai.assert.equal(
+                            3,
+                            rrv.rankPlotJSON.encoding.x.scale.rangeStep
+                        );
+                        // "Fit" the bars
+                        // NOTE: for some reason, this doesn't work if I just
+                        // say "await document.getElementById(...).click();",
+                        // like I'm doing with the boxplot checkbox. No idea
+                        // why.
+                        document.getElementById(
+                            "fitBarSizeCheckbox"
+                        ).checked = true;
+                        await document
+                            .getElementById("fitBarSizeCheckbox")
+                            .onchange();
                         // We have 5 features in this test rank plot JSON, and
                         // the rank plot width is set to 400. 400 / 5 = 80.
                         chai.assert.equal(
                             80,
                             rrv.rankPlotJSON.encoding.x.scale.rangeStep
                         );
+                        chai.assert.isTrue(
+                            document
+                                .getElementById("barSizeWarning")
+                                .classList.contains("invisible")
+                        );
+                        chai.assert.isTrue(
+                            document.getElementById("barSizeSlider").disabled
+                        );
+                        // Stop "fitting" the bars. This should cause the bar
+                        // size to go back to 3, and re-enable the slider.
+                        document.getElementById(
+                            "fitBarSizeCheckbox"
+                        ).checked = false;
+                        await document
+                            .getElementById("fitBarSizeCheckbox")
+                            .onchange();
+                        chai.assert.equal(
+                            3,
+                            rrv.rankPlotJSON.encoding.x.scale.rangeStep
+                        );
+                        chai.assert.isFalse(
+                            document.getElementById("barSizeSlider").disabled
+                        );
+                        // this definitely shouldn't change in either case, but
+                        // i'm checking the barSizeWarning here just to be safe
                         chai.assert.isTrue(
                             document
                                 .getElementById("barSizeWarning")
