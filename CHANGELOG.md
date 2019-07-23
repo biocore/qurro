@@ -71,6 +71,9 @@
   make it clearer that the differentials used here are equivalent to those used
   in the Morton/Marotz et al. 2019 analysis
   (https://github.com/knightlab-analyses/reference-frames).
+- Added a note to the Songbird example Jupyter Notebook (and added a
+  "README.txt" file to the Red Sea test data folder) emphasizing that Songbird
+  was just run simply (without looking at the diagnostic plots) for this data.
 - Removed some unused images from the `screenshots/` directory of Qurro's
   code repository.
 - Updated the screenshot used in the README.
