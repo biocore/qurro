@@ -2,6 +2,9 @@
 
 ## Qurro 0.3.0
 ### Features added
+- Now, Songbird no longer needs to be installed in order for the `qiime qurro
+  supervised-rank-plot` action to be available.
+  ([#154](https://github.com/biocore/qurro/issues/154))
 - Feature ranking values (i.e. differentials or loadings) are now shown in the
   tooltips for individual features in the rank plot.
   ([#186](https://github.com/biocore/qurro/issues/186))
@@ -46,7 +49,7 @@
       that weren't in the table -- already would trigger output messages,
       though).
     - More context regarding the details of feature filtering, if specified via
-      the `-x/--extreme-feature-count` or `--p-extreme-feature-count`.
+      the `-x`/`--extreme-feature-count`/`--p-extreme-feature-count` option.
   These output messages will show up normally when running Qurro standalone or
   when using the `--verbose` option when running Qurro through QIIME 2.
 - Added a `--p-debug` option when running Qurro through QIIME 2. This will

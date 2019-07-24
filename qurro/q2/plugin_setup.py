@@ -14,18 +14,8 @@ from ._method import supervised_rank_plot, unsupervised_rank_plot
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
 from qiime2.plugin import Metadata, Properties, Int, Bool
 from q2_types.feature_table import FeatureTable, Frequency
-from q2_types.feature_data import FeatureData
+from q2_types.feature_data import FeatureData, Differential
 from q2_types.ordination import PCoAResults
-
-songbird_accessible = False
-try:
-    from songbird.q2 import Differential
-
-    songbird_accessible = True
-except ImportError:
-    # Couldn't import Differential from songbird. This means qurro will
-    # only accept DEICODE output.
-    pass
 
 plugin = qiime2.plugin.Plugin(
     name="qurro",
@@ -69,22 +59,21 @@ long_desc = (
     + " sample abundances."
 )
 
-if songbird_accessible:
-    plugin.visualizers.register_function(
-        function=supervised_rank_plot,
-        inputs={
-            "ranks": FeatureData[Differential],
-            "table": FeatureTable[Frequency],
-        },
-        parameters=params,
-        parameter_descriptions=param_descs,
-        input_descriptions={
-            "ranks": ranks_desc.format(" differentials", "songbird"),
-            "table": TABLE,
-        },
-        name=short_desc.format("songbird"),
-        description=long_desc.format("songbird"),
-    )
+plugin.visualizers.register_function(
+    function=supervised_rank_plot,
+    inputs={
+        "ranks": FeatureData[Differential],
+        "table": FeatureTable[Frequency],
+    },
+    parameters=params,
+    parameter_descriptions=param_descs,
+    input_descriptions={
+        "ranks": ranks_desc.format(" differentials", "songbird"),
+        "table": TABLE,
+    },
+    name=short_desc.format("songbird"),
+    description=long_desc.format("songbird"),
+)
 
 plugin.visualizers.register_function(
     function=unsupervised_rank_plot,
