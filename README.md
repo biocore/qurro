@@ -87,9 +87,9 @@ available in the QIIME 2 plugin version of Qurro.
 Examples of using Qurro (both inside and outside of QIIME 2) are
 available in Qurro's example Jupyter notebooks, which are located
 [here](https://github.com/biocore/qurro/tree/master/example_notebooks):
-- [**`deicode_example.ipynb`**](https://github.com/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
+- [**`deicode_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
   demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and then using Qurro to visualize DEICODE's output.
-- [**`songbird_example.ipynb`**](https://github.com/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
+- [**`songbird_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   demonstrates using [songbird](https://github.com/biocore/songbird) and then using Qurro to visualize songbird's output.
 
 #### "Moving Pictures" Tutorial
