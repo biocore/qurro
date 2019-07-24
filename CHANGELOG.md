@@ -86,6 +86,9 @@
   This sort of error should already have come up in prior versions of Qurro,
   but now it will come up a bit earlier (and use a clearer message indicating
   what's going on).
+- Slightly changed the warning message produced when there are
+  indistinguishable rows in a GNPS feature metadata file (now this message is
+  no longer prefixed with something like `WARNING:root:`).
 - The output message letting the user know about samples in the sample metadata
   that are not also in the BIOM table has been shortened a bit (now it doesn't
   start with `NOTE: `).
