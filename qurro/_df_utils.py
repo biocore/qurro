@@ -355,10 +355,13 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     logging.debug("Transposing done.")
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
+    #
+    # We only need to check m_sample_metadata.shape[0] here since it should be
+    # equal to m_table.shape[1] at this point (due to our use of .align()).
     if m_sample_metadata.shape[0] < 1:
         raise ValueError(
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
+            "No samples are shared between the sample metadata file and BIOM "
+            "table."
         )
     print_if_dropped(
         sample_metadata,
