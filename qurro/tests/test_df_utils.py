@@ -7,6 +7,7 @@ from qurro._df_utils import (
     validate_df,
     replace_nan,
     remove_empty_samples_and_features,
+    print_if_dropped,
     merge_feature_metadata,
     sparsify_count_dict,
     check_column_names,
@@ -350,6 +351,40 @@ def test_remove_empty_samples_and_features_allempty():
     table["Sample4"] = np.zeros(len(table.index))
     with pytest.raises(ValueError):
         remove_empty_samples_and_features(table, metadata, ranks)
+
+
+def test_print_if_dropped(capsys):
+
+    table, metadata, ranks = get_test_data()
+
+    # Neither of these should result in anything being printed
+    print_if_dropped(table, table, 0, "feature", "table", "n/a")
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+    print_if_dropped(table, table, 1, "sample", "table", "n/a")
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+    # This should result in something, though!
+    table_f = table.drop(["F3", "F4", "F5", "F1"], axis="index")
+    print_if_dropped(table, table_f, 0, "feature", "table", "n/a")
+    captured = capsys.readouterr()
+    expected_output = (
+        "4 feature(s) in the table were not present in the n/a.\n"
+        "These feature(s) have been removed from the visualization.\n"
+    )
+    assert captured.out == expected_output
+
+    # As should this. (Check filtering against another axis.)
+    table_f = table.drop(["Sample2"], axis="columns")
+    print_if_dropped(table, table_f, 1, "sample", "table", "n/a")
+    captured = capsys.readouterr()
+    expected_output = (
+        "1 sample(s) in the table were not present in the n/a.\n"
+        "These sample(s) have been removed from the visualization.\n"
+    )
+    assert captured.out == expected_output
 
 
 def test_merge_feature_metadata():

@@ -217,6 +217,12 @@ def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
 def validate_samples_supported_output(output, expected_unsupported_samples):
     """Checks that the correct message has been based on BIOM sample support.
 
+       Also, this function is pretty old (it assumes the only way samples will
+       be dropped is from the sample metadata file -- not the other way around,
+       which is allowed). It might be worth updating this in the future, but
+       honestly some of the details in these integration tests are pretty old
+       (and it'd be easier to mostly just use unit tests).
+
        Parameters
        ----------
        output: str
@@ -230,10 +236,8 @@ def validate_samples_supported_output(output, expected_unsupported_samples):
     """
     if expected_unsupported_samples > 0:
         expected_msg = (
-            "NOTE: {} sample(s) in the sample metadata file were "
-            "not present in the BIOM table.".format(
-                expected_unsupported_samples
-            )
+            "{} sample(s) in the sample metadata file were not present in the "
+            "BIOM table.".format(expected_unsupported_samples)
         )
         assert expected_msg in output
 

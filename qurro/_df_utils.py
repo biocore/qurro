@@ -197,6 +197,58 @@ def remove_empty_samples_and_features(
     return filtered_table, filtered_metadata, filtered_ranks
 
 
+def print_if_dropped(
+    df_old, df_new, axis_num, item_name, df_name, filter_basis_name
+):
+    """Prints a message if a given DataFrame has been filtered.
+
+       Essentially, this function just checks if
+       df_old.shape[axis_num] - df_new.shape[axis_num] > 0.
+
+       If so, this prints a message with a bunch of details (which the _name
+       parameters all describe).
+
+       Parameters
+       ----------
+       df_old: pd.DataFrame (or pd.SparseDataFrame)
+            "Unfiltered" DataFrame -- used as the reference when trying to
+            determine if df_new has been filtered.
+
+       df_new: pd.DataFrame (or pd.SparseDataFrame)
+            A potentially-filtered DataFrame.
+
+       axis_num: int
+            The axis in the DataFrames' .shapes to check. This should be either
+            0 or 1, but we don't explicitly check for that.
+
+       item_name: str
+            The name of the "thing" described by the given axis in these
+            DataFrames. In practice, this is either "sample" or "feature".
+
+       df_name: str
+            The name of the DataFrame represented by df_old and df_new.
+
+       filter_basis_name: str
+            The name of the other DataFrame which caused these items to be
+            dropped. For example, if we're checking to see if samples were
+            dropped from the sample metadata file due to to samples not being
+            in the BIOM table, df_name could be "sample metadata file" and
+            filter_basis_name could be "BIOM table".
+    """
+
+    dropped_item_ct = df_old.shape[axis_num] - df_new.shape[axis_num]
+    if dropped_item_ct > 0:
+        print(
+            "{} {}(s) in the {} were not present in the {}.".format(
+                dropped_item_ct, item_name, df_name, filter_basis_name
+            )
+        )
+        print(
+            "These {}(s) have been removed from the "
+            "visualization.".format(item_name)
+        )
+
+
 def match_table_and_data(table, feature_ranks, sample_metadata):
     """Matches feature rankings and then sample metadata to a table.
 
@@ -275,13 +327,14 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
                 feature_ranks.shape[0], unsupported_feature_ct, word
             )
         )
-    dropped_feature_ct = table.shape[0] - featurefiltered_table.shape[0]
-    if dropped_feature_ct > 0:
-        print(
-            "NOTE: {} feature(s) in the BIOM table were not present in the "
-            "feature rankings.".format(dropped_feature_ct)
-        )
-        print("These feature(s) have been removed from the visualization.")
+    print_if_dropped(
+        table,
+        featurefiltered_table,
+        0,
+        "feature",
+        "BIOM table",
+        "feature rankings",
+    )
 
     # We transpose the sample metadata instead of the actual table because
     # transposing in pandas, at least from some personal testing, can be really
@@ -307,13 +360,22 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             "None of the samples in the sample metadata file "
             "are present in the input BIOM table."
         )
-    dropped_sample_ct = sample_metadata.shape[0] - m_sample_metadata.shape[0]
-    if dropped_sample_ct > 0:
-        print(
-            "NOTE: {} sample(s) in the sample metadata file were not "
-            "present in the BIOM table.".format(dropped_sample_ct)
-        )
-        print("These sample(s) have been removed from the visualization.")
+    print_if_dropped(
+        sample_metadata,
+        m_sample_metadata,
+        0,
+        "sample",
+        "sample metadata file",
+        "BIOM table",
+    )
+    print_if_dropped(
+        featurefiltered_table,
+        m_table,
+        1,
+        "sample",
+        "BIOM table",
+        "sample metadata file",
+    )
 
     return m_table, m_sample_metadata
 
