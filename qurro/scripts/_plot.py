@@ -12,6 +12,7 @@ from qurro._parameter_descriptions import (
     EXTREME_FEATURE_COUNT,
     TABLE,
     ASSUME_GNPS_FEATURE_METADATA,
+    DEBUG,
 )
 from qurro.generate import process_and_generate
 from qurro._rank_utils import read_rank_file
@@ -60,12 +61,7 @@ from qurro.__init__ import __version__
     is_flag=True,
     help=ASSUME_GNPS_FEATURE_METADATA,
 )
-@click.option(
-    "-v",
-    "--verbose",
-    is_flag=True,
-    help="If passed, this will output debug messages.",
-)
+@click.option("--debug", is_flag=True, help=DEBUG)
 @click.version_option(__version__, prog_name="Qurro")
 def plot(
     ranks: str,
@@ -75,7 +71,7 @@ def plot(
     output_dir: str,
     extreme_feature_count: int,
     assume_gnps_feature_metadata: bool,
-    verbose: bool,
+    debug: bool,
 ) -> None:
     """Generates a visualization of feature rankings and log ratios.
 
@@ -89,7 +85,7 @@ def plot(
     """
 
     # inspired by https://stackoverflow.com/a/14098306/10730311
-    if verbose:
+    if debug:
         logging.basicConfig(level=logging.DEBUG)
 
     logging.debug("Starting the standalone Qurro script.")

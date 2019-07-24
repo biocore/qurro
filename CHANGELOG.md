@@ -49,7 +49,16 @@
       the `-x/--extreme-feature-count` or `--p-extreme-feature-count`.
   These output messages will show up normally when running Qurro standalone or
   when using the `--verbose` option when running Qurro through QIIME 2.
+- Added a `--p-debug` option when running Qurro through QIIME 2. This will
+  cause debug messages to be output when the `--verbose` flag has also been
+  specified to QIIME 2. (Non-debug output messages -- for example, the print
+  messages described above -- will be output when `--verbose` has been
+  specified to QIIME 2, but regardless of whether or not `--p-debug` has been
+  specified.)
+  ([#95](https://github.com/biocore/qurro/issues/95))
 ### Backward-incompatible changes
+- Replaced `-v`/`--verbose` in Qurro's standalone script with `--debug`, in
+  order to be consistent with Qurro's QIIME 2 plugin.
 ### Bug fixes
 - A clear error is now raised if the feature rankings or feature metadata
   include a column named `qurro_x`. (This column name is used internally by

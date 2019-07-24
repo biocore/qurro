@@ -20,6 +20,7 @@ def supervised_rank_plot(
     sample_metadata: qiime2.Metadata,
     feature_metadata: qiime2.Metadata = None,
     extreme_feature_count: int = None,
+    debug: bool = False,
 ) -> None:
     """Generates a .qzv file of a Qurro visualization from songbird data.
 
@@ -35,6 +36,7 @@ def supervised_rank_plot(
         sample_metadata,
         feature_metadata,
         extreme_feature_count,
+        debug,
     )
 
 
@@ -45,6 +47,7 @@ def unsupervised_rank_plot(
     sample_metadata: qiime2.Metadata,
     feature_metadata: qiime2.Metadata = None,
     extreme_feature_count: int = None,
+    debug: bool = False,
 ) -> None:
     """Generates a .qzv file of a Qurro visualization from DEICODE data."""
 
@@ -55,4 +58,5 @@ def unsupervised_rank_plot(
         sample_metadata,
         feature_metadata,
         extreme_feature_count,
+        debug,
     )

@@ -18,8 +18,14 @@ def create_q2_visualization(
     sample_metadata,
     feature_metadata,
     extreme_feature_count,
+    debug,
 ):
 
+    # Same thing as in the standalone version of Qurro -- only show debug
+    # messages if explicitly requested with --(p-)debug. As with there, this is
+    # inspired by https://stackoverflow.com/a/14098306/10730311.
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
     logging.debug("Starting create_q2_visualization().")
     df_feature_metadata = None
     if feature_metadata is not None:

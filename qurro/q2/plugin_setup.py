@@ -11,8 +11,8 @@ import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
 from ._method import supervised_rank_plot, unsupervised_rank_plot
-from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE
-from qiime2.plugin import Metadata, Properties, Int
+from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
+from qiime2.plugin import Metadata, Properties, Int, Bool
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.feature_data import FeatureData
 from q2_types.ordination import PCoAResults
@@ -46,11 +46,17 @@ params = {
     "sample_metadata": Metadata,
     "feature_metadata": Metadata,
     "extreme_feature_count": Int,
+    "debug": Bool,
     # "assume_gnps_feature_metadata": Bool,
 }
 
 param_descs = {
     "extreme_feature_count": EXTREME_FEATURE_COUNT,
+    "debug": DEBUG
+    + (
+        " Note that you'll also need to use the --verbose option to see these "
+        "messages."
+    ),
     # "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
 }
 

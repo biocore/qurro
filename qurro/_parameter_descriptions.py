@@ -35,3 +35,5 @@ ASSUME_GNPS_FEATURE_METADATA = (
     'annotate features with their corresponding "LibraryID" column from the '
     "feature metadata."
 )
+
+DEBUG = "If this flag is used, Qurro will output debug messages."
