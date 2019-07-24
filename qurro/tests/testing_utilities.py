@@ -231,8 +231,7 @@ def validate_samples_supported_output(output, expected_unsupported_samples):
     if expected_unsupported_samples > 0:
         expected_msg = (
             "NOTE: {} sample(s) in the sample metadata file were "
-            "not present in the BIOM table, and have been "
-            "removed from the visualization.".format(
+            "not present in the BIOM table.".format(
                 expected_unsupported_samples
             )
         )
