@@ -168,8 +168,8 @@ def validate_standalone_result(
         assert result.exit_code != 0
         assert type(result.exception) == ValueError
         expected_message = (
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
+            "No samples are shared between the sample metadata file and BIOM "
+            "table."
         )
         assert expected_message == result.exc_info[1].args[0]
     else:
