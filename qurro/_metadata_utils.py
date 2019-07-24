@@ -7,7 +7,6 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import logging
 import pandas as pd
 import numpy as np
 from io import StringIO
@@ -198,9 +197,9 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
         if tfid not in truncated_id_to_full_id:
             truncated_id_to_full_id[tfid] = fid
         else:
-            logging.warning(
-                "Indistinguishable rows in GNPS feature "
-                "metadata file with truncated ID {}.".format(tfid)
+            print(
+                "Indistinguishable rows in GNPS feature metadata file with "
+                "truncated ID {}.".format(tfid)
             )
             # Replace the full feature ID with a bogus ID. This will prevent
             # the >= 2 full feature IDs from which the conflicting truncated
