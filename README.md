@@ -8,6 +8,7 @@
 <a href="https://travis-ci.org/biocore/qurro"><img src="https://travis-ci.org/biocore/qurro.svg?branch=master" alt="Build Status" /></a>
 <a href="https://codecov.io/gh/biocore/qurro"><img src="https://codecov.io/gh/biocore/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
 <a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
+<a href="https://pypi.org/project/qurro"><img src="https://img.shields.io/pypi/v/qurro.svg" alt="PyPI" /></a>
 <p>(Pronounced "churro.")</p>
 </div>
 
