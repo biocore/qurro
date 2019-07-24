@@ -181,7 +181,7 @@ def remove_empty_samples_and_features(
         filtered_metadata = filtered_table.align(
             sm_t, join="inner", axis="columns"
         )[1].T
-        logging.debug("Removed {} empty sample(s).".format(sample_diff))
+        print("Removed {} empty sample(s).".format(sample_diff))
     else:
         logging.debug("Couldn't find any empty samples.")
 
@@ -190,7 +190,7 @@ def remove_empty_samples_and_features(
         filtered_ranks = filtered_table.align(
             feature_ranks_df, join="inner", axis="index"
         )[1]
-        logging.debug("Removed {} empty feature(s).".format(feature_diff))
+        print("Removed {} empty feature(s).".format(feature_diff))
     else:
         logging.debug("Couldn't find any empty features.")
 
@@ -199,6 +199,13 @@ def remove_empty_samples_and_features(
 
 def match_table_and_data(table, feature_ranks, sample_metadata):
     """Matches feature rankings and then sample metadata to a table.
+
+       TODO: Some of the logic in this function for matching the feature ranks
+       and sample metadata could probably be abstracted out to another
+       function. This individual function isn't directly unit-tested, but its
+       behavior should be mostly tested in the "matching" integration tests
+       (...that being said, it'd be a lot easier + sustainable to also add
+       direct unit tests for this function).
 
        Parameters
        ----------
@@ -268,6 +275,13 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
                 feature_ranks.shape[0], unsupported_feature_ct, word
             )
         )
+    dropped_feature_ct = table.shape[0] - featurefiltered_table.shape[0]
+    if dropped_feature_ct > 0:
+        print(
+            "NOTE: {} feature(s) in the BIOM table were not present in the "
+            "feature rankings.".format(dropped_feature_ct)
+        )
+        print("These feature(s) have been removed from the visualization.")
 
     # We transpose the sample metadata instead of the actual table because
     # transposing in pandas, at least from some personal testing, can be really
@@ -293,14 +307,14 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
             "None of the samples in the sample metadata file "
             "are present in the input BIOM table."
         )
-
     dropped_sample_ct = sample_metadata.shape[0] - m_sample_metadata.shape[0]
     if dropped_sample_ct > 0:
         print(
             "NOTE: {} sample(s) in the sample metadata file were not "
-            "present in the BIOM table, and have been removed from the "
-            "visualization.".format(dropped_sample_ct)
+            "present in the BIOM table.".format(dropped_sample_ct)
         )
+        print("These sample(s) have been removed from the visualization.")
+
     return m_table, m_sample_metadata
 
 

@@ -46,9 +46,7 @@ def test_filtering_basic():
     """Tests the standard behavior of filter_unextreme_features()."""
 
     table, ranks = get_test_data()
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, 2, print_warning=False
-    )
+    filtered_table, filtered_ranks = filter_unextreme_features(table, ranks, 2)
     # Check that the appropriate features/samples were filtered out of the
     # table. NOTE -- I know this is sloppy code. Would like to fix it in the
     # future.
@@ -87,15 +85,11 @@ def test_filtering_large_efc():
     table, ranks = get_test_data()
 
     # The number of ranked features is 8.
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, 4, print_warning=False
-    )
+    filtered_table, filtered_ranks = filter_unextreme_features(table, ranks, 4)
     assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
 
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, 8, print_warning=False
-    )
+    filtered_table, filtered_ranks = filter_unextreme_features(table, ranks, 8)
     assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
 
@@ -109,7 +103,7 @@ def test_filtering_no_efc():
     table, ranks = get_test_data()
 
     filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, None, print_warning=False
+        table, ranks, None
     )
     assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
