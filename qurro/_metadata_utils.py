@@ -171,7 +171,7 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
     # check_column_names() when it checks if the feature metadata and ranking
     # column names are distinct, but we might as well do this check up front
     # since it's just one column in the feature metadata.
-    if "LibraryID" in feature_ranks_df.cols:
+    if "LibraryID" in feature_ranks_df.columns:
         raise ValueError(
             "If processing GNPS feature metadata, the feature rankings can't "
             'contain any columns named "LibraryID".'
