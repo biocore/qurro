@@ -367,11 +367,11 @@ def test_print_if_dropped(capsys):
     assert captured.out == ""
 
     # This should result in something, though!
-    table_f = table.drop(["F3", "F4", "F5", "F1"], axis="index")
+    table_f = table.drop(["F3", "F4", "F5", "F1", "F7"], axis="index")
     print_if_dropped(table, table_f, 0, "feature", "table", "n/a")
     captured = capsys.readouterr()
     expected_output = (
-        "4 feature(s) in the table were not present in the n/a.\n"
+        "5 feature(s) in the table were not present in the n/a.\n"
         "These feature(s) have been removed from the visualization.\n"
     )
     assert captured.out == expected_output
@@ -382,6 +382,32 @@ def test_print_if_dropped(capsys):
     captured = capsys.readouterr()
     expected_output = (
         "1 sample(s) in the table were not present in the n/a.\n"
+        "These sample(s) have been removed from the visualization.\n"
+    )
+    assert captured.out == expected_output
+
+    # Test behavior when *all* features are dropped.
+    # Should never happen -- we'd raise an error before this -- but good to
+    # check this, at least.
+    table_f = table.drop(list(table.index), axis="index")
+    print_if_dropped(table, table_f, 0, "feature", "table", "n/a")
+    captured = capsys.readouterr()
+    expected_output = (
+        "8 feature(s) in the table were not present in the n/a.\n"
+        "These feature(s) have been removed from the visualization.\n"
+    )
+    assert captured.out == expected_output
+
+    # Lastly, test behavior when everything is dropped -- i.e. this is an empty
+    # table. Should also never happen in practice.
+    # NOTE how we now modify table_f in place to make it truly empty.
+    table_f.drop(list(table_f.columns), axis="columns", inplace=True)
+    assert table_f.empty
+
+    print_if_dropped(table, table_f, 1, "sample", "table", "n/a")
+    captured = capsys.readouterr()
+    expected_output = (
+        "4 sample(s) in the table were not present in the n/a.\n"
         "These sample(s) have been removed from the visualization.\n"
     )
     assert captured.out == expected_output
