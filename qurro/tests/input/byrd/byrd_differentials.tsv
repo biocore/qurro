@@ -1,4 +1,4 @@
-	Intercept	"C(Timepoint, Treatment('F'))[T.B]"	"C(Timepoint, Treatment('F'))[T.PF]"
+Feature ID	Intercept	"C(Timepoint, Treatment('F'))[T.B]"	"C(Timepoint, Treatment('F'))[T.PF]"
 Archaea;Crenarchaeota;Thermoprotei;Desulfurococcales;Desulfurococcaceae;Aeropyrum;Aeropyrum_pernix	7.766142813438836	1.034115027455032	1.230924754071875
 Archaea;Crenarchaeota;Thermoprotei;Desulfurococcales;Desulfurococcaceae;Desulfurococcus;Desulfurococcus_kamchatkensis	-6.317137749915656	0.7799961080824733	0.22558572762076423
 Archaea;Crenarchaeota;Thermoprotei;Desulfurococcales;Desulfurococcaceae;Ignicoccus;Ignicoccus_hospitalis	-2.193627389197882	-3.079178143473923	0.22358897202078865
