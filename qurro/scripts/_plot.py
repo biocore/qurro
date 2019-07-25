@@ -9,8 +9,8 @@ import logging
 from biom import load_table
 import click
 from qurro._parameter_descriptions import (
-    EXTREME_FEATURE_COUNT,
     TABLE,
+    EXTREME_FEATURE_COUNT,
     ASSUME_GNPS_FEATURE_METADATA,
     DEBUG,
 )
@@ -29,14 +29,17 @@ from qurro.__init__ import __version__
     "-r",
     "--ranks",
     required=True,
-    help="Feature differentials or a biplot OrdinationResults.",
+    help=(
+        "Either feature differentials or an ordination containing feature "
+        "loadings."
+    ),
 )
 @click.option("-t", "--table", required=True, help=TABLE)
 @click.option(
-    "-fm", "--feature-metadata", default=None, help="Feature metadata file."
+    "-sm", "--sample-metadata", required=True, help="Sample metadata file."
 )
 @click.option(
-    "-sm", "--sample-metadata", required=True, help="Sample metadata file."
+    "-fm", "--feature-metadata", default=None, help="Feature metadata file."
 )
 @click.option(
     "-o",
