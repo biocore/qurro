@@ -13,7 +13,7 @@ from .._rank_utils import rename_loadings
 from ._actually_do_stuff import create_q2_visualization
 
 
-def supervised_rank_plot(
+def differential_plot(
     output_dir: str,
     ranks: pd.DataFrame,
     table: biom.Table,
@@ -22,7 +22,7 @@ def supervised_rank_plot(
     extreme_feature_count: int = None,
     debug: bool = False,
 ) -> None:
-    """Generates a .qzv file of a Qurro visualization from songbird data.
+    """Generates a Qurro visualization using differentials.
 
        (...Also, the reason the order of parameters here differs from
        qurro/scripts/_plot.py is that the first parameter has to be
@@ -40,7 +40,7 @@ def supervised_rank_plot(
     )
 
 
-def unsupervised_rank_plot(
+def loading_plot(
     output_dir: str,
     ranks: skbio.OrdinationResults,
     table: biom.Table,
@@ -49,7 +49,7 @@ def unsupervised_rank_plot(
     extreme_feature_count: int = None,
     debug: bool = False,
 ) -> None:
-    """Generates a .qzv file of a Qurro visualization from DEICODE data."""
+    """Generates a Qurro visualization using feature loadings in a biplot."""
 
     create_q2_visualization(
         output_dir,

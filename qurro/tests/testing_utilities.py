@@ -46,10 +46,10 @@ def run_integration_test(
     rrv_qzv = result = None
     if use_q2:
         if q2_ranking_tool == "songbird":
-            q2_action = q2qurro.actions.supervised_rank_plot
+            q2_action = q2qurro.actions.differential_plot
             q2_rank_type = "FeatureData[Differential]"
         elif q2_ranking_tool == "DEICODE":
-            q2_action = q2qurro.actions.unsupervised_rank_plot
+            q2_action = q2qurro.actions.loading_plot
             q2_rank_type = "PCoAResults % Properties(['biplot'])"
         else:
             raise ValueError(

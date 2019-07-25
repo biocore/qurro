@@ -3,7 +3,8 @@
 ## Qurro 0.3.0
 ### Features added
 - Now, Songbird no longer needs to be installed in order for the `qiime qurro
-  supervised-rank-plot` action to be available.
+  supervised-rank-plot` action (**NOTE: this action has been renamed to `qiime
+  qurro differential-plot`, see below**) to be available.
   ([#154](https://github.com/biocore/qurro/issues/154))
 - Feature ranking values (i.e. differentials or loadings) are now shown in the
   tooltips for individual features in the rank plot.
@@ -60,6 +61,9 @@
   specified.)
   ([#95](https://github.com/biocore/qurro/issues/95))
 ### Backward-incompatible changes
+- Renamed Qurro's QIIME 2 actions ([#98](https://github.com/biocore/qurro/issues/98)):
+    - **Renamed `qiime qurro supervised-rank-plot` to `qiime qurro differential-plot`.**
+    - **Renamed `qiime qurro unsupervised-rank-plot` to `qiime qurro loading-plot`.**
 - Replaced `-v`/`--verbose` in Qurro's standalone script with `--debug`, in
   order to be consistent with Qurro's QIIME 2 plugin.
 ### Bug fixes
@@ -84,6 +88,7 @@
 - DEICODE ordinations used in demos and test inputs have been rerun with
   DEICODE version 0.2.3.
   ([#188](https://github.com/biocore/qurro/issues/188))
+- Cleaned up Qurro's command-line interface options and help text.
 - A clear error is now raised if Qurro is trying to parse a GNPS feature
   metadata file, and the feature rankings include a column named `LibraryID`.
   This sort of error should already have come up in prior versions of Qurro,

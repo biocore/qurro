@@ -10,7 +10,7 @@
 import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
-from ._method import supervised_rank_plot, unsupervised_rank_plot
+from ._method import differential_plot, loading_plot
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
 from qiime2.plugin import Metadata, Properties, Int, Bool
 from q2_types.feature_table import FeatureTable, Frequency
@@ -22,11 +22,14 @@ plugin = qiime2.plugin.Plugin(
     version=__version__,
     website="https://github.com/biocore/qurro",
     # citations=[citations['martino-unpublished']],
-    short_description=("Plugin for visualizing feature ranks and log ratios."),
+    short_description=(
+        "Plugin for visualizing feature rankings and log ratios."
+    ),
     description=(
-        """This QIIME 2 plugin supports the visualization of
-        feature ranks (output by a tool like songbird or DEICODE) in
-        tandem with log ratios of their abundances within samples."""
+        "This QIIME 2 plugin supports the interactive visualization of "
+        "feature rankings (differentials produced by a tool like Songbird "
+        "or feature loadings in a biplot produced by a tool like DEICODE) "
+        "in tandem with log ratios of features' abundances within samples."
     ),
     package="qurro",
 )
@@ -50,33 +53,28 @@ param_descs = {
     # "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
 }
 
-ranks_desc = "A{} file describing feature rankings produced by {}."
-
-short_desc = "Generate a Qurro visualization from {} data"
+short_desc = "Generate a Qurro visualization from feature {}s"
 long_desc = (
-    "Generates an interactive visualization of {} feature rankings in tandem"
+    "Generates an interactive visualization of feature {}s in tandem"
     + " with a visualization of the log ratios of selected features'"
     + " sample abundances."
 )
 
 plugin.visualizers.register_function(
-    function=supervised_rank_plot,
+    function=differential_plot,
     inputs={
         "ranks": FeatureData[Differential],
         "table": FeatureTable[Frequency],
     },
     parameters=params,
     parameter_descriptions=param_descs,
-    input_descriptions={
-        "ranks": ranks_desc.format(" differentials", "songbird"),
-        "table": TABLE,
-    },
-    name=short_desc.format("songbird"),
-    description=long_desc.format("songbird"),
+    input_descriptions={"ranks": "Feature differentials.", "table": TABLE},
+    name=short_desc.format("differential"),
+    description=long_desc.format("differential"),
 )
 
 plugin.visualizers.register_function(
-    function=unsupervised_rank_plot,
+    function=loading_plot,
     inputs={
         "ranks": PCoAResults % Properties("biplot"),
         "table": FeatureTable[Frequency],
@@ -84,9 +82,9 @@ plugin.visualizers.register_function(
     parameters=params,
     parameter_descriptions=param_descs,
     input_descriptions={
-        "ranks": ranks_desc.format("n ordination", "DEICODE"),
+        "ranks": "A biplot containing feature loadings.",
         "table": TABLE,
     },
-    name=short_desc.format("DEICODE"),
-    description=long_desc.format("DEICODE"),
+    name=short_desc.format("loading"),
+    description=long_desc.format("loading"),
 )
