@@ -373,11 +373,23 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                                 .classList.contains("invisible")
                         );
                     });
-                    // TODO: we can test this by using another set of test
-                    // JSONs here (e.g. the sleep apnea test data).
-                    it(
-                        "Un-hides a warning element when the bar size is less than 1 pixel"
-                    );
+                    it("Un-hides a warning element when the bar size is less than 1 pixel", async function() {
+                        function isInvisible() {
+                            // Silly helper function to reduce repetitive code
+                            return document
+                                .getElementById("barSizeWarning")
+                                .classList.contains("invisible");
+                        }
+                        chai.assert.isTrue(isInvisible());
+
+                        await rrv.updateRankPlotBarSize(0.8, true);
+                        chai.assert.isFalse(isInvisible());
+
+                        // Clean up and hide the warning again -- this also
+                        // tests that it's removable
+                        await rrv.updateRankPlotBarSize(10, true);
+                        chai.assert.isTrue(isInvisible());
+                    });
                 });
             });
             describe("Changing the rank plot color scheme", function() {
