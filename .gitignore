@@ -69,7 +69,7 @@ tmp_files/*
 
 # Ignore test outputs that we don't want to bother having as demos
 # (this cuts down the size of the repo)
-docs/demos/
+docs/demos/*
 !docs/demos/byrd/
 !docs/demos/sleep_apnea/
 !docs/demos/red_sea/
