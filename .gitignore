@@ -74,6 +74,7 @@ docs/demos/
 !docs/demos/sleep_apnea/
 !docs/demos/red_sea/
 !docs/demos/q2_moving_pictures/
+!docs/demos/mackerel/
 # ... that being said, still don't bother including the q2templateassets/
 # files (for any QIIME 2 Qurro outputs). As far as I'm aware, these files
 # aren't used when viewing Qurro visualizations outside of QIIME 2 (even if
