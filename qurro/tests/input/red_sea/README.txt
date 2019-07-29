@@ -1,3 +1,4 @@
-These differentials were just computed by running Songbird normally. I haven't
-run any diagnostics to verify that Songbird was fitting things properly, so if
-you try this out yourself in Songbird you might get somewhat different results.
+These differentials were computed by running Songbird with the hyperparameters
+specified in the Songbird example Jupyter Notebook as of July 29, 2019 (i.e.
+--epochs 10000 and --differential-prior 0.5). Consultation with Tensorboard
+showed that this resulted in a reasonable model fit.
