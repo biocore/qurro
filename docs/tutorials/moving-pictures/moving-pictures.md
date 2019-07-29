@@ -89,11 +89,10 @@ necessary files for this tutorial here:
 
 Since we'll be working with DEICODE output (i.e. feature loadings in a
 compositional biplot), we'll need to use the
-`qiime qurro unsupervised-rank-plot` command. (The `supervised-rank-plot`
-command is for working with feature differentials.)
+`qiime qurro loading-plot` command.
 
 ```
-qiime qurro unsupervised-rank-plot \
+qiime qurro loading-plot \
     --i-table table.qza \
     --i-ranks ordination.qza \
     --m-sample-metadata-file sample-metadata.tsv \
