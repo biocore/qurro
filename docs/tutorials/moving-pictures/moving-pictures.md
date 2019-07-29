@@ -105,8 +105,8 @@ qiime qurro loading-plot \
 - `qurro-plot.qzv` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fqurro-plot.qzv) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/qurro-plot.qzv)
 
 You just generated your first Qurro plot! `qurro-plot.qzv` is a `.qzv` file --
-that is, a QIIME 2 visualization. You can view it either by running `qiime tools
-view qurro-plot.qzv` or by uploading the file to
+in other words, a QIIME 2 visualization. You can view it either by running
+`qiime tools view qurro-plot.qzv` or by uploading the file to
 [view.qiime2.org](https://view.qiime2.org/). (You can also just click on the
 "view" link right above to see a precomputed version of this visualization.)
 
@@ -118,8 +118,8 @@ Let's view `qurro-plot.qzv`, as described above.
 
 So right away we see two things: on the left a plot of rankings (in this case,
 loadings) for each feature, and on the right a plot of selected features' log
-ratios in samples. In this tutorial these plots will be referred to as the
-__rank plot__ and __sample plot__, respectively.
+ratios in samples. Throughout this tutorial these plots will be referred to as
+the __rank plot__ and __sample plot__, respectively.
 
 Since no features are currently selected to be part of a log ratio, these plots
 look pretty empty. So let's select some features!
@@ -136,10 +136,11 @@ There are a few ways of selecting features in Qurro:
 - One way is just by clicking on the rank plot twice. The first click sets
   the numerator feature for a log ratio, and the second click sets the
   denominator feature for the log ratio.
-- You can also select features based on a text-search through their feature
+- You can also select features based on a textual search through their
   IDs or metadata. For example, it's possible to construct the log ratio of all
-  features with taxonomy annotations containing the text `o__Fusobacteriales` over all
-  features with taxonomy annotations containing the text `o__Pseudomonadales`.
+  features with taxonomy annotations containing the text `o__Fusobacteriales`
+  over all features with taxonomy annotations containing the text
+  `o__Pseudomonadales`.
     - This is equivalent to the log ratio of all ranked features identified as
       being in the order
       [_Fusobacteriales_](https://en.wikipedia.org/wiki/Fusobacteriales) over all
@@ -154,8 +155,8 @@ There are a few ways of selecting features in Qurro:
       `log(top sum / bottom sum)`).
 - You can also select features by searching through their feature rankings or
   metadata numerically (e.g. you can select all features with a differential
-  above a certain threshold). This tutorial won't cover this option, but feel
-  free to try this out in Qurro.
+  above a certain threshold). This tutorial won't cover this option; feel
+  free to try this out in Qurro, though!
 
 Let's try the second of these options (selecting features from a text-search)
 out. In the bottom-right corner of the Qurro visualization -- under the
@@ -232,7 +233,7 @@ This is more interesting. Of course, there aren't a lot of samples in the plot,
 and this was a pretty arbitrary log ratio we just selected. So it's hard to
 draw any meaningful conclusions from this.
 
-Actually, let's examine that first problem in more depth: _where are all of the
+Let's examine that first problem in more depth: _where are all of the
 missing samples in the sample plot_?
 
 ### Missing samples
@@ -294,7 +295,7 @@ with a different number of features to show more features in the biplot.
 (Emperor's choice of which features to show is based on features' "magnitude
 based on all ... dimensions" -- [see this comment and the surrounding QIIME 2 forum thread](https://forum.qiime2.org/t/how-to-make-pcoa-biplot-in-r-using-q2-deicode-ordination/8377/6) for context.)
 
-## Epilogue: How should I actually, like, select features in Qurro?
+## Epilogue: In practice, how should I actually select features in Qurro?
 
 That's a good question! You have lots of strategies in choosing what to inspect
 in a Qurro visualization. This section discusses only a subset of these;
