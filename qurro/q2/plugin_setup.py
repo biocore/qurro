@@ -22,13 +22,13 @@ from q2_types.ordination import PCoAResults
 try:
     from q2_types.feature_data import FeatureData, Differential
 except ImportError:
-    msg = (
+    raise SystemError(
         "It looks like you're using a version of QIIME 2 before 2019.7. "
         "Starting with Qurro v0.3.0, Qurro only supports versions of QIIME 2 "
-        "of at least 2019.7. Please install a later version of QIIME 2 to use "
-        "Qurro, or uninstall Qurro to fix this QIIME 2 environment."
+        "of at least 2019.7. Please install a later version of QIIME 2 in "
+        "order to install Qurro v0.3.0. You can also uninstall Qurro in order "
+        "to fix the current QIIME 2 environment."
     )
-    raise SystemError(msg)
 
 plugin = qiime2.plugin.Plugin(
     name="qurro",

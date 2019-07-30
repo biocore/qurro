@@ -63,6 +63,8 @@
 ### Backward-incompatible changes
 - Qurro will now try to load the `Differential` type from q2-types. **This means
   that Qurro v0.3.0 will only support versions of QIIME 2 of at least 2019.7.**
+    - **This also means that installing Qurro v0.3.0 into an old QIIME 2
+      environment will break it.**
 - Renamed Qurro's QIIME 2 actions ([#98](https://github.com/biocore/qurro/issues/98)):
     - **Renamed `qiime qurro supervised-rank-plot` to `qiime qurro differential-plot`.**
     - **Renamed `qiime qurro unsupervised-rank-plot` to `qiime qurro loading-plot`.**
