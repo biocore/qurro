@@ -69,3 +69,21 @@ def test_sample_dropping_stats():
         expected_unsupported_samples=1,
     )
     validate_sample_stats_test_sample_plot_json(sample_json)
+
+
+def test_mackerel():
+    """Tests Qurro's JSON generation on the mackerel dataset (Qiita Study ID
+       11721).
+
+       This is less of a test and more of just a way to ensure that we
+       continuously update the mackerel demo whenever we update Qurro.
+    """
+    run_integration_test(
+        "mackerel",
+        "mackerel",
+        "differentials.tsv",
+        "feature-table.biom",
+        "sample-metadata.tsv",
+        feature_metadata_name="taxonomy.tsv",
+        expected_unsupported_samples=604,
+    )
