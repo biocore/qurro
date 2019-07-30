@@ -84,6 +84,8 @@
 - Updated the rank plot's y-axis to say `Magnitude: [ranking name]` instead of
   `Rank: [ranking name]`.
   ([#194](https://github.com/biocore/qurro/issues/194))
+- Replaced uses of `log ratio` with `log-ratio` throughout Qurro's code and
+  documentation.
 - Added a draft "Moving Pictures" tutorial.
 - DEICODE ordinations used in demos and test inputs have been rerun with
   DEICODE version 0.2.3.
