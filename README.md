@@ -24,7 +24,8 @@ Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
-`qiime tools view`).
+`qiime tools view`). **Starting with Qurro v0.3.0, Qurro requires a QIIME 2
+version of at least 2019.7.**
 
 Qurro should work with most modern web browsers. Firefox or Chrome are
 recommended.
