@@ -76,14 +76,14 @@ def plot(
     assume_gnps_feature_metadata: bool,
     debug: bool,
 ) -> None:
-    """Generates a visualization of feature rankings and log ratios.
+    """Generates a visualization of feature rankings and log-ratios.
 
        The resulting visualization contains two plots. The first plot shows
-       how features are ranked, and the second plot shows the log ratio
+       how features are ranked, and the second plot shows the log-ratio
        of "selected" features' abundances within samples.
 
        The visualization is interactive, so which features are "selected" to
-       construct log ratios -- as well as various other properties of the
+       construct log-ratios -- as well as various other properties of the
        visualization -- can be changed by the user.
     """
 

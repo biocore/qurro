@@ -13,7 +13,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
     class RRVDisplay {
         /* Class representing a display in qurro (involving two plots:
          * one bar plot containing feature ranks, and one scatterplot
-         * describing sample log ratios of feature abundances). These plots are
+         * describing sample log-ratios of feature abundances). These plots are
          * referred to in this code as the "rank" and "sample" plot,
          * respectively.
          *
@@ -38,7 +38,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * / show things.
          */
         constructor(rankPlotJSON, samplePlotJSON, countJSON) {
-            // Used for selections of log ratios between single features (via
+            // Used for selections of log-ratios between single features (via
             // the rank plot)
             this.onHigh = true;
             this.newFeatureLow = undefined;
@@ -493,7 +493,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 )
             );
 
-            // Update rank plot based on the new log ratio
+            // Update rank plot based on the new log-ratio
             // Doing this alongside the change to the sample plot is done so that
             // the "states" of the plot re: selected features + sample log
             // ratios are unified.
@@ -516,7 +516,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             ]);
 
             // Now that the plots have been updated, update the dropped sample
-            // count re: the new sample log ratios.
+            // count re: the new sample log-ratios.
             this.droppedSamples.balance = nullBalanceSampleIDs;
             dom_utils.updateMainSampleShownDiv(
                 this.droppedSamples,
@@ -721,7 +721,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 {
                     type: "quantitative",
                     field: "qurro_balance",
-                    title: "Current Log Ratio"
+                    title: "Current Log-Ratio"
                 },
                 {
                     type: this.samplePlotJSON.encoding.x.type,
@@ -1087,10 +1087,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             return abundance;
         }
 
-        /* Use abundance data to compute the new log ratio ("balance") values of
+        /* Use abundance data to compute the new log-ratio ("balance") values of
          * log(high feature abundance) - log(low feature abundance) for a given sample.
          *
-         * This particular function is for log ratios of two individual features that were
+         * This particular function is for log-ratios of two individual features that were
          * selected via the rank plot.
          */
         updateBalanceSingle(sampleRow) {
@@ -1108,7 +1108,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         /* Like updateBalanceSingle, but considers potentially many features in the
-         * numerator and denominator of the log ratio. For log ratios generated
+         * numerator and denominator of the log-ratio. For log-ratios generated
          * by textual queries.
          */
         updateBalanceMulti(sampleRow) {

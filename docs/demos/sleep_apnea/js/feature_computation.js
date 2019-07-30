@@ -278,10 +278,10 @@ define(["./dom_utils"], function(dom_utils) {
     }
 
     /* We set the balance for samples with an abundance of <= 0 in either
-     * the top or bottom of the log ratio as null.
+     * the top or bottom of the log-ratio as null.
      *
      * RRVDisplay.updateSamplePlotFilters() should ensure that samples with
-     * a null log ratio are filtered out of the sample plot.
+     * a null log-ratio are filtered out of the sample plot.
      */
     function computeBalance(topValue, botValue) {
         if (typeof topValue !== "number" || typeof botValue !== "number") {

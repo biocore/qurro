@@ -23,13 +23,13 @@ plugin = qiime2.plugin.Plugin(
     website="https://github.com/biocore/qurro",
     # citations=[citations['martino-unpublished']],
     short_description=(
-        "Plugin for visualizing feature rankings and log ratios."
+        "Plugin for visualizing feature rankings and log-ratios."
     ),
     description=(
         "This QIIME 2 plugin supports the interactive visualization of "
         "feature rankings (differentials produced by a tool like Songbird "
         "or feature loadings in a biplot produced by a tool like DEICODE) "
-        "in tandem with log ratios of features' abundances within samples."
+        "in tandem with log-ratios of features' abundances within samples."
     ),
     package="qurro",
 )
@@ -56,7 +56,7 @@ param_descs = {
 short_desc = "Generate a Qurro visualization from feature {}s"
 long_desc = (
     "Generates an interactive visualization of feature {}s in tandem"
-    + " with a visualization of the log ratios of selected features'"
+    + " with a visualization of the log-ratios of selected features'"
     + " sample abundances."
 )
 

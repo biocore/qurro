@@ -8,21 +8,21 @@ Qurro visualizes the output from a tool like
 [DEICODE](https://github.com/biocore/DEICODE). It displays a plot of
 __feature rankings__ (either the feature differentials produced by a tool like
 songbird, or the feature loadings in a compositional biplot produced by a tool
-like DEICODE) alongside a plot showing the __log ratios__ of
+like DEICODE) alongside a plot showing the __log-ratios__ of
 selected features' abundances within samples.
 
 ### Why is this useful?
 
 Regardless of if we're looking at feature differentials or feature loadings,
-what we care about when analyzing them are the log ratios between feature
+what we care about when analyzing them are the log-ratios between feature
 abundances (or between groups of features' abundances), particularly as
 compared to sample metadata categories. Both
 [songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) and
 [DEICODE's paper (Martino et al. 2019)](https://msystems.asm.org/content/4/1/e00016-19) mention
-analyzing the log ratios between features' abundances; Qurro provides an easy
+analyzing the log-ratios between features' abundances; Qurro provides an easy
 way to do this.
 
-Log ratio analyses are needed because data obtained from a microbiome study is
+Log-ratio analyses are needed because data obtained from a microbiome study is
 inherently compositional: we only have access to the relative abundances of
 features in each sample, instead of their absolute abundances.
 To quote [Gloor et al. 2017](https://www.frontiersin.org/articles/10.3389/fmicb.2017.02224):
@@ -121,36 +121,36 @@ loadings) for each feature, and on the right a plot of selected features' log
 ratios in samples. Throughout this tutorial these plots will be referred to as
 the __rank plot__ and __sample plot__, respectively.
 
-Since no features are currently selected to be part of a log ratio, these plots
+Since no features are currently selected to be part of a log-ratio, these plots
 look pretty empty. So let's select some features!
 
-### Selecting features to construct log ratios
+### Selecting features to construct log-ratios
 
-Recall that we'd like to analyze the log ratios between features' abundances.
-In Qurro, "selecting features" lets us define a __log ratio__ between multiple
+Recall that we'd like to analyze the log-ratios between features' abundances.
+In Qurro, "selecting features" lets us define a __log-ratio__ between multiple
 features' abundances in each sample. That is, we can select the numerator and
-denominator feature(s) that make up this log ratio.
+denominator feature(s) that make up this log-ratio.
 
 There are a few ways of selecting features in Qurro:
 
 - One way is just by clicking on the rank plot twice. The first click sets
-  the numerator feature for a log ratio, and the second click sets the
-  denominator feature for the log ratio.
+  the numerator feature for a log-ratio, and the second click sets the
+  denominator feature for the log-ratio.
 - You can also select features based on a textual search through their
-  IDs or metadata. For example, it's possible to construct the log ratio of all
+  IDs or metadata. For example, it's possible to construct the log-ratio of all
   features with taxonomy annotations containing the text `o__Fusobacteriales`
   over all features with taxonomy annotations containing the text
   `o__Pseudomonadales`.
-    - This is equivalent to the log ratio of all ranked features identified as
+    - This is equivalent to the log-ratio of all ranked features identified as
       being in the order
       [_Fusobacteriales_](https://en.wikipedia.org/wiki/Fusobacteriales) over all
       ranked features identified as being in the order
       [_Pseudomonadales_](https://en.wikipedia.org/wiki/Pseudomonadales).
     - In this case -- where an arbitrary number of features can be in the numerator
-      and denominator of the log ratio -- the log ratio is computed for a given
+      and denominator of the log-ratio -- the log-ratio is computed for a given
       sample by summing the feature abundances of the numerator features,
       summing the feature abundances of the denominator features, and then
-      taking the log ratio of these sums. Written out as a formula, this is
+      taking the log-ratio of these sums. Written out as a formula, this is
       `log(top sum) - log(bottom sum)` (or, [equivalently](https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Using_simpler_operations),
       `log(top sum / bottom sum)`).
 - You can also select features by searching through their feature rankings or
@@ -169,9 +169,9 @@ Repeat this process for the `Denominator` section, but now copy the text
 `o__Pseudomonadales` instead. Press the "Regenerate plots" button. You should
 see something like this:
 
-<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro2.png" alt="Qurro interface screenshot #2. The log ratio of o__Fusobacteriales to o__Pseudomonadales is selected." />
+<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro2.png" alt="Qurro interface screenshot #2. The log-ratio of o__Fusobacteriales to o__Pseudomonadales is selected." />
 
-Congrats! You just constructed a log ratio in Qurro. Both the rank plot and
+Congrats! You just constructed a log-ratio in Qurro. Both the rank plot and
 the sample plot should be updated now:
 
 - The rank plot should now have some bars colored red and some bars colored
@@ -182,7 +182,7 @@ the sample plot should be updated now:
    containing the text `o__Pseudomonadales`).
 
 - The sample plot should now look like a scatterplot containing at least a few
-  points. The y-axis value of each of these points is set to the log ratio of
+  points. The y-axis value of each of these points is set to the log-ratio of
   the selected features' abundances; the x-axis values and colors are set to
   whatever metadata categories you'd like to use.
 
@@ -227,10 +227,10 @@ Let's try setting the x-axis to the `Body Site` field and the color to the
 `Subject` field. You can do this using the controls underneath
 the sample plot, on the middle-right side of the Qurro interface.
 
-<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro3.png" alt="Qurro interface screenshot #3. The same log ratio as before is selected, and the x-axis of the sample plot is set to BodySite (with 'left palm' and 'right palm' as displayed values) and the color of each point is set to Subject (either 'subject-1' or 'subject-2')." />
+<img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro3.png" alt="Qurro interface screenshot #3. The same log-ratio as before is selected, and the x-axis of the sample plot is set to BodySite (with 'left palm' and 'right palm' as displayed values) and the color of each point is set to Subject (either 'subject-1' or 'subject-2')." />
 
 This is more interesting. Of course, there aren't a lot of samples in the plot,
-and this was a pretty arbitrary log ratio we just selected. So it's hard to
+and this was a pretty arbitrary log-ratio we just selected. So it's hard to
 draw any meaningful conclusions from this.
 
 Let's examine that first problem in more depth: _where are all of the
@@ -243,11 +243,11 @@ along with the tutorial so far, it should say that only
 `15 / 34 samples (44.12%)` are shown in the sample plot. What gives?
 
 As the text underneath this explains, it's because the other samples have
-invalid log ratios. These other samples either didn't have any
+invalid log-ratios. These other samples either didn't have any
 `o__Fusobacteriales` bacteria observed, didn't have any `o__Pseudomonadales`
 bacteria observed, or didn't have either of these bacteria.
 
-Zeroes in either the top or bottom of a log ratio mess things up. The logarithm
+Zeroes in either the top or bottom of a log-ratio mess things up. The logarithm
 of 0 / x (i.e the logarithm of 0) is undefined, as is the logarithm of x / 0
 (since you straight-up can't divide by 0 in the first place).
 
@@ -277,12 +277,12 @@ __Feature ID__ of this feature to your clipboard.
 Move back to the tab or window where you have the Qurro plot open.
 You can paste (using something like ctrl-V or &#8984;-V) the feature ID you just copied
 directly into the numerator or denominator search box, in the bottom right corner of Qurro's interface. You can do this twice
-(once for the numerator and once for the denominator) to create log ratios of
+(once for the numerator and once for the denominator) to create log-ratios of
 features directly from the biplot. (Make sure to change the feature field
 selector back to `Feature ID`, since we're searching using these feature IDs.)
 
 Now press the `Regenerate plots` button to select these two features, applying
-their log ratio to the rank and sample plots.
+their log-ratio to the rank and sample plots.
 
 #### Hey, wait a second! There are only eight arrows in the biplot, but there are over five hundred features in the feature ranks plot. What gives?
 
@@ -313,10 +313,10 @@ the rank plot (increasing the bar width makes this easier), or by picking out
 features that appear to be strongly associated with clustering of your samples
 in a biplot, as we did with Emperor above.
 
-One solid strategy for conducting a log ratio test is looking at particularly
+One solid strategy for conducting a log-ratio test is looking at particularly
 high- or low-ranked features,
 seeing what taxonomic classifications are used for these features, and using
-those taxonomic classifications to construct more detailed log ratios using
+those taxonomic classifications to construct more detailed log-ratios using
 text searching. Qurro's variety of search options should hopefully make this
 process straightforward.
 
@@ -324,7 +324,7 @@ process straightforward.
 Other work has been done on this problem; see, for example,
 [selbal](https://github.com/UVic-omics/selbal) (described in [Rivera-Pinto et al. 2018](https://msystems.asm.org/content/3/4/e00053-18.abstract)). In theory, you could use the output of selbal as a starting point for playing around with feature selection in a Qurro visualization, but I haven't tried this as of writing.
 
-[Songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) also offers a good review of log ratio analyses (...of course, some of the authors of this paper are also authors of Qurro, so that might not be the most unbiased advice :).
+[Songbird's paper (Morton and Marotz et al. 2019)](https://www.nature.com/articles/s41467-019-10656-5) also offers a good review of log-ratio analyses (...of course, some of the authors of this paper are also authors of Qurro, so that might not be the most unbiased advice :).
 
 ## Acknowledgements
 

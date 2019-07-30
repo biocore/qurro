@@ -322,7 +322,7 @@ def validate_sample_plot_json(
     biom_table_loc, metadata_loc, sample_json, count_json
 ):
     assert sample_json["mark"] == {"type": "circle"}
-    assert sample_json["title"] == "Log Ratio of Abundances in Samples"
+    assert sample_json["title"] == "Log-Ratio of Abundances in Samples"
     basic_vegalite_json_validation(sample_json)
     dn = sample_json["data"]["name"]
 

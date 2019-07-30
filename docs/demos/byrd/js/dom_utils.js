@@ -172,7 +172,7 @@ define(["vega"], function(vega) {
      *
      * dropType: This defines the reason we'll include in the <div> indicating
      * why samples have been dropped.
-     *  If this is "balance", the reason will be "an undefined log ratio."
+     *  If this is "balance", the reason will be "an undefined log-ratio."
      *  If this is "xAxis" or "color", the reason will be
      *  "a non-quantitative {f} field."
      *      ({f} will be replaced with whatever the optional field argument
@@ -202,7 +202,7 @@ define(["vega"], function(vega) {
             // why at least this many samples have to be dropped.
             var reason = "(invalid reason given)";
             if (dropType === "balance") {
-                reason = "an invalid (i.e. containing zero) log ratio.";
+                reason = "an invalid (i.e. containing zero) log-ratio.";
             } else if (dropType === "xAxis" || dropType === "color") {
                 reason = "an invalid " + field + " field.";
             }

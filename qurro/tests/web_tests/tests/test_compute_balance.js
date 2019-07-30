@@ -3,7 +3,7 @@ define(["feature_computation", "mocha", "chai"], function(
     mocha,
     chai
 ) {
-    describe("Computing log ratios", function() {
+    describe("Computing log-ratios", function() {
         it("Computes the natural logarithm (i.e. using e as a base)", function() {
             // log(e / 1) = log(e) = 1
             // log(1 / e) = -log(e) = -1
@@ -22,7 +22,7 @@ define(["feature_computation", "mocha", "chai"], function(
             chai.assert.isNull(feature_computation.computeBalance(0, 0));
         });
         var delta = 0.00001;
-        it("Computes the correct log ratio given valid inputs", function() {
+        it("Computes the correct log-ratio given valid inputs", function() {
             chai.assert.approximately(
                 feature_computation.computeBalance(2, 5),
                 -0.91629,

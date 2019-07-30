@@ -435,7 +435,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                         document.getElementById(divID).innerHTML,
                         "4 / 8 samples (50.00%) " +
                             "can't be shown due to having an invalid " +
-                            "(i.e. containing zero) log ratio."
+                            "(i.e. containing zero) log-ratio."
                     );
                     chai.assert.isFalse(
                         document

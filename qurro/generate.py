@@ -7,7 +7,7 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 #
 # Generates two JSON files: one for a rank plot and one for a sample
-# scatterplot of log ratios.
+# scatterplot of log-ratios.
 #
 # A lot of the code for processing input data in Qurro was based on code by
 # Jamie Morton, some of which is now located in ipynb/Figure3.ipynb in
@@ -259,7 +259,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "qurro_classification",
-                title="Log Ratio Classification",
+                title="Log-Ratio Classification",
                 scale=alt.Scale(
                     domain=["None", "Numerator", "Denominator", "Both"],
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
@@ -273,7 +273,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
                 ),
                 alt.Tooltip(
                     field="qurro_classification",
-                    title="Log Ratio Classification",
+                    title="Log-Ratio Classification",
                     type="nominal",
                 ),
                 "Feature ID",
@@ -328,7 +328,7 @@ def gen_sample_plot(metadata):
     # Used to set color
     default_metadata_col = sample_metadata.columns[0]
 
-    # Since we don't bother setting a default log ratio, we set the balance for
+    # Since we don't bother setting a default log-ratio, we set the balance for
     # every sample to None so that Vega* will filter them out (producing an
     # empty scatterplot by default, which makes sense).
     sample_metadata["qurro_balance"] = None
@@ -344,7 +344,7 @@ def gen_sample_plot(metadata):
     sample_chart = (
         alt.Chart(
             sample_metadata,
-            title="Log Ratio of Abundances in Samples",
+            title="Log-Ratio of Abundances in Samples",
             background="#FFFFFF",
             autosize=alt.AutoSizeParams(resize=True),
         )
