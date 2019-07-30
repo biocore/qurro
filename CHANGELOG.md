@@ -6,6 +6,9 @@
   supervised-rank-plot` action (**NOTE: this action has been renamed to `qiime
   qurro differential-plot`, see below**) to be available.
   ([#154](https://github.com/biocore/qurro/issues/154))
+    - **NOTE: this means that Qurro v0.3.0 will not work with pre-2019.7
+      versions of QIIME 2. See the "Backward-incompatible changes" section
+      below for details.**
 - Feature ranking values (i.e. differentials or loadings) are now shown in the
   tooltips for individual features in the rank plot.
   ([#186](https://github.com/biocore/qurro/issues/186))
@@ -61,8 +64,10 @@
   specified.)
   ([#95](https://github.com/biocore/qurro/issues/95))
 ### Backward-incompatible changes
-- Qurro will now try to load the `Differential` type from q2-types. **This means
-  that Qurro v0.3.0 will only support versions of QIIME 2 of at least 2019.7.**
+- Qurro will now try to load the `Differential` type from q2-types.
+  ([#154](https://github.com/biocore/qurro/issues/154))
+    - **This means that Qurro v0.3.0 will only support versions of QIIME 2 of
+      at least 2019.7.**
     - **This also means that installing Qurro v0.3.0 into an old QIIME 2
       environment will break it.**
 - Renamed Qurro's QIIME 2 actions ([#98](https://github.com/biocore/qurro/issues/98)):
