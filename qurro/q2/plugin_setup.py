@@ -14,8 +14,21 @@ from ._method import differential_plot, loading_plot
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
 from qiime2.plugin import Metadata, Properties, Int, Bool
 from q2_types.feature_table import FeatureTable, Frequency
-from q2_types.feature_data import FeatureData, Differential
 from q2_types.ordination import PCoAResults
+
+# Gracefully fail if the user is using an old version of QIIME 2. I expect this
+# will pop up a lot as people switch from 2019.4 to 2019.7. (We can remove this
+# in the future if desired.)
+try:
+    from q2_types.feature_data import FeatureData, Differential
+except ImportError:
+    msg = (
+        "It looks like you're using a version of QIIME 2 before 2019.7. "
+        "Starting with Qurro v0.3.0, Qurro only supports versions of QIIME 2 "
+        "of at least 2019.7. Please install a later version of QIIME 2 to use "
+        "Qurro, or uninstall Qurro to fix this QIIME 2 environment."
+    )
+    raise SystemError(msg)
 
 plugin = qiime2.plugin.Plugin(
     name="qurro",
