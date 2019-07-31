@@ -14,15 +14,13 @@ TABLE = (
 
 EXTREME_FEATURE_COUNT = (
     "If specified, Qurro will only use this many "
-    '"extreme" features from either end of all of the rankings. '
+    '"extreme" features from both ends of all of the rankings. '
     "This is useful when dealing with huge datasets (e.g. with "
     "BIOM tables exceeding 1 million entries), for which "
     "running Qurro normally might take a long amount of "
-    "time or crash due to memory limits. This value must be at least 1, and "
-    "must be an integer. Note that samples without any observed features "
-    "after this filtering step will be removed from the Qurro visualization, "
-    "as will features without any observations in samples (even features that "
-    'were not filtered due to being sufficiently "extreme").'
+    "time or crash due to memory limits. Note that the automatic removal of "
+    "empty samples and features from the table will be done *after* this "
+    "filtering step."
 )
 
 ASSUME_GNPS_FEATURE_METADATA = (
