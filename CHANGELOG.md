@@ -111,6 +111,9 @@
   DEICODE version 0.2.3.
   ([#188](https://github.com/biocore/qurro/issues/188))
 - Cleaned up Qurro's command-line interface options and help text.
+- When exporting data in the sample plot, the default filename is now just
+  `sample_plot_data.tsv` instead of `rrv_sample_plot_data.tsv`. (The prior
+  default filename dates back to when Qurro was named "rankratioviz.")
 - A clear error is now raised if Qurro is trying to parse a GNPS feature
   metadata file, and the feature rankings include a column named `LibraryID`.
   This sort of error should already have come up in prior versions of Qurro,
