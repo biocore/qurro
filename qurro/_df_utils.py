@@ -76,7 +76,10 @@ def fix_id(fid):
             new_id += ")"
         elif c == "[":
             new_id += "("
-        elif c == "'" or c == '"' or c == "\\":
+        elif c == "'" or c == '"':
+            # Don't bother replacing quotes
+            pass
+        elif c == "\\":
             new_id += "|"
         else:
             new_id += c

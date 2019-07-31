@@ -61,14 +61,15 @@ A python version of at least 3.5 is required to use Qurro.
 
 ### Temporary Caveat
 
-Certain characters in column names in the the sample metadata, feature metadata, and feature differentials (if passed) will be replaced with similar characters:
+Certain characters in column names in the the sample metadata, feature metadata (if passed), and feature differentials (if passed) will be replaced with similar characters or just removed entirely:
 
 | Old Character(s) | New Character |
 | ------------- | ------------- |
 | `.`  | `:`  |
 | `]`  | `)`  |
 | `[`  | `(`  |
-| `'`, `"`, or `\ `  | <code>\|</code>  |
+| `\ ` | <code>\|</code>  |
+| `'` or `"` | Nothing |
 
 This is due to some downstream issues with handling these sorts of characters
 in field names. See [this issue](https://github.com/biocore/qurro/issues/66)

@@ -90,6 +90,9 @@
   ([#190](https://github.com/biocore/qurro/issues/190))
 ### Performance enhancements
 ### Miscellaneous
+- When replacing certain characters within column names, Qurro no longer
+  replaces `'` or `"` characters with <code>\|</code> characters. Instead, `'`
+  and `"` characters are just removed from column names entirely.
 - Updated the rank plot's y-axis to say `Magnitude: [ranking name]` instead of
   `Rank: [ranking name]`.
   ([#194](https://github.com/biocore/qurro/issues/194))
