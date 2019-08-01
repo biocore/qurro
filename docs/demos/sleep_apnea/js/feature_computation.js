@@ -1,17 +1,16 @@
 define(["./dom_utils"], function(dom_utils) {
-    /* Converts a feature field value to a text-searchable type, if possible.
+    /* Converts a feature field value to a text-searchable value, if possible.
      *
-     * If the input is a string, returns the input unchanged.
+     * If the input is a string, returns the input (in lower case).
      * If the input is a number, returns the input as a string.
-     *     (This is useful if users want to search numbers as text -- when we
-     *     add more sophisticated search methods in the future, this
-     *     functionality should probably be removed.)
+     *     (This is useful if users want to search numbers as text, which is
+     *     kind of silly but still valid.)
      * If the input is neither of those types, returns null to indicate that we
      * can't "search" the input.
      */
     function tryTextSearchable(fmVal) {
         if (typeof fmVal === "string") {
-            return fmVal;
+            return fmVal.toLowerCase();
         } else if (typeof fmVal === "number") {
             return String(fmVal);
         } else {
@@ -247,13 +246,13 @@ define(["./dom_utils"], function(dom_utils) {
         if (searchType === "rank") {
             return rankFilterFeatures(
                 potentialFeatures,
-                inputText,
+                inputText.toLowerCase(),
                 featureField
             );
         } else if (searchType === "text") {
             return textFilterFeatures(
                 potentialFeatures,
-                inputText,
+                inputText.toLowerCase(),
                 featureField
             );
         } else if (

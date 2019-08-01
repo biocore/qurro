@@ -157,22 +157,28 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Searching is case sensitive", function() {
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "staphylococcus",
-                        "Taxonomy",
-                        "text"
-                    )
+            it("Searching is case *insensitive*", function() {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "staphylococcus",
+                            "Taxonomy",
+                            "text"
+                        )
+                    ),
+                    staphTextMatches
                 );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        "feature",
-                        "Feature ID",
-                        "text"
-                    )
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "feature",
+                            "Feature ID",
+                            "text"
+                        )
+                    ),
+                    inputFeatures
                 );
             });
 
@@ -266,30 +272,36 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ["Feature 2", "Feature 3"]
                 );
             });
-            // The case sensitivity, inputText-empty, and null value tests were
-            // just copied from above with the searchType changed. A possible
-            // TODO here is reducing the redunancy in these tests, but it's
+            // The case insensitivity, inputText-empty, and null value tests
+            // were just copied from above with the searchType changed.
+            // A TODO here is reducing the redunancy in these tests, but it's
             // not like efficiency in the JS testing process is a super huge
             // priority for us right now.
-            it("Searching is (still) case sensitive", function() {
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "staphylococcus",
-                        "Taxonomy",
-                        "rank"
-                    )
+            it("Searching is (still) case insensitive", function() {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "staphylococcus",
+                            "Taxonomy",
+                            "rank"
+                        )
+                    ),
+                    bacteriaMatches
                 );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        "feature",
-                        "Feature ID",
-                        "rank"
-                    )
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "feature",
+                            "Feature ID",
+                            "rank"
+                        )
+                    ),
+                    ["Feature 1", "Feature 3", "Feature 4|lol"]
                 );
             });
-            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characers", function() {
+            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characters", function() {
                 /* Just a helper function to alleviate redundant code here.
                  *
                  * Asserts that filterFeatures() with the given input text is
@@ -765,20 +777,24 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
             });
         });
         describe("tryTextSearchable()", function() {
-            it("Doesn't modify strings", function() {
+            it("Lowercases (but otherwise doesn't modify) strings", function() {
                 chai.assert.equal(
                     feature_computation.tryTextSearchable("abc"),
                     "abc"
                 );
                 chai.assert.equal(
+                    feature_computation.tryTextSearchable("AbC"),
+                    "abc"
+                );
+                chai.assert.equal(
                     feature_computation.tryTextSearchable("   Viruses   "),
-                    "   Viruses   "
+                    "   viruses   "
                 );
                 chai.assert.equal(
                     feature_computation.tryTextSearchable(
                         "   Viruses;Caudovirales;some third thing goes here   "
                     ),
-                    "   Viruses;Caudovirales;some third thing goes here   "
+                    "   viruses;caudovirales;some third thing goes here   "
                 );
                 chai.assert.equal(
                     feature_computation.tryTextSearchable("null"),

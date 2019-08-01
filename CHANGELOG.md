@@ -73,6 +73,10 @@
 - Renamed Qurro's QIIME 2 actions ([#98](https://github.com/biocore/qurro/issues/98)):
     - **Renamed `qiime qurro supervised-rank-plot` to `qiime qurro differential-plot`.**
     - **Renamed `qiime qurro unsupervised-rank-plot` to `qiime qurro loading-plot`.**
+- **Text searches are now case-insensitive!** You can now search through
+  features' taxonomies for, say, `p__firmicutes`, and results for
+  `p__Firmicutes` will show up.
+  ([#30](https://github.com/biocore/qurro/issues/30))
 - Replaced `-v`/`--verbose` in Qurro's standalone script with `--debug`, in
   order to be consistent with Qurro's QIIME 2 plugin.
 ### Bug fixes

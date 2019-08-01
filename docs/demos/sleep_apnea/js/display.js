@@ -1135,7 +1135,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.samplePlotJSON.encoding.x.field,
                 this.samplePlotJSON.encoding.color.field
             );
-            dom_utils.downloadDataURI("rrv_sample_plot_data.tsv", tsv, true);
+            dom_utils.downloadDataURI("sample_plot_data.tsv", tsv, true);
             // Also I guess export feature IDs somehow.
             // TODO go through this.topFeatures and this.botFeatures; convert
             // from two arrays to a string, where each feature is separated by
