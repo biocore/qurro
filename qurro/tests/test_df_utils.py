@@ -8,6 +8,7 @@ from qurro._df_utils import (
     replace_nan,
     remove_empty_samples_and_features,
     print_if_dropped,
+    match_table_and_data,
     merge_feature_metadata,
     sparsify_count_dict,
     check_column_names,
@@ -605,3 +606,128 @@ def test_check_column_names():
     with pytest.raises(ValueError) as exception_info:
         check_column_names(sm, fr, fm)
     assert "must be distinct" in str(exception_info.value)
+
+
+def test_match_table_and_data_no_change(capsys):
+    # In basic case, nothing should change
+    table, metadata, ranks = get_test_data()
+
+    m_table, m_metadata = match_table_and_data(table, ranks, metadata)
+    # Check that table and metadata are actually equal
+    assert_frame_equal(table, m_table)
+    assert_frame_equal(metadata, m_metadata)
+    # Check that nothing was printed (i.e. no "sample/feature dropped" messages
+    # or whatever)
+    captured = capsys.readouterr()
+    assert captured.out == ""
+
+
+def test_match_table_and_data_table_extra_feature(capsys):
+    # Test case where table contains a feature that isn't in the ranks
+    table, metadata, ranks = get_test_data()
+    new_row = DataFrame(
+        [[20, 20, 20, 20]],
+        columns=table.columns,
+        index=["FeatureInTableButNotRanks"],
+    )
+    table = table.append(new_row, verify_integrity=True)
+    m_table, m_metadata = match_table_and_data(table, ranks, metadata)
+    # Only features in the ranks' index should be left in the table's index,
+    # and the table and ranks' indices should line up.
+    assert len(set(m_table.index) & set(ranks.index)) == len(ranks.index)
+    # Sanity check -- another way of verifying the above
+    assert "FeatureInTableButNotRanks" not in m_table.index
+    # Check that the matched-up fields' data wasn't altered somehow
+    assert_frame_equal(table.loc[ranks.index], m_table)
+    assert_frame_equal(metadata, m_metadata)
+    # Check that a feature-dropping message was printed
+    captured = capsys.readouterr()
+    expected_msg = (
+        "1 feature(s) in the BIOM table were not present in the feature "
+        "rankings"
+    )
+    assert expected_msg in captured.out
+
+
+def test_match_table_and_data_table_extra_sample(capsys):
+    # Test case where table contains a sample that isn't in the metadata
+    table, metadata, ranks = get_test_data()
+
+    table["SampleInTableButNotMD"] = 10
+    m_table, m_metadata = match_table_and_data(table, ranks, metadata)
+
+    assert len(set(m_table.columns) & set(m_metadata.index)) == len(
+        metadata.index
+    )
+    assert "SampleInTableButNotMD" not in m_table.columns
+    assert "SampleInTableButNotMD" not in m_metadata.index
+    # Check that the matched-up fields' data wasn't altered somehow
+    assert_frame_equal(table[metadata.index], m_table)
+    assert_frame_equal(metadata, m_metadata)
+    # Check that a message re: the sample being dropped was printed
+    captured = capsys.readouterr()
+    expected_msg = (
+        "1 sample(s) in the BIOM table were not present in the sample "
+        "metadata file"
+    )
+    assert expected_msg in captured.out
+
+
+def test_match_table_and_data_metadata_extra_sample(capsys):
+    # Test case where metadata contains a sample that isn't in the table
+    table, metadata, ranks = get_test_data()
+
+    # Add a new row to the metadata
+    new_row = DataFrame(
+        [[20, 20, 20, 20]],
+        columns=metadata.columns,
+        index=["SampleInMDButNotTable"],
+    )
+    metadata = metadata.append(new_row, verify_integrity=True)
+    m_table, m_metadata = match_table_and_data(table, ranks, metadata)
+    assert len(set(m_table.columns) & set(m_metadata.index)) == len(
+        table.columns
+    )
+    assert "SampleInMDButNotTable" not in m_table.columns
+    assert "SampleInMDButNotTable" not in m_metadata.index
+    # Check that the matched-up fields' data wasn't altered somehow
+    assert_frame_equal(table, m_table)
+    assert_frame_equal(metadata.loc[table.columns], m_metadata)
+    # Check that a message re: the sample being dropped was printed
+    captured = capsys.readouterr()
+    expected_msg = (
+        "1 sample(s) in the sample metadata file were not present in the BIOM "
+        "table"
+    )
+    assert expected_msg in captured.out
+
+
+def test_match_table_and_data_ranked_features_not_in_table(capsys):
+    # Qurro is pretty accepting for mismatched data, but if any of your ranked
+    # features aren't in the BIOM Qurro will immediately throw an error.
+    # (...because that is not a good situation.)
+    table, metadata, ranks = get_test_data()
+    new_feature_row = DataFrame([[9, 0]], columns=ranks.columns, index=["F9"])
+    ranks_modified = ranks.append(new_feature_row, verify_integrity=True)
+    with pytest.raises(ValueError) as exception_info:
+        match_table_and_data(table, ranks_modified, metadata)
+    expected_message = (
+        "Of the 9 ranked features, 1 was not present in the input BIOM table"
+    )
+    assert expected_message in str(exception_info.value)
+
+    # Try this again; verify it works with more than 1 ranked features not in
+    # the table
+    # (also, the error message should use "were" instead of "was" now :)
+    new_feature_row = DataFrame(
+        [[10, -1]], columns=ranks.columns, index=["F10"]
+    )
+    ranks_modified = ranks_modified.append(
+        new_feature_row, verify_integrity=True
+    )
+    with pytest.raises(ValueError) as exception_info:
+        match_table_and_data(table, ranks_modified, metadata)
+    expected_message = (
+        "Of the 10 ranked features, 2 were not present in the input BIOM table"
+    )
+    assert expected_message in str(exception_info.value)
