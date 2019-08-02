@@ -4,7 +4,8 @@ from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 import pytest
 from qurro._rank_utils import filter_unextreme_features
-from qurro.generate import biom_table_to_sparse_df
+from qurro.generate import biom_table_to_sparse_df, process_input
+from qurro.tests.test_df_utils import get_test_data as get_test_data_2
 
 
 def get_test_data():
@@ -46,9 +47,7 @@ def test_filtering_basic():
     """Tests the standard behavior of filter_unextreme_features()."""
 
     table, ranks = get_test_data()
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, 2, print_warning=False
-    )
+    filtered_table, filtered_ranks = filter_unextreme_features(table, ranks, 2)
     # Check that the appropriate features/samples were filtered out of the
     # table. NOTE -- I know this is sloppy code. Would like to fix it in the
     # future.
@@ -87,15 +86,11 @@ def test_filtering_large_efc():
     table, ranks = get_test_data()
 
     # The number of ranked features is 8.
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, 4, print_warning=False
-    )
+    filtered_table, filtered_ranks = filter_unextreme_features(table, ranks, 4)
     assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
 
-    filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, 8, print_warning=False
-    )
+    filtered_table, filtered_ranks = filter_unextreme_features(table, ranks, 8)
     assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
 
@@ -109,7 +104,7 @@ def test_filtering_no_efc():
     table, ranks = get_test_data()
 
     filtered_table, filtered_ranks = filter_unextreme_features(
-        table, ranks, None, print_warning=False
+        table, ranks, None
     )
     assert_frame_equal(table, filtered_table)
     assert_frame_equal(ranks, filtered_ranks)
@@ -136,3 +131,35 @@ def test_filtering_invalid_efc():
 
     with pytest.raises(ValueError):
         filter_unextreme_features(table, ranks, 5.5)
+
+
+def test_filtering_to_empty_features():
+    """Integration test for the odd corner case where the "extreme" features
+       are all empty.
+    """
+    # Sorry this code is kinda gross
+    table, metadata, ranks = get_test_data_2()
+
+    # Zero out the table DataFrame
+    table[:] = 0
+    # Make the non-extreme features (F3 through F6) all non-empty, while
+    # *leaving* the extreme features (F1, F2, F7, F8) as empty
+    # (Note that our definition of "extreme" here is just based on -x 2)
+    table.loc["F3"] = table.loc["F4"] = table.loc["F5"] = table.loc["F6"] = 5
+
+    # Convert the table DataFrame to an actual BIOM table
+    # (so we can throw it into process_input())
+    biom_table = biom.Table(table.values, table.index, table.columns)
+
+    # Without a -x parameter (or with a -x parameter of > 2), this should work
+    # fine since the non-empty features will be preserved
+    process_input(ranks, metadata, biom_table)
+    process_input(ranks, metadata, biom_table, extreme_feature_count=3)
+    process_input(ranks, metadata, biom_table, extreme_feature_count=4)
+
+    # This, however, should cause an error!
+    # All the non-extreme features will be filtered out, leaving only empty
+    # features. This means that there'll be an empty table.
+    with pytest.raises(ValueError) as exception_info:
+        process_input(ranks, metadata, biom_table, extreme_feature_count=2)
+    assert "table is empty" in str(exception_info.value)

@@ -26,12 +26,8 @@
             >
             <option value="#ff0,#f00,#ff8c00">Yellow, Red, Orange</option>
         </select>
-        <select id="barSize">
-            <option value="1"></option>
-            <option value="2"></option>
-            <option value="3"></option>
-            <option value="fit"></option>
-        </select>
+        <input id="barSizeSlider" type="range" min="1" max="10" value="1" />
+        <input type="checkbox" id="fitBarSizeCheckbox" />
         <p id="barSizeWarning" class="warning plotControlBlock invisible"></p>
         <select id="xAxisField"> </select>
         <select id="colorField"> </select>
@@ -133,8 +129,12 @@
         <a id="downloadHelper"></a>
         <select id="topSearch"> </select>
         <select id="topSearchType">
-            <option value="text">Text Search</option>
-            <option value="rank">Rank Search</option>
+            <option value="text"></option>
+            <option value="rank"></option>
+            <option value="lt"></option>
+            <option value="gt"></option>
+            <option value="lte"></option>
+            <option value="gte"></option>
         </select>
         <!-- TODO instead of querying the DOM in the plot update functions,
              just make the search types and strings arguments (will make testing
@@ -143,8 +143,12 @@
         <input type="text" id="topText" />
         <select id="botSearch"> </select>
         <select id="botSearchType">
-            <option value="text">Text Search</option>
-            <option value="rank">Rank Search</option>
+            <option value="text"></option>
+            <option value="rank"></option>
+            <option value="lt"></option>
+            <option value="gt"></option>
+            <option value="lte"></option>
+            <option value="gte"></option>
         </select>
         <input type="text" id="botText" />
 

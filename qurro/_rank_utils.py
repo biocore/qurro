@@ -11,6 +11,7 @@ import logging
 import skbio
 import pandas as pd
 from qurro._df_utils import escape_columns
+from qurro._metadata_utils import get_q2_comment_lines
 
 
 def read_rank_file(file_loc):
@@ -52,8 +53,15 @@ def ordination_to_df(ordination_file_loc):
 def differentials_to_df(differentials_loc):
     """Converts a differential rank TSV file to a DataFrame."""
 
+    # As of QIIME 2 2019.7, differentials exported from QIIME 2 can have q2
+    # comments! So we need to detect these.
+    q2_lines = get_q2_comment_lines(differentials_loc)
     differentials = pd.read_csv(
-        differentials_loc, sep="\t", na_filter=False, dtype=object
+        differentials_loc,
+        sep="\t",
+        na_filter=False,
+        dtype=object,
+        skiprows=q2_lines,
     )
     # Delay setting index column so we can first load it as an object (this
     # saves us from situations where the index col would otherwise be read as a
@@ -89,12 +97,14 @@ def differentials_to_df(differentials_loc):
 
 
 def filter_unextreme_features(
-    table: pd.SparseDataFrame,
-    ranks: pd.DataFrame,
-    extreme_feature_count: int,
-    print_warning: bool = True,
+    table: pd.SparseDataFrame, ranks: pd.DataFrame, extreme_feature_count: int
 ) -> None:
     """Returns copies of the table and ranks with "unextreme" features removed.
+
+       This assumes that the table and ranks have already been matched (i.e.
+       their indices are now identical). If this isn't the case, the behavior
+       of this function is undefined (I'm pretty sure it will make the print
+       messages incorrect at minimum).
 
        Parameters
        ----------
@@ -114,11 +124,6 @@ def filter_unextreme_features(
             the feature rankings to preserve in the table. If this is None, the
             input table and ranks will just be returned.
             This has to be at least 1.
-
-       print_warning: bool
-            If True, this will print out a warning if (extreme_feature_count *
-            2) >= the number of ranked features. (This can be disabled for
-            tests, etc.)
 
        Returns
        -------
@@ -161,24 +166,28 @@ def filter_unextreme_features(
     efc2 = extreme_feature_count * 2
     if efc2 >= len(ranks):
         logging.debug("Extreme Feature Count too large to do any filtering.")
-        if print_warning:
-            print(
-                "The input Extreme Feature Count was {}. {} * 2 = {}.".format(
-                    extreme_feature_count, extreme_feature_count, efc2
-                )
+        print(
+            "The input Extreme Feature Count was {}. {} * 2 = {}.".format(
+                extreme_feature_count, extreme_feature_count, efc2
             )
-            print(
-                "{} is greater than or equal to the number of ranked "
-                "features ({}).".format(efc2, len(ranks))
-            )
-            print("Therefore, no feature filtering will be done now.")
+        )
+        print(
+            "{} is greater than or equal to the number of ranked "
+            "features ({}).".format(efc2, len(ranks))
+        )
+        print("Therefore, no feature filtering will be done now.")
         return table, ranks
 
     # OK, we're actually going to do some filtering.
-    logging.debug(
-        "Will perform filtering with e.f.c. of {}.".format(
+    starting_feature_ct = ranks.shape[0]
+    print(
+        "Will perform feature filtering with e.f.c. of {}.".format(
             extreme_feature_count
         )
+    )
+    print(
+        "Before filtering, the feature ranks and (matched) table contain {} "
+        "features.".format(starting_feature_ct)
     )
     logging.debug("Input table has shape {}.".format(table.shape))
     logging.debug("Input feature ranks have shape {}.".format(ranks.shape))
@@ -201,6 +210,16 @@ def filter_unextreme_features(
     filtered_ranks = ranks.loc[features_to_preserve]
     filtered_table = table.loc[features_to_preserve]
 
+    filtered_feature_ct = filtered_ranks.shape[0]
+    print(
+        "After filtering, the feature ranks and (matched) table contain {} "
+        "features.".format(filtered_feature_ct)
+    )
+    print(
+        "Filtered {} features in total.".format(
+            starting_feature_ct - filtered_feature_ct
+        )
+    )
     logging.debug("Output table has shape {}.".format(filtered_table.shape))
     logging.debug(
         "Output feature ranks have shape {}.".format(filtered_ranks.shape)

@@ -13,7 +13,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
     class RRVDisplay {
         /* Class representing a display in qurro (involving two plots:
          * one bar plot containing feature ranks, and one scatterplot
-         * describing sample log ratios of feature abundances). These plots are
+         * describing sample log-ratios of feature abundances). These plots are
          * referred to in this code as the "rank" and "sample" plot,
          * respectively.
          *
@@ -38,7 +38,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * / show things.
          */
         constructor(rankPlotJSON, samplePlotJSON, countJSON) {
-            // Used for selections of log ratios between single features (via
+            // Used for selections of log-ratios between single features (via
             // the rank plot)
             this.onHigh = true;
             this.newFeatureLow = undefined;
@@ -85,7 +85,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // possible sample plot x-axis/colorization options.
             this.metadataCols = undefined;
 
-            // Ordered list of all ranks
+            // Ordered list of all feature ranking fields
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
@@ -152,8 +152,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     rankField: async function() {
                         await display.updateRankField();
                     },
-                    barSize: async function() {
-                        await display.updateRankPlotBarSize(true);
+                    barSizeSlider: async function() {
+                        await display.updateRankPlotBarSizeToSlider(true);
+                    },
+                    fitBarSizeCheckbox: async function() {
+                        await display.updateRankPlotBarFitting(true);
                     },
                     boxplotCheckbox: async function() {
                         await display.updateSamplePlotBoxplot();
@@ -180,26 +183,26 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.rankOrdering,
                     this.rankOrdering[0]
                 );
-                // NOTE: we use .slice() to make a copy of the initial array so
-                // that when we unshift "Feature ID" onto
-                // this.featureMetadataFields, the original array (in the rank
-                // plot JSON) isn't modified.
-                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering.slice();
-                // Just so that we have something to search by, even if no
-                // actual feature metadata was passed.
-                // Note that in JS, .unshift() adds to the beginning (not end)
-                // of an array.
-                this.featureMetadataFields.unshift("Feature ID");
+                this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
+                var searchableFields = {
+                    standalone: ["Feature ID"],
+                    "Feature Metadata": this.featureMetadataFields,
+                    "Feature Rankings": this.rankOrdering
+                };
                 dom_utils.populateSelect(
                     "topSearch",
-                    this.featureMetadataFields,
-                    "Feature ID"
+                    searchableFields,
+                    "Feature ID",
+                    true
                 );
                 dom_utils.populateSelect(
                     "botSearch",
-                    this.featureMetadataFields,
-                    "Feature ID"
+                    searchableFields,
+                    "Feature ID",
+                    true
                 );
+                // Clear the "features text" displays
+                this.updateFeaturesTextDisplays(false, true);
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
                 // This is intended to address cases where there are only a few
@@ -211,14 +214,17 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.featureIDs.length <=
                     this.rankPlotJSON.config.view.width
                 ) {
-                    document.getElementById("barSize").value = "fit";
-                    this.updateRankPlotBarSize(false);
+                    document.getElementById(
+                        "fitBarSizeCheckbox"
+                    ).checked = true;
+                    this.updateRankPlotBarFitting(false);
                 }
             }
-            // Set the y-axis to say "Rank: [rank title]" instead of just
-            // "[rank title]". Makes things a bit clearer.
+            // Set the y-axis to say "Magnitude: [ranking title]" instead of
+            // just "[rank title]". Use of "Magnitude" here is based on
+            // discussion in issue #191.
             this.rankPlotJSON.encoding.y.title =
-                "Rank: " + this.rankPlotJSON.encoding.y.field;
+                "Magnitude: " + this.rankPlotJSON.encoding.y.field;
             // We can use a closure to allow callback functions to access "this"
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.
@@ -271,9 +277,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          */
         makeSamplePlot(notFirstTime) {
             if (!notFirstTime) {
-                this.metadataCols = RRVDisplay.identifyMetadataColumns(
-                    this.samplePlotJSON
-                );
+                this.metadataCols = this.samplePlotJSON.datasets.qurro_sample_metadata_fields;
                 // Note that we set the default metadata fields based on whatever
                 // the JSON has as the defaults.
                 dom_utils.populateSelect(
@@ -404,17 +408,43 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             await this.makeRankPlot(true);
         }
 
-        async updateRankPlotBarSize(callRemakeRankPlot) {
-            var newSizeType = document.getElementById("barSize").value;
-            var newBarSize;
-            if (newSizeType === "fit") {
-                // Not 100% sure this is optimal.
-                newBarSize =
+        /* Syncs up the rank plot's bar width with whatever the slider says. */
+        async updateRankPlotBarSizeToSlider(callRemakeRankPlot) {
+            var sliderBarSize = Number(
+                document.getElementById("barSizeSlider").value
+            );
+            await this.updateRankPlotBarSize(sliderBarSize, callRemakeRankPlot);
+        }
+
+        /* Either enables or disables "fitting" the bar widths.
+         *
+         * Adjusts the "disabled" status of the barSizeSlider accordingly --
+         * this prevents users from triggering onchange events while "fitting"
+         * the bar widths is enabled.
+         */
+        async updateRankPlotBarFitting(callRemakeRankPlot) {
+            if (document.getElementById("fitBarSizeCheckbox").checked) {
+                var fittedBarSize =
                     this.rankPlotJSON.config.view.width /
                     this.featureIDs.length;
+                document.getElementById("barSizeSlider").disabled = true;
+                await this.updateRankPlotBarSize(
+                    fittedBarSize,
+                    callRemakeRankPlot
+                );
             } else {
-                newBarSize = parseInt(newSizeType);
+                document.getElementById("barSizeSlider").disabled = false;
+                await this.updateRankPlotBarSizeToSlider(callRemakeRankPlot);
             }
+        }
+
+        /* Remakes the rank plot with the specified bar width (in pixels).
+         *
+         * If newBarSize < 1, this also makes the barSizeWarning element
+         * visible. (If newBarSize >= 1, this will make the barSizeWarning
+         * element invisible.)
+         */
+        async updateRankPlotBarSize(newBarSize, callRemakeRankPlot) {
             this.rankPlotJSON.encoding.x.scale.rangeStep = newBarSize;
             if (newBarSize < 1) {
                 document
@@ -463,7 +493,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 )
             );
 
-            // Update rank plot based on the new log ratio
+            // Update rank plot based on the new log-ratio
             // Doing this alongside the change to the sample plot is done so that
             // the "states" of the plot re: selected features + sample log
             // ratios are unified.
@@ -486,7 +516,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             ]);
 
             // Now that the plots have been updated, update the dropped sample
-            // count re: the new sample log ratios.
+            // count re: the new sample log-ratios.
             this.droppedSamples.balance = nullBalanceSampleIDs;
             dom_utils.updateMainSampleShownDiv(
                 this.droppedSamples,
@@ -502,7 +532,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         async updateSamplePlotMulti() {
-            // Determine which feature metadata field(s) to look at
+            // Determine which feature field(s) (Feature ID, anything in the
+            // feature metadata, anything in the feature rankings) to look at
             var topField = document.getElementById("topSearch").value;
             var botField = document.getElementById("botSearch").value;
             var topSearchType = document.getElementById("topSearchType").value;
@@ -575,12 +606,24 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         updateFeatureHeaderCounts(topCt, botCt) {
+            var featureCt = this.featureIDs.length;
+            var featureCtStr = featureCt.toLocaleString();
             document.getElementById("numHeader").textContent =
-                "Numerator Features (" + topCt.toLocaleString() + " selected)";
+                "Numerator Features: " +
+                topCt.toLocaleString() +
+                " / " +
+                featureCtStr +
+                " (" +
+                dom_utils.formatPercentage(topCt, featureCt) +
+                "%) selected";
             document.getElementById("denHeader").textContent =
-                "Denominator Features (" +
+                "Denominator Features: " +
                 botCt.toLocaleString() +
-                " selected)";
+                " / " +
+                featureCtStr +
+                " (" +
+                dom_utils.formatPercentage(botCt, featureCt) +
+                "%) selected";
         }
 
         /* Converts a list of feature "rows" from the rank plot JSON to a
@@ -602,20 +645,20 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
             var outputText = "";
             var currVal, anotherFieldLeft;
+            // fmFields is just the feature metadata fields, with "Feature ID"
+            // added on at the beginning
+            var fmFields = this.featureMetadataFields.slice();
+            fmFields.unshift("Feature ID");
             for (var i = 0; i < featureRowList.length; i++) {
                 if (i > 0) {
                     outputText += "\n";
                 }
-                // Note that "Feature ID" is included in
-                // this.featureMetadataFields, since we added it in
-                // makeRankPlot() above
-                for (var c = 0; c < this.featureMetadataFields.length; c++) {
-                    currVal = featureRowList[i][this.featureMetadataFields[c]];
+                for (var c = 0; c < fmFields.length; c++) {
+                    currVal = featureRowList[i][fmFields[c]];
                     // If currVal *is* null or undefined, this will look like
                     // / / in the output for this metadata field -- which is
                     // fine.
-                    anotherFieldLeft =
-                        c + 1 < this.featureMetadataFields.length;
+                    anotherFieldLeft = c + 1 < fmFields.length;
                     if (currVal !== null && currVal !== undefined) {
                         outputText += currVal;
                         if (anotherFieldLeft) {
@@ -643,6 +686,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             if (clear) {
                 document.getElementById("topFeaturesDisplay").value = "";
                 document.getElementById("botFeaturesDisplay").value = "";
+                // NOTE: this will still include the total number of features
+                // in the headers. Shouldn't be a huge problem; can be changed
+                // if desired.
                 this.updateFeatureHeaderCounts(0, 0);
             } else if (single) {
                 document.getElementById(
@@ -675,7 +721,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 {
                     type: "quantitative",
                     field: "qurro_balance",
-                    title: "Current Log Ratio"
+                    title: "Current Log-Ratio"
                 },
                 {
                     type: this.samplePlotJSON.encoding.x.type,
@@ -794,6 +840,15 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          *    strings (e.g. "Infinity", "-Infinity", "NaN") -- we'd display
          *    these strings normally for a nominal encoding, but for a
          *    quantitative encoding we filter them out.
+         *
+         *    Note that the normal isFinite() (as opposed to Number.isFinite())
+         *    has a few quirks, including isFinite(null) and isFinite("   ")
+         *    both being true. However, we should avoid these, since we already
+         *    check for null values before calling isFinite(), and since the
+         *    metadata handlers filter out leading/trailing whitespace (so
+         *    inputs like "" or "    " will end up as null in the plot JSONs),
+         *    we should get around these quirks. (See the sample stats test for
+         *    examples of how Qurro's input handling is good in this way.)
          */
         getInvalidSampleIDs(fieldName, correspondingEncoding) {
             var dataName = this.samplePlotJSON.data.name;
@@ -967,7 +1022,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         static identifySampleIDs(samplePlotSpec) {
-            // Like identifyMetadataColumns(), but just finds sample IDs.
             var sampleIDs = [];
             var dataName = samplePlotSpec.data.name;
             var sid;
@@ -978,25 +1032,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 }
             }
             return sampleIDs;
-        }
-
-        static identifyMetadataColumns(samplePlotSpec) {
-            // Given a Vega-Lite sample plot specification, find all the metadata cols.
-            // Just uses whatever the first available sample's keys are as a
-            // reference. So, uh, if the input sample plot JSON has zero samples, this
-            // will fail. (But that should have been caught in the python script.)
-            var dataName = samplePlotSpec.data.name;
-            var mdCols = Object.keys(samplePlotSpec.datasets[dataName][0]);
-            if (mdCols.length > 0) {
-                return mdCols.filter(function(mdColName) {
-                    return mdColName !== "qurro_balance";
-                });
-            } else {
-                throw new Error(
-                    "No metadata columns identified. Something seems " +
-                        "wrong with the sample plot JSON."
-                );
-            }
         }
 
         /* Checks if a sample ID is actually supported by the count data we
@@ -1052,10 +1087,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             return abundance;
         }
 
-        /* Use abundance data to compute the new log ratio ("balance") values of
+        /* Use abundance data to compute the new log-ratio ("balance") values of
          * log(high feature abundance) - log(low feature abundance) for a given sample.
          *
-         * This particular function is for log ratios of two individual features that were
+         * This particular function is for log-ratios of two individual features that were
          * selected via the rank plot.
          */
         updateBalanceSingle(sampleRow) {
@@ -1073,7 +1108,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         }
 
         /* Like updateBalanceSingle, but considers potentially many features in the
-         * numerator and denominator of the log ratio. For log ratios generated
+         * numerator and denominator of the log-ratio. For log-ratios generated
          * by textual queries.
          */
         updateBalanceMulti(sampleRow) {
@@ -1100,7 +1135,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.samplePlotJSON.encoding.x.field,
                 this.samplePlotJSON.encoding.color.field
             );
-            dom_utils.downloadDataURI("rrv_sample_plot_data.tsv", tsv, true);
+            dom_utils.downloadDataURI("sample_plot_data.tsv", tsv, true);
             // Also I guess export feature IDs somehow.
             // TODO go through this.topFeatures and this.botFeatures; convert
             // from two arrays to a string, where each feature is separated by
@@ -1240,10 +1275,21 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 document.getElementById("topText").value = "";
                 document.getElementById("botText").value = "";
 
-                // Set scale type and bar width <select>s to default values
+                // Set scale type <select>s to default values
                 document.getElementById("xAxisScale").value = "nominal";
                 document.getElementById("colorScale").value = "nominal";
-                document.getElementById("barSize").value = "1";
+
+                // Set color <select>s to default values
+                document.getElementById("catColorScheme").value = "tableau10";
+                document.getElementById("quantColorScheme").value = "blues";
+
+                // Set bar width controls/elements to default values
+                document.getElementById("barSizeSlider").value = "1";
+                document.getElementById("barSizeSlider").disabled = false;
+                document.getElementById("fitBarSizeCheckbox").checked = false;
+                document
+                    .getElementById("barSizeWarning")
+                    .classList.add("invisible");
 
                 // Clear sample dropped stats divs and set them invisible
                 for (var s = 0; s < dom_utils.statDivs.length; s++) {

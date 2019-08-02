@@ -7,7 +7,7 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 #
 # Generates two JSON files: one for a rank plot and one for a sample
-# scatterplot of log ratios.
+# scatterplot of log-ratios.
 #
 # A lot of the code for processing input data in Qurro was based on code by
 # Jamie Morton, some of which is now located in ipynb/Figure3.ipynb in
@@ -21,7 +21,10 @@ from distutils.dir_util import copy_tree
 import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
-from qurro._json_utils import replace_js_json_definitions
+from qurro._json_utils import (
+    replace_js_json_definitions,
+    check_json_dataset_names,
+)
 from qurro._df_utils import (
     replace_nan,
     validate_df,
@@ -173,24 +176,34 @@ def process_input(
 
 
 def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
-    """Generates altair.Chart object describing the rank plot.
+    """Uses Altair to generate a JSON Vega-Lite spec for the rank plot.
 
-    Arguments:
+    Parameters
+    ----------
 
     V: pd.DataFrame
-        feature ranks
+        DataFrame containing feature rank (and feature metadata, if applicable)
+        information. (Indices correspond to features, and columns correspond
+        to feature ranking or feature metadata fields.)
+
+        This should have already been matched with the BIOM table, filtered (if
+        -x passed), had empty features removed, etc.
 
     ranking_ids: pd.Index
-        IDs of the actual "ranking" columns in V (since V can include
-        feature metadata)
+        IDs of the actual "feature ranking" columns in V.
 
     feature_metadata_cols: pd.Index or list
-        IDs of the feature metadata columns in V (if no such IDs present, an
-        empty list should be passed)
+        IDs of the "feature metadata" columns in V (if there wasn't any
+        feature metadata provided, this can just be an empty list).
 
-    Returns:
+    Returns
+    -------
 
-    JSON describing a Vega-Lite specification for the rank plot.
+    rank_chart_json: dict
+        A dict version of the alt.Chart for the rank plot, with
+        qurro_rank_ordering and qurro_feature_metadata_ordering datasets
+        added in indicating which columns describe feature rankings and
+        which describe feature metadata.
     """
 
     rank_data = V.copy()
@@ -246,7 +259,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "qurro_classification",
-                title="Log Ratio Classification",
+                title="Log-Ratio Classification",
                 scale=alt.Scale(
                     domain=["None", "Numerator", "Denominator", "Both"],
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
@@ -260,11 +273,12 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
                 ),
                 alt.Tooltip(
                     field="qurro_classification",
-                    title="Log Ratio Classification",
+                    title="Log-Ratio Classification",
                     type="nominal",
                 ),
                 "Feature ID",
                 *feature_metadata_cols,
+                *ranking_ids,
             ],
         )
         .configure_axis(
@@ -279,6 +293,8 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "qurro_rank_ordering"
     fm_col_ordering = "qurro_feature_metadata_ordering"
+    check_json_dataset_names(rank_chart_json, rank_ordering, fm_col_ordering)
+
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
     # "Feature ID" and "qurro_classification" columns (as well as any feature
@@ -288,25 +304,31 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     return rank_chart_json
 
 
-def gen_sample_plot(table, metadata):
-    """Generates altair.Chart object describing the sample scatterplot.
+def gen_sample_plot(metadata):
+    """Uses Altair to generate a JSON Vega-Lite spec for the sample plot.
 
-    Arguments:
+    Parameters
+    ----------
 
-    table: (Sparse)DataFrame representation of the processed BIOM table.
-    metadata: DataFrame describing metadata for each sample.
+    metadata: pd.DataFrame
+        DataFrame containing sample metadata information. (Indices correspond
+        to samples, and columns correspond to sample metadata fields.)
 
-    Returns:
+        This should have already been matched with the BIOM table, had empty
+        samples removed, etc.
 
-    JSON describing altair.Chart for the sample plot.
+    Returns
+    -------
+
+    sample_chart_json: dict
+        A dict version of the alt.Chart for the sample plot.
     """
-
     sample_metadata = metadata.copy()
 
     # Used to set color
     default_metadata_col = sample_metadata.columns[0]
 
-    # Since we don't bother setting a default log ratio, we set the balance for
+    # Since we don't bother setting a default log-ratio, we set the balance for
     # every sample to None so that Vega* will filter them out (producing an
     # empty scatterplot by default, which makes sense).
     sample_metadata["qurro_balance"] = None
@@ -318,18 +340,11 @@ def gen_sample_plot(table, metadata):
     sample_metadata.rename_axis("Sample ID", axis="index", inplace=True)
     sample_metadata.reset_index(inplace=True)
 
-    # Very minor thing -- sort the samples by their IDs. This should ensure
-    # that the sample plot output is deterministic.
-    # NOTE: this is probably unnecessary due to the use of sort_keys in
-    # _json_utils.try_to_replace_line_json(). Double-check if we can remove
-    # this.
-    sample_metadata.sort_values(by=["Sample ID"], inplace=True)
-
     # Create sample plot chart Vega-Lite spec using Altair.
     sample_chart = (
         alt.Chart(
             sample_metadata,
-            title="Log Ratio of Abundances in Samples",
+            title="Log-Ratio of Abundances in Samples",
             background="#FFFFFF",
             autosize=alt.AutoSizeParams(resize=True),
         )
@@ -362,15 +377,26 @@ def gen_sample_plot(table, metadata):
     # able to successfully use alt.MarkDef in the alt.Chart definition above.)
     sample_chart_dict = sample_chart.to_dict()
     sample_chart_dict["mark"] = {"type": "circle"}
-    # Sparsify the table's count data in order to cut down on the size of
-    # main.js and make the Qurro visualization load faster.
-    count_dict = table.T.to_dict()
-    sparse_count_dict = sparsify_count_dict(count_dict)
-    # Return the JSONs as dicts for 1) the sample plot JSON (which only
-    # contains sample metadata), and 2) the sparsified sample counts per
-    # feature (which will be stored separately from the sample plot JSON in
-    # the hopes of not hitting performance too terribly).
-    return sample_chart_dict, sparse_count_dict
+
+    sm_fields = "qurro_sample_metadata_fields"
+    check_json_dataset_names(sample_chart_dict, sm_fields)
+    # Specify an alphabetical ordering for the sample metadata field names.
+    # This will be used for populating the x-axis / color field selectors in
+    # Qurro's sample plot controls.
+    #
+    # Importantly, this is case insensitive (by default, the json.dumps
+    # sort_keys parameter considers names like "Sample ID" to occur before
+    # names like "age" due to casing -- we use this list to get around this).
+    # Solution based on this article:
+    # https://www.afternerd.com/blog/python-sort-list/#sort-strings-case-insensitive
+    #
+    # Also, we remove qurro_balance from this list because it shouldn't be
+    # exposed to the user in the Qurro interface. (It's already used on the
+    # y-axis of the sample plot automatically.)
+    sorted_md_cols = list(sorted(sample_metadata.columns, key=str.lower))
+    sorted_md_cols.remove("qurro_balance")
+    sample_chart_dict["datasets"][sm_fields] = sorted_md_cols
+    return sample_chart_dict
 
 
 def gen_visualization(
@@ -381,7 +407,7 @@ def gen_visualization(
     df_sample_metadata,
     output_dir,
 ):
-    """Creates a Qurro visualization.
+    """Creates a Qurro visualization from already-processed-and-validated data.
 
        Returns
        -------
@@ -396,10 +422,10 @@ def gen_visualization(
 
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
-    logging.debug("Generating sample plot (and count data) JSONs.")
-    sample_plot_json, count_json = gen_sample_plot(
-        processed_table, df_sample_metadata
-    )
+    logging.debug("Generating sample plot JSON.")
+    sample_plot_json = gen_sample_plot(df_sample_metadata)
+    logging.debug("Generating count data JSON.")
+    count_json = sparsify_count_dict(processed_table.T.to_dict())
     logging.debug("Finished generating all JSONs.")
 
     # Copy support_files/ for the Qurro visualization to the output directory

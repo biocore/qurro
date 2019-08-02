@@ -7,7 +7,7 @@
 
 .PHONY: test pytest jstest stylecheck style
 
-JSLOCS = qurro/support_files/js/*.js qurro/support_files/main.js qurro/tests/web_tests/tests/*.js qurro/tests/web_tests/setup.js
+JSLOCS = qurro/support_files/js/*.js qurro/support_files/main.js qurro/tests/web_tests/tests/*.js qurro/tests/web_tests/*.js
 HTMLCSSLOCS = qurro/support_files/index.html qurro/tests/web_tests/index.html qurro/support_files/qurro.css docs/*.html docs/css/*.css
 
 test: pytest jstest

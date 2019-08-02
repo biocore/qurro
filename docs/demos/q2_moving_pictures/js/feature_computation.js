@@ -1,18 +1,16 @@
-define(function() {
-    /* Converts a feature metadata field to a text-searchable type, if
-     * possible.
+define(["./dom_utils"], function(dom_utils) {
+    /* Converts a feature field value to a text-searchable value, if possible.
      *
-     * If the input is a string, returns the input unchanged.
+     * If the input is a string, returns the input (in lower case).
      * If the input is a number, returns the input as a string.
-     *     (This is useful if users want to search numbers as text -- when we
-     *     add more sophisticated search methods in the future, this
-     *     functionality should probably be removed.)
+     *     (This is useful if users want to search numbers as text, which is
+     *     kind of silly but still valid.)
      * If the input is neither of those types, returns null to indicate that we
      * can't "search" the input.
      */
-    function trySearchable(fmVal) {
+    function tryTextSearchable(fmVal) {
         if (typeof fmVal === "string") {
-            return fmVal;
+            return fmVal.toLowerCase();
         } else if (typeof fmVal === "number") {
             return String(fmVal);
         } else {
@@ -21,22 +19,18 @@ define(function() {
     }
 
     /* Given a list of feature "rows", a string of input text, and a feature
-     * metadata field, returns a list of all features that contain that text in
-     * the specified feature metadata field.
+     * field, returns a list of all features that contain that text in
+     * the specified feature field.
      *
      * Note that this can lead to some weird results if you're not careful --
      * e.g. just searching on "Staphylococcus" will include Staph phages in the
      * filtering (since their names contain the text "Staphylococcus").
      */
-    function textFilterFeatures(
-        featureRowList,
-        inputText,
-        featureMetadataField
-    ) {
+    function textFilterFeatures(featureRowList, inputText, featureField) {
         var filteredFeatures = [];
         var currVal;
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            currVal = trySearchable(featureRowList[ti][featureMetadataField]);
+            currVal = tryTextSearchable(featureRowList[ti][featureField]);
             if (currVal === null) {
                 continue;
             } else if (currVal.includes(inputText)) {
@@ -46,8 +40,95 @@ define(function() {
         return filteredFeatures;
     }
 
-    /* Prepares an array of ranks, either from the input text or from a feature
-     * metadata field.
+    /* Given an operator ("lt", "gt", "lte", or "gte"), returns a comparison
+     * function that takes in a single number (i) as input and returns true if:
+     *
+     * "lt":  i <  n
+     * "gt":  i >  n
+     * "lte": i <= n
+     * "gte": i >= n
+     *
+     * Throws an error if operator isn't one of the four possible values listed
+     * above.
+     */
+    function operatorToCompareFunc(operator, n) {
+        if (operator === "lt") {
+            return function(i) {
+                return i < n;
+            };
+        } else if (operator === "gt") {
+            return function(i) {
+                return i > n;
+            };
+        } else if (operator === "lte") {
+            return function(i) {
+                return i <= n;
+            };
+        } else if (operator === "gte") {
+            return function(i) {
+                return i >= n;
+            };
+        } else {
+            throw new Error(
+                "unrecognized operator passed; must be 'lt', " +
+                    "'gt', 'lte', or 'gte'"
+            );
+        }
+    }
+
+    /* Given a list of feature "rows", a number, a feature field, and an
+     * "operator" string, returns a list of all features where the feature's
+     * field value is both numeric and compares to the input number properly.
+     *
+     * Valid values for "operator" are "lt", "gt", "lte", and "gte"
+     * (corresponding to the comparison operators <, >, <=, and >=). Passing
+     * anything else for the "operator" argument will result in an error being
+     * thrown by operatorToCompareFunc().
+     *
+     * As an example: if the input features' field values are "asdf",
+     * 3, 5, and 10, the inputNum is 6, and the operator is "lt", then this
+     * will return the features with field values of 3 and 5.
+     */
+    function numberBasicFilterFeatures(
+        featureRowList,
+        inputNum,
+        featureField,
+        operator
+    ) {
+        // Get a comparison function based on the operator and inputNum
+        var compareFunc = operatorToCompareFunc(operator, inputNum);
+        var filteredFeatures = [];
+        var currNum, currVal;
+
+        // Loop through every feature, checking the particular feature field's
+        // values accordingly
+        for (var ti = 0; ti < featureRowList.length; ti++) {
+            currVal = featureRowList[ti][featureField];
+            // This check is basically equivalent to what
+            // RRVDisplay.getInvalidSampleIDs() does. For both sample and
+            // feature metadata values, we know that the input is either a
+            // string/number or a null value.
+            // If this feature's field value is null, or if it isn't a valid
+            // numerical value, then we won't bother calling compareFunc on it.
+            // Otherwise, we'll try that.
+            if (currVal === null) {
+                continue;
+            } else {
+                // currNum will either be a normal number or NaN, so we can
+                // just test its validity with !isNaN().
+                currNum = dom_utils.getNumberIfValid(currVal);
+                // Only do the comparison if currNum isn't NaN (uses boolean
+                // short-circuiting).
+                if (!isNaN(currNum) && compareFunc(currNum)) {
+                    filteredFeatures.push(featureRowList[ti]);
+                }
+            }
+        }
+        return filteredFeatures;
+    }
+
+    /* Prepares an array of separated text fragments (also referred to as
+     * "ranks"), either from the input text or from a feature field.
      *
      * In rank searching, users can search for multiple ranks at once if they
      * separate them with a comma, a semicolon, or a space; and we rely on
@@ -94,7 +175,7 @@ define(function() {
     }
 
     /* Given a list of feature "rows", a string of input "ranks," and a feature
-     * metadata field, returns a list of all features that contain a taxonomic
+     * field, returns a list of all features that contain a taxonomic
      * rank that matches a rank in the input. (The input(s) and things being
      * searched for don't actually have to refer to taxonomic ranks, but this
      * functionality was designed for use with taxonomy strings -- the problem
@@ -106,18 +187,14 @@ define(function() {
      * get a list of separated text fragments in the input.
      *
      * Next, we go through the features one-by-one. Each feature's value for
-     * the specified feature metadata field will be split up using
+     * the specified feature field will be split up using
      * textToRankArray(). We then search for exact matches (not just
      * "does this contain the input text," like in textFilterFeatures(), but
      * "is this exactly equal to the input text?"), and return a list of
      * all features where at least one separated text fragment matched the
      * input text fragment(s).
      */
-    function rankFilterFeatures(
-        featureRowList,
-        inputText,
-        featureMetadataField
-    ) {
+    function rankFilterFeatures(featureRowList, inputText, featureField) {
         var inputRankArray = textToRankArray(inputText);
         if (inputRankArray.length <= 0) {
             return [];
@@ -125,12 +202,12 @@ define(function() {
         var ranksOfFeatureMetadata;
         var filteredFeatures = [];
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            // If the current feature metadata value is null / otherwise not
-            // text-searchable, trySearchable() returns null (which will cause
+            // If the current feature field value is null / otherwise not
+            // text-searchable, tryTextSearchable() returns null (which will cause
             // textToRankArray() to return [], which will cause
             // existsIntersection() to return false quickly).
             ranksOfFeatureMetadata = textToRankArray(
-                trySearchable(featureRowList[ti][featureMetadataField])
+                tryTextSearchable(featureRowList[ti][featureField])
             );
             if (existsIntersection(ranksOfFeatureMetadata, inputRankArray)) {
                 filteredFeatures.push(featureRowList[ti]);
@@ -140,54 +217,70 @@ define(function() {
     }
 
     /* Returns list of feature data objects (in the rank plot JSON) based
-     * on a match of a given feature metadata field (including Feature ID)
-     * with the input text.
+     * on a match of a given feature metadata/ranking field (including Feature
+     * ID) with the input text. The input text must be a string (even numbers
+     * aren't allowed -- the conversion is done later on in this function if a
+     * numeric search type is being used).
      *
      * If inputText is empty (i.e. its length is 0), this returns an empty
      * array.
+     *
+     * Will raise an error if the featureField isn't present in the data or if
+     * the searchType is unrecognized. (The filtering functions this delegates
+     * to may also raise errors.)
      */
-    function filterFeatures(
-        rankPlotJSON,
-        inputText,
-        featureMetadataField,
-        searchType
-    ) {
+    function filterFeatures(rankPlotJSON, inputText, featureField, searchType) {
         if (
-            featureMetadataField !== "Feature ID" &&
+            featureField !== "Feature ID" &&
             rankPlotJSON.datasets.qurro_feature_metadata_ordering.indexOf(
-                featureMetadataField
-            ) < 0
+                featureField
+            ) < 0 &&
+            rankPlotJSON.datasets.qurro_rank_ordering.indexOf(featureField) < 0
         ) {
-            throw new Error("featureMetadataField not found in data");
-        } else if (searchType !== "text" && searchType !== "rank") {
-            throw new Error('searchType must be either "text" or "rank"');
-        } else if (inputText.trim().length === 0) {
+            throw new Error("featureField not found in data");
+        } else if (inputText.length === 0) {
             return [];
         }
 
         var potentialFeatures = rankPlotJSON.datasets[rankPlotJSON.data.name];
-        // We know search type has to be either "rank" or "text" since we
-        // checked above
         if (searchType === "rank") {
             return rankFilterFeatures(
                 potentialFeatures,
-                inputText,
-                featureMetadataField
+                inputText.toLowerCase(),
+                featureField
             );
-        } else {
+        } else if (searchType === "text") {
             return textFilterFeatures(
                 potentialFeatures,
-                inputText,
-                featureMetadataField
+                inputText.toLowerCase(),
+                featureField
             );
+        } else if (
+            searchType === "lt" ||
+            searchType === "gt" ||
+            searchType === "lte" ||
+            searchType === "gte"
+        ) {
+            var inputNum = dom_utils.getNumberIfValid(inputText);
+            if (isNaN(inputNum)) {
+                return [];
+            }
+            return numberBasicFilterFeatures(
+                potentialFeatures,
+                inputNum,
+                featureField,
+                searchType
+            );
+        } else {
+            throw new Error("unrecognized searchType");
         }
     }
 
     /* We set the balance for samples with an abundance of <= 0 in either
-     * the top or bottom of the log ratio as null.
+     * the top or bottom of the log-ratio as null.
      *
      * RRVDisplay.updateSamplePlotFilters() should ensure that samples with
-     * a null log ratio are filtered out of the sample plot.
+     * a null log-ratio are filtered out of the sample plot.
      */
     function computeBalance(topValue, botValue) {
         if (typeof topValue !== "number" || typeof botValue !== "number") {
@@ -205,7 +298,8 @@ define(function() {
         filterFeatures: filterFeatures,
         computeBalance: computeBalance,
         textToRankArray: textToRankArray,
+        operatorToCompareFunc: operatorToCompareFunc,
         existsIntersection: existsIntersection,
-        trySearchable: trySearchable
+        tryTextSearchable: tryTextSearchable
     };
 });

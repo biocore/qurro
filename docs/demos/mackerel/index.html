@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            Qurro
+        </title>
+        <link rel="shortcut icon" href="icon.png" />
+        <link rel="stylesheet" href="vendor/reset.css" />
+        <link rel="stylesheet" href="qurro.css" />
+    </head>
+
+    <body>
+        <div class="centeredBlock marginOnTop" id="loadingMessage">
+            <strong>
+                Loading Qurro plots; this might take a few seconds...
+            </strong>
+        </div>
+        <div class="twoColumnRow">
+            <div>
+                <div id="rankPlot"></div>
+                <div class="centeredBlock">
+                    <label for="rankField">Ranking</label>
+                    <select id="rankField"> </select>
+                </div>
+                <div class="centeredBlock">
+                    <label for="rankPlotColorScheme">Color scheme</label>
+                    <select id="rankPlotColorScheme">
+                        <!-- Just normal web colors, with the exception of
+                            "Purple" (which is a bit lighter than the "Purple"
+                             web color).
+                             See https://en.wikipedia.org/wiki/Web_colors.
+                        -->
+                        <option value="#f00,#00f,#949"
+                            >Red, Blue, Purple</option
+                        >
+                        <!-- These colors were taken directly from Figure 3a in
+                             the Songbird paper (Morton/Marotz et al. 2019).
+                        -->
+                        <option value="#5fa2c8,#daa520,#029e73"
+                            >Blue, Gold, Green (Songbird paper)</option
+                        >
+                        <!-- Just normal web colors. -->
+                        <option value="#ff0,#f00,#ff8c00"
+                            >Yellow, Red, Orange</option
+                        >
+                    </select>
+                </div>
+                <div class="centeredBlock">
+                    <label for="barSizeSlider">Bar width</label>
+                    <input
+                        id="barSizeSlider"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="1"
+                    />
+                </div>
+                <div class="centeredBlock">
+                    <label for="fitBarSizeCheckbox"
+                        >Fit bar widths to the plot's default width?</label
+                    >
+                    <input type="checkbox" id="fitBarSizeCheckbox" />
+                    <p
+                        id="barSizeWarning"
+                        class="warning centeredBlock invisible marginOnTop"
+                    >
+                        <strong>Warning:</strong> The rank plot is currently
+                        using a bar width of less than one pixel per bar. This
+                        means that the image shown isn't necessarily going to be
+                        an accurate representation of the rank plot.
+                    </p>
+                </div>
+            </div>
+            <div>
+                <div id="samplePlot"></div>
+                <div class="centeredBlock">
+                    <!-- NOTE that the scale/field select values below will be
+                         literally used in the JSON.
+                         Also, the first-listed one is the default. Since the
+                         default x-axis is the balance (quant.) and the default
+                         color is the sample ID (nom.), we adjust the default
+                         scale types accordingly.
+                    -->
+                    <div class="centeredBlock">
+                        <label for="xAxisField">x-axis field</label>
+                        <select id="xAxisField"> </select>
+                        <label for="xAxisScale">x-axis scale type</label>
+                        <select id="xAxisScale">
+                            <option value="nominal">Categorical</option>
+                            <option value="quantitative">Quantitative</option>
+                        </select>
+                    </div>
+                    <div class="centeredBlock">
+                        <label id="colorFieldLabel" for="colorField"
+                            >Color field</label
+                        >
+                        <select id="colorField"> </select>
+                        <label id="colorScaleLabel" for="colorScale"
+                            >Color scale type</label
+                        >
+                        <select id="colorScale">
+                            <option value="nominal">Categorical</option>
+                            <option value="quantitative">Quantitative</option>
+                        </select>
+                    </div>
+                    <div class="centeredBlock">
+                        <label id="catColorSchemeLabel" for="catColorScheme"
+                            >Categorical color scheme</label
+                        >
+                        <select id="catColorScheme">
+                            <option value="accent">accent</option>
+                            <option value="category10">category10</option>
+                            <option value="category20">category20</option>
+                            <option value="category20b">category20b</option>
+                            <option value="category20c">category20c</option>
+                            <option value="dark2">dark2</option>
+                            <option value="paired">paired</option>
+                            <option value="pastel1">pastel1</option>
+                            <option value="pastel2">pastel2</option>
+                            <option value="set1">set1</option>
+                            <option value="set2">set2</option>
+                            <option value="set3">set3</option>
+                            <option value="tableau10" selected="true"
+                                >tableau10</option
+                            >
+                            <option value="tableau20">tableau20</option>
+                        </select>
+                        <label id="quantColorSchemeLabel" for="quantColorScheme"
+                            >Quantitative color scheme</label
+                        >
+                        <select id="quantColorScheme">
+                            <optgroup label="Sequential Single-Hue">
+                                <option value="blues" selected="true"
+                                    >blues</option
+                                >
+                                <option value="tealblues">tealblues</option>
+                                <option value="teals">teals</option>
+                                <option value="greens">greens</option>
+                                <option value="browns">browns</option>
+                                <option value="oranges">oranges</option>
+                                <option value="reds">reds</option>
+                                <option value="purples">purples</option>
+                                <option value="warmgreys">warmgreys</option>
+                                <option value="greys">greys</option>
+                            </optgroup>
+                            <optgroup label="Sequential Multi-Hue">
+                                <option value="viridis">viridis</option>
+                                <option value="magma">magma</option>
+                                <option value="inferno">inferno</option>
+                                <option value="plasma">plasma</option>
+                                <option value="bluegreen">bluegreen</option>
+                                <option value="bluepurple">bluepurple</option>
+                                <option value="goldgreen">goldgreen</option>
+                                <option value="goldorange">goldorange</option>
+                                <option value="goldred">goldred</option>
+                                <option value="greenblue">greenblue</option>
+                                <option value="orangered">orangered</option>
+                                <option value="purplebluegreen"
+                                    >purplebluegreen</option
+                                >
+                                <option value="purpleblue">purpleblue</option>
+                                <option value="purplered">purplered</option>
+                                <option value="redpurple">redpurple</option>
+                                <option value="yellowgreenblue"
+                                    >yellowgreenblue</option
+                                >
+                                <option value="yellowgreen">yellowgreen</option>
+                                <option value="yelloworangebrown"
+                                    >yelloworangebrown</option
+                                >
+                                <option value="yelloworangered"
+                                    >yelloworangered</option
+                                >
+                                <option value="darkblue">darkblue</option>
+                                <option value="darkgold">darkgold</option>
+                                <option value="darkgreen">darkgreen</option>
+                                <option value="darkmulti">darkmulti</option>
+                                <option value="darkred">darkred</option>
+                                <option value="lightgreyred"
+                                    >lightgreyred</option
+                                >
+                                <option value="lightgreyteal"
+                                    >lightgreyteal</option
+                                >
+                                <option value="lightmulti">lightmulti</option>
+                                <option value="lightorange">lightorange</option>
+                                <option value="lighttealblue"
+                                    >lighttealblue</option
+                                >
+                            </optgroup>
+                            <optgroup label="Diverging">
+                                <option value="blueorange">blueorange</option>
+                                <option value="brownbluegreen"
+                                    >brownbluegreen</option
+                                >
+                                <option value="purplegreen">purplegreen</option>
+                                <option value="pinkyellowgreen"
+                                    >pinkyellowgreen</option
+                                >
+                                <option value="purpleorange"
+                                    >purpleorange</option
+                                >
+                                <option value="redblue">redblue</option>
+                                <option value="redgrey">redgrey</option>
+                                <option value="redyellowblue"
+                                    >redyellowblue</option
+                                >
+                                <option value="redyellowgreen"
+                                    >redyellowgreen</option
+                                >
+                                <option value="spectral">spectral</option>
+                            </optgroup>
+                            <optgroup label="Cyclical">
+                                <option value="rainbow">rainbow</option>
+                                <option value="sinebow">sinebow</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="centeredBlock">
+                        <label for="boxplotCheckbox"
+                            >Use boxplots for categorical data?</label
+                        >
+                        <input type="checkbox" id="boxplotCheckbox" />
+                    </div>
+                    <!-- note that these values are obviously placeholders. In
+                         the future, I guess the three bottom divs should start
+                         out as hidden?
+                         And I guess we should auto-add-on the top div contents
+                         when we load the sample JSON (i.e. and know the # of
+                         samples in the dataset).
+                    -->
+                    <div
+                        id="mainSamplesDroppedDiv"
+                        class="centeredBlock sampleRemovedDiv marginOnTop invisible"
+                    ></div>
+                    <div
+                        id="balanceSamplesDroppedDiv"
+                        class="centeredBlock sampleRemovedDiv invisible"
+                    ></div>
+                    <div
+                        id="xAxisSamplesDroppedDiv"
+                        class="centeredBlock sampleRemovedDiv invisible"
+                    ></div>
+                    <div
+                        id="colorSamplesDroppedDiv"
+                        class="centeredBlock sampleRemovedDiv invisible"
+                    ></div>
+                </div>
+            </div>
+        </div>
+        <div class="twoColumnRow">
+            <div>
+                <!-- Note for future reference: whitespace between the
+                    start and end tag of a textarea is apparently
+                    interpreted as just that, and preserved in the textarea
+                    on the page.
+                    (So that's why the textarea declarations below are on
+                    long lines.)
+                -->
+                <div class="centeredBlock">
+                    <h4 id="numHeader" class="centeredHeader">
+                        Numerator Features
+                    </h4>
+                    <textarea
+                        id="topFeaturesDisplay"
+                        class="fancyBorder num"
+                        rows="6"
+                    ></textarea>
+                </div>
+                <div id="divide" class="centeredBlock"></div>
+                <div class="centeredBlock">
+                    <h4 id="denHeader" class="centeredHeader">
+                        Denominator Features
+                    </h4>
+                    <textarea
+                        id="botFeaturesDisplay"
+                        class="fancyBorder den"
+                        rows="6"
+                    ></textarea>
+                </div>
+            </div>
+            <div id="selectionControls">
+                <h3 class="centeredHeader">Selecting Features</h3>
+                <p class="info centeredBlock marginOnTop">
+                    To construct a log-ratio, select feature(s) by clicking on
+                    the plot of feature ranks on the left or by searching using
+                    the controls below.
+                </p>
+                <h4 class="centeredHeader">Numerator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
+                    <select class="fancyBorder num" id="topSearch"> </select>
+                    <select class="fancyBorder num" id="topSearchType">
+                        <optgroup label="Text searching (case insensitive)">
+                            <option value="text"
+                                >contains the exact text</option
+                            >
+                            <option value="rank"
+                                >contains the exact separated text
+                                fragment(s)</option
+                            >
+                        </optgroup>
+                        <optgroup label="Numeric searching (basic)">
+                            <option value="lt">is less than</option>
+                            <option value="gt">is greater than</option>
+                            <option value="lte"
+                                >is less than or equal to</option
+                            >
+                            <option value="gte"
+                                >is greater than or equal to</option
+                            >
+                        </optgroup>
+                        <!--
+                        <optgroup label="Numeric searching (percentile)">
+                            <option value="topp"
+                                >is in this top percent of values</option
+                            >
+                            <option value="botp"
+                                >is in this bottom percent of values</option
+                            >
+                        </optgroup>
+                        -->
+                    </select>
+                    <input
+                        type="text"
+                        class="fancyBorder num searchInput"
+                        id="topText"
+                    />
+                </div>
+                <h4 class="centeredHeader">Denominator</h4>
+                <div class="centeredBlock">
+                    Filter to features where
+                    <select class="fancyBorder den" id="botSearch"> </select>
+                    <select class="fancyBorder den" id="botSearchType">
+                        <optgroup label="Text searching (case insensitive)">
+                            <option value="text"
+                                >contains the exact text</option
+                            >
+                            <option value="rank"
+                                >contains the exact separated text
+                                fragment(s)</option
+                            >
+                        </optgroup>
+                        <optgroup label="Numeric searching (basic)">
+                            <option value="lt">is less than</option>
+                            <option value="gt">is greater than</option>
+                            <option value="lte"
+                                >is less than or equal to</option
+                            >
+                            <option value="gte"
+                                >is greater than or equal to</option
+                            >
+                        </optgroup>
+                        <!--
+                        <optgroup label="Numeric searching (percentile)">
+                            <option value="topp"
+                                >is in this top percent of values</option
+                            >
+                            <option value="botp"
+                                >is in this bottom percent of values</option
+                            >
+                        </optgroup>
+                        -->
+                    </select>
+                    <input
+                        type="text"
+                        class="fancyBorder den searchInput"
+                        id="botText"
+                    />
+                </div>
+
+                <!-- Invisible <a> used for downloading data URIs.
+                     Based on #downloadHelper in MetagenomeScope's viewer
+                     interface.
+                -->
+                <a id="downloadHelper" class="invisible"></a>
+                <div class="centeredBlock marginOnTop">
+                    <button id="multiFeatureButton">
+                        Regenerate plots
+                    </button>
+                    <button id="exportDataButton">
+                        Export sample data
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--
+        <p>
+            <label for="selectMicrobesFileSelector">
+                <strong>
+                    Upload "Select Features" List:
+                </strong>
+            </label>
+            TODO make RRVDisplay get this input by ID
+                and set its onchange to the RRVDisplay instance's
+                particular select microbes or whatever function
+            <input type="file" id="selectMicrobesFileSelector"
+                onChange="ssmv.uploadSelectMicrobesFile();" />
+        </p>
+        <p>
+            <label for="zeroFillInput">
+                <strong>
+                    Value to fill in for zero-abundance features:
+                </strong>
+            </label>
+            <input type="number" id="zeroFillInput" min="0"
+                max="1000" value="0">
+            </input>
+        </p>
+        -->
+        <!-- This file will be edited by the Qurro python script to
+             contain definitions for the rank plot and sample plot JSON,
+             and will use these to create an instance of RRVDisplay
+             (thereby starting Qurro).
+
+             Leaving this code at the bottom of the page is sufficient to wait
+             until the rest of the stuff in the page has been loaded:
+             see https://stackoverflow.com/a/1861233.
+
+             We need to wait for the page to load before calling
+             RRVDisplay.makePlots(); otherwise, we'll get (at least) the error
+             "ERROR: Signal bind element not found: null" described at
+             https://github.com/vega/vega-embed/issues/64.
+        -->
+        <script data-main="main" src="vendor/require.js"></script>
+    </body>
+</html>

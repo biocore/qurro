@@ -1,5 +1,4 @@
 define(["chai"], function(chai) {
-
     /* Return a list of the feature IDs present in an array of feature data
      * "objects" (rows in the data in the rank plot JSON).
      */
@@ -13,19 +12,39 @@ define(["chai"], function(chai) {
 
     /* Asserts that the #numHeader and #denHeader elements are set to the
      * correct counts.
+     *
+     * Solution for converting percentages to locale strings with exactly 2
+     * fractional digits, as with dom_utils.formatPercentage(), based on
+     * https://stackoverflow.com/a/31581206/10730311.
      */
-    function checkHeaders(expTopCt, expBotCt) {
+    function checkHeaders(expTopCt, expBotCt, numFeatures) {
+        var topP = 100 * (expTopCt / numFeatures);
+        var botP = 100 * (expBotCt / numFeatures);
         chai.assert.equal(
-            document.getElementById("numHeader").innerHTML,
-            "Numerator Features (" +
+            document.getElementById("numHeader").textContent,
+            "Numerator Features: " +
                 expTopCt.toLocaleString() +
-                " selected)"
+                " / " +
+                numFeatures.toLocaleString() +
+                " (" +
+                topP.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) +
+                "%) selected"
         );
         chai.assert.equal(
-            document.getElementById("denHeader").innerHTML,
-            "Denominator Features (" +
+            document.getElementById("denHeader").textContent,
+            "Denominator Features: " +
                 expBotCt.toLocaleString() +
-                " selected)"
+                " / " +
+                numFeatures.toLocaleString() +
+                " (" +
+                botP.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) +
+                "%) selected"
         );
     }
 
@@ -37,8 +56,11 @@ define(["chai"], function(chai) {
         } else {
             chai.assert.isFalse(ele.disabled);
         }
+    }
+
+    return {
+        getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray,
+        checkHeaders: checkHeaders,
+        assertEnabled: assertEnabled
     };
-
-
-    return {getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray, checkHeaders: checkHeaders, assertEnabled: assertEnabled};
 });

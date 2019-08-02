@@ -5,21 +5,70 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
     testing_utilities
 ) {
     describe("Various general DOM utilities", function() {
+        /* Returns a list of child values, with optgroups represented in the
+         * list as objects mapping the optgroup label to a list of child option
+         * values.
+         *
+         * Sorry this function is kind of gross; adding support for optgroups
+         * necessarily made these utility functions a lot less compact than
+         * they used to be.
+         */
         var getChildValuesFromSelect = function(selectID) {
             var ele = document.getElementById(selectID);
             var outputValues = [];
+            var currOptgroupValues, currOptgroupObject;
+            var j;
             for (var i = 0; i < ele.children.length; i++) {
-                outputValues.push(ele.children[i].value);
+                // If this child element is an <optgroup>, we'll need to
+                // iterate over *its* children (which should be <option>s) in
+                // order to extract their values.
+                if (ele.children[i].tagName === "OPTGROUP") {
+                    currOptgroupValues = [];
+                    for (j = 0; j < ele.children[i].children.length; j++) {
+                        currOptgroupValues.push(
+                            ele.children[i].children[j].value
+                        );
+                    }
+                    // We have to create currOptgroupObject before adding it to
+                    // outputValues. For context, see:
+                    // https://stackoverflow.com/a/11508490/10730311
+                    currOptgroupObject = {};
+                    currOptgroupObject[
+                        ele.children[i].label
+                    ] = currOptgroupValues;
+                    outputValues.push(currOptgroupObject);
+                } else {
+                    outputValues.push(ele.children[i].value);
+                }
             }
             return outputValues;
         };
+        var checkIfOptionShouldBeSelected = function(
+            optionEle,
+            expectedSelectedValue
+        ) {
+            if (optionEle.value === expectedSelectedValue) {
+                chai.assert.isTrue(optionEle.selected);
+            } else {
+                chai.assert.isFalse(optionEle.selected);
+            }
+        };
         var assertSelected = function(selectID, expectedSelectedValue) {
             var ele = document.getElementById(selectID);
+            var j;
             for (var i = 0; i < ele.children.length; i++) {
-                if (ele.children[i].value === expectedSelectedValue) {
-                    chai.assert.isTrue(ele.children[i].selected);
+                if (ele.children[i].tagName === "OPTGROUP") {
+                    for (j = 0; j < ele.children[i].children.length; j++) {
+                        checkIfOptionShouldBeSelected(
+                            ele.children[i].children[j],
+                            expectedSelectedValue
+                        );
+                    }
                 } else {
-                    chai.assert.isFalse(ele.children[i].selected);
+                    checkIfOptionShouldBeSelected(
+                        ele.children[i],
+                        expectedSelectedValue
+                    );
                 }
             }
         };
@@ -71,7 +120,46 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             it("Throws an error when passed an empty list", function() {
                 chai.assert.throws(function() {
                     dom_utils.populateSelect(selectID, [], "I'm irrelevant!");
-                });
+                }, /options must have at least one value/);
+            });
+            it("Creates <optgroup>s when optgroupMap is truthy", function() {
+                var vals = { g1: ["o1", "o2"], g2: ["o3"] };
+                dom_utils.populateSelect(selectID, vals, "o2", true);
+                // Check that the select has two optgroups with the correct
+                // options
+                chai.assert.sameDeepMembers(
+                    getChildValuesFromSelect(selectID),
+                    [{ g1: ["o1", "o2"] }, { g2: ["o3"] }]
+                );
+                assertSelected(selectID, "o2");
+            });
+            it('Creates global options for optgroups labelled "standalone"', function() {
+                var vals = {
+                    g1: ["o1", "o2"],
+                    g2: ["o3"],
+                    standalone: ["o4", "o5"]
+                };
+                dom_utils.populateSelect(selectID, vals, "o3", true);
+                chai.assert.sameDeepMembers(
+                    getChildValuesFromSelect(selectID),
+                    [{ g1: ["o1", "o2"] }, { g2: ["o3"] }, "o4", "o5"]
+                );
+                assertSelected(selectID, "o3");
+            });
+            it("Throws an error when passed an empty optgroups object", function() {
+                chai.assert.throws(function() {
+                    dom_utils.populateSelect(selectID, {}, "", true);
+                }, /options must have at least one optgroup specified/);
+            });
+            it("Throws an error when passed an optgroups object with all empty children", function() {
+                chai.assert.throws(function() {
+                    dom_utils.populateSelect(
+                        selectID,
+                        { abc: [], def: [] },
+                        "",
+                        true
+                    );
+                }, /options must have at least one child option/);
             });
         });
 
@@ -347,7 +435,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                         document.getElementById(divID).innerHTML,
                         "4 / 8 samples (50.00%) " +
                             "can't be shown due to having an invalid " +
-                            "(i.e. containing zero) log ratio."
+                            "(i.e. containing zero) log-ratio."
                     );
                     chai.assert.isFalse(
                         document

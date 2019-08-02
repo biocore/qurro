@@ -7,7 +7,6 @@
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import logging
 import pandas as pd
 import numpy as np
 from io import StringIO
@@ -167,6 +166,16 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
             "GNPS feature metadata file can't contain columns named: "
             "{}".format(restricted_cols)
         )
+    # After processing, the output metadata DF will only contain one non-index
+    # column: "LibraryID". This case should automatically be detected in
+    # check_column_names() when it checks if the feature metadata and ranking
+    # column names are distinct, but we might as well do this check up front
+    # since it's just one column in the feature metadata.
+    if "LibraryID" in feature_ranks_df.columns:
+        raise ValueError(
+            "If processing GNPS feature metadata, the feature rankings can't "
+            'contain any columns named "LibraryID".'
+        )
 
     # Create a feature ID column from the parent mass and RTConsensus cols.
     # Use of .map() here is derived from
@@ -188,9 +197,9 @@ def read_gnps_feature_metadata_file(md_file_loc, feature_ranks_df):
         if tfid not in truncated_id_to_full_id:
             truncated_id_to_full_id[tfid] = fid
         else:
-            logging.warning(
-                "Indistinguishable rows in GNPS feature "
-                "metadata file with truncated ID {}.".format(tfid)
+            print(
+                "Indistinguishable rows in GNPS feature metadata file with "
+                "truncated ID {}.".format(tfid)
             )
             # Replace the full feature ID with a bogus ID. This will prevent
             # the >= 2 full feature IDs from which the conflicting truncated

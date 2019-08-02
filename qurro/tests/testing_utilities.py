@@ -32,7 +32,14 @@ def run_integration_test(
     q2_table_biom_format="BIOMV210Format",
     extreme_feature_count=None,
 ):
-    """Runs qurro, and validates the output somewhat."""
+    """Runs qurro, and validates the output somewhat.
+
+       Note that this is a pretty outdated function (as in, it doesn't support
+       checking many of the corner cases/etc. that happen when running Qurro).
+       The main purpose of this function is just checking at a high level that
+       things look good, and that data is faithfully represented in the output
+       main.js file.
+    """
 
     in_dir = os.path.join("qurro", "tests", "input", input_dir_name)
     rloc = os.path.join(in_dir, ranks_name)
@@ -46,10 +53,10 @@ def run_integration_test(
     rrv_qzv = result = None
     if use_q2:
         if q2_ranking_tool == "songbird":
-            q2_action = q2qurro.actions.supervised_rank_plot
+            q2_action = q2qurro.actions.differential_plot
             q2_rank_type = "FeatureData[Differential]"
         elif q2_ranking_tool == "DEICODE":
-            q2_action = q2qurro.actions.unsupervised_rank_plot
+            q2_action = q2qurro.actions.loading_plot
             q2_rank_type = "PCoAResults % Properties(['biplot'])"
         else:
             raise ValueError(
@@ -168,8 +175,8 @@ def validate_standalone_result(
         assert result.exit_code != 0
         assert type(result.exception) == ValueError
         expected_message = (
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
+            "No samples are shared between the sample metadata file and BIOM "
+            "table."
         )
         assert expected_message == result.exc_info[1].args[0]
     else:
@@ -217,6 +224,12 @@ def validate_main_js(out_dir, rloc, tloc, sloc, validate_jsons=True):
 def validate_samples_supported_output(output, expected_unsupported_samples):
     """Checks that the correct message has been based on BIOM sample support.
 
+       Also, this function is pretty old (it assumes the only way samples will
+       be dropped is from the sample metadata file -- not the other way around,
+       which is allowed). It might be worth updating this in the future, but
+       honestly some of the details in these integration tests are pretty old
+       (and it'd be easier to mostly just use unit tests).
+
        Parameters
        ----------
        output: str
@@ -230,11 +243,8 @@ def validate_samples_supported_output(output, expected_unsupported_samples):
     """
     if expected_unsupported_samples > 0:
         expected_msg = (
-            "NOTE: {} sample(s) in the sample metadata file were "
-            "not present in the BIOM table, and have been "
-            "removed from the visualization.".format(
-                expected_unsupported_samples
-            )
+            "{} sample(s) in the sample metadata file were not present in the "
+            "BIOM table.".format(expected_unsupported_samples)
         )
         assert expected_msg in output
 
@@ -319,9 +329,16 @@ def validate_sample_plot_json(
     biom_table_loc, metadata_loc, sample_json, count_json
 ):
     assert sample_json["mark"] == {"type": "circle"}
-    assert sample_json["title"] == "Log Ratio of Abundances in Samples"
+    assert sample_json["title"] == "Log-Ratio of Abundances in Samples"
     basic_vegalite_json_validation(sample_json)
     dn = sample_json["data"]["name"]
+
+    # Assert that sample metadata fields are in alphabetical order, ignoring
+    # case. As in Qurro's code, this solution for sorting this way is based on
+    # this article:
+    # https://www.afternerd.com/blog/python-sort-list/#sort-strings-case-insensitive
+    sm_fields = sample_json["datasets"]["qurro_sample_metadata_fields"]
+    assert sorted(sm_fields, key=str.lower) == sm_fields
 
     # Check that each sample's metadata in the sample plot JSON matches with
     # its actual metadata.

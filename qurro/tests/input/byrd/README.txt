@@ -1,4 +1,4 @@
-The byrd_differentials.tsv file is just an old beta.csv file that I converted
-to the new format by changing commas to tabs and changing the filename: I can't
-make any guarantees as to its usefulness or accuracy beyond serving as
-a test songbird file.
+The byrd_differentials.tsv file is equivalent to the differentials.csv file
+available at https://github.com/knightlab-analyses/reference-frames/tree/master/results/byrd-results
+(as of July 10, 2019), but is stored here as a .tsv file instead of as a .csv
+file.

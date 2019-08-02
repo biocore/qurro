@@ -1,0 +1,160 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 1em;
+    font-weight: bold;
+}
+strong {
+    font-weight: bold;
+}
+.marginOnTop {
+    margin-top: 1em;
+}
+h3 {
+    font-size: larger;
+}
+h4 {
+    font-size: large;
+}
+/* Override user agents that automatically add vertical margins, which can make
+ * the layout look kinda strange
+ */
+.centeredHeader {
+    margin-bottom: 0.25em;
+    text-align: center;
+}
+/* info and warning are inspired by the similarly-named elements in
+ * Bootstrap.
+ */
+.info {
+    font-size: small;
+    background-color: #cfffff;
+    color: #1f4c73;
+    border-radius: 5px;
+    border: 2px solid #cfcfff;
+    width: 75%;
+    padding: 0.5em;
+    /* Horizontally centers this element */
+    margin-right: auto;
+    margin-left: auto;
+}
+.info strong {
+    color: #0a2a3b;
+}
+.warning {
+    font-size: small;
+    background-color: #ffffcc;
+    color: #734d15;
+    border-radius: 8px;
+    border: 2px dotted #ffcfcc;
+    width: 75%;
+    padding: 0.5em;
+    /* Horizontally centers this element */
+    margin-right: auto;
+    margin-left: auto;
+}
+.warning strong {
+    color: #3b270a;
+}
+.twoColumnRow {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+.centeredBlock {
+    display: block;
+    text-align: center;
+}
+.sampleRemovedDiv {
+    font-size: small;
+}
+code {
+    font-family: monospace;
+}
+/* Inspired by https://stackoverflow.com/a/42227872/10730311. */
+#divide {
+    width: 98%;
+    height: 2px;
+    background-color: lightgray;
+    margin: 1em auto;
+}
+#rankPlot {
+    margin-right: 2em;
+    text-align: right;
+    width: 90%;
+}
+#samplePlot {
+    margin-left: 2em;
+    text-align: left;
+}
+/* The reason for max-width: 90% is to leave room for the Vega-Embed "actions"
+ * circle thing. Might be worth addressing this later, but for now this is a
+ * reasonable hack.
+ * Also, max-height can be decreased once we remove the rank signal (it's
+ * included within the rankPlot, which is why the height is as large as it is).
+ * width: 100% is needed to let the plot divs cover their entire horizontal
+ * space.
+ */
+#rankPlot,
+#samplePlot {
+    margin-top: 0.5em;
+    overflow: auto;
+    max-height: 420px;
+    max-width: 90%;
+}
+textarea {
+    width: 92%;
+    max-width: 96%;
+    min-width: 30%;
+}
+.fancyBorder {
+    border: 1px solid;
+    border-radius: 3px;
+}
+.num {
+    border-color: #f00;
+}
+.den {
+    border-color: #00f;
+}
+/* Don't completely overwrite the outline imposed by the browser on selection;
+ * instead of using the default color for the outlines, use a special darker
+ * color based on the element's border color. These colors should adhere to
+ * accessibility guidelines for contrast; see
+ * https://www.w3.org/WAI/WCAG21/Understanding/non-text-contrast.html and see
+ * https://www.w3.org/WAI/WCAG21/Techniques/general/G145#procedure for a
+ * description of how to verify this (tldr: you just calculate the relative
+ * luminance of both colors and look at the ratio after adding 0.05 to both
+ * parts of the ratio).
+ */
+.num:focus {
+    outline-color: #800;
+}
+.den:focus {
+    outline-color: #009;
+}
+.searchInput {
+    width: 80%;
+}
+.invisible {
+    display: none;
+}
+/* Adjust the styling of the contents of Vega tooltips (the contents of which
+ * are stored in HTML tables). All we really care about is making them large
+ * enough to show big blocks of text (e.g. feature taxonomy).
+ *
+ * Based on the customization described in the vega-tooltip docs here:
+ * https://github.com/vega/vega-tooltip/blob/master/docs/customizing_your_tooltip.md
+ *
+ * Sidenote: worth making a PR to vega-tooltip that makes it clear that this is
+ * how you do this? Might be nice. (TODO?)
+ */
+#vg-tooltip-element.vg-tooltip.custom-theme td {
+    max-width: 550px;
+    max-height: 300px;
+}

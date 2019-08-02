@@ -7,9 +7,9 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
 ) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
-    var rankPlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"gridColor": "#f2f2f2", "labelBound": true}, "mark": {"tooltip": null}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-d5bf6e97702c9e72a67a25d194eadce5"}, "datasets": {"data-d5bf6e97702c9e72a67a25d194eadce5": [{"Feature ID": "Taxon1", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "qurro_classification": "None"}, {"Feature ID": "Taxon2", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "qurro_classification": "None"}, {"Feature ID": "Taxon3", "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "qurro_classification": "None"}, {"Feature ID": "Taxon4", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "qurro_classification": "None"}, {"Feature ID": "Taxon5", "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "qurro_classification": "None"}], "qurro_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2"]}, "encoding": {"color": {"field": "qurro_classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}, "title": "Log Ratio Classification", "type": "nominal"}, "tooltip": [{"field": "qurro_x", "title": "Current Ranking", "type": "quantitative"}, {"field": "qurro_classification", "title": "Log Ratio Classification", "type": "nominal"}, {"field": "Feature ID", "type": "nominal"}, {"field": "FeatureMetadata1", "type": "nominal"}, {"field": "FeatureMetadata2", "type": "nominal"}], "x": {"axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Sorted Features", "type": "ordinal"}, "y": {"field": "Intercept", "type": "quantitative"}}, "mark": "bar", "selection": {"selector005": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Feature Ranks", "transform": [{"sort": [{"field": "Intercept", "order": "ascending"}], "window": [{"as": "qurro_x", "op": "row_number"}]}]};
+    var rankPlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"gridColor": "#f2f2f2", "labelBound": true}, "mark": {"tooltip": null}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-d5bf6e97702c9e72a67a25d194eadce5"}, "datasets": {"data-d5bf6e97702c9e72a67a25d194eadce5": [{"Feature ID": "Taxon1", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "qurro_classification": "None"}, {"Feature ID": "Taxon2", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "qurro_classification": "None"}, {"Feature ID": "Taxon3", "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "qurro_classification": "None"}, {"Feature ID": "Taxon4", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "qurro_classification": "None"}, {"Feature ID": "Taxon5", "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "qurro_classification": "None"}], "qurro_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2"]}, "encoding": {"color": {"field": "qurro_classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}, "title": "Log-Ratio Classification", "type": "nominal"}, "tooltip": [{"field": "qurro_x", "title": "Current Ranking", "type": "quantitative"}, {"field": "qurro_classification", "title": "Log-Ratio Classification", "type": "nominal"}, {"field": "Feature ID", "type": "nominal"}, {"field": "FeatureMetadata1", "type": "nominal"}, {"field": "FeatureMetadata2", "type": "nominal"}, {"field": "Intercept", "type": "quantitative"}, {"field": "Rank 1", "type": "quantitative"}, {"field": "Rank 2", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Sorted Features", "type": "ordinal"}, "y": {"field": "Intercept", "type": "quantitative"}}, "mark": "bar", "selection": {"selector005": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Feature Ranks", "transform": [{"sort": [{"field": "Intercept", "order": "ascending"}], "window": [{"as": "qurro_x", "op": "row_number"}]}]};
     // prettier-ignore
-    var samplePlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"labelBound": true}, "mark": {"tooltip": null}, "range": {"category": {"scheme": "tableau10"}, "ramp": {"scheme": "blues"}}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-17ad6d7eb8d11fdb67d65d9f4abd5654"}, "datasets": {"data-17ad6d7eb8d11fdb67d65d9f4abd5654": [{"Metadata1": "1", "Metadata2": "2", "Metadata3": "3", "Sample ID": "Sample1", "qurro_balance": null}, {"Metadata1": "4", "Metadata2": "5", "Metadata3": "6", "Sample ID": "Sample2", "qurro_balance": null}, {"Metadata1": "7", "Metadata2": "8", "Metadata3": "9", "Sample ID": "Sample3", "qurro_balance": null}, {"Metadata1": "13", "Metadata2": "14", "Metadata3": "15", "Sample ID": "Sample5", "qurro_balance": null}, {"Metadata1": "16", "Metadata2": "17", "Metadata3": "18", "Sample ID": "Sample6", "qurro_balance": null}, {"Metadata1": "19", "Metadata2": "20", "Metadata3": "21", "Sample ID": "Sample7", "qurro_balance": null}]}, "encoding": {"color": {"field": "Metadata1", "type": "nominal"}, "tooltip": [{"field": "Sample ID", "type": "nominal"}, {"field": "qurro_balance", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "Metadata1", "type": "nominal"}, "y": {"field": "qurro_balance", "title": "log(Numerator / Denominator)", "type": "quantitative"}}, "mark": {"type": "circle"}, "selection": {"selector006": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Log Ratio of Abundances in Samples"};
+    var samplePlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"labelBound": true}, "mark": {"tooltip": null}, "range": {"category": {"scheme": "tableau10"}, "ramp": {"scheme": "blues"}}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-17ad6d7eb8d11fdb67d65d9f4abd5654"}, "datasets": {"data-17ad6d7eb8d11fdb67d65d9f4abd5654": [{"Metadata1": "1", "Metadata2": "2", "Metadata3": "3", "Sample ID": "Sample1", "qurro_balance": null}, {"Metadata1": "4", "Metadata2": "5", "Metadata3": "6", "Sample ID": "Sample2", "qurro_balance": null}, {"Metadata1": "7", "Metadata2": "8", "Metadata3": "9", "Sample ID": "Sample3", "qurro_balance": null}, {"Metadata1": "13", "Metadata2": "14", "Metadata3": "15", "Sample ID": "Sample5", "qurro_balance": null}, {"Metadata1": "16", "Metadata2": "17", "Metadata3": "18", "Sample ID": "Sample6", "qurro_balance": null}, {"Metadata1": "19", "Metadata2": "20", "Metadata3": "21", "Sample ID": "Sample7", "qurro_balance": null}], "qurro_sample_metadata_fields": ["Metadata1", "Metadata2", "Metadata3", "Sample ID"]}, "encoding": {"color": {"field": "Metadata1", "type": "nominal"}, "tooltip": [{"field": "Sample ID", "type": "nominal"}, {"field": "qurro_balance", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "Metadata1", "type": "nominal"}, "y": {"field": "qurro_balance", "title": "log(Numerator / Denominator)", "type": "quantitative"}}, "mark": {"type": "circle"}, "selection": {"selector006": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Log-Ratio of Abundances in Samples"};
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
@@ -88,7 +88,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 for (var i = 0; i < data.length; i++) {
                     chai.assert.isNull(data[i].qurro_balance);
                 }
-                testing_utilities.checkHeaders(0, 0);
+                testing_utilities.checkHeaders(0, 0, 5);
             }
             describe("Single-feature selections", function() {
                 beforeEach(async function() {
@@ -138,8 +138,8 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     rrv.newFeatureLow = { "Feature ID": "Taxon2" };
                     rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
                     await rrv.updateSamplePlotSingle();
-                    // Check that the sample log ratios were properly updated
-                    // Sample1 has a Taxon1 count of 0, so its log ratio should
+                    // Check that the sample log-ratios were properly updated
+                    // Sample1 has a Taxon1 count of 0, so its log-ratio should
                     // be null (because log(0/x) is undefined).
                     chai.assert.isNull(
                         rrv.samplePlotJSON.datasets[dataName][0].qurro_balance
@@ -169,9 +169,9 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.datasets[dataName][5].qurro_balance
                     );
                     // Check that various DOM elements were properly updated
-                    testing_utilities.checkHeaders(1, 1);
+                    testing_utilities.checkHeaders(1, 1, 5);
                     chai.assert.equal(
-                        "2 / 6 samples (33.33%) can't be shown due to having an invalid (i.e. containing zero) log ratio.",
+                        "2 / 6 samples (33.33%) can't be shown due to having an invalid (i.e. containing zero) log-ratio.",
                         document.getElementById("balanceSamplesDroppedDiv")
                             .textContent
                     );
@@ -241,7 +241,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 it("Properly updates the sample plot balances");
                 it("Properly updates the rank plot classifications");
                 it('Properly updates the "feature text" headers', function() {
-                    testing_utilities.checkHeaders(5, 1);
+                    testing_utilities.checkHeaders(5, 1, 5);
                     chai.assert.sameMembers(
                         [
                             "Taxon1 / / ",
@@ -276,7 +276,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     await document.getElementById("rankField").onchange();
                     // Check that the rank plot JSON was updated accordingly:
                     // 1. y-axis field updated
-                    // 2. y-axis title updated to say "Rank: [rank name]"
+                    // 2. y-axis title updated to say "Magnitude: [rank name]"
                     // 3. The lone transform of the rank plot JSON should now
                     //    sort by the new rank field
                     chai.assert.equal(
@@ -284,7 +284,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.rankPlotJSON.encoding.y.field
                     );
                     chai.assert.equal(
-                        "Rank: Rank 1",
+                        "Magnitude: Rank 1",
                         rrv.rankPlotJSON.encoding.y.title
                     );
                     // Sanity check -- verify there's only one transform, and
@@ -302,8 +302,8 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             });
             describe("Changing the bar width", function() {
                 async function triggerBarSizeUpdate(newValue) {
-                    document.getElementById("barSize").value = newValue;
-                    await document.getElementById("barSize").onchange();
+                    document.getElementById("barSizeSlider").value = newValue;
+                    await document.getElementById("barSizeSlider").onchange();
                 }
                 it("Changing the bar width to a constant size updates JSON and DOM properly", async function() {
                     await triggerBarSizeUpdate("3");
@@ -319,7 +319,23 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
                 describe("Changing the bar width to fit to the rank plot width", function() {
                     it("Works properly in basic case", async function() {
-                        await triggerBarSizeUpdate("fit");
+                        // Set bar size to 3 using the slider
+                        await triggerBarSizeUpdate("3");
+                        chai.assert.equal(
+                            3,
+                            rrv.rankPlotJSON.encoding.x.scale.rangeStep
+                        );
+                        // "Fit" the bars
+                        // NOTE: for some reason, this doesn't work if I just
+                        // say "await document.getElementById(...).click();",
+                        // like I'm doing with the boxplot checkbox. No idea
+                        // why.
+                        document.getElementById(
+                            "fitBarSizeCheckbox"
+                        ).checked = true;
+                        await document
+                            .getElementById("fitBarSizeCheckbox")
+                            .onchange();
                         // We have 5 features in this test rank plot JSON, and
                         // the rank plot width is set to 400. 400 / 5 = 80.
                         chai.assert.equal(
@@ -331,12 +347,49 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                                 .getElementById("barSizeWarning")
                                 .classList.contains("invisible")
                         );
+                        chai.assert.isTrue(
+                            document.getElementById("barSizeSlider").disabled
+                        );
+                        // Stop "fitting" the bars. This should cause the bar
+                        // size to go back to 3, and re-enable the slider.
+                        document.getElementById(
+                            "fitBarSizeCheckbox"
+                        ).checked = false;
+                        await document
+                            .getElementById("fitBarSizeCheckbox")
+                            .onchange();
+                        chai.assert.equal(
+                            3,
+                            rrv.rankPlotJSON.encoding.x.scale.rangeStep
+                        );
+                        chai.assert.isFalse(
+                            document.getElementById("barSizeSlider").disabled
+                        );
+                        // this definitely shouldn't change in either case, but
+                        // i'm checking the barSizeWarning here just to be safe
+                        chai.assert.isTrue(
+                            document
+                                .getElementById("barSizeWarning")
+                                .classList.contains("invisible")
+                        );
                     });
-                    // TODO: we can test this by using another set of test
-                    // JSONs here (e.g. the sleep apnea test data).
-                    it(
-                        "Un-hides a warning element when the bar size is less than 1 pixel"
-                    );
+                    it("Un-hides a warning element when the bar size is less than 1 pixel", async function() {
+                        function isInvisible() {
+                            // Silly helper function to reduce repetitive code
+                            return document
+                                .getElementById("barSizeWarning")
+                                .classList.contains("invisible");
+                        }
+                        chai.assert.isTrue(isInvisible());
+
+                        await rrv.updateRankPlotBarSize(0.8, true);
+                        chai.assert.isFalse(isInvisible());
+
+                        // Clean up and hide the warning again -- this also
+                        // tests that it's removable
+                        await rrv.updateRankPlotBarSize(10, true);
+                        chai.assert.isTrue(isInvisible());
+                    });
                 });
             });
             describe("Changing the rank plot color scheme", function() {

@@ -47,21 +47,20 @@
                     </select>
                 </div>
                 <div class="centeredBlock">
-                    <label for="barSize">Bar width</label>
-                    <select id="barSize">
-                        <option value="1"
-                            >Set each bar's width to 1 pixel</option
-                        >
-                        <option value="2"
-                            >Set each bar's width to 2 pixels</option
-                        >
-                        <option value="3"
-                            >Set each bar's width to 3 pixels</option
-                        >
-                        <option value="fit"
-                            >Fit bar widths to display width</option
-                        >
-                    </select>
+                    <label for="barSizeSlider">Bar width</label>
+                    <input
+                        id="barSizeSlider"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="1"
+                    />
+                </div>
+                <div class="centeredBlock">
+                    <label for="fitBarSizeCheckbox"
+                        >Fit bar widths to the plot's default width?</label
+                    >
+                    <input type="checkbox" id="fitBarSizeCheckbox" />
                     <p
                         id="barSizeWarning"
                         class="warning centeredBlock invisible marginOnTop"
@@ -261,7 +260,7 @@
                 -->
                 <div class="centeredBlock">
                     <h4 id="numHeader" class="centeredHeader">
-                        Numerator Features (0 selected)
+                        Numerator Features
                     </h4>
                     <textarea
                         id="topFeaturesDisplay"
@@ -272,7 +271,7 @@
                 <div id="divide" class="centeredBlock"></div>
                 <div class="centeredBlock">
                     <h4 id="denHeader" class="centeredHeader">
-                        Denominator Features (0 selected)
+                        Denominator Features
                     </h4>
                     <textarea
                         id="botFeaturesDisplay"
@@ -284,7 +283,7 @@
             <div id="selectionControls">
                 <h3 class="centeredHeader">Selecting Features</h3>
                 <p class="info centeredBlock marginOnTop">
-                    To construct a log ratio, select feature(s) by clicking on
+                    To construct a log-ratio, select feature(s) by clicking on
                     the plot of feature ranks on the left or by searching using
                     the controls below.
                 </p>
@@ -293,11 +292,35 @@
                     Filter to features where
                     <select class="fancyBorder num" id="topSearch"> </select>
                     <select class="fancyBorder num" id="topSearchType">
-                        <option value="text">contains the exact text</option>
-                        <option value="rank"
-                            >contains the exact separated text
-                            fragment(s)</option
-                        >
+                        <optgroup label="Text searching (case insensitive)">
+                            <option value="text"
+                                >contains the exact text</option
+                            >
+                            <option value="rank"
+                                >contains the exact separated text
+                                fragment(s)</option
+                            >
+                        </optgroup>
+                        <optgroup label="Numeric searching (basic)">
+                            <option value="lt">is less than</option>
+                            <option value="gt">is greater than</option>
+                            <option value="lte"
+                                >is less than or equal to</option
+                            >
+                            <option value="gte"
+                                >is greater than or equal to</option
+                            >
+                        </optgroup>
+                        <!--
+                        <optgroup label="Numeric searching (percentile)">
+                            <option value="topp"
+                                >is in this top percent of values</option
+                            >
+                            <option value="botp"
+                                >is in this bottom percent of values</option
+                            >
+                        </optgroup>
+                        -->
                     </select>
                     <input
                         type="text"
@@ -310,11 +333,35 @@
                     Filter to features where
                     <select class="fancyBorder den" id="botSearch"> </select>
                     <select class="fancyBorder den" id="botSearchType">
-                        <option value="text">contains the exact text</option>
-                        <option value="rank"
-                            >contains the exact separated text
-                            fragment(s)</option
-                        >
+                        <optgroup label="Text searching (case insensitive)">
+                            <option value="text"
+                                >contains the exact text</option
+                            >
+                            <option value="rank"
+                                >contains the exact separated text
+                                fragment(s)</option
+                            >
+                        </optgroup>
+                        <optgroup label="Numeric searching (basic)">
+                            <option value="lt">is less than</option>
+                            <option value="gt">is greater than</option>
+                            <option value="lte"
+                                >is less than or equal to</option
+                            >
+                            <option value="gte"
+                                >is greater than or equal to</option
+                            >
+                        </optgroup>
+                        <!--
+                        <optgroup label="Numeric searching (percentile)">
+                            <option value="topp"
+                                >is in this top percent of values</option
+                            >
+                            <option value="botp"
+                                >is in this bottom percent of values</option
+                            >
+                        </optgroup>
+                        -->
                     </select>
                     <input
                         type="text"
@@ -330,7 +377,7 @@
                 <a id="downloadHelper" class="invisible"></a>
                 <div class="centeredBlock marginOnTop">
                     <button id="multiFeatureButton">
-                        Regenerate sample plot
+                        Regenerate plots
                     </button>
                     <button id="exportDataButton">
                         Export sample data

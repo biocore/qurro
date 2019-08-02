@@ -76,7 +76,10 @@ def fix_id(fid):
             new_id += ")"
         elif c == "[":
             new_id += "("
-        elif c == "'" or c == '"' or c == "\\":
+        elif c == "'" or c == '"':
+            # Don't bother replacing quotes
+            pass
+        elif c == "\\":
             new_id += "|"
         else:
             new_id += c
@@ -181,7 +184,7 @@ def remove_empty_samples_and_features(
         filtered_metadata = filtered_table.align(
             sm_t, join="inner", axis="columns"
         )[1].T
-        logging.debug("Removed {} empty sample(s).".format(sample_diff))
+        print("Removed {} empty sample(s).".format(sample_diff))
     else:
         logging.debug("Couldn't find any empty samples.")
 
@@ -190,15 +193,74 @@ def remove_empty_samples_and_features(
         filtered_ranks = filtered_table.align(
             feature_ranks_df, join="inner", axis="index"
         )[1]
-        logging.debug("Removed {} empty feature(s).".format(feature_diff))
+        print("Removed {} empty feature(s).".format(feature_diff))
     else:
         logging.debug("Couldn't find any empty features.")
 
     return filtered_table, filtered_metadata, filtered_ranks
 
 
+def print_if_dropped(
+    df_old, df_new, axis_num, item_name, df_name, filter_basis_name
+):
+    """Prints a message if a given DataFrame has been filtered.
+
+       Essentially, this function just checks if
+       df_old.shape[axis_num] - df_new.shape[axis_num] > 0.
+
+       If so, this prints a message with a bunch of details (which the _name
+       parameters all describe).
+
+       Parameters
+       ----------
+       df_old: pd.DataFrame (or pd.SparseDataFrame)
+            "Unfiltered" DataFrame -- used as the reference when trying to
+            determine if df_new has been filtered.
+
+       df_new: pd.DataFrame (or pd.SparseDataFrame)
+            A potentially-filtered DataFrame.
+
+       axis_num: int
+            The axis in the DataFrames' .shapes to check. This should be either
+            0 or 1, but we don't explicitly check for that.
+
+       item_name: str
+            The name of the "thing" described by the given axis in these
+            DataFrames. In practice, this is either "sample" or "feature".
+
+       df_name: str
+            The name of the DataFrame represented by df_old and df_new.
+
+       filter_basis_name: str
+            The name of the other DataFrame which caused these items to be
+            dropped. For example, if we're checking to see if samples were
+            dropped from the sample metadata file due to to samples not being
+            in the BIOM table, df_name could be "sample metadata file" and
+            filter_basis_name could be "BIOM table".
+    """
+
+    dropped_item_ct = df_old.shape[axis_num] - df_new.shape[axis_num]
+    if dropped_item_ct > 0:
+        print(
+            "{} {}(s) in the {} were not present in the {}.".format(
+                dropped_item_ct, item_name, df_name, filter_basis_name
+            )
+        )
+        print(
+            "These {}(s) have been removed from the "
+            "visualization.".format(item_name)
+        )
+
+
 def match_table_and_data(table, feature_ranks, sample_metadata):
     """Matches feature rankings and then sample metadata to a table.
+
+       TODO: Some of the logic in this function for matching the feature ranks
+       and sample metadata could probably be abstracted out to another
+       function. This individual function isn't directly unit-tested, but its
+       behavior should be mostly tested in the "matching" integration tests
+       (...that being said, it'd be a lot easier + sustainable to also add
+       direct unit tests for this function).
 
        Parameters
        ----------
@@ -268,11 +330,23 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
                 feature_ranks.shape[0], unsupported_feature_ct, word
             )
         )
+    print_if_dropped(
+        table,
+        featurefiltered_table,
+        0,
+        "feature",
+        "BIOM table",
+        "feature rankings",
+    )
 
     # We transpose the sample metadata instead of the actual table because
     # transposing in pandas, at least from some personal testing, can be really
     # expensive for huge (EMP-scale) DataFrames. Since sample metadata will
     # generally be smaller than the actual table, we transpose that.
+    #
+    # (The reason we have debug log messages around these statements is because
+    # of how expensive transposing can be -- this is a rudimentary way to check
+    # for bottlenecks when really large datasets are passed into Qurro.)
     logging.debug(
         "Temporarily transposing sample metadata to make matching easier."
     )
@@ -288,19 +362,31 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     logging.debug("Transposing done.")
     # Allow for dropped samples (e.g. negative controls), but ensure that at
     # least one sample is supported by the BIOM table.
+    #
+    # We only need to check m_sample_metadata.shape[0] here since it should be
+    # equal to m_table.shape[1] at this point (due to our use of .align()).
     if m_sample_metadata.shape[0] < 1:
         raise ValueError(
-            "None of the samples in the sample metadata file "
-            "are present in the input BIOM table."
+            "No samples are shared between the sample metadata file and BIOM "
+            "table."
         )
+    print_if_dropped(
+        sample_metadata,
+        m_sample_metadata,
+        0,
+        "sample",
+        "sample metadata file",
+        "BIOM table",
+    )
+    print_if_dropped(
+        featurefiltered_table,
+        m_table,
+        1,
+        "sample",
+        "BIOM table",
+        "sample metadata file",
+    )
 
-    dropped_sample_ct = sample_metadata.shape[0] - m_sample_metadata.shape[0]
-    if dropped_sample_ct > 0:
-        print(
-            "NOTE: {} sample(s) in the sample metadata file were not "
-            "present in the BIOM table, and have been removed from the "
-            "visualization.".format(dropped_sample_ct)
-        )
     return m_table, m_sample_metadata
 
 
@@ -419,6 +505,12 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
         raise ValueError(
             "Feature rankings/metadata can't contain any columns called "
             '"qurro_classification".{}'.format(sugg)
+        )
+
+    if "qurro_x" in fr_cols or "qurro_x" in fm_cols:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            '"qurro_x".{}'.format(sugg)
         )
 
     if len(set(fr_cols) & set(fm_cols)) > 0:

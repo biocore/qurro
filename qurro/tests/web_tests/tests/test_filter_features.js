@@ -6,14 +6,36 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
 ) {
     var rankPlotSkeleton = {
         data: { name: "dataName" },
-        datasets: { dataName: [], qurro_feature_metadata_ordering: [] }
+        datasets: {
+            dataName: [],
+            qurro_feature_metadata_ordering: [],
+            qurro_rank_ordering: []
+        }
     };
-    describe("Filtering lists of features based on text searching", function() {
+    describe("Filtering lists of features based on text/number searching", function() {
         var rpJSON1 = JSON.parse(JSON.stringify(rankPlotSkeleton));
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 1" });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Featurelol 2" });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 3" });
-        rpJSON1.datasets.dataName.push({ "Feature ID": "Feature 4|lol" });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Feature 1",
+            n: 1.2,
+            x: null
+        });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Featurelol 2",
+            n: 2,
+            x: "asdf"
+        });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Feature 3",
+            n: 3.0,
+            x: "0"
+        });
+        rpJSON1.datasets.dataName.push({
+            "Feature ID": "Feature 4|lol",
+            n: 4.5,
+            x: "Infinity"
+        });
+        rpJSON1.datasets.qurro_rank_ordering.push("n");
+        rpJSON1.datasets.qurro_rank_ordering.push("x");
         var inputFeatures = [
             "Feature 1",
             "Featurelol 2",
@@ -135,22 +157,28 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Searching is case sensitive", function() {
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "staphylococcus",
-                        "Taxonomy",
-                        "text"
-                    )
+            it("Searching is case *insensitive*", function() {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "staphylococcus",
+                            "Taxonomy",
+                            "text"
+                        )
+                    ),
+                    staphTextMatches
                 );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        "feature",
-                        "Feature ID",
-                        "text"
-                    )
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "feature",
+                            "Feature ID",
+                            "text"
+                        )
+                    ),
+                    inputFeatures
                 );
             });
 
@@ -244,30 +272,36 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ["Feature 2", "Feature 3"]
                 );
             });
-            // The case sensitivity, inputText-empty, and null value tests were
-            // just copied from above with the searchType changed. A possible
-            // TODO here is reducing the redunancy in these tests, but it's
+            // The case insensitivity, inputText-empty, and null value tests
+            // were just copied from above with the searchType changed.
+            // A TODO here is reducing the redunancy in these tests, but it's
             // not like efficiency in the JS testing process is a super huge
             // priority for us right now.
-            it("Searching is (still) case sensitive", function() {
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "staphylococcus",
-                        "Taxonomy",
-                        "rank"
-                    )
+            it("Searching is (still) case insensitive", function() {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "staphylococcus",
+                            "Taxonomy",
+                            "rank"
+                        )
+                    ),
+                    bacteriaMatches
                 );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON1,
-                        "feature",
-                        "Feature ID",
-                        "rank"
-                    )
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "feature",
+                            "Feature ID",
+                            "rank"
+                        )
+                    ),
+                    ["Feature 1", "Feature 3", "Feature 4|lol"]
                 );
             });
-            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characers", function() {
+            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characters", function() {
                 /* Just a helper function to alleviate redundant code here.
                  *
                  * Asserts that filterFeatures() with the given input text is
@@ -310,6 +344,265 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ),
                     ["Feature 6"]
                 );
+            });
+        });
+        describe("Basic number-based searching", function() {
+            it('Less than (< or "lt") finds features < a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3.2",
+                            "n",
+                            "lt"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 3"]
+                );
+                // Test that even equal values are excluded
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3",
+                            "n",
+                            "lt"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "1.0",
+                        "n",
+                        "lt"
+                    )
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "5",
+                            "n",
+                            "lt"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
+            it('Greater than (> or "gt") finds features > a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3.2",
+                            "n",
+                            "gt"
+                        )
+                    ),
+                    ["Feature 4|lol"]
+                );
+                // Test that even equal values are excluded
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3",
+                            "n",
+                            "gt"
+                        )
+                    ),
+                    ["Feature 4|lol"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "4.5",
+                        "n",
+                        "gt"
+                    )
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "0",
+                            "n",
+                            "gt"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
+            it('Less than or equal (<= or "lte") finds features <= a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "3",
+                            "n",
+                            "lte"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 3"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "1.17",
+                        "n",
+                        "lte"
+                    )
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "4.5",
+                            "n",
+                            "lte"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
+            it('Greater than or equal (>= or "gte") finds features >= a given value', function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "2",
+                            "n",
+                            "gte"
+                        )
+                    ),
+                    ["Featurelol 2", "Feature 3", "Feature 4|lol"]
+                );
+                // Test case where everything empty
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "5.0",
+                        "n",
+                        "gte"
+                    )
+                );
+                // Test case where everything included
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "1.20000",
+                            "n",
+                            "gte"
+                        )
+                    ),
+                    inputFeatures
+                );
+            });
+            it("Non-finite / non-numeric feature field values are ignored", function() {
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "0",
+                            "x",
+                            "gte"
+                        )
+                    ),
+                    ["Feature 3"]
+                );
+            });
+            it("Non-finite / non-numeric input field values are ignored", function() {
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "null",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "NaN",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "Infinity",
+                        "x",
+                        "lte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "-Infinity",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(rpJSON1, "", "x", "gte")
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "  ",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        " asdf ",
+                        "x",
+                        "gte"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "asdf",
+                        "x",
+                        "gte"
+                    )
+                );
+            });
+            describe("operatorToCompareFunc()", function() {
+                it("Passing in an invalid operator results in an error", function() {
+                    // This should never happen since we screen for invalid
+                    // operators in filterFeatures(), but still good to check for
+                    chai.assert.throws(function() {
+                        feature_computation.operatorToCompareFunc("asdf", 3);
+                    }, /unrecognized operator passed/);
+                });
+                it("Passing in a valid operator results in a valid comparison function", function() {
+                    // The other basic numerical comparison operators (lte, gt,
+                    // gte) have already been unit-tested above. This just
+                    // double-checks that operatorToCompareFunc() itself works
+                    // when called manually.
+                    var lt3 = feature_computation.operatorToCompareFunc(
+                        "lt",
+                        3
+                    );
+                    chai.assert.isTrue(lt3(0));
+                    chai.assert.isTrue(lt3(2));
+                    chai.assert.isFalse(lt3(3));
+                    chai.assert.isFalse(lt3(4));
+                });
             });
         });
         describe("existsIntersection()", function() {
@@ -483,49 +776,58 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
-        describe("trySearchable()", function() {
-            it("Doesn't modify strings", function() {
+        describe("tryTextSearchable()", function() {
+            it("Lowercases (but otherwise doesn't modify) strings", function() {
                 chai.assert.equal(
-                    feature_computation.trySearchable("abc"),
+                    feature_computation.tryTextSearchable("abc"),
                     "abc"
                 );
                 chai.assert.equal(
-                    feature_computation.trySearchable("   Viruses   "),
-                    "   Viruses   "
+                    feature_computation.tryTextSearchable("AbC"),
+                    "abc"
                 );
                 chai.assert.equal(
-                    feature_computation.trySearchable(
+                    feature_computation.tryTextSearchable("   Viruses   "),
+                    "   viruses   "
+                );
+                chai.assert.equal(
+                    feature_computation.tryTextSearchable(
                         "   Viruses;Caudovirales;some third thing goes here   "
                     ),
-                    "   Viruses;Caudovirales;some third thing goes here   "
+                    "   viruses;caudovirales;some third thing goes here   "
                 );
                 chai.assert.equal(
-                    feature_computation.trySearchable("null"),
+                    feature_computation.tryTextSearchable("null"),
                     "null"
                 );
             });
             it("Converts numbers to strings", function() {
                 chai.assert.equal(
-                    feature_computation.trySearchable(3.14),
+                    feature_computation.tryTextSearchable(3.14),
                     "3.14"
                 );
-                chai.assert.equal(feature_computation.trySearchable(5), "5");
+                chai.assert.equal(
+                    feature_computation.tryTextSearchable(5),
+                    "5"
+                );
             });
             it("Returns null when a non-string + non-number passed in", function() {
-                chai.assert.isNull(feature_computation.trySearchable([3]));
+                chai.assert.isNull(feature_computation.tryTextSearchable([3]));
                 chai.assert.isNull(
-                    feature_computation.trySearchable([3, 4, 5])
+                    feature_computation.tryTextSearchable([3, 4, 5])
                 );
                 chai.assert.isNull(
-                    feature_computation.trySearchable(["a", "b", "c"])
+                    feature_computation.tryTextSearchable(["a", "b", "c"])
                 );
-                chai.assert.isNull(feature_computation.trySearchable(["a"]));
                 chai.assert.isNull(
-                    feature_computation.trySearchable({ abc: "def" })
+                    feature_computation.tryTextSearchable(["a"])
                 );
-                chai.assert.isNull(feature_computation.trySearchable(null));
                 chai.assert.isNull(
-                    feature_computation.trySearchable(undefined)
+                    feature_computation.tryTextSearchable({ abc: "def" })
+                );
+                chai.assert.isNull(feature_computation.tryTextSearchable(null));
+                chai.assert.isNull(
+                    feature_computation.tryTextSearchable(undefined)
                 );
             });
         });
@@ -579,21 +881,13 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
             });
-            it("Returns [] when inputText.trim().length is 0", function() {
+            it("Returns [] when inputText.length is 0", function() {
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "",
                         "Feature ID",
                         "text"
-                    )
-                );
-                chai.assert.isEmpty(
-                    feature_computation.filterFeatures(
-                        rpJSON2,
-                        "  \r            \t \n     ",
-                        "Taxonomy",
-                        "rank"
                     )
                 );
             });
