@@ -82,8 +82,8 @@ necessary files for this tutorial here:
 - `table.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fdocs.qiime2.org%2F2019.4%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftable.qza) | [download](https://docs.qiime2.org/2019.4/data/tutorials/moving-pictures/table.qza)
 - `sample-metadata.tsv` [download](https://data.qiime2.org/2019.4/tutorials/moving-pictures/sample_metadata.tsv)
 - `taxonomy.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fdocs.qiime2.org%2F2019.4%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftaxonomy.qza) | [download](https://docs.qiime2.org/2019.4/data/tutorials/moving-pictures/taxonomy.qza)
-- `ordination.qza` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fordination.qza) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/ordination.qza)
-- `biplot.qzv` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/biplot.qzv)
+- `ordination.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fordination.qza) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/ordination.qza)
+- `biplot.qzv` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/biplot.qzv)
 
 ## Running Qurro
 
@@ -102,7 +102,7 @@ qiime qurro loading-plot \
 
 ##### Output Artifacts
 
-- `qurro-plot.qzv` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fqurro-plot.qzv) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/qurro-plot.qzv)
+- `qurro-plot.qzv` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fqurro-plot.qzv) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/qurro-plot.qzv)
 
 You just generated your first Qurro plot! `qurro-plot.qzv` is a `.qzv` file --
 in other words, a QIIME 2 visualization. You can view it either by running
