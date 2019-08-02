@@ -32,7 +32,14 @@ def run_integration_test(
     q2_table_biom_format="BIOMV210Format",
     extreme_feature_count=None,
 ):
-    """Runs qurro, and validates the output somewhat."""
+    """Runs qurro, and validates the output somewhat.
+
+       Note that this is a pretty outdated function (as in, it doesn't support
+       checking many of the corner cases/etc. that happen when running Qurro).
+       The main purpose of this function is just checking at a high level that
+       things look good, and that data is faithfully represented in the output
+       main.js file.
+    """
 
     in_dir = os.path.join("qurro", "tests", "input", input_dir_name)
     rloc = os.path.join(in_dir, ranks_name)
