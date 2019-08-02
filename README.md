@@ -84,17 +84,9 @@ standalone script to make Qurro understand the metadata file. **Please
 note that this functionality is experimental**; furthermore, it is not yet
 available in the QIIME 2 plugin version of Qurro.
 
-### Tutorials
+## Tutorials
 
-Examples of using Qurro (both inside and outside of QIIME 2) are
-available in Qurro's example Jupyter notebooks, which are located
-[here](https://github.com/biocore/qurro/tree/master/example_notebooks):
-- [**`deicode_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
-  demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and then using Qurro to visualize DEICODE's output.
-- [**`songbird_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
-  demonstrates using [Songbird](https://github.com/biocore/songbird) and then using Qurro to visualize Songbird's output.
-
-#### "Moving Pictures" Tutorial
+### "Moving Pictures" Tutorial
 
 In the style of the QIIME 2 and DEICODE moving pictures tutorials, there is a
 draft moving pictures tutorial (showing how to use Qurro within QIIME 2, and
@@ -104,24 +96,15 @@ This tutorial is still a work in progress, so feel free to contact us if you
 have any outstanding questions (or any suggestions for improving this
 tutorial).
 
-### Brief Description: Interacting with a Qurro visualization
-The two plots (one of feature rankings, and one of samples' log ratios)
-in a Qurro visualization are linked [1]: when a change is made to the
-selected features in a log ratio, both the rank plot and sample plot are
-accordingly modified.
+### Running Qurro from the command line
 
-To elaborate on that: clicking on two features in the rank plot sets a new
-numerator feature (determined from the first-clicked feature) and a
-new denominator feature (determined from the second-clicked feature) for the
-abundance log ratios in the sample plot.
-
-You can also run queries over the various features in the rank plot in order to
-construct more complicated log ratios (e.g. "the log ratio of the combined
-abundances of all features that contain the text 'X' over the combined
-abundances of all features that contain the text 'Y'").
-Although this method doesn't require you to manually select features on the
-rank plot, the rank plot is still updated to indicate the features used in the
-log ratios.
+Examples of using Qurro (both inside and outside of QIIME 2) are
+available in Qurro's example Jupyter notebooks, which are located
+[here](https://github.com/biocore/qurro/tree/master/example_notebooks):
+- [**`deicode_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
+  demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and then using Qurro to visualize DEICODE's output.
+- [**`songbird_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
+  demonstrates using [Songbird](https://github.com/biocore/songbird) and then using Qurro to visualize Songbird's output.
 
 ## Citing Qurro
 
