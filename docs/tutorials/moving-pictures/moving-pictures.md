@@ -1,4 +1,5 @@
 # Qurro QIIME 2 "Moving Pictures" Tutorial
+Using Qurro v0.3.0.
 
 ## Introduction
 
