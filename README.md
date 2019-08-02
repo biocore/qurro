@@ -90,8 +90,8 @@ available in the QIIME 2 plugin version of Qurro.
 
 In the style of the QIIME 2 and DEICODE moving pictures tutorials, there is a
 draft moving pictures tutorial (showing how to use Qurro within QIIME 2, and
-how to interact with the generated Qurro visualization) available
-[here](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md).
+how to interact with the generated Qurro visualization) **available
+[here](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md).**
 This tutorial is still a work in progress, so feel free to contact us if you
 have any outstanding questions (or any suggestions for improving this
 tutorial).
