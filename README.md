@@ -160,6 +160,9 @@ Qurro also uses [Travis-CI](https://travis-ci.org/) and
 
 ### Data Sources
 
+The test data located in `qurro/tests/input/mackerel/` were exported from
+QIIME 2 artifacts in [this repository](https://github.com/knightlab-analyses/qurro-mackerel-analysis). These data are from Minich et al. 2019 [1].
+
 The test data located in `qurro/tests/input/byrd/` are from
 [this repository](https://github.com/knightlab-analyses/reference-frames).
 These data, in turn, originate from Byrd et al.'s 2017 study on atopic
@@ -203,7 +206,10 @@ And thanks to a bunch of the Knight Lab for helping name the tool :)
 
 ## References
 
-[1] Becker, R. A. & Cleveland, W. S. (1987). Brushing scatterplots. _Technometrics, 29_(2), 127-142. (Section 4.1 in particular talks about linking visualizations.)
+[1] Minich, J. J., Petrus, S., Michael, J. D., Michael, T. P., Knight, R., &
+Allen, E. E. (2019). Temporal, environmental, and biological
+drivers of the mucosal microbiome in a wild marine fish, Scomber japonicus.
+_Manuscript under review._
 
 [2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
 
