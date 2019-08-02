@@ -61,7 +61,7 @@ A python version of at least 3.5 is required to use Qurro.
 
 ### Temporary Caveat
 
-Certain characters in column names in the the sample metadata, feature metadata (if passed), and feature differentials (if passed) will be replaced with similar characters or just removed entirely:
+Certain characters in column names in the sample metadata, feature metadata (if passed), and feature differentials (if passed) will be replaced with similar characters or just removed entirely:
 
 | Old Character(s) | New Character |
 | ------------- | ------------- |
