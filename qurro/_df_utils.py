@@ -343,6 +343,10 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     # transposing in pandas, at least from some personal testing, can be really
     # expensive for huge (EMP-scale) DataFrames. Since sample metadata will
     # generally be smaller than the actual table, we transpose that.
+    #
+    # (The reason we have debug log messages around these statements is because
+    # of how expensive transposing can be -- this is a rudimentary way to check
+    # for bottlenecks when really large datasets are passed into Qurro.)
     logging.debug(
         "Temporarily transposing sample metadata to make matching easier."
     )
