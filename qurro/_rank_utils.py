@@ -11,6 +11,7 @@ import logging
 import skbio
 import pandas as pd
 from qurro._df_utils import escape_columns
+from qurro._metadata_utils import get_q2_comment_lines
 
 
 def read_rank_file(file_loc):
@@ -52,8 +53,15 @@ def ordination_to_df(ordination_file_loc):
 def differentials_to_df(differentials_loc):
     """Converts a differential rank TSV file to a DataFrame."""
 
+    # As of QIIME 2 2019.7, differentials exported from QIIME 2 can have q2
+    # comments! So we need to detect these.
+    q2_lines = get_q2_comment_lines(differentials_loc)
     differentials = pd.read_csv(
-        differentials_loc, sep="\t", na_filter=False, dtype=object
+        differentials_loc,
+        sep="\t",
+        na_filter=False,
+        dtype=object,
+        skiprows=q2_lines,
     )
     # Delay setting index column so we can first load it as an object (this
     # saves us from situations where the index col would otherwise be read as a
