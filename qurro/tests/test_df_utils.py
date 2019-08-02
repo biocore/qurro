@@ -702,7 +702,7 @@ def test_match_table_and_data_metadata_extra_sample(capsys):
     assert expected_msg in captured.out
 
 
-def test_match_table_and_data_ranked_features_not_in_table(capsys):
+def test_match_table_and_data_ranked_features_not_in_table():
     # Qurro is pretty accepting for mismatched data, but if any of your ranked
     # features aren't in the BIOM Qurro will immediately throw an error.
     # (...because that is not a good situation.)
@@ -729,6 +729,21 @@ def test_match_table_and_data_ranked_features_not_in_table(capsys):
         match_table_and_data(table, ranks_modified, metadata)
     expected_message = (
         "Of the 10 ranked features, 2 were not present in the input BIOM table"
+    )
+    assert expected_message in str(exception_info.value)
+
+
+def test_match_table_and_data_complete_sample_mismatch():
+    # Test that, if no samples are shared between the table and metadata, an
+    # error is raised.
+    table, metadata, ranks = get_test_data()
+
+    # Instead of Sample1, ... use S1, ...
+    metadata.index = ["S1", "S2", "S3", "S4"]
+    with pytest.raises(ValueError) as exception_info:
+        match_table_and_data(table, ranks, metadata)
+    expected_message = (
+        "No samples are shared between the sample metadata file and BIOM table"
     )
     assert expected_message in str(exception_info.value)
 
