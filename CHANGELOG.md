@@ -110,8 +110,7 @@
 - Replaced uses of `log ratio` with `log-ratio` throughout Qurro's code and
   documentation.
 - On the [Qurro website](https://biocore.github.io/qurro/):
-  - Added a "Mackerel" demo (based on the output of [this](https://github.com/knightlab-analyses/qurro-mackerel-analysis/)
-    analysis).
+  - Added a "Mackerel" demo (based on the output of [this](https://github.com/knightlab-analyses/qurro-mackerel-analysis/) analysis), and associated with data from [this paper](https://www.biorxiv.org/content/10.1101/721555v1).
   - Replaced "OTUs" for the Moving Pictures and Sleep Apnea demo dataset
     feature types with "ASVs / sOTUs".
   - Replaced "OTUs" for the Byrd dataset feature type with "Taxa".
