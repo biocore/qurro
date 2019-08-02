@@ -92,6 +92,13 @@
   basically never happen anyway, Qurro's code now checks for this scenario and
   raises an error accordingly.
   ([#190](https://github.com/biocore/qurro/issues/190))
+- QIIME 2 comment lines in differentials TSV files are now properly handled
+  when running Qurro outside of QIIME 2.
+    - Before this fix, trying to use a differentials file in standalone Qurro
+      that included #q2:types comments would cause Qurro to crash.
+      ...However, I'm pretty sure no differentials files including these
+      sorts of comment lines were in use until the release of QIIME 2 2019.7 a
+      few days ago, so I doubt this has been a big problem for anyone.
 ### Performance enhancements
 ### Miscellaneous
 - When replacing certain characters within column names, Qurro no longer
