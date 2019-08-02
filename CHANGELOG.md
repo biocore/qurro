@@ -101,6 +101,7 @@
       few days ago, so I doubt this has been a big problem for anyone.
 ### Performance enhancements
 ### Miscellaneous
+- Added a draft "Moving Pictures" tutorial.
 - When replacing certain characters within column names, Qurro no longer
   replaces `'` or `"` characters with <code>\|</code> characters. Instead, `'`
   and `"` characters are just removed from column names entirely.
@@ -116,7 +117,8 @@
   - Replaced "OTUs" for the Byrd dataset feature type with "Taxa".
   - Cleaned up the Byrd demo's dataset citation (to reflect the fact that the
     Morton/Marotz et al. 2019 paper is now published).
-- Added a draft "Moving Pictures" tutorial.
+  - Removed the now-incomplete "tutorials" section, in favor of just linking to
+    Qurro's GitHub page.
 - DEICODE ordinations used in demos and test inputs have been rerun with
   DEICODE version 0.2.3.
   ([#188](https://github.com/biocore/qurro/issues/188))
