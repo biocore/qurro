@@ -731,3 +731,45 @@ def test_match_table_and_data_ranked_features_not_in_table(capsys):
         "Of the 10 ranked features, 2 were not present in the input BIOM table"
     )
     assert expected_message in str(exception_info.value)
+
+
+def test_match_table_and_data_complex(capsys):
+    # Test the case where there are multiple sources of mismatched data:
+    # -> 1 extra feature in the table ("F9")
+    # -> 1 extra sample in the table ("Sample5")
+    # -> 1 extra sample in the metadata ("SampleM")
+    table, metadata, ranks = get_test_data()
+
+    # Add the extra feature to the table
+    new_f_row = DataFrame([[1, 2, 3, 4]], columns=table.columns, index=["F9"])
+    table = table.append(new_f_row, verify_integrity=True)
+
+    # Add the extra sample to the table
+    table["Sample5"] = 5
+
+    # Add the extra sample to the metadata
+    new_s_row = DataFrame(
+        [[4, 3, 2, 1]], columns=metadata.columns, index=["SampleM"]
+    )
+    metadata = metadata.append(new_s_row, verify_integrity=True)
+
+    # Ok, actually run the function!
+    m_table, m_metadata = match_table_and_data(table, ranks, metadata)
+    captured = capsys.readouterr()
+
+    # ...Now we can check all of the output messages. There'll be a lot.
+    expected_message_1 = (
+        "1 feature(s) in the BIOM table were not present in the feature "
+        "rankings"
+    )
+    expected_message_2 = (
+        "1 sample(s) in the BIOM table were not present in the sample "
+        "metadata file"
+    )
+    expected_message_3 = (
+        "1 sample(s) in the sample metadata file were not present in the BIOM "
+        "table"
+    )
+    assert expected_message_1 in captured.out
+    assert expected_message_2 in captured.out
+    assert expected_message_3 in captured.out
