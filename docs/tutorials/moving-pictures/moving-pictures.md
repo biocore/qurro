@@ -1,4 +1,5 @@
 # Qurro QIIME 2 "Moving Pictures" Tutorial
+Using Qurro v0.3.0.
 
 ## Introduction
 
@@ -22,8 +23,8 @@ compared to sample metadata categories. Both
 analyzing the log-ratios between features' abundances; Qurro provides an easy
 way to do this.
 
-Log-ratio analyses are needed because data obtained from a microbiome study is
-inherently compositional: we only have access to the relative abundances of
+Log-ratio analyses are needed because data obtained from a microbiome study is,
+in general, "compositional": we only have access to the relative abundances of
 features in each sample, instead of their absolute abundances.
 To quote [Gloor et al. 2017](https://www.frontiersin.org/articles/10.3389/fmicb.2017.02224):
 
@@ -82,8 +83,8 @@ necessary files for this tutorial here:
 - `table.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fdocs.qiime2.org%2F2019.4%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftable.qza) | [download](https://docs.qiime2.org/2019.4/data/tutorials/moving-pictures/table.qza)
 - `sample-metadata.tsv` [download](https://data.qiime2.org/2019.4/tutorials/moving-pictures/sample_metadata.tsv)
 - `taxonomy.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fdocs.qiime2.org%2F2019.4%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftaxonomy.qza) | [download](https://docs.qiime2.org/2019.4/data/tutorials/moving-pictures/taxonomy.qza)
-- `ordination.qza` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fordination.qza) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/ordination.qza)
-- `biplot.qzv` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/biplot.qzv)
+- `ordination.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fordination.qza) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/ordination.qza)
+- `biplot.qzv` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/biplot.qzv)
 
 ## Running Qurro
 
@@ -102,7 +103,7 @@ qiime qurro loading-plot \
 
 ##### Output Artifacts
 
-- `qurro-plot.qzv` [view](https://view.qiime2.org/?src=http%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fqurro-plot.qzv) | [download](http://biocore.github.io/qurro/tutorials/moving-pictures/data/qurro-plot.qzv)
+- `qurro-plot.qzv` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fqurro-plot.qzv) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/qurro-plot.qzv)
 
 You just generated your first Qurro plot! `qurro-plot.qzv` is a `.qzv` file --
 in other words, a QIIME 2 visualization. You can view it either by running
@@ -265,7 +266,8 @@ you can do this using `qiime tools view` or by uploading `biplot.qzv` to
 [view.qiime2.org](https://view.qiime2.org/).
 
 Here's a screenshot of the biplot, with samples colored by their `BodySite` and
-features (arrows) colored by their `Taxon`.
+features (arrows) colored by their `Taxon`. (Feature labels have been hidden in
+this screenshot.)
 
 <img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/emperor1.png" alt="Screenshot of the biplot generated in the DEICODE tutorial, visualized in Emperor." />
 
