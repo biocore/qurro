@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.3.0
+## Qurro 0.3.0 (August 3, 2019)
 ### Features added
 - Now, Songbird no longer needs to be installed in order for the `qiime qurro
   supervised-rank-plot` action (**NOTE: this action has been renamed to `qiime
