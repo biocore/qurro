@@ -146,8 +146,9 @@ For python testing/style checking, Qurro uses
 [pytest-cov](https://github.com/pytest-dev/pytest-cov),
 [flake8](http://flake8.pycqa.org/en/latest/), and
 [black](https://github.com/ambv/black). You'll also need to have QIIME 2
-installed to run most of the python tests (the exact QIIME 2 version shouldn't
-matter too much).
+installed to run most of the python tests (your QIIME 2 version should be at
+least 2019.7, due to the `FeatureData[Differential]` type being merged into
+q2-types starting with this release).
 
 For JavaScript testing/style checking, Qurro uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
