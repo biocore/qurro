@@ -142,7 +142,7 @@ This is more interesting. Of course, there aren't a lot of samples in the plot, 
 
 Let's examine that first problem in more depth: _where are all of the missing samples in the sample plot_?
 
-### Sidenote: Missing samples
+#### Sidenote: Missing samples
 
 Notice the text underneath the sample plot controls? If you've been following along with the tutorial so far, it should say that only `15 / 34 samples (44.12%)` are shown in the sample plot. What gives?
 
