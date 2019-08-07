@@ -4,7 +4,7 @@
 ## 0. Introduction
 
 ### What is Qurro?
-Qurro visualizes the output from a tool like [Songbird](https://github.com/biocore/songbird) or [DEICODE](https://github.com/biocore/DEICODE). It displays a plot of __feature rankings__ (either the feature differentials produced by a tool like Songbird, or the feature loadings in a compositional biplot produced by a tool like DEICODE) alongside a plot showing the __log-ratios__ of selected features' abundances within samples.
+Qurro visualizes the output from a tool like [Songbird](https://github.com/biocore/songbird) or [DEICODE](https://github.com/biocore/DEICODE). It displays a plot of __feature rankings__ (either the feature differentials produced by a tool like Songbird, or the feature loadings in a compositional biplot produced by a tool like DEICODE -- when sorted numerically, either of these input types provide rankings) alongside a plot showing the __log-ratios__ of selected features' abundances within samples.
 
 **This tutorial will pick up from where the [DEICODE moving pictures tutorial](https://library.qiime2.org/plugins/deicode/19/) leaves off.** Don't worry if you haven't followed that tutorial yet; we'll provide all the files needed here.
 
@@ -162,7 +162,7 @@ selector back to `Feature ID`, since we're searching using these feature IDs.)
 
 Now press the `Regenerate plots` button to select these two features, applying their log-ratio to the rank and sample plots.
 
-#### Hey, wait a second! There are only eight arrows in the biplot, but there are over five hundred features in the feature ranks plot. What gives?
+#### Hey, wait a second! There are only eight arrows in the biplot, but there are over five hundred features in the rank plot. What gives?
 
 This is just a result of how the biplot visualization was created in the DEICODE tutorial. In the `qiime emperor biplot` command, the `--p-number-of-features` parameter was set to 8, so only 8 arrows (i.e. features) are shown in the Emperor visualization of the biplot. Feel free to try rerunning this command with a different number of features to show more features in the biplot.
 

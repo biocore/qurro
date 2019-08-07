@@ -40,9 +40,9 @@ plugin = qiime2.plugin.Plugin(
     ),
     description=(
         "This QIIME 2 plugin supports the interactive visualization of "
-        "feature rankings (differentials produced by a tool like Songbird "
-        "or feature loadings in a biplot produced by a tool like DEICODE) "
-        "in tandem with log-ratios of features' abundances within samples."
+        "feature rankings (either differentials or feature loadings -- when "
+        "sorted numerically these provide rankings) in tandem with log-ratios "
+        "of features' abundances within samples."
     ),
     package="qurro",
 )
