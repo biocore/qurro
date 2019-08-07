@@ -93,17 +93,24 @@ Recall that we'd like to analyze the log-ratios between features' abundances.  I
 
 There are a few ways of selecting features in Qurro:
 
-1. One way is just by clicking on the rank plot twice. The first click sets the numerator feature for a log-ratio, and the second click sets the denominator feature for the log-ratio.
+1. One way is just by **clicking on the rank plot twice**. The first click sets the numerator feature for a log-ratio, and the second click sets the denominator feature for the log-ratio. (Increasing the bar width can help with this.)
 
-2. You can also select features based on a textual search through their IDs or metadata. For example, it's possible to construct the log-ratio of all features with taxonomy annotations containing the text `Streptocococcus` over all features with taxonomy annotations containing the text `Staphylocococcus`.
+2. You can also select features based on a **textual search through their IDs or metadata**. For example, it's possible to construct the log-ratio of all features with taxonomy annotations containing the text `Streptocococcus` over all features with taxonomy annotations containing the text `Staphylocococcus`.
 
-    - In this case -- where an arbitrary number of features can be in the numerator and denominator of the log-ratio -- the log-ratio is computed for a given sample by summing the feature abundances of the numerator features, summing the feature abundances of the denominator features, and then taking the log-ratio of these sums. Written out as a formula, this is `log(top sum) - log(bottom sum)` (or, [equivalently](https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Using_simpler_operations), `log(top sum / bottom sum)`).
+3. You can also select features by **searching through their feature rankings or metadata numerically** (e.g. you can select all features with a differential above a certain threshold). This tutorial won't cover this option; feel free to try this out in Qurro, though!
 
-3. You can also select features by searching through their feature rankings or metadata numerically (e.g. you can select all features with a differential above a certain threshold). This tutorial won't cover this option; feel free to try this out in Qurro, though!
+#### Sidenote: computing log-ratios involving > 2 features
+Note that in the latter two cases specified above -- where an arbitrary number of features can be in the numerator and denominator of the log-ratio -- the log-ratio is computed for a given sample by summing the feature abundances of the numerator features, summing the feature abundances of the denominator features, and then taking the log-ratio of these sums. Written out as a formula, this is `log(top sum) - log(bottom sum)` (or, [equivalently](https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Using_simpler_operations), `log(top sum / bottom sum)`).
 
-Let's try the second of these options (selecting features from a text-search) out. In the bottom-right corner of the Qurro visualization -- under the `Numerator` section -- change the feature field selector (it's the dropdown that comes right after some text that says "Filter to features where") to say `Taxon` instead of `Feature ID`. Now copy the text `o__Fusobacteriales` into the text box in this section.
+### First steps: selecting features by textual searching
 
-Repeat this process for the `Denominator` section, but now copy the text `o__Pseudomonadales` instead. Press the "Regenerate plots" button. You should see something like this:
+Let's try the second of the selection options mentioned above (selecting features from a textual search) out.
+
+1. In the bottom-right corner of the Qurro visualization -- under the `Numerator` section -- change the feature field selector (it's the dropdown that comes right after some text that says "Filter to features where") to say `Taxon` instead of `Feature ID`. Now copy the text `o__Fusobacteriales` into the text box in this section.
+
+2. Repeat this process for the `Denominator` section, but now copy the text `o__Pseudomonadales` instead.
+
+3. Press the "Regenerate plots" button. You should see something like this:
 
 <img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro2.png" alt="Qurro interface screenshot #2. The log-ratio of o__Fusobacteriales to o__Pseudomonadales is selected." />
 
@@ -123,7 +130,7 @@ In practice, we can account for this by changing the __search type__ (currently 
 
 (This sort of problem is also observable in practice when, for example, the features being investigated include Viruses in addition to Bacteria: there are plenty of _Staphylococcus_ species and plenty of _Staphylococcus_ phages, and a basic text search for just `Staphylococcus` will give you both. Check out a Qurro visualization of the [Byrd demo dataset](https://biocore.github.io/qurro/demos/byrd/index.html) for an example of this.) 
 
-### Changing up the sample plot
+### Customizing the sample plot
 
 The sample plot's "x-axis" and "color" fields are initially set to whatever the first field was in your sample metadata file (in this case, `BarcodeSequence`).  This probably isn't super useful, so we can change these to more interesting metadata fields.
 
@@ -135,7 +142,7 @@ This is more interesting. Of course, there aren't a lot of samples in the plot, 
 
 Let's examine that first problem in more depth: _where are all of the missing samples in the sample plot_?
 
-### Missing samples
+### Sidenote: Missing samples
 
 Notice the text underneath the sample plot controls? If you've been following along with the tutorial so far, it should say that only `15 / 34 samples (44.12%)` are shown in the sample plot. What gives?
 
