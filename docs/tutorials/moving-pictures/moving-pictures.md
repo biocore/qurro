@@ -95,9 +95,7 @@ There are a few ways of selecting features in Qurro:
 
 1. One way is just by clicking on the rank plot twice. The first click sets the numerator feature for a log-ratio, and the second click sets the denominator feature for the log-ratio.
 
-2. You can also select features based on a textual search through their IDs or metadata. For example, it's possible to construct the log-ratio of all features with taxonomy annotations containing the text `o__Fusobacteriales` over all features with taxonomy annotations containing the text `o__Pseudomonadales`.
-
-    - This is equivalent to the log-ratio of all ranked features identified as being in the order [_Fusobacteriales_](https://en.wikipedia.org/wiki/Fusobacteriales) over all ranked features identified as being in the order [_Pseudomonadales_](https://en.wikipedia.org/wiki/Pseudomonadales).
+2. You can also select features based on a textual search through their IDs or metadata. For example, it's possible to construct the log-ratio of all features with taxonomy annotations containing the text `Streptocococcus` over all features with taxonomy annotations containing the text `Staphylocococcus`.
 
     - In this case -- where an arbitrary number of features can be in the numerator and denominator of the log-ratio -- the log-ratio is computed for a given sample by summing the feature abundances of the numerator features, summing the feature abundances of the denominator features, and then taking the log-ratio of these sums. Written out as a formula, this is `log(top sum) - log(bottom sum)` (or, [equivalently](https://en.wikipedia.org/wiki/List_of_logarithmic_identities#Using_simpler_operations), `log(top sum / bottom sum)`).
 
