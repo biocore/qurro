@@ -146,7 +146,7 @@ Let's examine that first problem in more depth: _where are all of the missing sa
 
 Notice the text underneath the sample plot controls? If you've been following along with the tutorial so far, it should say that only `15 / 34 samples (44.12%)` are shown in the sample plot. What gives?
 
-As the text underneath this explains, it's because the other samples have invalid log-ratios. These other samples either didn't have any `o__Fusobacteriales` bacteria observed, didn't have any `o__Pseudomonadales` bacteria observed, or didn't have either of these bacteria.
+As the text underneath this explains, it's because the other samples have invalid log-ratios. These other samples either didn't have any `o__Fusobacteriales` bacteria observed, didn't have any `o__Pseudomonadales` bacteria observed, or didn't have either of these bacteria observed.
 
 Zeroes in either the top or bottom of a log-ratio mess things up. The logarithm of 0 / x (i.e the logarithm of 0) is undefined, as is the logarithm of x / 0 (since you straight-up can't divide by 0 in the first place).
 
