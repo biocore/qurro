@@ -104,7 +104,7 @@ Note that in the latter two cases specified above -- where an arbitrary number o
 
 ### First steps: selecting features by textual searching
 
-Let's try the second of the selection options mentioned above (selecting features from a textual search) out.
+Let's try the second of the selection options mentioned above (selecting features from a textual search) out. In particular, we'll compute the log ratio of all features identified as being in the order *Fusobacteriales* over all features identified as being in the order *Pseudomonadales*.
 
 1. In the bottom-right corner of the Qurro visualization -- under the `Numerator` section -- change the feature field selector (it's the dropdown that comes right after some text that says "Filter to features where") to say `Taxon` instead of `Feature ID`. Now copy the text `o__Fusobacteriales` into the text box in this section.
 
