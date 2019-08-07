@@ -95,7 +95,7 @@ There are a few ways of selecting features in Qurro:
 
 1. One way is just by **clicking on the rank plot twice**. The first click sets the numerator feature for a log-ratio, and the second click sets the denominator feature for the log-ratio. (Increasing the bar width can help with this.)
 
-2. You can also select features based on a **textual search through their IDs or metadata**. For example, it's possible to construct the log-ratio of all features with taxonomy annotations containing the text `Streptocococcus` over all features with taxonomy annotations containing the text `Staphylocococcus`.
+2. You can also select features based on a **textual search through their IDs or metadata**. For example, it's possible to construct the log-ratio of all features with taxonomy annotations containing the text `Streptococcus` over all features with taxonomy annotations containing the text `Staphylococcus`.
 
 3. You can also select features by **searching through their feature rankings or metadata numerically** (e.g. you can select all features with a differential above a certain threshold). This tutorial won't cover this option; feel free to try this out in Qurro, though!
 
