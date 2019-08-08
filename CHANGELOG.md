@@ -1,5 +1,20 @@
 # Qurro changelog
 
+## Qurro 0.4.0
+### Features added
+### Backward-incompatible changes
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+- Cleaned up various parts of Qurro's documentation to specify that
+  feature rankings are what you get from sorting differentials/feature
+  loadings, not just the literal differentials/feature loadings.
+- Modified the "testing dependencies" section of the README to correctly
+  specify the minimum version of QIIME 2 needed.
+- Various improvements to the moving pictures tutorial.
+- Modifed Qurro's python package description to say "**differentially** ranked
+  features" instead of just "ranked features."
+
 ## Qurro 0.3.0 (August 3, 2019)
 ### Features added
 - Now, Songbird no longer needs to be installed in order for the `qiime qurro
