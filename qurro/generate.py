@@ -234,7 +234,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     rank_chart = (
         alt.Chart(
             rank_data,
-            title="Feature Ranks",
+            title="Features",
             background="#FFFFFF",
             autosize=alt.AutoSizeParams(resize=True),
         )
@@ -251,7 +251,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
             # see https://stackoverflow.com/a/55544817/10730311.
             x=alt.X(
                 "qurro_x",
-                title="Sorted Features",
+                title="Feature Rankings",
                 type="ordinal",
                 scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
                 axis=alt.Axis(ticks=False, labelAngle=0),
@@ -344,7 +344,7 @@ def gen_sample_plot(metadata):
     sample_chart = (
         alt.Chart(
             sample_metadata,
-            title="Log-Ratio of Abundances in Samples",
+            title="Samples",
             background="#FFFFFF",
             autosize=alt.AutoSizeParams(resize=True),
         )
@@ -357,7 +357,7 @@ def gen_sample_plot(metadata):
             ),
             alt.Y(
                 "qurro_balance:Q",
-                title="log(Numerator / Denominator)",
+                title="Current Log-Ratio",
                 type="quantitative",
             ),
             color=alt.Color(default_metadata_col, type="nominal"),

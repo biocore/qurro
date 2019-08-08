@@ -282,7 +282,7 @@ def validate_rank_plot_json(
     # exhaustive; they're mainly intended to verify that a general plot
     # matching our specs is being created)
     assert rank_json["mark"] == "bar"
-    assert rank_json["title"] == "Feature Ranks"
+    assert rank_json["title"] == "Features"
     basic_vegalite_json_validation(rank_json)
 
     # Loop over every feature in the reference feature ranks. Check that each
@@ -329,7 +329,7 @@ def validate_sample_plot_json(
     biom_table_loc, metadata_loc, sample_json, count_json
 ):
     assert sample_json["mark"] == {"type": "circle"}
-    assert sample_json["title"] == "Log-Ratio of Abundances in Samples"
+    assert sample_json["title"] == "Samples"
     basic_vegalite_json_validation(sample_json)
     dn = sample_json["data"]["name"]
 

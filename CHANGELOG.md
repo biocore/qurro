@@ -10,6 +10,12 @@
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
+- Adjusted some of the default titles in Qurro's plots to make things clearer
+  and simpler:
+    - Rank plot title: `Feature Ranks` -> `Features`
+    - Rank plot x-axis title: `Sorted Features` -> `Feature Rankings`
+    - Sample plot title: `Log-Ratios of Abundances in Samples` -> `Samples`
+    - Sample plot y-axis title: `log(Numerator / Denominator)` -> `Current Log-Ratio`
 - Cleaned up various parts of Qurro's documentation to specify that
   feature rankings are what you get from sorting differentials/feature
   loadings, not just the literal differentials/feature loadings.
