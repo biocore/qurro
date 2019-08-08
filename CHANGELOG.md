@@ -2,6 +2,10 @@
 
 ## Qurro 0.4.0
 ### Features added
+- Added light "grid lines" in the Qurro visualization interface. These clearly
+  split up the interface into four distinct sections (rank plot, sample plot,
+  selected features, selecting features), making it clearer how the interface
+  is structured.
 ### Backward-incompatible changes
 ### Bug fixes
 ### Performance enhancements
