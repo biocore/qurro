@@ -24,6 +24,10 @@
     - Rank plot x-axis title: `Sorted Features` -> `Feature Rankings`
     - Sample plot title: `Log-Ratios of Abundances in Samples` -> `Samples`
     - Sample plot y-axis title: `log(Numerator / Denominator)` -> `Current Log-Ratio`
+- Renamed the text-searching options in the search type menu (again). This change
+  reflects these options' case insensitivity as of the previous version (v0.3.0).
+    - `contains the exact text` --> `contains the text`
+    - `contains the exact separated text fragment(s)` --> `contains the separated text fragment(s)`
 - The text boxes describing the currently-selected numerator / denominator
   features are now "read-only" (you can't edit them while using Qurro). This
   should remove any vulnerability to accidental edits of these text boxes.
