@@ -2,12 +2,20 @@
 
 ## Qurro 0.4.0
 ### Features added
-- Added light "grid lines" in the Qurro visualization interface. These clearly
+- Started using Bootstrap (v4.3.1) for styling the Qurro visualization
+  interface. Although the functionality available in Qurro is still the same,
+  this interface has received a significant makeover. The bulk of these
+  cosmetic interface changes are not documented here.
+- Added light "grid lines" to the Qurro visualization interface. These clearly
   split up the interface into four distinct sections (rank plot, sample plot,
   selected features, selecting features), making it clearer how the interface
   is structured.
 ### Backward-incompatible changes
 ### Bug fixes
+- Fixed some problems in how the plots were aligned/positioned in the interface.
+  Now, both plots should "float" toward the middle of the screen, as intended.
+  Also removed some unused whitespace around these plots (the grid lines helped
+  here).
 ### Performance enhancements
 ### Miscellaneous
 - Adjusted some of the default titles in Qurro's plots to make things clearer
@@ -16,14 +24,22 @@
     - Rank plot x-axis title: `Sorted Features` -> `Feature Rankings`
     - Sample plot title: `Log-Ratios of Abundances in Samples` -> `Samples`
     - Sample plot y-axis title: `log(Numerator / Denominator)` -> `Current Log-Ratio`
+- The text boxes describing the currently-selected numerator / denominator
+  features are now "read-only" (you can't edit them while using Qurro). This
+  should remove any vulnerability to accidental edits of these text boxes.
 - Cleaned up various parts of Qurro's documentation to specify that
   feature rankings are what you get from sorting differentials/feature
   loadings, not just the literal differentials/feature loadings.
+- Reworded the text in the info box in the "Selecting Features" section of
+  the Qurro interface ("To construct a log-ratio...")
 - Modified the "testing dependencies" section of the README to correctly
   specify the minimum version of QIIME 2 needed.
 - Various improvements to the moving pictures tutorial.
 - Modifed Qurro's python package description to say "**differentially** ranked
   features" instead of just "ranked features."
+- Darkened the color of the "divider" between the numerator and denominator
+  features text boxes, in order to distinguish it from the grid lines.
+- Removed dependency on [Reset CSS](https://meyerweb.com/eric/tools/css/reset/).
 
 ## Qurro 0.3.0 (August 3, 2019)
 ### Features added
