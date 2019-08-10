@@ -13,10 +13,31 @@
     display: grid;
     grid-template-columns: 50% 50%;
 }
-.twoColumnRow > div {
-    border: 1px solid #eee;
+/* START setting up grid lines. This is kind of a hack, sorry, but being
+ * explicit in the CSS seemed cleaner than an arguably worse JS hack (I think
+ * busting out something like Sass for this project would probably be overkill)
+ */
+#topLeftDiv,
+#topRightDiv,
+#botLeftDiv,
+#botRightDiv {
     border-radius: 3px;
+    border-color: #eee;
+    border-style: solid;
 }
+#topLeftDiv {
+    border-width: 0 1px 1px 0;
+}
+#topRightDiv {
+    border-width: 0 0 1px 1px;
+}
+#botLeftDiv {
+    border-width: 1px 1px 0 0;
+}
+#botRightDiv {
+    border-width: 1px 0 0 1px;
+}
+/* END setting up grid lines. */
 .centeredBlock {
     display: block;
     text-align: center;
