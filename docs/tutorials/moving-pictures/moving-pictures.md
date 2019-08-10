@@ -79,13 +79,18 @@ You just generated your first Qurro plot! `qurro-plot.qzv` is a `.qzv` file -- i
 
 ## 4. Interacting with a Qurro visualization
 
-Let's view `qurro-plot.qzv`, as described above.
+Let's view `qurro-plot.qzv`, as described above. You should see something like
+this:
 
 <img src="https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/screenshots/qurro1.png" alt="Qurro interface screenshot #1. No features are selected." />
 
-So right away we see two things: on the left a plot of rankings (in this case, loadings) for each feature, and on the right a plot of selected features' log ratios in samples. Throughout this tutorial these plots will be referred to as the __rank plot__ and __sample plot__, respectively.
+(The Qurro screenshots in this tutorial are zoomed out a bit so that we can
+show all the relevant parts of the display; depending on your screen resolution
+things might look a bit different.)
 
-Since no features are currently selected to be part of a log-ratio, these plots look pretty empty. So let's select some features!
+In any case, right away we see two things: on the left a plot of rankings (in this case, sorted loadings) for each feature, and on the right a plot of selected features' log ratios in samples. Throughout this tutorial these plots will be referred to as the __rank plot__ and __sample plot__, respectively.
+
+Since no features are currently selected to be part of a log-ratio, these plots look pretty empty. Let's select some features!
 
 ### Selecting features to construct log-ratios
 
