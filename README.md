@@ -125,10 +125,7 @@ licenses (each of which includes a respective copyright notice).
 - [Vega-Lite](https://vega.github.io/vega-lite/)
 - [Vega-Embed](https://github.com/vega/vega-embed)
 - [RequireJS](https://requirejs.org/)
-- [reset](https://meyerweb.com/eric/tools/css/reset/)
-  - Note that `reset` is released under the public domain, so it doesn't have a
-    "license." In any case, thank you to [Eric Meyer](https://meyerweb.com/eric/)
-    for providing this resource!
+- [Bootstrap 4.3](https://getbootstrap.com/docs/4.3/getting-started/introduction/)
 
 The following software projects are required for Qurro's python code
 to function, although they are not distributed with Qurro (and are
