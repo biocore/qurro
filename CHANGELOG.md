@@ -20,10 +20,10 @@
 ### Miscellaneous
 - Adjusted some of the default titles in Qurro's plots to make things clearer
   and simpler:
-    - Rank plot title: `Feature Ranks` -> `Features`
-    - Rank plot x-axis title: `Sorted Features` -> `Feature Rankings`
-    - Sample plot title: `Log-Ratios of Abundances in Samples` -> `Samples`
-    - Sample plot y-axis title: `log(Numerator / Denominator)` -> `Current Log-Ratio`
+    - Rank plot title: `Feature Ranks` --> `Features`
+    - Rank plot x-axis title: `Sorted Features` --> `Feature Rankings`
+    - Sample plot title: `Log-Ratios of Abundances in Samples` --> `Samples`
+    - Sample plot y-axis title: `log(Numerator / Denominator)` --> `Current Log-Ratio`
 - Renamed the text-searching options in the search type menu (again). This change
   reflects these options' case insensitivity as of the previous version (v0.3.0).
     - `contains the exact text` --> `contains the text`
