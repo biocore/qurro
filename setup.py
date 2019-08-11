@@ -69,7 +69,7 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        "altair >= 3.1.0",
+        "altair == 3.1.0",
         "biom-format[hdf5]",
         "click",
         "numpy >= 1.12.0",

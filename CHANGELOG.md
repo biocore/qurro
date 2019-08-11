@@ -44,6 +44,9 @@
 - Darkened the color of the "divider" between the numerator and denominator
   features text boxes, in order to distinguish it from the grid lines.
 - Removed dependency on [Reset CSS](https://meyerweb.com/eric/tools/css/reset/).
+- Temporarily pinned the required version of Altair at `3.1.0`, to ensure
+  consistency between the Vega-Lite specifications generated and the Vega\*
+  versions used by Qurro.
 
 ## Qurro 0.3.0 (August 3, 2019)
 ### Features added
