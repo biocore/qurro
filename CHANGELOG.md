@@ -47,7 +47,7 @@
 - Temporarily pinned the required version of Altair at `3.1.0`, to ensure
   consistency between the Vega-Lite specifications generated and the Vega\*
   versions used by Qurro.
-- Updated the screenshot used in the README.
+- Various minor updates to Qurro's documentation.
 
 ## Qurro 0.3.0 (August 3, 2019)
 ### Features added
