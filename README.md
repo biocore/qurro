@@ -18,7 +18,7 @@ Qurro visualizes the output from a tool like
 __feature rankings__ (either the differentials produced by a tool like
 Songbird, or the loadings in a compositional biplot produced by a tool
 like DEICODE -- when sorted numerically, either of these input types provide
-rankings) alongside a plot showing the __log ratios__ of
+rankings) alongside a plot showing the __log-ratios__ of
 selected features' abundances within samples.
 
 Qurro can be used standalone (as a Python 3 script that generates a
