@@ -31,7 +31,7 @@ from qurro.__init__ import __version__
     required=True,
     help=(
         "Either feature differentials or an ordination containing feature "
-        "loadings."
+        "loadings. When sorted numerically, these provide feature rankings."
     ),
 )
 @click.option("-t", "--table", required=True, help=TABLE)

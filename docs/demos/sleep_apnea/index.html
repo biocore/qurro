@@ -6,7 +6,7 @@
             Qurro
         </title>
         <link rel="shortcut icon" href="icon.png" />
-        <link rel="stylesheet" href="vendor/reset.css" />
+        <link rel="stylesheet" href="vendor/bootstrap.min.css" />
         <link rel="stylesheet" href="qurro.css" />
     </head>
 
@@ -17,15 +17,28 @@
             </strong>
         </div>
         <div class="twoColumnRow">
-            <div>
+            <div id="topLeftDiv">
                 <div id="rankPlot"></div>
-                <div class="centeredBlock">
-                    <label for="rankField">Ranking</label>
-                    <select id="rankField"> </select>
+                <!-- input group structure based on Bootstrap docs:
+                     https://getbootstrap.com/docs/4.3/components/input-group/#custom-select
+                -->
+                <div class="input-group input-group-sm mb-1">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="rankField"
+                            >Ranking</label
+                        >
+                    </div>
+                    <select id="rankField" class="custom-select"> </select>
                 </div>
-                <div class="centeredBlock">
-                    <label for="rankPlotColorScheme">Color scheme</label>
-                    <select id="rankPlotColorScheme">
+                <div class="input-group input-group-sm mb-1">
+                    <div class="input-group-prepend">
+                        <label
+                            class="input-group-text"
+                            for="rankPlotColorScheme"
+                            >Color scheme</label
+                        >
+                    </div>
+                    <select id="rankPlotColorScheme" class="custom-select">
                         <!-- Just normal web colors, with the exception of
                             "Purple" (which is a bit lighter than the "Purple"
                              web color).
@@ -63,7 +76,7 @@
                     <input type="checkbox" id="fitBarSizeCheckbox" />
                     <p
                         id="barSizeWarning"
-                        class="warning centeredBlock invisible marginOnTop"
+                        class="alert alert-warning centeredBlock invisible marginOnTop"
                     >
                         <strong>Warning:</strong> The rank plot is currently
                         using a bar width of less than one pixel per bar. This
@@ -72,7 +85,7 @@
                     </p>
                 </div>
             </div>
-            <div>
+            <div id="topRightDiv">
                 <div id="samplePlot"></div>
                 <div class="centeredBlock">
                     <!-- NOTE that the scale/field select values below will be
@@ -82,33 +95,56 @@
                          color is the sample ID (nom.), we adjust the default
                          scale types accordingly.
                     -->
-                    <div class="centeredBlock">
-                        <label for="xAxisField">x-axis field</label>
-                        <select id="xAxisField"> </select>
-                        <label for="xAxisScale">x-axis scale type</label>
-                        <select id="xAxisScale">
+                    <div class="input-group input-group-sm mb-1">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="xAxisField"
+                                >x-axis field</label
+                            >
+                        </div>
+                        <select class="custom-select" id="xAxisField"> </select>
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="xAxisScale"
+                                >x-axis scale type</label
+                            >
+                        </div>
+                        <select class="custom-select" id="xAxisScale">
                             <option value="nominal">Categorical</option>
                             <option value="quantitative">Quantitative</option>
                         </select>
                     </div>
-                    <div class="centeredBlock">
-                        <label id="colorFieldLabel" for="colorField"
-                            >Color field</label
-                        >
-                        <select id="colorField"> </select>
-                        <label id="colorScaleLabel" for="colorScale"
-                            >Color scale type</label
-                        >
-                        <select id="colorScale">
+                    <div class="input-group input-group-sm mb-1">
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                id="colorFieldLabel"
+                                for="colorField"
+                                >Color field</label
+                            >
+                        </div>
+                        <select class="custom-select" id="colorField"> </select>
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                id="colorScaleLabel"
+                                for="colorScale"
+                                >Color scale type</label
+                            >
+                        </div>
+                        <select class="custom-select" id="colorScale">
                             <option value="nominal">Categorical</option>
                             <option value="quantitative">Quantitative</option>
                         </select>
                     </div>
-                    <div class="centeredBlock">
-                        <label id="catColorSchemeLabel" for="catColorScheme"
-                            >Categorical color scheme</label
-                        >
-                        <select id="catColorScheme">
+                    <div class="input-group input-group-sm mb-1">
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                id="catColorSchemeLabel"
+                                for="catColorScheme"
+                                >Categorical color scheme</label
+                            >
+                        </div>
+                        <select class="custom-select" id="catColorScheme">
                             <option value="accent">accent</option>
                             <option value="category10">category10</option>
                             <option value="category20">category20</option>
@@ -126,10 +162,15 @@
                             >
                             <option value="tableau20">tableau20</option>
                         </select>
-                        <label id="quantColorSchemeLabel" for="quantColorScheme"
-                            >Quantitative color scheme</label
-                        >
-                        <select id="quantColorScheme">
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                id="quantColorSchemeLabel"
+                                for="quantColorScheme"
+                                >Quantitative color scheme</label
+                            >
+                        </div>
+                        <select class="custom-select" id="quantColorScheme">
                             <optgroup label="Sequential Single-Hue">
                                 <option value="blues" selected="true"
                                     >blues</option
@@ -223,16 +264,9 @@
                         >
                         <input type="checkbox" id="boxplotCheckbox" />
                     </div>
-                    <!-- note that these values are obviously placeholders. In
-                         the future, I guess the three bottom divs should start
-                         out as hidden?
-                         And I guess we should auto-add-on the top div contents
-                         when we load the sample JSON (i.e. and know the # of
-                         samples in the dataset).
-                    -->
                     <div
                         id="mainSamplesDroppedDiv"
-                        class="centeredBlock sampleRemovedDiv marginOnTop invisible"
+                        class="centeredBlock sampleRemovedDiv invisible"
                     ></div>
                     <div
                         id="balanceSamplesDroppedDiv"
@@ -250,7 +284,7 @@
             </div>
         </div>
         <div class="twoColumnRow">
-            <div>
+            <div id="botLeftDiv">
                 <!-- Note for future reference: whitespace between the
                     start and end tag of a textarea is apparently
                     interpreted as just that, and preserved in the textarea
@@ -264,8 +298,9 @@
                     </h4>
                     <textarea
                         id="topFeaturesDisplay"
-                        class="fancyBorder num"
+                        class="rounded num"
                         rows="6"
+                        readonly="true"
                     ></textarea>
                 </div>
                 <div id="divide" class="centeredBlock"></div>
@@ -275,30 +310,35 @@
                     </h4>
                     <textarea
                         id="botFeaturesDisplay"
-                        class="fancyBorder den"
+                        class="rounded den"
                         rows="6"
+                        readonly="true"
                     ></textarea>
                 </div>
             </div>
-            <div id="selectionControls">
+            <div id="botRightDiv">
                 <h3 class="centeredHeader">Selecting Features</h3>
-                <p class="info centeredBlock marginOnTop">
+                <p
+                    class="alert alert-info centeredBlock marginOnTop"
+                    role="alert"
+                >
                     To construct a log-ratio, select feature(s) by clicking on
-                    the plot of feature ranks on the left or by searching using
-                    the controls below.
+                    two features in the rank plot or by searching using the
+                    controls below.
                 </p>
                 <h4 class="centeredHeader">Numerator</h4>
-                <div class="centeredBlock">
-                    Filter to features where
-                    <select class="fancyBorder num" id="topSearch"> </select>
-                    <select class="fancyBorder num" id="topSearchType">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="topSearch">
+                            Filter to features where
+                        </label>
+                    </div>
+                    <select class="custom-select num" id="topSearch"> </select>
+                    <select class="custom-select num" id="topSearchType">
                         <optgroup label="Text searching (case insensitive)">
-                            <option value="text"
-                                >contains the exact text</option
-                            >
+                            <option value="text">contains the text</option>
                             <option value="rank"
-                                >contains the exact separated text
-                                fragment(s)</option
+                                >contains the separated text fragment(s)</option
                             >
                         </optgroup>
                         <optgroup label="Numeric searching (basic)">
@@ -322,24 +362,21 @@
                         </optgroup>
                         -->
                     </select>
-                    <input
-                        type="text"
-                        class="fancyBorder num searchInput"
-                        id="topText"
-                    />
                 </div>
+                <input type="text" class="form-control num" id="topText" />
                 <h4 class="centeredHeader">Denominator</h4>
-                <div class="centeredBlock">
-                    Filter to features where
-                    <select class="fancyBorder den" id="botSearch"> </select>
-                    <select class="fancyBorder den" id="botSearchType">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="botSearch">
+                            Filter to features where
+                        </label>
+                    </div>
+                    <select class="custom-select den" id="botSearch"> </select>
+                    <select class="custom-select den" id="botSearchType">
                         <optgroup label="Text searching (case insensitive)">
-                            <option value="text"
-                                >contains the exact text</option
-                            >
+                            <option value="text">contains the text</option>
                             <option value="rank"
-                                >contains the exact separated text
-                                fragment(s)</option
+                                >contains the separated text fragment(s)</option
                             >
                         </optgroup>
                         <optgroup label="Numeric searching (basic)">
@@ -363,12 +400,8 @@
                         </optgroup>
                         -->
                     </select>
-                    <input
-                        type="text"
-                        class="fancyBorder den searchInput"
-                        id="botText"
-                    />
                 </div>
+                <input type="text" class="form-control den" id="botText" />
 
                 <!-- Invisible <a> used for downloading data URIs.
                      Based on #downloadHelper in MetagenomeScope's viewer
@@ -376,10 +409,10 @@
                 -->
                 <a id="downloadHelper" class="invisible"></a>
                 <div class="centeredBlock marginOnTop">
-                    <button id="multiFeatureButton">
+                    <button id="multiFeatureButton" class="btn btn-light">
                         Regenerate plots
                     </button>
-                    <button id="exportDataButton">
+                    <button id="exportDataButton" class="btn btn-light">
                         Export sample data
                     </button>
                 </div>

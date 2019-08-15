@@ -1,71 +1,43 @@
-body {
-    font-family: Helvetica, Arial, sans-serif;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin-top: 1em;
-    font-weight: bold;
-}
-strong {
-    font-weight: bold;
-}
 .marginOnTop {
     margin-top: 1em;
 }
-h3 {
-    font-size: larger;
-}
-h4 {
-    font-size: large;
-}
-/* Override user agents that automatically add vertical margins, which can make
- * the layout look kinda strange
- */
 .centeredHeader {
     margin-bottom: 0.25em;
     text-align: center;
 }
-/* info and warning are inspired by the similarly-named elements in
- * Bootstrap.
- */
-.info {
+.alert {
     font-size: small;
-    background-color: #cfffff;
-    color: #1f4c73;
-    border-radius: 5px;
-    border: 2px solid #cfcfff;
-    width: 75%;
-    padding: 0.5em;
-    /* Horizontally centers this element */
-    margin-right: auto;
-    margin-left: auto;
-}
-.info strong {
-    color: #0a2a3b;
-}
-.warning {
-    font-size: small;
-    background-color: #ffffcc;
-    color: #734d15;
-    border-radius: 8px;
-    border: 2px dotted #ffcfcc;
-    width: 75%;
-    padding: 0.5em;
-    /* Horizontally centers this element */
-    margin-right: auto;
-    margin-left: auto;
-}
-.warning strong {
-    color: #3b270a;
+    margin: 0 2em;
 }
 .twoColumnRow {
     display: grid;
     grid-template-columns: 50% 50%;
 }
+/* START setting up grid lines. This is kind of a hack, sorry, but being
+ * explicit in the CSS seemed cleaner than an arguably worse JS hack (I think
+ * busting out something like Sass for this project would probably be overkill)
+ */
+#topLeftDiv,
+#topRightDiv,
+#botLeftDiv,
+#botRightDiv {
+    border-radius: 3px;
+    border-color: #eee;
+    border-style: solid;
+}
+#topLeftDiv {
+    border-width: 0 1px 1px 0;
+}
+#topRightDiv {
+    border-width: 0 0 1px 1px;
+}
+#botLeftDiv {
+    border-width: 1px 1px 0 0;
+}
+#botRightDiv {
+    border-width: 1px 0 0 1px;
+}
+/* END setting up grid lines. */
 .centeredBlock {
     display: block;
     text-align: center;
@@ -73,48 +45,35 @@ h4 {
 .sampleRemovedDiv {
     font-size: small;
 }
-code {
-    font-family: monospace;
-}
 /* Inspired by https://stackoverflow.com/a/42227872/10730311. */
 #divide {
     width: 98%;
     height: 2px;
-    background-color: lightgray;
+    background-color: #bbb;
     margin: 1em auto;
 }
 #rankPlot {
-    margin-right: 2em;
-    text-align: right;
-    width: 90%;
+    float: right;
 }
 #samplePlot {
-    margin-left: 2em;
-    text-align: left;
+    float: left;
 }
-/* The reason for max-width: 90% is to leave room for the Vega-Embed "actions"
- * circle thing. Might be worth addressing this later, but for now this is a
- * reasonable hack.
- * Also, max-height can be decreased once we remove the rank signal (it's
- * included within the rankPlot, which is why the height is as large as it is).
- * width: 100% is needed to let the plot divs cover their entire horizontal
- * space.
- */
 #rankPlot,
 #samplePlot {
     margin-top: 0.5em;
     overflow: auto;
     max-height: 420px;
-    max-width: 90%;
+    max-width: 100%;
 }
+/* Bootstrap styles text areas to be non-horizontally-resizable, so no need to
+ * worry about that.
+ *
+ * Also, the 2em min-height figure was determined by some basic testing to
+ * look good. (It seems like a reasonable value for this.)
+ */
 textarea {
-    width: 92%;
-    max-width: 96%;
-    min-width: 30%;
-}
-.fancyBorder {
-    border: 1px solid;
-    border-radius: 3px;
+    width: 95%;
+    min-height: 2em;
 }
 .num {
     border-color: #f00;
@@ -131,15 +90,23 @@ textarea {
  * description of how to verify this (tldr: you just calculate the relative
  * luminance of both colors and look at the ratio after adding 0.05 to both
  * parts of the ratio).
+ *
+ * Also: we manually set the border-color and box-shadow because Bootstrap
+ * automatically changes this for form-control elements. See
+ * https://blog.blakesimpson.co.uk/page.php?id=71 for context.
+ * The form-control elements won't have the cool focus used on the normal
+ * textarea elements, but they'll still have a noticeable "outline" due to the
+ * use of box-shadow.
  */
 .num:focus {
+    border-color: #f00;
+    box-shadow: 0 0 0 1px #800;
     outline-color: #800;
 }
 .den:focus {
+    border-color: #00f;
+    box-shadow: 0 0 0 1px #009;
     outline-color: #009;
-}
-.searchInput {
-    width: 80%;
 }
 .invisible {
     display: none;
@@ -157,4 +124,18 @@ textarea {
 #vg-tooltip-element.vg-tooltip.custom-theme td {
     max-width: 550px;
     max-height: 300px;
+}
+/* Use minimal padding for the "table" structure inside the tooltip.
+ * Bootstrap attempts to override this, so we fix it.
+ *
+ * We set this for the entire .vg-tooltip class because we want these changes
+ * to affect both the rank and sample plot (rank plot uses a custom tooltip
+ * class, sample plot uses the default [which as of writing is the "light
+ * theme"]).
+ *
+ * (Default padding values are trying to mimic what Vega* does by default, but
+ * are probably slightly off. It looks good enough for the time being.)
+ */
+#vg-tooltip-element.vg-tooltip td {
+    padding: 0px 0px 0px 2px;
 }

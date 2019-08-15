@@ -301,8 +301,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.sampleCount
             );
 
-            // NOTE: Use of "patch" based on
-            // https://beta.observablehq.com/@domoritz/rotating-earth
             var parentDisplay = this;
             return vegaEmbed("#samplePlot", this.samplePlotJSON, {
                 downloadFileName: "sample_plot"

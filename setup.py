@@ -30,7 +30,8 @@ classes = """
 classifiers = [s.strip() for s in classes.split("\n") if s]
 
 description = (
-    "Visualizes ranked features and log ratios of their sample abundances"
+    "Visualizes differentially ranked features and log ratios of their "
+    "sample abundances"
 )
 
 with open("README.md") as f:
@@ -68,7 +69,7 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        "altair >= 3.1.0",
+        "altair == 3.1.0",
         "biom-format[hdf5]",
         "click",
         "numpy >= 1.12.0",
