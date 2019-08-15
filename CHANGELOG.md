@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.4.0
+## Qurro 0.4.0 (August 15, 2019)
 ### Features added
 - Started using Bootstrap (v4.3.1) for styling the Qurro visualization
   interface. Although the functionality available in Qurro is still the same,
