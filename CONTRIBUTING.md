@@ -14,14 +14,11 @@ in this repository or email the Qurro development team
 1. Clone your fork of Qurro's source code to your computer.
 2. Create a development conda environment for Qurro:
     1. Install the latest version of QIIME 2 natively,
-       [as you would normally](https://docs.qiime2.org/2019.4/install/native/).
+       [as you would normally](https://docs.qiime2.org/2019.7/install/native/).
+       _You'll need to install a QIIME 2 version of at least 2019.7._
     2. In a terminal, navigate to the folder to which you cloned your fork of
        Qurro's source code above. Run `pip install -e .[dev]` inside this folder to
        install Qurro along with its normal and development Python dependencies.
-    3. Install songbird using `conda install -c conda-forge songbird`. This is
-       required to get QIIME 2 to recognize the `FeatureData[Differential]` type
-       (note that this is a temporary requirement, and should be unnecessary
-       after QIIME 2 version 2019.7 is released).
     4. Install the various Node.js requirements for testing Qurro's JavaScript
        code. This can be done by running
        `npm install -g mocha-headless-chrome jshint prettier nyc`. Note that
@@ -36,11 +33,16 @@ If these commands succeed, then you can start making changes to Qurro.
 
 ## Before submitting a pull request to Qurro
 
-You should check that 1) all the tests pass (i.e. `make test` succeeds),
-and 2) the code is properly formatted (i.e. `make stylecheck` succeeds). If
-you'd like to fix the code's formatting automatically, you can just run
-`make style` (some code might require a slight bit of manual tweaking
-afterwards to get things working).
+Both of the following criteria should be followed:
+
+1. All the tests pass (i.e. `make test` succeeds).
+2. The code is properly formatted (i.e. `make stylecheck` succeeds).
+
+Assuming all of Qurro's development dependencies are installed, you can run
+`make style` to perform auto-formatting. (In rare occasions I've observed black
+and flake8 disagreeing, in which case you'd need to manually resolve the
+problem to get `make stylecheck` to pass. But I don't think this should happen
+very often or at all by this point -- contact me if you have questions.)
 
 ## Acknowledgements
 
