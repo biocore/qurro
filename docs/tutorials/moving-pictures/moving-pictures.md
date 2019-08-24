@@ -55,8 +55,8 @@ If you've completed the DEICODE tutorial already, you can follow along here (usi
 - `table.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fdocs.qiime2.org%2F2019.4%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftable.qza) | [download](https://docs.qiime2.org/2019.4/data/tutorials/moving-pictures/table.qza)
 - `sample-metadata.tsv` [download](https://data.qiime2.org/2019.4/tutorials/moving-pictures/sample_metadata.tsv)
 - `taxonomy.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fdocs.qiime2.org%2F2019.4%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftaxonomy.qza) | [download](https://docs.qiime2.org/2019.4/data/tutorials/moving-pictures/taxonomy.qza)
-- `ordination.qza` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fordination.qza) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/ordination.qza)
-- `biplot.qzv` [view](https://view.qiime2.org/?src=https%3A%2F%2Fbiocore.github.io%2Fqurro%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv) | [download](https://biocore.github.io/qurro/tutorials/moving-pictures/data/biplot.qzv)
+- `ordination.qza` [view](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fraw.githubusercontent.com%2Fbiocore%2Fqurro%2Fmaster%2Fdocs%2Ftutorials%2Fmoving-pictures%2Fdata%2Fordination.qza) | [download](https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/data/ordination.qzv)
+- `biplot.qzv` [view](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fraw.githubusercontent.com%2Fbiocore%2Fqurro%2Fmaster%2Fdocs%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv) | [download](https://raw.githubusercontent.com/biocore/qurro/master/docs/tutorials/moving-pictures/data/biplot.qzv)
 
 ## 3. Running Qurro
 
