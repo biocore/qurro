@@ -1,5 +1,19 @@
 # Qurro changelog
 
+## Next Qurro release (date TBD)
+### Features added
+### Backward-incompatible changes
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+- For searching by the values of a given feature ranking, the header shown
+  above all of the ranking column names said `Feature Rankings`.
+  This was slightly misleading, since searching is being done on the
+  magnitudes of each ranking column for each feature (i.e. based on the
+  y-axis values shown in the rank plot). To make things clearer, this header
+  has been changed from `Feature Rankings` to `Feature Ranking Magnitudes`.
+
+
 ## Qurro 0.4.0 (August 15, 2019)
 ### Features added
 - Started using Bootstrap (v4.3.1) for styling the Qurro visualization
@@ -48,6 +62,7 @@
   consistency between the Vega-Lite specifications generated and the Vega\*
   versions used by Qurro.
 - Various minor updates to Qurro's documentation.
+
 
 ## Qurro 0.3.0 (August 3, 2019)
 ### Features added
