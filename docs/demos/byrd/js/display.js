@@ -187,7 +187,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 var searchableFields = {
                     standalone: ["Feature ID"],
                     "Feature Metadata": this.featureMetadataFields,
-                    "Feature Rankings": this.rankOrdering
+                    "Feature Ranking Magnitudes": this.rankOrdering
                 };
                 dom_utils.populateSelect(
                     "topSearch",
