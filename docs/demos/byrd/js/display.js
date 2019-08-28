@@ -719,7 +719,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 {
                     type: "quantitative",
                     field: "qurro_balance",
-                    title: "Current Log-Ratio"
+                    title: "Current Natural Log-Ratio"
                 },
                 {
                     type: this.samplePlotJSON.encoding.x.type,
@@ -1178,7 +1178,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          */
         getSamplePlotData(currXField, currColorField) {
             var outputTSV =
-                '"Sample ID"\tCurrent_Log_Ratio\t' +
+                '"Sample ID"\tCurrent_Natural_Log_Ratio\t' +
                 RRVDisplay.quoteTSVFieldIfNeeded(currXField) +
                 "\t" +
                 RRVDisplay.quoteTSVFieldIfNeeded(currColorField);

@@ -357,7 +357,7 @@ def gen_sample_plot(metadata):
             ),
             alt.Y(
                 "qurro_balance:Q",
-                title="Current Log-Ratio",
+                title="Current Natural Log-Ratio",
                 type="quantitative",
             ),
             color=alt.Color(default_metadata_col, type="nominal"),

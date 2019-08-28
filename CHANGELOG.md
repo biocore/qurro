@@ -6,6 +6,12 @@
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
+- Renamed the y-axis of the sample plot to say `Current Natural Log-Ratio`
+  instead of just `Current Log-Ratio`. (This makes it clearer that these
+  log-ratios are computed using the natural log.) This change has also been
+  applied to TSV files exported from the sample plot (`Current_Log_Ratio` -->
+  `Current_Natural_Log_Ratio`), as well as to the tooltips of samples in the
+  sample plot.
 - For searching by the values of a given feature ranking, the header shown
   above all of the ranking column names said `Feature Rankings`.
   This was slightly misleading, since searching is being done on the
