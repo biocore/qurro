@@ -468,6 +468,69 @@ def sparsify_count_dict(count_dict):
     return sparse_count_dict
 
 
+def add_sample_presence_count(feature_data, table_sdf):
+    """Adds a "qurro_spc" column to a DataFrame of feature information.
+
+       The value in this column corresponds to the number of samples a given
+       feature is present in, as determined by the count data given in the
+       table_sdf argument.
+
+       Parameters
+       ----------
+
+       feature_data: pd.DataFrame
+            A DataFrame containing some sort of feature information. At the
+            point in Qurro this is called, this will likely include both
+            feature ranking information and feature metadata information.
+
+       table_sdf: pd.SparseDataFrame
+            Representation of a BIOM table containing count data. The index
+            contains feature IDs, and the columns contain sample IDs.
+            This table should only contain samples that will be used in the
+            Qurro visualization (i.e. this table should be the output of all
+            the matching, filtering, removing empty, etc. steps), since the
+            presence of irrelevant samples will result in inaccurate SPC values
+            being computed.
+
+       Returns
+       -------
+
+       output_feature_data: pd.DataFrame
+            feature_data, with a qurro_spc column added.
+
+       Raises
+       ------
+
+       ValueError: if feature_data already contains a column named "qurro_spc".
+                   (Assuming you've already called check_column_names() on this
+                   data this shouldn't be a problem, but this checks anyway.)
+    """
+    # Convert the table into a presence-absence representation (every count
+    # value > 0 is replaced with 1).
+    #
+    # When I was looking around for ways to do this, I googled "pandas
+    # dataframe presence absence" and one of the first hits was the docs for
+    # DF.where() (which led me to DF.mask). Nowhere on either of these pages
+    # is "presence" or "absence" mentioned. But, uh, thanks Google for reading
+    # my mind?
+    table_pa = table_sdf.mask(table_sdf > 0, 1)
+    # Sum each row of the presence-absence table, producing a series with
+    # qurro_spc values
+    spc_series = table_pa.sum(axis="columns")
+    spc_series.name = "qurro_spc"
+
+    # Return merged copy of the feature data with the series named "qurro_spc"
+    # Note the use of suffixes=(False, False) -- this will throw a ValueError
+    # if feature_data already contains a column called "qurro_spc".
+    return feature_data.merge(
+        spc_series,
+        how="left",
+        left_index=True,
+        right_index=True,
+        suffixes=(False, False),
+    )
+
+
 def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
     """Checks that column names in input data will work properly in Qurro.
 
@@ -511,6 +574,12 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
         raise ValueError(
             "Feature rankings/metadata can't contain any columns called "
             '"qurro_x".{}'.format(sugg)
+        )
+
+    if "qurro_spc" in fr_cols or "qurro_spc" in fm_cols:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            '"qurro_spc".{}'.format(sugg)
         )
 
     if len(set(fr_cols) & set(fm_cols)) > 0:

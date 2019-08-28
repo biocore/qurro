@@ -6,7 +6,17 @@
   if, say, all of your samples have an x-axis value of at least 20, then they
   won't be squished on the side of the sample plot any more.
   ([#218](https://github.com/biocore/qurro/issues/218))
+- All features in the rank plot now have a "Sample Presence Count" field shown
+  in their tooltips. A given feature's "Sample Presence Count" value is equal
+  to the number of samples in the Qurro visualization that contain that
+  feature. This should give some context as to why log-ratios between certain
+  features result in more or less samples being dropped from the sample plot.
+  ([#217](https://github.com/biocore/qurro/issues/217))
 ### Backward-incompatible changes
+- As a side effect of implementing the Sample Presence Count feature, if any of
+  your feature ranks or feature metadata inputs contain a column named
+  `qurro_spc` then an error will be raised when trying to generate a Qurro
+  visualization.
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous

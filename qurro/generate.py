@@ -34,6 +34,7 @@ from qurro._df_utils import (
     match_table_and_data,
     merge_feature_metadata,
     sparsify_count_dict,
+    add_sample_presence_count,
 )
 
 
@@ -175,7 +176,7 @@ def process_input(
     )
 
 
-def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
+def gen_rank_plot(V, ranking_ids, feature_metadata_cols, table_sdf):
     """Uses Altair to generate a JSON Vega-Lite spec for the rank plot.
 
     Parameters
@@ -195,6 +196,13 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     feature_metadata_cols: pd.Index or list
         IDs of the "feature metadata" columns in V (if there wasn't any
         feature metadata provided, this can just be an empty list).
+
+    table_sdf: pd.SparseDataFrame
+        A representation of the input BIOM table containing count data. This
+        is used to calculate qurro_spc (the number of samples a feature is
+        present in) for each feature in V. This should ONLY contain samples
+        that will be used in the Qurro visualization -- the presence of extra
+        samples will mess up _df_utils.add_sample_presence_count().
 
     Returns
     -------
@@ -225,6 +233,10 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
     rank_data["qurro_classification"] = "None"
+
+    # Add a "qurro_spc" column indicating how many samples each feature is
+    # present in.
+    rank_data = add_sample_presence_count(rank_data, table_sdf)
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
@@ -275,6 +287,11 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
                     field="qurro_classification",
                     title="Log-Ratio Classification",
                     type="nominal",
+                ),
+                alt.Tooltip(
+                    field="qurro_spc",
+                    title="Sample Presence Count",
+                    type="quantitative",
                 ),
                 "Feature ID",
                 *feature_metadata_cols,
@@ -423,7 +440,9 @@ def gen_visualization(
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
-    rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
+    rank_plot_json = gen_rank_plot(
+        V, ranking_ids, feature_metadata_cols, processed_table
+    )
     logging.debug("Generating sample plot JSON.")
     sample_plot_json = gen_sample_plot(df_sample_metadata)
     logging.debug("Generating count data JSON.")
