@@ -2,6 +2,10 @@
 
 ## Next Qurro release (date TBD)
 ### Features added
+- The sample plot's x- and y-axes are now no longer forced to include zero. So
+  if, say, all of your samples have an x-axis value of at least 20, then they
+  won't be squished on the side of the sample plot any more.
+  ([#218](https://github.com/biocore/qurro/issues/218))
 ### Backward-incompatible changes
 ### Bug fixes
 ### Performance enhancements
@@ -26,6 +30,7 @@
   interface. Although the functionality available in Qurro is still the same,
   this interface has received a significant makeover. The bulk of these
   cosmetic interface changes are not documented here.
+  ([#111](https://github.com/biocore/qurro/issues/111))
 - Added light "grid lines" to the Qurro visualization interface. These clearly
   split up the interface into four distinct sections (rank plot, sample plot,
   selected features, selecting features), making it clearer how the interface

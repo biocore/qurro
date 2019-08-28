@@ -354,11 +354,13 @@ def gen_sample_plot(metadata):
                 default_metadata_col,
                 type="nominal",
                 axis=alt.Axis(labelAngle=-45),
+                scale=alt.Scale(zero=False),
             ),
             alt.Y(
                 "qurro_balance:Q",
                 title="Current Natural Log-Ratio",
                 type="quantitative",
+                scale=alt.Scale(zero=False),
             ),
             color=alt.Color(default_metadata_col, type="nominal"),
             tooltip=["Sample ID:N", "qurro_balance:Q"],
