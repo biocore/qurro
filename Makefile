@@ -31,8 +31,6 @@ stylecheck:
 	jshint $(JSLOCS)
 	prettier --check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 
-# If we'd want to do any automatic python code formatting (e.g. with black), we
-# could do that here
 style:
 	black -l 79 qurro/ setup.py
 	@# To be extra safe, do a dry run of prettier and check that it hasn't
