@@ -23,15 +23,4 @@ EXTREME_FEATURE_COUNT = (
     "filtering step."
 )
 
-ASSUME_GNPS_FEATURE_METADATA = (
-    "If specified, Qurro will assume that the input feature metadata "
-    "was obtained from GNPS. This means that Qurro will read each "
-    'feature\'s ID as "A;B", where A is the mass-to-charge ratio of the '
-    'feature (corresponding to the "parent mass" column in the feature '
-    "metadata) and B is the discharge time of the feature (corresponding to "
-    'the "RTConsensus" column in the feature metadata). Qurro will then only '
-    'annotate features with their corresponding "LibraryID" column from the '
-    "feature metadata."
-)
-
 DEBUG = "If this flag is used, Qurro will output debug messages."

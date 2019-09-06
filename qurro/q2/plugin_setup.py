@@ -53,7 +53,6 @@ params = {
     "feature_metadata": Metadata,
     "extreme_feature_count": Int,
     "debug": Bool,
-    # "assume_gnps_feature_metadata": Bool,
 }
 
 param_descs = {
@@ -63,7 +62,6 @@ param_descs = {
         " Note that you'll also need to use the --verbose option to see these "
         "messages."
     ),
-    # "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
 }
 
 short_desc = "Generate a Qurro visualization from feature {}s"

@@ -13,6 +13,12 @@
   features result in more or less samples being dropped from the sample plot.
   ([#217](https://github.com/biocore/qurro/issues/217))
 ### Backward-incompatible changes
+- **Removed the `-gnps`/`--assume-gnps-feature-metadata` argument from the
+  standalone Qurro interface.** If you'd like to use GNPS data in Qurro, you'll
+  just need to supply a "normal" feature metadata file where the first column
+  corresponds to each feature's ID.  (This should be available through GNPS
+  now.) A benefit of this is that you can use this data in either the
+  standalone or QIIME 2 Qurro interfaces.
 - As a side effect of implementing the Sample Presence Count feature, if any of
   your feature ranks or feature metadata inputs contain a column named
   `qurro_spc` then an error will be raised when trying to generate a Qurro

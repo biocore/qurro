@@ -76,15 +76,6 @@ This is due to some downstream issues with handling these sorts of characters
 in field names. See [this issue](https://github.com/biocore/qurro/issues/66)
 for context.
 
-### Integration with metabolomics feature metadata
-
-If you have a GNPS feature metadata file (where each row in the file has a
-`parent mass` and `RTConsensus` column), you can pass in the `-gnps`
-(`--assume-gnps-feature-metadata`) command-line argument to Qurro's
-standalone script to make Qurro understand the metadata file. **Please
-note that this functionality is experimental**; furthermore, it is not yet
-available in the QIIME 2 plugin version of Qurro.
-
 ## Tutorials
 
 ### "Moving Pictures" Tutorial
