@@ -12,6 +12,16 @@ TABLE = (
     "Qurro visualization."
 )
 
+SAMPLE_METADATA = (
+    "Sample metadata. You can use sample metadata fields to change the "
+    "x-axis and coloring in the sample plot."
+)
+
+FEATURE_METADATA = (
+    "Feature metadata. You can use feature metadata fields to filter features "
+    "in the rank plot when selecting them for log-ratios."
+)
+
 EXTREME_FEATURE_COUNT = (
     "If specified, Qurro will only use this many "
     '"extreme" features from both ends of all of the rankings. '

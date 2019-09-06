@@ -8,7 +8,13 @@
 import logging
 from biom import load_table
 import click
-from qurro._parameter_descriptions import TABLE, EXTREME_FEATURE_COUNT, DEBUG
+from qurro._parameter_descriptions import (
+    TABLE,
+    EXTREME_FEATURE_COUNT,
+    DEBUG,
+    SAMPLE_METADATA,
+    FEATURE_METADATA,
+)
 from qurro.generate import process_and_generate
 from qurro._rank_utils import read_rank_file
 from qurro._metadata_utils import read_metadata_file
@@ -27,12 +33,8 @@ from qurro.__init__ import __version__
     ),
 )
 @click.option("-t", "--table", required=True, help=TABLE)
-@click.option(
-    "-sm", "--sample-metadata", required=True, help="Sample metadata file."
-)
-@click.option(
-    "-fm", "--feature-metadata", default=None, help="Feature metadata file."
-)
+@click.option("-sm", "--sample-metadata", required=True, help=SAMPLE_METADATA)
+@click.option("-fm", "--feature-metadata", default=None, help=FEATURE_METADATA)
 @click.option(
     "-o",
     "--output-dir",

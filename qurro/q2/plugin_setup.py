@@ -11,7 +11,13 @@ import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
 from ._method import differential_plot, loading_plot
-from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
+from qurro._parameter_descriptions import (
+    TABLE,
+    EXTREME_FEATURE_COUNT,
+    DEBUG,
+    SAMPLE_METADATA,
+    FEATURE_METADATA,
+)
 from qiime2.plugin import Metadata, Properties, Int, Bool
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.ordination import PCoAResults
@@ -56,6 +62,8 @@ params = {
 }
 
 param_descs = {
+    "sample_metadata": SAMPLE_METADATA,
+    "feature_metadata": FEATURE_METADATA,
     "extreme_feature_count": EXTREME_FEATURE_COUNT,
     "debug": DEBUG
     + (
