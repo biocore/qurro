@@ -173,8 +173,7 @@ Lastly, the data located in `qurro/tests/input/red_sea`
 (and in `example_notebooks/songbird_red_sea/input/`, and shown in the
 screenshot above) were taken from Songbird's GitHub repository in its
 [`data/redsea/`](https://github.com/biocore/songbird/tree/master/data/redsea)
-folder, and are associated with
-[this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/) [3].
+folder, and are associated with Thompson et al. 2017 [3].
 
 ### Logo
 
@@ -199,17 +198,21 @@ And thanks to a bunch of the Knight Lab for helping name the tool :)
 [1] Minich, J. J., Petrus, S., Michael, J. D., Michael, T. P., Knight, R., &
 Allen, E. E. (2019). Temporal, environmental, and biological
 drivers of the mucosal microbiome in a wild marine fish, Scomber japonicus.
-_Manuscript under review._
+_bioRxiv_, page 721555. [Link](https://www.biorxiv.org/content/10.1101/721555v1).
 
 [2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/28679656).
 
 [3] Thompson, L. R., Williams, G. J., Haroon, M. F., Shibl, A., Larsen, P.,
 Shorenstein, J., ... & Stingl, U. (2017). Metagenomic covariation along densely
 sampled environmental gradients in the Red Sea. _The ISME journal, 11_(1), 138.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/27420030).
 
 [4] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/29896566).
 
 [5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome biology, 12_(5), R50.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/21624126).
 
 ## License
 
