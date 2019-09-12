@@ -38,6 +38,14 @@
   magnitudes of each ranking column for each feature (i.e. based on the
   y-axis values shown in the rank plot). To make things clearer, this header
   has been changed from `Feature Rankings` to `Feature Ranking Magnitudes`.
+- Improved the command-line documentation of the sample and feature metadata
+  parameters.
+- Updated citation/link information for references in the README.
+- Changed the project structure around slightly to ensure that
+  `dependency_licenses/` for libraries distributed with Qurro
+  (Vega, Vega-Lite, Vega-Embed, RequireJS, Bootstrap) are now installed in
+  both "source" and "built" distributions of Qurro (previously, these were only
+  installed in "source" distributions).
 
 
 ## Qurro 0.4.0 (August 15, 2019)

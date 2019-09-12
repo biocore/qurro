@@ -110,7 +110,7 @@ the DOI of Qurro's source code (provided by Zenodo). See
 
 Code files for the following projects are distributed within
 `qurro/support_file/vendor/`.
-See the `dependency_licenses/` directory for copies of these software projects'
+See the `qurro/dependency_licenses/` directory for copies of these software projects'
 licenses (each of which includes a respective copyright notice).
 - [Vega](https://vega.github.io/vega/)
 - [Vega-Lite](https://vega.github.io/vega-lite/)

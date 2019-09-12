@@ -1,4 +1,4 @@
+graft qurro/dependency_licenses
 graft qurro/support_files
 include README.md
 include LICENSE.txt
-graft dependency_licenses
