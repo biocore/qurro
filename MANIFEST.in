@@ -1,6 +1,4 @@
-include qurro/support_files/*
-include qurro/support_files/js/*
-include qurro/support_files/vendor/*
+graft qurro/support_files
 include README.md
 include LICENSE.txt
-include dependency_licenses/*
+graft dependency_licenses
