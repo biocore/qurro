@@ -84,7 +84,7 @@ def plot(
     df_sample_metadata = escape_columns(
         read_metadata_file(sample_metadata), "sample metadata"
     )
-    feature_ranks = read_rank_file(ranks)
+    feature_ranks, rank_type = read_rank_file(ranks)
 
     df_feature_metadata = None
     if feature_metadata is not None:
@@ -95,6 +95,7 @@ def plot(
 
     process_and_generate(
         feature_ranks,
+        rank_type,
         df_sample_metadata,
         loaded_biom,
         output_dir,

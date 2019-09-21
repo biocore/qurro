@@ -40,6 +40,7 @@ from qurro._df_utils import (
 
 def process_and_generate(
     feature_ranks,
+    rank_type,
     sample_metadata,
     biom_table,
     output_dir,
@@ -55,7 +56,13 @@ def process_and_generate(
         extreme_feature_count,
     )
     return gen_visualization(
-        V, ranking_ids, feature_metadata_cols, processed_table, U, output_dir
+        V,
+        rank_type,
+        ranking_ids,
+        feature_metadata_cols,
+        processed_table,
+        U,
+        output_dir,
     )
 
 
@@ -176,7 +183,7 @@ def process_input(
     )
 
 
-def gen_rank_plot(V, ranking_ids, feature_metadata_cols, table_sdf):
+def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
     """Uses Altair to generate a JSON Vega-Lite spec for the rank plot.
 
     Parameters
@@ -189,6 +196,11 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols, table_sdf):
 
         This should have already been matched with the BIOM table, filtered (if
         -x passed), had empty features removed, etc.
+
+    rank_type: str
+        Human-readable name for a given ranking column that will be used as the
+        prefix for each y-axis label in the rank plot. (This should be either
+        "Differential" or "Feature Loading".)
 
     ranking_ids: pd.Index
         IDs of the actual "feature ranking" columns in V.
@@ -211,7 +223,8 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols, table_sdf):
         A dict version of the alt.Chart for the rank plot, with
         qurro_rank_ordering and qurro_feature_metadata_ordering datasets
         added in indicating which columns describe feature rankings and
-        which describe feature metadata.
+        which describe feature metadata. (Also has a qurro_rank_type "dataset"
+        (really just a string) that points to the specified rank_type.)
     """
 
     rank_data = V.copy()
@@ -310,7 +323,10 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols, table_sdf):
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "qurro_rank_ordering"
     fm_col_ordering = "qurro_feature_metadata_ordering"
-    check_json_dataset_names(rank_chart_json, rank_ordering, fm_col_ordering)
+    dataset_name_for_rank_type = "qurro_rank_type"
+    check_json_dataset_names(
+        rank_chart_json, rank_ordering, fm_col_ordering, rank_type
+    )
 
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
@@ -318,6 +334,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols, table_sdf):
     # metadata the user saw fit to pass in).
     rank_chart_json["datasets"][rank_ordering] = list(ranking_ids)
     rank_chart_json["datasets"][fm_col_ordering] = list(feature_metadata_cols)
+    rank_chart_json["datasets"][dataset_name_for_rank_type] = rank_type
     return rank_chart_json
 
 
@@ -420,6 +437,7 @@ def gen_sample_plot(metadata):
 
 def gen_visualization(
     V,
+    rank_type,
     ranking_ids,
     feature_metadata_cols,
     processed_table,
@@ -441,7 +459,7 @@ def gen_visualization(
 
     logging.debug("Generating rank plot JSON.")
     rank_plot_json = gen_rank_plot(
-        V, ranking_ids, feature_metadata_cols, processed_table
+        V, rank_type, ranking_ids, feature_metadata_cols, processed_table
     )
     logging.debug("Generating sample plot JSON.")
     sample_plot_json = gen_sample_plot(df_sample_metadata)

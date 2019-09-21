@@ -89,6 +89,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
+            // The human-readable "type" of the feature rankings (should be
+            // either "Differential" or "Feature Loading")
+            this.rankType = undefined;
 
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
@@ -123,6 +126,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // current x-axis. (It does the same thing with tooltips, which is
             // why we delete tooltips also when switching to boxplots.)
             this.colorEles = ["colorField", "colorScale"];
+
             // Set up relevant DOM bindings
             var display = this;
             // NOTE: can probably update a few of these callbacks to just refer
@@ -177,6 +181,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
 
         makeRankPlot(notFirstTime) {
             if (!notFirstTime) {
+                this.rankType = this.rankPlotJSON.datasets.qurro_rank_type;
+                // Update the rank field label to say either "Differential" or
+                // "Feature Loading". I waffled on whether or not to put this
+                // here or in setUpDOM(), but I guess this location makes sense
+                document.getElementById(
+                    "rankFieldLabel"
+                ).textContent = this.rankType;
+
                 this.rankOrdering = this.rankPlotJSON.datasets.qurro_rank_ordering;
                 dom_utils.populateSelect(
                     "rankField",
@@ -186,9 +198,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
                 var searchableFields = {
                     standalone: ["Feature ID"],
-                    "Feature Metadata": this.featureMetadataFields,
-                    "Feature Ranking Magnitudes": this.rankOrdering
+                    "Feature Metadata": this.featureMetadataFields
                 };
+                searchableFields[this.rankType + "s"] = this.rankOrdering;
                 dom_utils.populateSelect(
                     "topSearch",
                     searchableFields,
@@ -224,7 +236,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // just "[rank title]". Use of "Magnitude" here is based on
             // discussion in issue #191.
             this.rankPlotJSON.encoding.y.title =
-                "Magnitude: " + this.rankPlotJSON.encoding.y.field;
+                this.rankType + ": " + this.rankPlotJSON.encoding.y.field;
             // We can use a closure to allow callback functions to access "this"
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.
@@ -1296,6 +1308,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         .getElementById(dom_utils.statDivs[s])
                         .classList.add("invisible");
                 }
+
+                // Reset the UI elements that have been updated with the
+                // rankType. At present, we can do this just by clearing the
+                // rankFieldLabel; the only other places the rankType is used
+                // are in the rank plot y-axis (which is cleared in destroy()
+                // if clearRankPlot is truthy) and in the searching <select>s
+                // (which were already cleared via calls to clearDiv()).
+                document.getElementById("rankFieldLabel").textContent = "";
             }
         }
     }

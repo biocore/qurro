@@ -14,6 +14,7 @@ from qurro._df_utils import escape_columns
 def create_q2_visualization(
     output_dir,
     feature_ranks,
+    rank_type,
     table,
     sample_metadata,
     feature_metadata,
@@ -41,6 +42,7 @@ def create_q2_visualization(
 
     index_path = process_and_generate(
         feature_ranks,
+        rank_type,
         df_sample_metadata,
         table,
         output_dir,

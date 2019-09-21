@@ -15,16 +15,22 @@ from qurro._metadata_utils import get_q2_comment_lines
 
 
 def read_rank_file(file_loc):
-    """Converts an input file of ranks to a DataFrame."""
+    """Converts an input file of ranks to a DataFrame.
+
+    Also returns a human-readable "rank type" -- either "Differential" or
+    "Feature Loading".
+    """
 
     if file_loc.endswith(".tsv"):
         rank_df = differentials_to_df(file_loc)
+        rank_type = "Differential"
     else:
         # ordination_to_df() will raise an appropriate error if it can't
         # process this file.
         rank_df = ordination_to_df(file_loc)
+        rank_type = "Feature Loading"
 
-    return escape_columns(rank_df, "feature ranks")
+    return escape_columns(rank_df, "feature ranks"), rank_type
 
 
 def rename_loadings(loadings_df):

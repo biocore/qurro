@@ -44,12 +44,17 @@
   applied to TSV files exported from the sample plot (`Current_Log_Ratio` -->
   `Current_Natural_Log_Ratio`), as well as to the tooltips of samples in the
   sample plot.
+- Renamed the y-axis of the rank plot to say either `Differential: ` or
+  `Feature Loading: ` instead of `Magnitude: `.
+- Renamed the label for changing the rank plot ranking from `Ranking` to either
+  `Differential` or `Feature Loading`.
 - For searching by the values of a given feature ranking, the header shown
   above all of the ranking column names said `Feature Rankings`.
   This was slightly misleading, since searching is being done on the
   magnitudes of each ranking column for each feature (i.e. based on the
   y-axis values shown in the rank plot). To make things clearer, this header
-  has been changed from `Feature Rankings` to `Feature Ranking Magnitudes`.
+  has been changed from `Feature Rankings` to either `Differentials` or
+  `Feature Loadings`.
 - Improved the command-line documentation of the sample and feature metadata
   parameters.
 - Updated citation/link information for references in the README.

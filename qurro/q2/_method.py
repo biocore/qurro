@@ -32,6 +32,7 @@ def differential_plot(
     create_q2_visualization(
         output_dir,
         ranks,
+        "Differential",
         table,
         sample_metadata,
         feature_metadata,
@@ -54,6 +55,7 @@ def loading_plot(
     create_q2_visualization(
         output_dir,
         rename_loadings(ranks.features),
+        "Feature Loading",
         table,
         sample_metadata,
         feature_metadata,

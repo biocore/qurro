@@ -24,9 +24,11 @@
                 -->
                 <div class="input-group input-group-sm mb-1">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="rankField"
-                            >Ranking</label
-                        >
+                        <label
+                            class="input-group-text"
+                            for="rankField"
+                            id="rankFieldLabel"
+                        ></label>
                     </div>
                     <select id="rankField" class="custom-select"> </select>
                 </div>
@@ -338,7 +340,8 @@
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
                             <option value="nottext"
-                                >does not contain the text</option
+                                >is provided, and does not contain the
+                                text</option
                             >
                             <option value="rank"
                                 >contains the separated text fragment(s)</option
@@ -379,7 +382,8 @@
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
                             <option value="nottext"
-                                >does not contain the text</option
+                                >is provided, and does not contain the
+                                text</option
                             >
                             <option value="rank"
                                 >contains the separated text fragment(s)</option
