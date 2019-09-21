@@ -2,6 +2,18 @@
 
 ## Next Qurro release (date TBD)
 ### Features added
+- Added an additional text searching option:
+  `is provided, and does not contain the text`. This will select features
+  where:
+    1. The specified feature field (e.g. Feature ID) is provided, and
+    2. The specified feature field does not contain the specified text.
+
+  Note the first clause. If a given field is not provided (e.g. no taxonomy
+  information is provided for `Feature A`), then that feature won't show up in
+  any results that involve searching on feature taxonomy. This behavior is the
+  same as with other text-/number-searching methods, but we've explicitly
+  specified it here so that it's clear (you could argue that a non-existent
+  taxonomy entry "does not contain" some text).
 - The sample plot's x- and y-axes are now no longer forced to include zero. So
   if, say, all of your samples have an x-axis value of at least 20, then they
   won't be squished on the side of the sample plot any more.

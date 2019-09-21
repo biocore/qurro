@@ -19,21 +19,41 @@ define(["./dom_utils"], function(dom_utils) {
     }
 
     /* Given a list of feature "rows", a string of input text, and a feature
-     * field, returns a list of all features that contain that text in
-     * the specified feature field.
+     * field, returns a list of all features that *do* or *do not* contain that
+     * text in the specified feature field.
+     *
+     * If "negate" is truthy, then this will return a list of all features that
+     * *do not* contain the specified text in the specified feature field.
+     * Otherwise, this will return a list of all features that *do* contain the
+     * specified text in the specified feature field.
      *
      * Note that this can lead to some weird results if you're not careful --
      * e.g. just searching on "Staphylococcus" will include Staph phages in the
      * filtering (since their names contain the text "Staphylococcus").
      */
-    function textFilterFeatures(featureRowList, inputText, featureField) {
+    function textFilterFeatures(
+        featureRowList,
+        inputText,
+        featureField,
+        negate
+    ) {
         var filteredFeatures = [];
         var currVal;
+        var decisionFunc;
+        if (negate) {
+            decisionFunc = function(value) {
+                return !value.includes(inputText);
+            };
+        } else {
+            decisionFunc = function(value) {
+                return value.includes(inputText);
+            };
+        }
         for (var ti = 0; ti < featureRowList.length; ti++) {
             currVal = tryTextSearchable(featureRowList[ti][featureField]);
             if (currVal === null) {
                 continue;
-            } else if (currVal.includes(inputText)) {
+            } else if (decisionFunc(currVal)) {
                 filteredFeatures.push(featureRowList[ti]);
             }
         }
@@ -249,11 +269,13 @@ define(["./dom_utils"], function(dom_utils) {
                 inputText.toLowerCase(),
                 featureField
             );
-        } else if (searchType === "text") {
+        } else if (searchType === "text" || searchType === "nottext") {
+            var negate = searchType === "nottext";
             return textFilterFeatures(
                 potentialFeatures,
                 inputText.toLowerCase(),
-                featureField
+                featureField,
+                negate
             );
         } else if (
             searchType === "lt" ||

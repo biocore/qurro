@@ -245,6 +245,213 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
+        describe('"Does not contain the text" searching', function() {
+            it("Correctly searches through feature IDs", function() {
+                // Unlike the normal "text" searching version of this
+                // particular test, we want to make sure that the features
+                // returned *do not* contain the given text. So, in this case,
+                // we want all of the features in rpJSON1 that don't have the
+                // text "lol" in their Feature ID.
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "lol",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 3"]
+                );
+                // Similarly, since all of rpJSON1's features' Feature IDs
+                // contain the text "Feature", we'd expect nottext searching to
+                // give us an empty list of features.
+                chai.assert.isEmpty(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "Feature",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    )
+                );
+            });
+
+            it("Correctly searches through feature metadata fields", function() {
+                // Default text search ignores taxonomic ranks (i.e. semicolons)
+                // In this case, get all features with taxonomies that do not
+                // contain the text "Staphylococcus".
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Staphylococcus",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 5", "Feature 6"]
+                );
+                // In this case, get all features with taxonomies that don't
+                // contain the text "Bacteria".
+                // This includes Feature 1 (Archaea), Features 4 and 5
+                // (Viruses), and Feature 6 ("null" -- yes, this is an invalid
+                // taxonomy string, but this isn't checking for validity)
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Bacteria",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 4", "Feature 5", "Feature 6"]
+                );
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Caudovirales",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 2", "Feature 3", "Feature 6"]
+                );
+                // Only respects taxonomic ranks if the user forces it
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            ";Staphylococcus;",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 4", "Feature 5", "Feature 6"]
+                );
+            });
+
+            it("Searching is case *insensitive*", function() {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "staphylococcus",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 5", "Feature 6"]
+                );
+                chai.assert.isEmpty(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "feature",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    )
+                );
+            });
+
+            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function() {
+                // If inputText is empty, the searching will automatically end.
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "",
+                        "Feature ID",
+                        "nottext"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "",
+                        "Taxonomy",
+                        "nottext"
+                    )
+                );
+                // "Filter to features where Feature ID does not contain the
+                // text ' \n \t '." Since none of the feature IDs for this
+                // dataset contain that weird combo of whitespace, all of the
+                // features should be contained in the results.
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            " \n \t ",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    ),
+                    inputFeatures
+                );
+                // Same thing as above case, but for another dataset and for
+                // taxonomy. (Note that Feature 7 isn't included because its
+                // taxonomy is null.)
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            " \n \t ",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    [
+                        "Feature 1",
+                        "Feature 2",
+                        "Feature 3",
+                        "Feature 4",
+                        "Feature 5",
+                        "Feature 6"
+                    ]
+                );
+                // All feature IDs in rpJSON1 contain a space. Since we're
+                // filtering to features with IDs that *do not* contain a
+                // space, the results here should be empty.
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        " ",
+                        "Feature ID",
+                        "nottext"
+                    )
+                );
+            });
+            it("Ignores actual null values", function() {
+                // Feature 6's Taxonomy value is "null", while Feature 7's
+                // Taxonomy value is null (literally a null value). So
+                // searching methods shouldn't look at Feature 7's Taxonomy
+                // value.
+                // ...Since we're using "nottext", this should give us all
+                // features where taxonomy is provided *and* taxonomy does not
+                // contain the text "null" -- in this case, this is all
+                // features aside from 6 and 7.
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "null",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    [
+                        "Feature 1",
+                        "Feature 2",
+                        "Feature 3",
+                        "Feature 4",
+                        "Feature 5"
+                    ]
+                );
+            });
+        });
         describe('"Rank"-mode searching', function() {
             it("Finds matching features based on full, exact taxonomic rank", function() {
                 chai.assert.sameOrderedMembers(
