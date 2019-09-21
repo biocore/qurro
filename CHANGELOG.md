@@ -12,8 +12,9 @@
   information is provided for `Feature A`), then that feature won't show up in
   any results that involve searching on feature taxonomy. This behavior is the
   same as with other text-/number-searching methods, but we've explicitly
-  specified it here so that it's clear (you could argue that a non-existent
-  taxonomy entry "does not contain" some text).
+  specified it here so that it's clear (since you could argue that a
+  non-existent taxonomy entry "does not contain" some text).
+  ([#221](https://github.com/biocore/qurro/issues/221))
 - The sample plot's x- and y-axes are now no longer forced to include zero. So
   if, say, all of your samples have an x-axis value of at least 20, then they
   won't be squished on the side of the sample plot any more.
@@ -31,6 +32,7 @@
   corresponds to each feature's ID.  (This should be available through GNPS
   now.) A benefit of this is that you can use this data in either the
   standalone or QIIME 2 Qurro interfaces.
+  ([#49](https://github.com/biocore/qurro/issues/49))
 - As a side effect of implementing the Sample Presence Count feature, if any of
   your feature ranks or feature metadata inputs contain a column named
   `qurro_spc` then an error will be raised when trying to generate a Qurro
@@ -46,6 +48,7 @@
   sample plot.
 - Renamed the y-axis of the rank plot to say either `Differential: ` or
   `Feature Loading: ` instead of `Magnitude: `.
+  ([#223](https://github.com/biocore/qurro/issues/223))
 - Renamed the label for changing the rank plot ranking from `Ranking` to either
   `Differential` or `Feature Loading`.
 - For searching by the values of a given feature ranking, the header shown
