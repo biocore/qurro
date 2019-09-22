@@ -41,6 +41,8 @@
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
+- Various aesthetic changes to the Qurro visualization interface (e.g.
+  changing the location/styling of certain buttons).
 - Renamed the y-axis of the sample plot to say `Current Natural Log-Ratio`
   instead of just `Current Log-Ratio`. (This makes it clearer that these
   log-ratios are computed using the natural log.) This change has also been

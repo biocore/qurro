@@ -135,6 +135,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 multiFeatureButton: async function() {
                     await display.updateSamplePlotMulti();
                 },
+                autoSelectButton: async function() {
+                    await display.autoSelectFeatures();
+                },
                 exportDataButton: function() {
                     display.exportData();
                 }
