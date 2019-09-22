@@ -37,6 +37,7 @@
   your feature ranks or feature metadata inputs contain a column named
   `qurro_spc` then an error will be raised when trying to generate a Qurro
   visualization.
+- Qurro now requires that a Pandas version of at least 0.24.0 is installed.
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
