@@ -73,7 +73,7 @@ setup(
         "biom-format[hdf5]",
         "click",
         "numpy >= 1.12.0",
-        "pandas >= 0.20.1",
+        "pandas >= 0.24.0",
         "scikit-bio > 0.5.3",
     ],
     # Based on how Altair splits up its requirements:
