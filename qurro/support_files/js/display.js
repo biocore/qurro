@@ -133,7 +133,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // to te original function?
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
                 multiFeatureButton: async function() {
-                    await display.updateSamplePlotMulti();
+                    await display.regenerateFromFiltering();
                 },
                 autoSelectButton: async function() {
                     await display.autoSelectFeatures();
@@ -272,7 +272,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             console.log(
                                 "Set newFeatureLow: " + display.newFeatureLow
                             );
-                            display.updateSamplePlotSingle();
+                            display.regenerateFromClicking();
                         }
                         display.onHigh = !display.onHigh;
                     }
@@ -544,7 +544,16 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
         }
 
-        async updateSamplePlotMulti() {
+        /* Updates the rank and sample plot based on the "filtering" controls.
+         *
+         * Broadly, this just involves applying user-specified queries to get a
+         * list of feature(s) for the numerator and denominator of a log-ratio.
+         *
+         * This then calls changeSamplePlot(), uses these feature lists to
+         * 1) update sample log-ratios in the sample plot
+         * 2) update the "classifications" of features in the rank plot
+         */
+        async regenerateFromFiltering() {
             // Determine which feature field(s) (Feature ID, anything in the
             // feature metadata, anything in the feature rankings) to look at
             var topField = document.getElementById("topSearch").value;
@@ -573,7 +582,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.updateFeaturesTextDisplays();
         }
 
-        async updateSamplePlotSingle() {
+        async regenerateFromClicking() {
             if (
                 this.newFeatureLow !== undefined &&
                 this.newFeatureHigh !== undefined

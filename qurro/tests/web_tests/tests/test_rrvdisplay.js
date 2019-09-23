@@ -90,7 +90,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
              * before test(s).
              */
             async function updateSingleAndCheckAllBalancesNull() {
-                await rrv.updateSamplePlotSingle();
+                await rrv.regenerateFromClicking();
                 var data = rrv.samplePlotView.data(dataName);
                 for (var i = 0; i < data.length; i++) {
                     chai.assert.isNull(data[i].qurro_balance);
@@ -144,7 +144,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 it("Works properly when actually changing the plots", async function() {
                     rrv.newFeatureLow = { "Feature ID": "Taxon2" };
                     rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
-                    await rrv.updateSamplePlotSingle();
+                    await rrv.regenerateFromClicking();
                     // Check that the sample log-ratios were properly updated
                     // Sample1 has a Taxon1 count of 0, so its log-ratio should
                     // be null (because log(0/x) is undefined).
@@ -219,7 +219,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     document.getElementById("botSearchType").value = "text";
                     document.getElementById("topText").value = "Taxon";
                     document.getElementById("botText").value = "Yeet";
-                    // This should just result in rrv.updateSamplePlotMulti()
+                    // This should just result in rrv.regenerateFromFiltering()
                     // being called. The added benefit is that this also tests
                     // that the onclick event of the multiFeatureButton was set
                     // properly :)
@@ -242,9 +242,9 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 // TODO: We will probably need to change changeSamplePlot() to
                 // be an async function that updates the rank and sample plot
                 // with runAsync() instead of run(), and awaits that result.
-                // Then we can make updateSamplePlotMulti async (and have it
+                // Then we can make regenerateFromFiltering async (and have it
                 // await changeSamplePlot()), and then await
-                // updateSamplePlotMulti's result here. Yay!
+                // regenerateFromFiltering's result here. Yay!
                 it("Properly updates the sample plot balances");
                 it("Properly updates the rank plot classifications");
                 it('Properly updates the "feature text" headers', function() {
