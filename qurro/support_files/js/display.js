@@ -473,6 +473,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
+        /* Updates the selected log-ratio, which involves updating both plots:
+         *
+         * 1) update sample log-ratios in the sample plot
+         * 2) update the "classifications" of features in the rank plot
+         * 3) update dropped sample information re: the new log-ratios
+         * */
         async updateLogRatio(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
@@ -549,9 +555,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * Broadly, this just involves applying user-specified queries to get a
          * list of feature(s) for the numerator and denominator of a log-ratio.
          *
-         * This then calls updateLogRatio(), which uses these feature lists to
-         * 1) update sample log-ratios in the sample plot
-         * 2) update the "classifications" of features in the rank plot
+         * This then calls updateLogRatio().
          */
         async regenerateFromFiltering() {
             // Determine which feature field(s) (Feature ID, anything in the
