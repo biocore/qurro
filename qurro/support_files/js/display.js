@@ -473,7 +473,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
-        async changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
+        async updateLogRatio(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
             var nullBalanceSampleIDs = [];
@@ -549,7 +549,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * Broadly, this just involves applying user-specified queries to get a
          * list of feature(s) for the numerator and denominator of a log-ratio.
          *
-         * This then calls changeSamplePlot(), uses these feature lists to
+         * This then calls updateLogRatio(), which uses these feature lists to
          * 1) update sample log-ratios in the sample plot
          * 2) update the "classifications" of features in the rank plot
          */
@@ -574,7 +574,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            await this.changeSamplePlot(
+            await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
@@ -617,7 +617,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     if (lowsDiffer || highsDiffer) {
                         // Time to update the sample scatterplot regarding new
                         // microbes.
-                        await this.changeSamplePlot(
+                        await this.updateLogRatio(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
@@ -1208,7 +1208,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 RRVDisplay.quoteTSVFieldIfNeeded(currColorField);
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
-            // (Note that changeSamplePlot() causes updates to samples'
+            // (Note that updateLogRatio() causes updates to samples'
             // qurro_balance properties, so we don't have to use the
             // samplePlotView)
             var data = this.samplePlotJSON.datasets[dataName];

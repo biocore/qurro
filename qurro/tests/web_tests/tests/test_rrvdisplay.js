@@ -239,11 +239,11 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 });
-                // TODO: We will probably need to change changeSamplePlot() to
+                // TODO: We will probably need to change updateLogRatio() to
                 // be an async function that updates the rank and sample plot
                 // with runAsync() instead of run(), and awaits that result.
                 // Then we can make regenerateFromFiltering async (and have it
-                // await changeSamplePlot()), and then await
+                // await updateLogRatio()), and then await
                 // regenerateFromFiltering's result here. Yay!
                 it("Properly updates the sample plot balances");
                 it("Properly updates the rank plot classifications");
