@@ -133,10 +133,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // to te original function?
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
                 multiFeatureButton: async function() {
-                    await display.updateSamplePlotMulti();
+                    await display.regenerateFromFiltering();
                 },
                 autoSelectButton: async function() {
-                    await display.autoSelectFeatures();
+                    await display.regenerateFromAutoSelection();
                 },
                 exportDataButton: function() {
                     display.exportData();
@@ -272,7 +272,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             console.log(
                                 "Set newFeatureLow: " + display.newFeatureLow
                             );
-                            display.updateSamplePlotSingle();
+                            display.regenerateFromClicking();
                         }
                         display.onHigh = !display.onHigh;
                     }
@@ -473,7 +473,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
-        async changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
+        /* Updates the selected log-ratio, which involves updating both plots:
+         *
+         * 1) update sample log-ratios in the sample plot
+         * 2) update the "classifications" of features in the rank plot
+         * 3) update dropped sample information re: the new log-ratios
+         * */
+        async updateLogRatio(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
             var nullBalanceSampleIDs = [];
@@ -544,7 +550,52 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
         }
 
-        async updateSamplePlotMulti() {
+        /* Updates the rank and sample plot based on "autoselection."
+         *
+         * By "autoselection," we just mean picking the top/bottom features for
+         * the current ranking in the rank plot.
+         */
+        async regenerateFromAutoSelection() {
+            var inputNumber = document.getElementById("autoSelectNumber").value;
+            // autoSelectType should be either "autoPercent" or "autoLiteral".
+            // Therefore, there are four possible values of this we can pass in
+            // to filterFeatures:
+            // -autoPercentTop
+            // -autoPercentBot
+            // -autoLiteralTop
+            // -autoLiteralBot
+            var autoSelectType = document.getElementById("autoSelectType")
+                .value;
+            this.topFeatures = feature_computation.filterFeatures(
+                this.rankPlotJSON,
+                inputNumber,
+                this.rankPlotJSON.encoding.y.field,
+                autoSelectType + "Top"
+            );
+            this.botFeatures = feature_computation.filterFeatures(
+                this.rankPlotJSON,
+                inputNumber,
+                this.rankPlotJSON.encoding.y.field,
+                autoSelectType + "Bot"
+            );
+            // TODO: abstract below stuff to a helper function for use by
+            // regenerateFromAutoSelection() and RegenerateFromFiltering()
+            await this.updateLogRatio(
+                this.updateBalanceMulti,
+                this.updateRankColorMulti
+            );
+            // Update features text displays
+            this.updateFeaturesTextDisplays();
+        }
+
+        /* Updates the rank and sample plot based on the "filtering" controls.
+         *
+         * Broadly, this just involves applying user-specified queries to get a
+         * list of feature(s) for the numerator and denominator of a log-ratio.
+         *
+         * This then calls updateLogRatio().
+         */
+        async regenerateFromFiltering() {
             // Determine which feature field(s) (Feature ID, anything in the
             // feature metadata, anything in the feature rankings) to look at
             var topField = document.getElementById("topSearch").value;
@@ -565,7 +616,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            await this.changeSamplePlot(
+            await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
@@ -573,7 +624,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.updateFeaturesTextDisplays();
         }
 
-        async updateSamplePlotSingle() {
+        async regenerateFromClicking() {
             if (
                 this.newFeatureLow !== undefined &&
                 this.newFeatureHigh !== undefined
@@ -608,7 +659,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     if (lowsDiffer || highsDiffer) {
                         // Time to update the sample scatterplot regarding new
                         // microbes.
-                        await this.changeSamplePlot(
+                        await this.updateLogRatio(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
@@ -1199,7 +1250,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 RRVDisplay.quoteTSVFieldIfNeeded(currColorField);
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
-            // (Note that changeSamplePlot() causes updates to samples'
+            // (Note that updateLogRatio() causes updates to samples'
             // qurro_balance properties, so we don't have to use the
             // samplePlotView)
             var data = this.samplePlotJSON.datasets[dataName];

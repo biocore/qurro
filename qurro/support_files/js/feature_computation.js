@@ -237,10 +237,10 @@ define(["./dom_utils"], function(dom_utils) {
     }
 
     /* Returns list of feature data objects (in the rank plot JSON) based
-     * on a match of a given feature metadata/ranking field (including Feature
-     * ID) with the input text. The input text must be a string (even numbers
-     * aren't allowed -- the conversion is done later on in this function if a
-     * numeric search type is being used).
+     * on some sort of "match" of a given feature metadata/ranking field
+     * (including Feature ID) with the input text. The input text must be a
+     * string (even numbers aren't allowed -- the conversion is done later on
+     * in this function if a numeric search type is being used).
      *
      * If inputText is empty (i.e. its length is 0), this returns an empty
      * array.
@@ -263,6 +263,7 @@ define(["./dom_utils"], function(dom_utils) {
         }
 
         var potentialFeatures = rankPlotJSON.datasets[rankPlotJSON.data.name];
+        var inputNum;
         if (searchType === "rank") {
             return rankFilterFeatures(
                 potentialFeatures,
@@ -283,7 +284,7 @@ define(["./dom_utils"], function(dom_utils) {
             searchType === "lte" ||
             searchType === "gte"
         ) {
-            var inputNum = dom_utils.getNumberIfValid(inputText);
+            inputNum = dom_utils.getNumberIfValid(inputText);
             if (isNaN(inputNum)) {
                 return [];
             }
@@ -293,8 +294,94 @@ define(["./dom_utils"], function(dom_utils) {
                 featureField,
                 searchType
             );
+        } else if (searchType.startsWith("auto")) {
+            var featureCt = potentialFeatures.length;
+            inputNum = dom_utils.getNumberIfValid(inputText);
+            // Initial check for validity: regardless of if inputNum describes
+            // a "literal" or "percentage"-based cutoff, it should be a finite
+            // number that's at least 0
+            if (isNaN(inputNum) || inputNum < 0) {
+                return [];
+            }
+            // Now, we just need to enforce upper bounds on the input number:
+            // Percentages obviously can't be > 100%
+            else if (searchType.startsWith("autoPercent") && inputNum > 100) {
+                return [];
+            }
+            // And, similarly, you can't include more features than are present
+            // in the dataset
+            else if (
+                searchType.startsWith("autoLiteral") &&
+                inputNum > featureCt
+            ) {
+                return [];
+            }
+            // OK, so now we know that inputNum is valid!
+            // Next, let's just figure out how many features to extract from a
+            // given side of the ranking.
+            var numberOfFeaturesToGet;
+            if (searchType.startsWith("autoPercent")) {
+                // Why floor? If the user requests, say, the top and bottom
+                // 33.33% of features, and there are 10 features, then it makes
+                // more sense to give 3 features on each side than 4 (IMO).
+                numberOfFeaturesToGet = Math.floor(
+                    (inputNum / 100) * featureCt
+                );
+            } else {
+                numberOfFeaturesToGet = inputNum;
+            }
+            var useTop = searchType.endsWith("Top");
+            return extremeFilterFeatures(
+                potentialFeatures,
+                numberOfFeaturesToGet,
+                featureField,
+                useTop
+            );
         } else {
             throw new Error("unrecognized searchType");
+        }
+    }
+
+    /* Returns list of "n" feature data objects from either the top or bottom
+     * side of the feature rankings.
+     *
+     * featureRowList is a list of feature rows (same as the other
+     * *FilterFeatures() methods), n is an integer, ranking is a feature
+     * ranking shared by every feature in featureRowList, and useTop is a
+     * boolean value.
+     */
+    function extremeFilterFeatures(featureRowList, n, ranking, useTop) {
+        // TODO:
+        // Sort features by ranking in featureRowList to get sortedFeatureRowList
+        // If useTop, get top n features with ranking
+        // else, get bottom n features with ranking
+        // If any features do not have "ranking", throw an error (ok if
+        // implicitly thrown i guess?)
+        // return list of (top|bottom) n features
+        var sortedFeatureRowList = featureRowList.sort(
+            // Compare features by their "ranking field" values, i.e. the
+            // literal differential or feature loading values.
+            // (...These should all explicitly be numbers, as guaranteed by our
+            // use of pd.to_numeric() in qurro.generate.gen_rank_plot().)
+            // Comparison function based on spec here (thanks MDN!) --
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description
+            function(feature1, feature2) {
+                var f1r = feature1[ranking];
+                var f2r = feature2[ranking];
+                if (f1r < f2r) {
+                    return -1;
+                } else if (f1r > f2r) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        );
+        var featureCt = featureRowList.length;
+        if (useTop) {
+            return sortedFeatureRowList.slice(featureCt - n);
+        } else {
+            return sortedFeatureRowList.slice(0, n);
         }
     }
 

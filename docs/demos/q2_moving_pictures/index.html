@@ -330,7 +330,7 @@
                 <h4 class="centeredHeader">Autoselecting Features</h4>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="autoSearchNumber">
+                        <label class="input-group-text" for="autoSelectNumber">
                             Using the current ranking, autoselect the top and
                             bottom
                         </label>
@@ -338,11 +338,13 @@
                     <input
                         type="number"
                         class="form-control"
-                        id="autoSearchNumber"
+                        id="autoSelectNumber"
                     />
-                    <select class="custom-select" id="autoSearchType">
-                        <option value="percent">percentages of features</option>
-                        <option value="literal">features</option>
+                    <select class="custom-select" id="autoSelectType">
+                        <option value="autoPercent"
+                            >percentages of features</option
+                        >
+                        <option value="autoLiteral">features</option>
                     </select>
                     <!-- Based on
                          https://getbootstrap.com/docs/4.0/components/input-group/#button-addons

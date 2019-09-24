@@ -136,7 +136,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     await display.regenerateFromFiltering();
                 },
                 autoSelectButton: async function() {
-                    await display.autoSelectFeatures();
+                    await display.regenerateFromAutoSelection();
                 },
                 exportDataButton: function() {
                     display.exportData();
@@ -548,6 +548,44 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "balanceSamplesDroppedDiv",
                 "balance"
             );
+        }
+
+        /* Updates the rank and sample plot based on "autoselection."
+         *
+         * By "autoselection," we just mean picking the top/bottom features for
+         * the current ranking in the rank plot.
+         */
+        async regenerateFromAutoSelection() {
+            var inputNumber = document.getElementById("autoSelectNumber").value;
+            // autoSelectType should be either "autoPercent" or "autoLiteral".
+            // Therefore, there are four possible values of this we can pass in
+            // to filterFeatures:
+            // -autoPercentTop
+            // -autoPercentBot
+            // -autoLiteralTop
+            // -autoLiteralBot
+            var autoSelectType = document.getElementById("autoSelectType")
+                .value;
+            this.topFeatures = feature_computation.filterFeatures(
+                this.rankPlotJSON,
+                inputNumber,
+                this.rankPlotJSON.encoding.y.field,
+                autoSelectType + "Top"
+            );
+            this.botFeatures = feature_computation.filterFeatures(
+                this.rankPlotJSON,
+                inputNumber,
+                this.rankPlotJSON.encoding.y.field,
+                autoSelectType + "Bot"
+            );
+            // TODO: abstract below stuff to a helper function for use by
+            // regenerateFromAutoSelection() and RegenerateFromFiltering()
+            await this.updateLogRatio(
+                this.updateBalanceMulti,
+                this.updateRankColorMulti
+            );
+            // Update features text displays
+            this.updateFeaturesTextDisplays();
         }
 
         /* Updates the rank and sample plot based on the "filtering" controls.
