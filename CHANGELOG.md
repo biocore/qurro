@@ -2,6 +2,13 @@
 
 ## Next Qurro release (date TBD)
 ### Features added
+- Added **autoselection**, another method for selecting multiple features in a
+  log-ratio. This method just picks features from the top and bottom of the
+  currently-selected ranking, using a specified threshold (either in
+  percentages of features or just in features).
+  ([#189](https://github.com/biocore/qurro/issues/189))
+    - This feature should be useful when quickly assessing how much a given
+      ranking field "separates" samples along certain metadata categories.
 - Added an additional text searching option:
   `is provided, and does not contain the text`. This will select features
   where:
