@@ -812,6 +812,23 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 });
             });
         });
+        describe("Autoselecting features", function() {
+            describe("Percentage-based inputs", function() {
+                it("Works properly when math is easy (top 25% of 4 features)", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "25",
+                                "n",
+                                "autoPercentTop"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                });
+            });
+        });
         describe("existsIntersection()", function() {
             it("Returns true if an intersection exists", function() {
                 chai.assert.isTrue(
