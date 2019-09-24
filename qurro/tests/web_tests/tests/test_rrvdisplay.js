@@ -279,7 +279,25 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         delta
                     );
                 });
-                it("Properly updates the rank plot classifications");
+                it("Properly updates the rank plot classifications", function() {
+                    // we've selected the log-ratio of (all features) over
+                    // (taxon 3)
+                    var rpData =
+                        rrv.rankPlotJSON.datasets[rrv.rankPlotJSON.data.name];
+                    for (var i = 0; i < rpData.length; i++) {
+                        if (rpData[i]["Feature ID"] === "Taxon3") {
+                            chai.assert.equal(
+                                "Both",
+                                rpData[i].qurro_classification
+                            );
+                        } else {
+                            chai.assert.equal(
+                                "Numerator",
+                                rpData[i].qurro_classification
+                            );
+                        }
+                    }
+                });
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1, 5);
                     chai.assert.sameMembers(
