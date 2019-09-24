@@ -813,7 +813,25 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
             });
         });
         describe("Autoselecting features", function() {
-            describe("Percentage-based inputs", function() {
+            describe("Inputs are in numbers of features", function() {
+                it("Returns empty if the input number is > number of features", function() {
+                    var vals = [4.1, "4.2", 4.3, "4.4", "20", 100, 99999];
+                    var searchTypes = ["autoLiteralTop", "autoLiteralBot"];
+                    for (var i = 0; i < vals.length; i++) {
+                        for (var s = 0; s < searchTypes.length; s++) {
+                            chai.assert.empty(
+                                feature_computation.filterFeatures(
+                                    rpJSON1,
+                                    vals[i],
+                                    "n",
+                                    searchTypes[s]
+                                )
+                            );
+                        }
+                    }
+                });
+            });
+            describe("Inputs are in percentages of features", function() {
                 it("Works properly when math is easy (top 25% of 4 features)", function() {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
@@ -840,8 +858,32 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
+                it("Returns empty if the input number is > 100%", function() {
+                    var vals = [
+                        "100.00001",
+                        100.000001,
+                        101,
+                        102,
+                        999,
+                        99999,
+                        "999999"
+                    ];
+                    var searchTypes = ["autoPercentTop", "autoPercentBot"];
+                    for (var i = 0; i < vals.length; i++) {
+                        for (var s = 0; s < searchTypes.length; s++) {
+                            chai.assert.empty(
+                                feature_computation.filterFeatures(
+                                    rpJSON1,
+                                    vals[i],
+                                    "n",
+                                    searchTypes[s]
+                                )
+                            );
+                        }
+                    }
+                });
             });
-            it("Nothing returned if input number isn't a finite, nonnegative number", function() {
+            it("Returns empty if input number isn't a finite, nonnegative number", function() {
                 var invalidValsToTest = [
                     "asdf",
                     "NaN",
