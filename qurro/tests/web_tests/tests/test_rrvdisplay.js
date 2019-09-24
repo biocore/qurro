@@ -210,7 +210,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
             describe("Multi-feature selections (basic case)", function() {
-                before(async function() {
+                beforeEach(async function() {
                     await resetRRVDisplay(rrv);
                     document.getElementById("topSearch").value = "Feature ID";
                     document.getElementById("botSearch").value =
