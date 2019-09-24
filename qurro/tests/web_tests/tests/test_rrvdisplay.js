@@ -239,13 +239,46 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 });
-                // TODO: We will probably need to change updateLogRatio() to
-                // be an async function that updates the rank and sample plot
-                // with runAsync() instead of run(), and awaits that result.
-                // Then we can make regenerateFromFiltering async (and have it
-                // await updateLogRatio()), and then await
-                // regenerateFromFiltering's result here. Yay!
-                it("Properly updates the sample plot balances");
+                it("Properly updates the sample plot balances", function() {
+                    // same delta as in the compute balances tests
+                    var delta = 0.00001;
+                    // Sample1
+                    chai.assert.approximately(
+                        Math.log(9 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][0].qurro_balance,
+                        delta
+                    );
+                    // Sample2
+                    chai.assert.approximately(
+                        Math.log(10 / 3),
+                        rrv.samplePlotJSON.datasets[dataName][1].qurro_balance,
+                        delta
+                    );
+                    // Sample3
+                    chai.assert.approximately(
+                        Math.log(3),
+                        rrv.samplePlotJSON.datasets[dataName][2].qurro_balance,
+                        delta
+                    );
+                    // Sample5
+                    chai.assert.approximately(
+                        Math.log(13 / 4),
+                        rrv.samplePlotJSON.datasets[dataName][3].qurro_balance,
+                        delta
+                    );
+                    // Sample6
+                    chai.assert.approximately(
+                        Math.log(10 / 3),
+                        rrv.samplePlotJSON.datasets[dataName][4].qurro_balance,
+                        delta
+                    );
+                    // Sample7
+                    chai.assert.approximately(
+                        Math.log(9 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][5].qurro_balance,
+                        delta
+                    );
+                });
                 it("Properly updates the rank plot classifications");
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1, 5);
