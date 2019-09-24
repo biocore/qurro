@@ -827,6 +827,56 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 4|lol"]
                     );
                 });
+                it("Works properly when math is less easy (bottom 57% of 4 features)", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "57",
+                                "n",
+                                "autoPercentBot"
+                            )
+                        ),
+                        ["Feature 1", "Featurelol 2"]
+                    );
+                });
+            });
+            it("Nothing returned if input number isn't a finite, nonnegative number", function() {
+                var invalidValsToTest = [
+                    "asdf",
+                    "NaN",
+                    "Infinity",
+                    "-Infinity",
+                    "null",
+                    "NULL",
+                    "Null",
+                    "'); console.log('hello world');",
+                    NaN,
+                    Infinity,
+                    -Infinity,
+                    -1,
+                    "-1",
+                    "-100.23",
+                    -100.23
+                ];
+                var searchTypes = [
+                    "autoPercentTop",
+                    "autoPercentBot",
+                    "autoLiteralTop",
+                    "autoLiteralBot"
+                ];
+                for (var i = 0; i < invalidValsToTest.length; i++) {
+                    for (var s = 0; s < searchTypes.length; s++) {
+                        chai.assert.isEmpty(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                invalidValsToTest[i],
+                                "n",
+                                searchTypes[s]
+                            )
+                        );
+                    }
+                }
             });
         });
         describe("existsIntersection()", function() {
