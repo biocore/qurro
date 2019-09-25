@@ -294,7 +294,13 @@ define(["./dom_utils"], function(dom_utils) {
                 featureField,
                 searchType
             );
-        } else if (searchType.startsWith("auto")) {
+        } else if (
+            searchType === "autoPercentTop" ||
+            searchType === "autoPercentBot" ||
+            searchType === "autoLiteralTop" ||
+            searchType === "autoLiteralBot"
+        ) {
+            var inPercentages = searchType.startsWith("autoPercent");
             var featureCt = potentialFeatures.length;
             inputNum = dom_utils.getNumberIfValid(inputText);
             // Initial check for validity: regardless of if inputNum describes
@@ -305,22 +311,19 @@ define(["./dom_utils"], function(dom_utils) {
             }
             // Now, we just need to enforce upper bounds on the input number:
             // Percentages obviously can't be > 100%
-            else if (searchType.startsWith("autoPercent") && inputNum > 100) {
+            else if (inPercentages && inputNum > 100) {
                 return [];
             }
             // And, similarly, you can't include more features than are present
             // in the dataset
-            else if (
-                searchType.startsWith("autoLiteral") &&
-                inputNum > featureCt
-            ) {
+            else if (!inPercentages && inputNum > featureCt) {
                 return [];
             }
             // OK, so now we know that inputNum is valid!
             // Next, let's just figure out how many features to extract from a
             // given side of the ranking.
             var numberOfFeaturesToGet;
-            if (searchType.startsWith("autoPercent")) {
+            if (inPercentages) {
                 // Why floor? If the user requests, say, the top and bottom
                 // 33.33% of features, and there are 10 features, then it makes
                 // more sense to give 3 features on each side than 4 (IMO).
