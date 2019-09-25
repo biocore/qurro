@@ -580,12 +580,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
             // TODO: abstract below stuff to a helper function for use by
             // regenerateFromAutoSelection() and RegenerateFromFiltering()
+            this.updateFeaturesTextDisplays();
             await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
-            // Update features text displays
-            this.updateFeaturesTextDisplays();
         }
 
         /* Updates the rank and sample plot based on the "filtering" controls.
@@ -616,12 +615,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
+            this.updateFeaturesTextDisplays();
             await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
-            // Update features text displays
-            this.updateFeaturesTextDisplays();
         }
 
         async regenerateFromClicking() {
@@ -657,13 +655,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             this.newFeatureHigh["Feature ID"];
                     }
                     if (lowsDiffer || highsDiffer) {
-                        // Time to update the sample scatterplot regarding new
-                        // microbes.
+                        this.updateFeaturesTextDisplays(true);
+                        // Time to update the plots re: the new log-ratio
                         await this.updateLogRatio(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
-                        this.updateFeaturesTextDisplays(true);
                     }
                 }
             }

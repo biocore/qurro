@@ -328,7 +328,13 @@ define(["./dom_utils"], function(dom_utils) {
                     (inputNum / 100) * featureCt
                 );
             } else {
-                numberOfFeaturesToGet = inputNum;
+                // If inputNum is a float, we just take the floor of it (so if
+                // the user asks for the top/bottom 43.7 features we'll just
+                // return the top/bottom 43 features).
+                // We could also reject float values above, but I don't think
+                // that'd be super user-friendly to people going between % and
+                // "literal # of feature" modes.
+                numberOfFeaturesToGet = Math.floor(inputNum);
             }
             var useTop = searchType.endsWith("Top");
             return extremeFilterFeatures(

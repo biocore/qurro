@@ -814,6 +814,19 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
         });
         describe("Autoselecting features", function() {
             describe("Inputs are in numbers of features", function() {
+                it("Returns empty for 0 features", function() {
+                    var searchTypes = ["autoLiteralTop", "autoLiteralBot"];
+                    for (var s = 0; s < searchTypes.length; s++) {
+                        chai.assert.empty(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                0,
+                                "n",
+                                searchTypes[s]
+                            )
+                        );
+                    }
+                });
                 it("Returns empty if the input number is > number of features", function() {
                     var vals = [4.1, "4.2", 4.3, "4.4", "20", 100, 99999];
                     var searchTypes = ["autoLiteralTop", "autoLiteralBot"];
@@ -830,6 +843,11 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         }
                     }
                 });
+                it("Works properly when 1 feature requested");
+                it("Works properly when 2 features requested");
+                // TODO integration test on clicking the autoSelectButton
+                it("Works properly with overlapping features");
+                it("Works properly when all features requested");
             });
             describe("Inputs are in percentages of features", function() {
                 it("Works properly when math is easy (top 25% of 4 features)", function() {

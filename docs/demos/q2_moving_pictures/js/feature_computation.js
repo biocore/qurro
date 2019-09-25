@@ -263,6 +263,7 @@ define(["./dom_utils"], function(dom_utils) {
         }
 
         var potentialFeatures = rankPlotJSON.datasets[rankPlotJSON.data.name];
+        var inputNum;
         if (searchType === "rank") {
             return rankFilterFeatures(
                 potentialFeatures,
@@ -283,7 +284,7 @@ define(["./dom_utils"], function(dom_utils) {
             searchType === "lte" ||
             searchType === "gte"
         ) {
-            var inputNum = dom_utils.getNumberIfValid(inputText);
+            inputNum = dom_utils.getNumberIfValid(inputText);
             if (isNaN(inputNum)) {
                 return [];
             }
@@ -295,7 +296,7 @@ define(["./dom_utils"], function(dom_utils) {
             );
         } else if (searchType.startsWith("auto")) {
             var featureCt = potentialFeatures.length;
-            var inputNum = dom_utils.getNumberIfValid(inputText);
+            inputNum = dom_utils.getNumberIfValid(inputText);
             // Initial check for validity: regardless of if inputNum describes
             // a "literal" or "percentage"-based cutoff, it should be a finite
             // number that's at least 0
@@ -327,7 +328,13 @@ define(["./dom_utils"], function(dom_utils) {
                     (inputNum / 100) * featureCt
                 );
             } else {
-                numberOfFeaturesToGet = inputNum;
+                // If inputNum is a float, we just take the floor of it (so if
+                // the user asks for the top/bottom 43.7 features we'll just
+                // return the top/bottom 43 features).
+                // We could also reject float values above, but I don't think
+                // that'd be super user-friendly to people going between % and
+                // "literal # of feature" modes.
+                numberOfFeaturesToGet = Math.floor(inputNum);
             }
             var useTop = searchType.endsWith("Top");
             return extremeFilterFeatures(
@@ -348,15 +355,11 @@ define(["./dom_utils"], function(dom_utils) {
      * *FilterFeatures() methods), n is an integer, ranking is a feature
      * ranking shared by every feature in featureRowList, and useTop is a
      * boolean value.
+     *
+     * Throws an error if any features don't have the specified ranking.
      */
     function extremeFilterFeatures(featureRowList, n, ranking, useTop) {
-        // TODO:
-        // Sort features by ranking in featureRowList to get sortedFeatureRowList
-        // If useTop, get top n features with ranking
-        // else, get bottom n features with ranking
-        // If any features do not have "ranking", throw an error (ok if
-        // implicitly thrown i guess?)
-        // return list of (top|bottom) n features
+        // Sort features by the specified ranking in featureRowList
         var sortedFeatureRowList = featureRowList.sort(
             // Compare features by their "ranking field" values, i.e. the
             // literal differential or feature loading values.
@@ -367,6 +370,11 @@ define(["./dom_utils"], function(dom_utils) {
             function(feature1, feature2) {
                 var f1r = feature1[ranking];
                 var f2r = feature2[ranking];
+                if (f1r === undefined || f2r === undefined) {
+                    throw new Error(
+                        ranking + " ranking not present in all features"
+                    );
+                }
                 if (f1r < f2r) {
                     return -1;
                 } else if (f1r > f2r) {
@@ -378,8 +386,10 @@ define(["./dom_utils"], function(dom_utils) {
         );
         var featureCt = featureRowList.length;
         if (useTop) {
+            // get top n features for the given ranking
             return sortedFeatureRowList.slice(featureCt - n);
         } else {
+            // get bottom n features for the given ranking
             return sortedFeatureRowList.slice(0, n);
         }
     }
