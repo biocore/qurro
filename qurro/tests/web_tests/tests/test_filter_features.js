@@ -1044,6 +1044,32 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     }
                 }
             });
+            it("Throws an error if a ranking isn't present in all features", function() {
+                chai.assert.throws(function() {
+                    // We get a list of "feature rows" to mimic what
+                    // filterFeatures() would give to extremeFilterFeatures()
+                    var potentialFeatures = rpJSON1.datasets[rpJSON1.data.name];
+                    feature_computation.extremeFilterFeatures(
+                        potentialFeatures,
+                        2,
+                        "aosdifj",
+                        true
+                    );
+                }, /aosdifj ranking not present and\/or numeric for all features/);
+            });
+            it("Throws an error if a ranking isn't numeric for all features", function() {
+                chai.assert.throws(function() {
+                    // We get a list of "feature rows" to mimic what
+                    // filterFeatures() would give to extremeFilterFeatures()
+                    var potentialFeatures = rpJSON1.datasets[rpJSON1.data.name];
+                    feature_computation.extremeFilterFeatures(
+                        potentialFeatures,
+                        2,
+                        "x",
+                        true
+                    );
+                }, /x ranking not present and\/or numeric for all features/);
+            });
         });
         describe("existsIntersection()", function() {
             it("Returns true if an intersection exists", function() {

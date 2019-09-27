@@ -373,9 +373,14 @@ define(["./dom_utils"], function(dom_utils) {
             function(feature1, feature2) {
                 var f1r = feature1[ranking];
                 var f2r = feature2[ranking];
-                if (f1r === undefined || f2r === undefined) {
+                // Basic validation to ensure that both features have this
+                // ranking, and that it isn't null or whatever (should never
+                // happen in practice due to validation on the python side of
+                // things, but might as well be careful)
+                if (typeof f1r !== "number" || typeof f2r !== "number") {
                     throw new Error(
-                        ranking + " ranking not present in all features"
+                        ranking +
+                            " ranking not present and/or numeric for all features"
                     );
                 }
                 if (f1r < f2r) {
@@ -417,6 +422,7 @@ define(["./dom_utils"], function(dom_utils) {
 
     return {
         filterFeatures: filterFeatures,
+        extremeFilterFeatures: extremeFilterFeatures,
         computeBalance: computeBalance,
         textToRankArray: textToRankArray,
         operatorToCompareFunc: operatorToCompareFunc,
