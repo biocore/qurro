@@ -209,7 +209,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Multi-feature selections (basic case)", function() {
+            describe("Multi-feature selections (text-based filtering, basic case)", function() {
                 beforeEach(async function() {
                     await resetRRVDisplay(rrv);
                     document.getElementById("topSearch").value = "Feature ID";
@@ -318,9 +318,61 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Multi-feature selections (corner cases)", function() {
+            describe("Multi-feature selections (text-based filtering, corner cases)", function() {
                 describe("Empty search fields provided", function() {
                     it("Clears feature classifications and sample balances");
+                });
+            });
+            describe("Multi-feature selections (auto-selection)", function() {
+                /* Utility function that lets us essentially integration-test
+                 * the auto-selection functionality. Cool!
+                 */
+                async function callAutoSelect(inputNumber, inputType) {
+                    document.getElementById(
+                        "autoSelectNumber"
+                    ).value = inputNumber;
+                    document.getElementById("autoSelectType").value = inputType;
+                    await document.getElementById("autoSelectButton").click();
+                }
+                beforeEach(async function() {
+                    await resetRRVDisplay(rrv);
+                });
+                it("Basic percentage-based filtering works", async function() {
+                    await callAutoSelect("25", "autoPercent");
+                    // 25% of 5 features is 1, so we should see 1 feature on
+                    // the top and bottom (and the current ranking is
+                    // "Intercept" so this should be Taxon2 on the bottom and
+                    // Taxon4 on the top)
+                    chai.assert.sameMembers(
+                        ["Taxon4"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                });
+                it("Basic literal-number-based filtering works", async function() {
+                    await callAutoSelect("3", "autoLiteral");
+                    // 3 features on the bottom and 3 on the top. Since there
+                    // are 5 features, we should see an overlap in the middle
+                    // feature for the current ranking (i.e. Taxon1).
+                    chai.assert.sameMembers(
+                        ["Taxon4", "Taxon5", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2", "Taxon3", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
                 });
             });
         });
