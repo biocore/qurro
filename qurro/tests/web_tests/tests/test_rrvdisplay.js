@@ -209,7 +209,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Multi-feature selections (text-based filtering, basic case)", function() {
+            describe("Multi-feature selections (text-based filtering, one basic case)", function() {
                 beforeEach(async function() {
                     await resetRRVDisplay(rrv);
                     document.getElementById("topSearch").value = "Feature ID";
@@ -355,6 +355,31 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             rrv.botFeatures
                         )
                     );
+
+                    // Yeah, JS considers 1e2 as a valid number! It's
+                    // automatically converted to 100 when you pass it in to
+                    // vega.toNumber() (you can also just straight-up use
+                    // "1e2"-esque syntax in JS, apparently).
+                    await callAutoSelect("1e2", "autoPercent");
+                    var allFeatures = [
+                        "Taxon1",
+                        "Taxon2",
+                        "Taxon3",
+                        "Taxon4",
+                        "Taxon5"
+                    ];
+                    chai.assert.sameMembers(
+                        allFeatures,
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        allFeatures,
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
                 });
                 it("Basic literal-number-based filtering works", async function() {
                     await callAutoSelect("3", "autoLiteral");
@@ -373,6 +398,20 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             rrv.botFeatures
                         )
                     );
+                });
+                it("Invalid inputs result in empty feature selections", async function() {
+                    await callAutoSelect("-3", "autoLiteral");
+                    chai.assert.empty(rrv.topFeatures);
+                    chai.assert.empty(rrv.botFeatures);
+                    await callAutoSelect("-3", "autoPercent");
+                    chai.assert.empty(rrv.topFeatures);
+                    chai.assert.empty(rrv.botFeatures);
+                    await callAutoSelect("100000", "autoLiteral");
+                    chai.assert.empty(rrv.topFeatures);
+                    chai.assert.empty(rrv.botFeatures);
+                    await callAutoSelect("101", "autoPercent");
+                    chai.assert.empty(rrv.topFeatures);
+                    chai.assert.empty(rrv.botFeatures);
                 });
             });
         });
