@@ -355,6 +355,43 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             rrv.botFeatures
                         )
                     );
+                    // Check that the resulting log-ratios are correct.
+                    // We only bother testing this for auto-selection once,
+                    // since we've already unit-tested the heck out of the
+                    // balance computation stuff (and auto-selection is doing
+                    // the same stuff under the hood -- the only "new" stuff
+                    // it does is before it assigns topFeatures and
+                    // botFeatures).
+                    //
+                    // Sample1
+                    chai.assert.equal(
+                        Math.log(1 / 6),
+                        rrv.samplePlotJSON.datasets[dataName][0].qurro_balance
+                    );
+                    // Sample2
+                    chai.assert.equal(
+                        Math.log(1 / 5),
+                        rrv.samplePlotJSON.datasets[dataName][1].qurro_balance
+                    );
+                    // Sample3
+                    chai.assert.equal(
+                        Math.log(1 / 4),
+                        rrv.samplePlotJSON.datasets[dataName][2].qurro_balance
+                    );
+                    // Sample5
+                    chai.assert.equal(
+                        Math.log(1 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][3].qurro_balance
+                    );
+                    // Sample6
+                    chai.assert.equal(
+                        0,
+                        rrv.samplePlotJSON.datasets[dataName][4].qurro_balance
+                    );
+                    // Sample7
+                    chai.assert.isNull(
+                        rrv.samplePlotJSON.datasets[dataName][5].qurro_balance
+                    );
 
                     // Yeah, JS considers 1e2 as a valid number! It's
                     // automatically converted to 100 when you pass it in to
