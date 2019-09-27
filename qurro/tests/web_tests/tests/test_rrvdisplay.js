@@ -728,9 +728,27 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.config.range.ramp.scheme
                     );
                 });
-                it(
-                    "updateSamplePlotColorScheme() throws an error for unrecognized scale range types"
-                );
+                it("Invalid scale ranges cause an error", async function() {
+                    // SO! Testing for errors in async functions doesn't
+                    // really work as expected in Chai, at least as of writing.
+                    // See https://github.com/chaijs/chai/issues/415 for
+                    // details. The more explicit (albeit less elegant)
+                    // approach we use to test this was derived from
+                    // https://github.com/chaijs/chai/issues/1254#issue-446313886.
+                    try {
+                        await rrv.updateSamplePlotColorScheme(
+                            "skedaddle skedappen this should never friggin happen"
+                        );
+                        throw new Error(
+                            "function didn't fail when it should have!"
+                        );
+                    } catch (error) {
+                        chai.assert.match(
+                            error,
+                            /Unrecognized scale range type specified: skedaddle/
+                        );
+                    }
+                });
             });
         });
         describe("Boxplot functionality", function() {

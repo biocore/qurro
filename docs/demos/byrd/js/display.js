@@ -970,7 +970,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.samplePlotJSON.encoding.color.type === "quantitative";
             } else {
                 throw new Error(
-                    "Unrecognized scale range type specified:" + scaleRangeType
+                    "Unrecognized scale range type specified: " + scaleRangeType
                 );
             }
             this.samplePlotJSON.config.range[scaleRangeType].scheme = newScheme;
