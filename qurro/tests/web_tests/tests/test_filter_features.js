@@ -843,11 +843,63 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         }
                     }
                 });
-                it("Works properly when 1 feature requested");
-                it("Works properly when 2 features requested");
+                it("Works properly when 1 feature requested", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "1",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "1",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                });
+                it("Works properly when 2 features requested", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "2",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "2",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 1", "Featurelol 2"]
+                    );
+                });
                 // TODO integration test on clicking the autoSelectButton
-                it("Works properly with overlapping features");
-                it("Works properly when all features requested");
+                // probs easiest to just do that in test_rrvdisplay.js
+                // - overlapping features
+                // - basic percentage and literal cases
+                // TODO: add another test json (or just add another ranking
+                // to rpJSON1) where all features have the same ranking, and
+                // test that this doesn't break autoselection (should just
+                // arbitrarily choose, but should be limited properly
+                // nonetheless)
             });
             describe("Inputs are in percentages of features", function() {
                 it("Works properly when math is easy (top 25% of 4 features)", function() {
@@ -900,6 +952,60 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         }
                     }
                 });
+            });
+            it("Works properly when >50% of features requested", function() {
+                /* Tests all auto-selection search types when we expect
+                 * either *all* features to be returned, or 3/4 features to
+                 * be returned
+                 */
+
+                // NOTE the three arrays below are "paired" -- don't change
+                // the ordering of one without changing the ordering of
+                // the others
+                // (This is lazy but I don't think making this test any
+                // more elegant will be particularly useful)
+                var searchTypes = [
+                    "autoLiteralTop",
+                    "autoLiteralBot",
+                    "autoPercentTop",
+                    "autoPercentBot"
+                ];
+                var searchInputsAll = ["4", "4", "100", "100"];
+                var searchInputs3 = ["3", "3", "75", "75"];
+
+                // these lists are used for determining expected outputs
+                var top3 = ["Featurelol 2", "Feature 3", "Feature 4|lol"];
+                var bot3 = ["Feature 1", "Featurelol 2", "Feature 3"];
+                var expectedOutputFeatures;
+                for (var i = 0; i < searchTypes.length; i++) {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                searchInputsAll[i],
+                                "n",
+                                searchTypes[i]
+                            )
+                        ),
+                        inputFeatures
+                    );
+                    if (searchTypes[i].endsWith("Top")) {
+                        expectedOutputFeatures = top3;
+                    } else {
+                        expectedOutputFeatures = bot3;
+                    }
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                searchInputs3[i],
+                                "n",
+                                searchTypes[i]
+                            )
+                        ),
+                        expectedOutputFeatures
+                    );
+                }
             });
             it("Returns empty if input number isn't a finite, nonnegative number", function() {
                 var invalidValsToTest = [
