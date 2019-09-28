@@ -17,25 +17,30 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 1",
             n: 1.2,
-            x: null
+            x: null,
+            same: 5
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Featurelol 2",
             n: 2,
-            x: "asdf"
+            x: "asdf",
+            same: 5
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 3",
             n: 3.0,
-            x: "0"
+            x: "0",
+            same: 5
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 4|lol",
             n: 4.5,
-            x: "Infinity"
+            x: "Infinity",
+            same: 5
         });
         rpJSON1.datasets.qurro_rank_ordering.push("n");
         rpJSON1.datasets.qurro_rank_ordering.push("x");
+        rpJSON1.datasets.qurro_rank_ordering.push("same");
         var inputFeatures = [
             "Feature 1",
             "Featurelol 2",
@@ -813,31 +818,44 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
             });
         });
         describe("Autoselecting features", function() {
+            var literalSearchTypes = ["autoLiteralTop", "autoLiteralBot"];
+            var percentSearchTypes = ["autoPercentTop", "autoPercentBot"];
+            var autoSearchTypes = literalSearchTypes.concat(percentSearchTypes);
             describe("Inputs are in numbers of features", function() {
                 it("Returns empty for 0 features", function() {
-                    var searchTypes = ["autoLiteralTop", "autoLiteralBot"];
-                    for (var s = 0; s < searchTypes.length; s++) {
+                    var literalSearchTypes = [
+                        "autoLiteralTop",
+                        "autoLiteralBot"
+                    ];
+                    for (var s = 0; s < literalSearchTypes.length; s++) {
                         chai.assert.empty(
                             feature_computation.filterFeatures(
                                 rpJSON1,
-                                0,
+                                "0",
                                 "n",
-                                searchTypes[s]
+                                literalSearchTypes[s]
                             )
                         );
                     }
                 });
                 it("Returns empty if the input number is > number of features", function() {
-                    var vals = [4.1, "4.2", 4.3, "4.4", "20", 100, 99999];
-                    var searchTypes = ["autoLiteralTop", "autoLiteralBot"];
+                    var vals = [
+                        "4.1",
+                        "4.2",
+                        "4.3",
+                        "4.4",
+                        "20",
+                        "100",
+                        "99999"
+                    ];
                     for (var i = 0; i < vals.length; i++) {
-                        for (var s = 0; s < searchTypes.length; s++) {
+                        for (var s = 0; s < literalSearchTypes.length; s++) {
                             chai.assert.empty(
                                 feature_computation.filterFeatures(
                                     rpJSON1,
                                     vals[i],
                                     "n",
-                                    searchTypes[s]
+                                    literalSearchTypes[s]
                                 )
                             );
                         }
@@ -891,15 +909,21 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
-                // TODO integration test on clicking the autoSelectButton
-                // probs easiest to just do that in test_rrvdisplay.js
-                // - overlapping features
-                // - basic percentage and literal cases
-                // TODO: add another test json (or just add another ranking
-                // to rpJSON1) where all features have the same ranking, and
-                // test that this doesn't break autoselection (should just
-                // arbitrarily choose, but should be limited properly
-                // nonetheless)
+                it("Chooses correct number of features when all have equal ranking column value", function() {
+                    for (var s = 0; s < literalSearchTypes.length; s++) {
+                        for (var i = 0; i < 5; i++) {
+                            chai.assert.lengthOf(
+                                feature_computation.filterFeatures(
+                                    rpJSON1,
+                                    String(i),
+                                    "same",
+                                    literalSearchTypes[s]
+                                ),
+                                i
+                            );
+                        }
+                    }
+                });
             });
             describe("Inputs are in percentages of features", function() {
                 it("Works properly when math is easy (top 25% of 4 features)", function() {
@@ -928,26 +952,41 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
-                it("Returns empty if the input number is > 100%", function() {
+                it("Returns empty if the input number is > 100% or 0%", function() {
                     var vals = [
                         "100.00001",
-                        100.000001,
-                        101,
-                        102,
-                        999,
-                        99999,
-                        "999999"
+                        "101",
+                        "102",
+                        "999",
+                        "99999",
+                        "999999",
+                        "0",
+                        "0"
                     ];
-                    var searchTypes = ["autoPercentTop", "autoPercentBot"];
                     for (var i = 0; i < vals.length; i++) {
-                        for (var s = 0; s < searchTypes.length; s++) {
+                        for (var s = 0; s < percentSearchTypes.length; s++) {
                             chai.assert.empty(
                                 feature_computation.filterFeatures(
                                     rpJSON1,
                                     vals[i],
                                     "n",
-                                    searchTypes[s]
+                                    percentSearchTypes[s]
                                 )
+                            );
+                        }
+                    }
+                });
+                it("Chooses correct percentage of features when all have equal ranking column value", function() {
+                    for (var s = 0; s < percentSearchTypes.length; s++) {
+                        for (var i = 0; i < 125; i += 25) {
+                            chai.assert.lengthOf(
+                                feature_computation.filterFeatures(
+                                    rpJSON1,
+                                    String(i),
+                                    "same",
+                                    percentSearchTypes[s]
+                                ),
+                                i / 25
                             );
                         }
                     }
@@ -959,17 +998,10 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                  * be returned
                  */
 
-                // NOTE the three arrays below are "paired" -- don't change
-                // the ordering of one without changing the ordering of
-                // the others
+                // NOTE the two arrays below are designed to match the order of
+                // autoSearchTypes.
                 // (This is lazy but I don't think making this test any
                 // more elegant will be particularly useful)
-                var searchTypes = [
-                    "autoLiteralTop",
-                    "autoLiteralBot",
-                    "autoPercentTop",
-                    "autoPercentBot"
-                ];
                 var searchInputsAll = ["4", "4", "100", "100"];
                 var searchInputs3 = ["3", "3", "75", "75"];
 
@@ -977,19 +1009,19 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 var top3 = ["Featurelol 2", "Feature 3", "Feature 4|lol"];
                 var bot3 = ["Feature 1", "Featurelol 2", "Feature 3"];
                 var expectedOutputFeatures;
-                for (var i = 0; i < searchTypes.length; i++) {
+                for (var i = 0; i < autoSearchTypes.length; i++) {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
                             feature_computation.filterFeatures(
                                 rpJSON1,
                                 searchInputsAll[i],
                                 "n",
-                                searchTypes[i]
+                                autoSearchTypes[i]
                             )
                         ),
                         inputFeatures
                     );
-                    if (searchTypes[i].endsWith("Top")) {
+                    if (autoSearchTypes[i].endsWith("Top")) {
                         expectedOutputFeatures = top3;
                     } else {
                         expectedOutputFeatures = bot3;
@@ -1000,7 +1032,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                                 rpJSON1,
                                 searchInputs3[i],
                                 "n",
-                                searchTypes[i]
+                                autoSearchTypes[i]
                             )
                         ),
                         expectedOutputFeatures
@@ -1025,26 +1057,24 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     "-100.23",
                     -100.23
                 ];
-                var searchTypes = [
-                    "autoPercentTop",
-                    "autoPercentBot",
-                    "autoLiteralTop",
-                    "autoLiteralBot"
-                ];
                 for (var i = 0; i < invalidValsToTest.length; i++) {
-                    for (var s = 0; s < searchTypes.length; s++) {
+                    for (var s = 0; s < autoSearchTypes.length; s++) {
                         chai.assert.isEmpty(
                             feature_computation.filterFeatures(
                                 rpJSON1,
                                 invalidValsToTest[i],
                                 "n",
-                                searchTypes[s]
+                                autoSearchTypes[s]
                             )
                         );
                     }
                 }
             });
             it("Throws an error if a ranking isn't present in all features", function() {
+                // NOTE: we can use a number (2) here because we're calling
+                // extremeFilterFeatures() directly, instead of calling
+                // filterFeatures() first (which expects inputText to be a
+                // string)
                 chai.assert.throws(function() {
                     // We get a list of "feature rows" to mimic what
                     // filterFeatures() would give to extremeFilterFeatures()
