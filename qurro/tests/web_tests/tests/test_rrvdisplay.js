@@ -437,18 +437,17 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
                 it("Invalid inputs result in empty feature selections", async function() {
-                    await callAutoSelect("-3", "autoLiteral");
-                    chai.assert.empty(rrv.topFeatures);
-                    chai.assert.empty(rrv.botFeatures);
-                    await callAutoSelect("-3", "autoPercent");
-                    chai.assert.empty(rrv.topFeatures);
-                    chai.assert.empty(rrv.botFeatures);
-                    await callAutoSelect("100000", "autoLiteral");
-                    chai.assert.empty(rrv.topFeatures);
-                    chai.assert.empty(rrv.botFeatures);
-                    await callAutoSelect("101", "autoPercent");
-                    chai.assert.empty(rrv.topFeatures);
-                    chai.assert.empty(rrv.botFeatures);
+                    function assertEmpty(rrv) {
+                        chai.assert.empty(rrv.topFeatures);
+                        chai.assert.empty(rrv.botFeatures);
+                    }
+                    var vals = ["-3", "123eee", "-0.01"];
+                    for (var v = 0; v < vals.length; v++) {
+                        await callAutoSelect(vals[v], "autoLiteral");
+                        assertEmpty(rrv);
+                        await callAutoSelect(vals[v], "autoPercent");
+                        assertEmpty(rrv);
+                    }
                 });
             });
         });

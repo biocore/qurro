@@ -309,17 +309,18 @@ define(["./dom_utils"], function(dom_utils) {
             if (isNaN(inputNum) || inputNum < 0) {
                 return [];
             }
-            // Now, we just need to enforce upper bounds on the input number:
-            // Percentages obviously can't be > 100%
-            else if (inPercentages && inputNum > 100) {
-                return [];
+            // If the user asks for more than 100% of the features (aka more
+            // features than are present in the dataset), just go ahead and
+            // return all features
+            else if (
+                (inPercentages && inputNum > 100) ||
+                (!inPercentages && inputNum > featureCt)
+            ) {
+                return potentialFeatures;
             }
-            // And, similarly, you can't include more features than are present
-            // in the dataset
-            else if (!inPercentages && inputNum > featureCt) {
-                return [];
-            }
-            // OK, so now we know that inputNum is valid!
+            // OK, so now we know that inputNum is valid (i.e. is a number and
+            // is in the range [0, 100] for percentage searching or [0, #
+            // features] for number-of-features searching).
             // Next, let's just figure out how many features to extract from a
             // given side of the ranking.
             var numberOfFeaturesToGet;

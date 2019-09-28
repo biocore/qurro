@@ -838,7 +838,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         );
                     }
                 });
-                it("Returns empty if the input number is > number of features", function() {
+                it("Gets all features if the input number is > number of features", function() {
                     var vals = [
                         "4.1",
                         "4.2",
@@ -850,13 +850,16 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ];
                     for (var i = 0; i < vals.length; i++) {
                         for (var s = 0; s < literalSearchTypes.length; s++) {
-                            chai.assert.empty(
-                                feature_computation.filterFeatures(
-                                    rpJSON1,
-                                    vals[i],
-                                    "n",
-                                    literalSearchTypes[s]
-                                )
+                            chai.assert.sameMembers(
+                                testing_utilities.getFeatureIDsFromObjectArray(
+                                    feature_computation.filterFeatures(
+                                        rpJSON1,
+                                        vals[i],
+                                        "n",
+                                        literalSearchTypes[s]
+                                    )
+                                ),
+                                inputFeatures
                             );
                         }
                     }
@@ -952,26 +955,39 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
-                it("Returns empty if the input number is > 100% or 0%", function() {
+                it("Returns empty if 0% of features are requested", function() {
+                    for (var s = 0; s < percentSearchTypes.length; s++) {
+                        chai.assert.empty(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "0",
+                                "n",
+                                percentSearchTypes[s]
+                            )
+                        );
+                    }
+                });
+                it("Gets all features if the input number is > 100%", function() {
                     var vals = [
                         "100.00001",
                         "101",
                         "102",
                         "999",
                         "99999",
-                        "999999",
-                        "0",
-                        "0"
+                        "999999"
                     ];
                     for (var i = 0; i < vals.length; i++) {
                         for (var s = 0; s < percentSearchTypes.length; s++) {
-                            chai.assert.empty(
-                                feature_computation.filterFeatures(
-                                    rpJSON1,
-                                    vals[i],
-                                    "n",
-                                    percentSearchTypes[s]
-                                )
+                            chai.assert.sameMembers(
+                                testing_utilities.getFeatureIDsFromObjectArray(
+                                    feature_computation.filterFeatures(
+                                        rpJSON1,
+                                        vals[i],
+                                        "n",
+                                        percentSearchTypes[s]
+                                    )
+                                ),
+                                inputFeatures
                             );
                         }
                     }
