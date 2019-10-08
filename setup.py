@@ -87,4 +87,5 @@ setup(
         "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
+    python_requires=">=3.5",
 )
