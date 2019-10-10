@@ -3,7 +3,9 @@ requirejs.config({
     paths: {
         vega: "vendor/vega.min",
         "vega-lite": "vendor/vega-lite.min",
-        "vega-embed": "vendor/vega-embed.min"
+        "vega-embed": "vendor/vega-embed.min",
+        "jquery": "vendor/jquery-3.4.1.min",
+        "datatables": "vendor/jquery.dataTables.min"
     },
     shim: {
         "vega-lite": { deps: ["vega"] },
@@ -11,7 +13,7 @@ requirejs.config({
     }
 });
 requirejs(
-    ["js/display", "js/feature_computation", "vega", "vega-lite", "vega-embed"],
+    ["js/display", "js/feature_computation", "vega", "vega-lite", "vega-embed", "jquery", "datatables"],
     function(display, feature_computation, vega, vegaLite, vegaEmbed) {
         // DON'T CHANGE THESE LINES unless you know what you're doing -- the
         // "var *JSON = {};" lines are expected to contain that text by Qurro's

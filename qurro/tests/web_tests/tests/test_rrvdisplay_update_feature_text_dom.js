@@ -12,7 +12,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe('Updating "feature text" DOM elements via RRVDisplay.updateFeaturesTextDisplays()', function() {
+    describe('Updating "feature text" DOM elements via RRVDisplay.updateFeaturesDisplays()', function() {
         var rrv;
         before(async function() {
             rrv = new display.RRVDisplay(
@@ -36,7 +36,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 FeatureMetadata1: 10,
                 FeatureMetadata2: 3
             };
-            rrv.updateFeaturesTextDisplays(true);
+            rrv.updateFeaturesDisplays(true);
             chai.assert.equal(
                 document.getElementById("topFeaturesDisplay").value,
                 "New feature name high / 5 / test"
@@ -53,7 +53,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 FeatureMetadata2: "lol"
             };
             rrv.newFeatureLow = { "Feature ID": "Thing 2!" };
-            rrv.updateFeaturesTextDisplays(true);
+            rrv.updateFeaturesDisplays(true);
             chai.assert.equal(
                 document.getElementById("topFeaturesDisplay").value,
                 "Thing 1! / / lol"
@@ -83,7 +83,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             var expectedTopText =
                 "abc / 1\ndef / 2\nghi / 3\nlmno pqrs / 4\ntuv / ";
             var expectedBotText = "asdf / \nghjk / 7";
-            rrv.updateFeaturesTextDisplays();
+            rrv.updateFeaturesDisplays();
             chai.assert.equal(
                 document.getElementById("topFeaturesDisplay").value,
                 expectedTopText
@@ -98,7 +98,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // same as before
             rrv.topFeatures = [{ "Feature ID": "onlyfeature", f1: 100 }];
             expectedTopText = "onlyfeature / 100";
-            rrv.updateFeaturesTextDisplays();
+            rrv.updateFeaturesDisplays();
             chai.assert.equal(
                 document.getElementById("topFeaturesDisplay").value,
                 expectedTopText
@@ -113,7 +113,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // don't have any results.
             rrv.topFeatures = [];
             rrv.botFeatures = [];
-            rrv.updateFeaturesTextDisplays();
+            rrv.updateFeaturesDisplays();
             chai.assert.isEmpty(
                 document.getElementById("topFeaturesDisplay").value
             );
@@ -126,12 +126,12 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // Populate the DOM elements
             rrv.newFeatureHigh = "Thing 1!";
             rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
+            rrv.updateFeaturesDisplays(true);
             // Just to be super sure, check that the headers were updated
             // correctly
             testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing works
-            rrv.updateFeaturesTextDisplays(false, true);
+            rrv.updateFeaturesDisplays(false, true);
             chai.assert.isEmpty(
                 document.getElementById("topFeaturesDisplay").value
             );
@@ -142,11 +142,11 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // Repopulate the DOM elements
             rrv.newFeatureHigh = "Thing 1!";
             rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
+            rrv.updateFeaturesDisplays(true);
             testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing is done, even if "single" is true
             // (the "clear" argument takes priority)
-            rrv.updateFeaturesTextDisplays(true, true);
+            rrv.updateFeaturesDisplays(true, true);
             chai.assert.isEmpty(
                 document.getElementById("topFeaturesDisplay").value
             );

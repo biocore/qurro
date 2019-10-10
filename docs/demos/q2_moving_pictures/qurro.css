@@ -139,3 +139,7 @@ textarea {
 #vg-tooltip-element.vg-tooltip td {
     padding: 0px 0px 0px 2px;
 }
+
+/* formating for tables */
+th { font-size: 12px; }
+td { font-size: 11px; }

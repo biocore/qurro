@@ -109,6 +109,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Note that this will fail if either makePlot function fails with
             // an error. This should be ok for Qurro's purposes, though.
             await Promise.all([this.makeRankPlot(), this.makeSamplePlot()]);
+
             this.setUpDOM();
             document
                 .getElementById("loadingMessage")
@@ -173,6 +174,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 },
                 "onchange"
             );
+
+
         }
 
         makeRankPlot(notFirstTime) {
@@ -201,8 +204,37 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "Feature ID",
                     true
                 );
-                // Clear the "features text" displays
-                this.updateFeaturesTextDisplays(false, true);
+                // Initialize tables and update them
+                var columns = [{"title": "Feature ID"}];
+                $.each($.merge(this.rankOrdering, this.featureMetadataFields), function( index, value ) {
+                    columns.push({"title": value})
+                });
+                this.featureColumns = columns;
+                $('#topFeaturesDisplay').DataTable({
+                    scrollY:        "200px",
+                    paging:         false,
+                    scrollX:        true,
+                    scrollCollapse: true,
+                    columns: this.featureColumns,
+                    data: [],
+                    columnDefs: [
+                        { width: '20%', targets: 0 }
+                    ],
+                    fixedColumns: true
+                });
+                $('#botFeaturesDisplay').DataTable({
+                    scrollY:        "200px",
+                    paging:         false,
+                    scrollX:        true,
+                    scrollCollapse: true,
+                    columns: this.featureColumns,
+                    data: [],
+                    columnDefs: [
+                        { width: '20%', targets: 0 }
+                    ],
+                    fixedColumns: true
+                });
+                this.updateFeaturesDisplays(false, true);
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
                 // This is intended to address cases where there are only a few
@@ -555,7 +587,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.updateRankColorMulti
             );
             // Update features text displays
-            this.updateFeaturesTextDisplays();
+            this.updateFeaturesDisplays();
         }
 
         async updateSamplePlotSingle() {
@@ -597,7 +629,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
-                        this.updateFeaturesTextDisplays(true);
+                        this.updateFeaturesDisplays(true);
                     }
                 }
             }
@@ -624,52 +656,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "%) selected";
         }
 
-        /* Converts a list of feature "rows" from the rank plot JSON to a
-         * human-readable string that will be used to populate a <textarea>
-         * in qurro' output.
-         *
-         * Basically, this goes through each feature and creates a
-         * representation that looks something like
-         * Feature ID / FeatMetadataField1Value / FeatMetadataField2Value ...,
-         * where each feature metadata value is separated by a " / ".
-         *
-         * The output text returned by this function is just a string
-         * containing all of these representations, which are themselves
-         * separated by newline characters.
-         */
-        featureRowListToText(featureRowList) {
-            if (featureRowList.length <= 0) {
-                return "";
-            }
-            var outputText = "";
-            var currVal, anotherFieldLeft;
-            // fmFields is just the feature metadata fields, with "Feature ID"
-            // added on at the beginning
-            var fmFields = this.featureMetadataFields.slice();
-            fmFields.unshift("Feature ID");
-            for (var i = 0; i < featureRowList.length; i++) {
-                if (i > 0) {
-                    outputText += "\n";
-                }
-                for (var c = 0; c < fmFields.length; c++) {
-                    currVal = featureRowList[i][fmFields[c]];
-                    // If currVal *is* null or undefined, this will look like
-                    // / / in the output for this metadata field -- which is
-                    // fine.
-                    anotherFieldLeft = c + 1 < fmFields.length;
-                    if (currVal !== null && currVal !== undefined) {
-                        outputText += currVal;
-                        if (anotherFieldLeft) {
-                            outputText += " / ";
-                        }
-                    } else if (anotherFieldLeft) {
-                        outputText += "/ ";
-                    }
-                }
-            }
-            return outputText;
-        }
-
         /* Updates the textareas that list the selected features, as well as
          * the corresponding header elements that indicate the numbers of
          * selected features.
@@ -680,33 +666,50 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * value for the single argument (and clear is falsy), this will
          * instead update based on the single selection values.
          */
-        updateFeaturesTextDisplays(single, clear) {
+        updateFeaturesDisplays(single, clear) {
+            var topDisplay = $('#topFeaturesDisplay').DataTable();
+            var botDisplay = $('#botFeaturesDisplay').DataTable();
+            var featureColumns = this.featureColumns;
+
+            topDisplay
+                .clear()
+                .draw();
+            botDisplay
+                .clear()
+                .draw();
+
             if (clear) {
-                document.getElementById("topFeaturesDisplay").value = "";
-                document.getElementById("botFeaturesDisplay").value = "";
-                // NOTE: this will still include the total number of features
-                // in the headers. Shouldn't be a huge problem; can be changed
-                // if desired.
                 this.updateFeatureHeaderCounts(0, 0);
-            } else if (single) {
-                document.getElementById(
-                    "topFeaturesDisplay"
-                ).value = this.featureRowListToText([this.newFeatureHigh]);
-                document.getElementById(
-                    "botFeaturesDisplay"
-                ).value = this.featureRowListToText([this.newFeatureLow]);
-                this.updateFeatureHeaderCounts(1, 1);
             } else {
-                document.getElementById(
-                    "topFeaturesDisplay"
-                ).value = this.featureRowListToText(this.topFeatures);
-                document.getElementById(
-                    "botFeaturesDisplay"
-                ).value = this.featureRowListToText(this.botFeatures);
-                this.updateFeatureHeaderCounts(
-                    this.topFeatures.length,
-                    this.botFeatures.length
-                );
+                if (single) {
+                  var topFeatures = [this.newFeatureHigh]
+                  var botFeatures = [this.newFeatureLow]
+                } else {
+                    var topFeatures = this.topFeatures
+                    var botFeatures = this.botFeatures
+                    this.updateFeatureHeaderCounts(
+                        this.topFeatures.length,
+                        this.botFeatures.length
+                    );
+                }
+
+                $.each(topFeatures, function( index, feature ) {
+                    var row = []
+                    $.each(featureColumns, function( index, column ) {
+                        row.push(feature[column['title']])
+                    });
+                    topDisplay.row.add(row)
+                });
+                $.each(botFeatures, function( index, feature ) {
+                    var row = []
+                    $.each(featureColumns, function( index, column ) {
+                        row.push(feature[column['title']])
+                    });
+                    botDisplay.row.add(row)
+                });
+
+                topDisplay.draw();
+                botDisplay.draw();
             }
         }
 
@@ -1252,7 +1255,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // Reset various UI elements to their "default" states
 
                 // Clear the "features text" displays
-                this.updateFeaturesTextDisplays(false, true);
+                this.updateFeaturesDisplays(false, true);
 
                 // Clear <select>s populated with field information from this
                 // RRVDisplay's JSONs
