@@ -85,5 +85,5 @@ def test_mackerel():
         "feature-table.biom",
         "sample-metadata.tsv",
         feature_metadata_name="taxonomy.tsv",
-        expected_unsupported_samples=1067,
+        expected_unsupported_samples=1248,
     )
