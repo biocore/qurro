@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Next Qurro release (date TBD)
+## Qurro 0.5.0
 ### Features added
 - Added **autoselection**, another method for selecting multiple features in a
   log-ratio. This method just picks features from the top and bottom of the
@@ -45,6 +45,9 @@
   `qurro_spc` then an error will be raised when trying to generate a Qurro
   visualization.
 - Qurro now requires that a Pandas version of at least 0.24.0 is installed.
+- Qurro now (explicitly) requires that a Python version of at least 3.5 is
+  installed. (This was already a requirement, but it should be enforced when
+  installing Qurro now.)
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
@@ -52,10 +55,10 @@
   changing the location/styling of certain buttons).
 - Renamed the y-axis of the sample plot to say `Current Natural Log-Ratio`
   instead of just `Current Log-Ratio`. (This makes it clearer that these
-  log-ratios are computed using the natural log.) This change has also been
-  applied to TSV files exported from the sample plot (`Current_Log_Ratio` -->
-  `Current_Natural_Log_Ratio`), as well as to the tooltips of samples in the
-  sample plot.
+  log-ratios are computed using the natural log, i.e. `ln`.) This change has
+  also been applied to TSV files exported from the sample plot
+  (`Current_Log_Ratio` --> `Current_Natural_Log_Ratio`), as well as to the
+  tooltips of samples in the sample plot.
 - Renamed the y-axis of the rank plot to say either `Differential: ` or
   `Feature Loading: ` instead of `Magnitude: `.
   ([#223](https://github.com/biocore/qurro/issues/223))
@@ -76,7 +79,7 @@
   (Vega, Vega-Lite, Vega-Embed, RequireJS, Bootstrap) are now installed in
   both "source" and "built" distributions of Qurro (previously, these were only
   installed in "source" distributions).
-
+- Updated the "Mackerel" demo / test data to match the latest output of [this analysis](https://github.com/knightlab-analyses/qurro-mackerel-analysis/). Notable changes include using the `reference-hit` Deblur BIOM output instead of the `all` Deblur BIOM output (i.e. likely non-16S sequences are filtered out), and using SILVA instead of Greengenes for taxonomic classification.
 
 ## Qurro 0.4.0 (August 15, 2019)
 ### Features added
