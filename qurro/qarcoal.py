@@ -49,8 +49,12 @@ def qarcoal(table: biom.Table,
         denom_string)]
 
     # drop columns (samples) in which no feature w/ string is present
-    tax_num_df.drop(columns = 'Taxon', inplace = True)
-    tax_denom_df.drop(columns = 'Taxon', inplace = True)
+    tax_num_df.drop(
+        columns = ['Taxon', 'Confidence'],
+        inplace = True)
+    tax_denom_df.drop(
+        columns = ['Taxon', 'Confidence'],
+        inplace = True)
 
     tax_num_joined_df = tax_num_df.join(feat_table)
     tax_num_joined_df = tax_num_joined_df.loc[
