@@ -10,11 +10,15 @@
 import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
+from qurro.qarcoal import qarcoal
 from ._method import differential_plot, loading_plot
+from ._type import (QarcoalLogRatios, QarcoalLogRatiosDirFmt,
+    QarcoalLogRatiosFormat)
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
-from qiime2.plugin import Metadata, Properties, Int, Bool
+from qiime2.plugin import Metadata, Properties, Int, Bool, Str
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.ordination import PCoAResults
+from q2_types.sample_data import SampleData
 
 # Gracefully fail if the user is using an old version of QIIME 2. I expect this
 # will pop up a lot as people switch from 2019.4 to 2019.7. (We can remove this
@@ -42,7 +46,7 @@ plugin = qiime2.plugin.Plugin(
         "This QIIME 2 plugin supports the interactive visualization of "
         "feature rankings (either differentials or feature loadings -- when "
         "sorted numerically these provide rankings) in tandem with log-ratios "
-        "of features' abundances within samples."
+        "of features' abundances within samples. Test"
     ),
     package="qurro",
 )
@@ -101,3 +105,36 @@ plugin.visualizers.register_function(
     name=short_desc.format("loading"),
     description=long_desc.format("loading"),
 )
+
+qarcoal_params = {
+    "num_string": Str,
+    "denom_string": Str
+}
+
+qarcoal_param_descs = {
+    "num_string": "numerator string to search for in taxonomy",
+    "denom_string": "denominator string to search for in taxonomy"
+}
+
+plugin.methods.register_function(
+    function=qarcoal,
+    inputs={
+        "table": FeatureTable[Frequency]
+    },
+    parameters=qarcoal_params,
+    parameter_descriptions=qarcoal_param_descs,
+    input_descriptions={"table": TABLE},
+    outputs=[('qarcoal_log_ratios', SampleData[QarcoalLogRatios])],
+    description=(
+        "Compute the log ratio of two specified feature strings by" +
+        "searching taxonomy for incidence of each string, summing" +
+        "all relevant feature counts for each sample, and taking" +
+        "the natural log of the numerator sum divided by denominator" +
+        "sum."),
+    name="Compute numerator:denominator feature log ratios"
+)
+
+
+# Register types
+#plugin.register_formats(
+plugin.register_semantic_types(QarcoalLogRatios)
