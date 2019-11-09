@@ -116,7 +116,8 @@ qarcoal_params = {
 
 qarcoal_param_descs = {
     "num_string": "numerator string to search for in taxonomy",
-    "denom_string": "denominator string to search for in taxonomy"
+    "denom_string": "denominator string to search for in taxonomy",
+    "taxonomy": "Qiime2 Metadata with taxonomy information"
 }
 
 plugin.methods.register_function(

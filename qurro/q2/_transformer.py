@@ -29,16 +29,14 @@ def _2(obj: qiime2.Metadata) -> QarcoalLogRatiosFormat:
     return ff
 
 @plugin.register_transformer
-def _3(data: pd.Series) -> QarcoalLogRatiosFormat:
+def _3(data: pd.DataFrame) -> QarcoalLogRatiosFormat:
     ff = QarcoalLogRatiosFormat()
     with ff.open() as fh:
         data.to_csv(fh, sep = '\t', header=True)
     return ff
 
-# taken from q2-types/sample_data/_transformer.py
 @plugin.register_transformer
-def _4(ff: QarcoalLogRatiosFormat) -> pd.Series:
+def _4(ff: QarcoalLogRatiosFormat) -> pd.DataFrame:
     with ff.open() as fh:
         df = _read_log_ratios(fh)
-        series = df.iloc[:,0]
-    return series
+    return df
