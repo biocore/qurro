@@ -12,9 +12,12 @@
 import biom
 import pandas as pd
 
-def qarcoal(table: biom.Table, 
+def qarcoal(table: biom.Table,
+            taxonomy: pd.DataFrame,
             num_string: str, 
-            denom_string: str) -> pd.DataFrame:
+            denom_string: str) -> pd.Series:
 
-    feat_table = table.to_dataframe().T
-    return feat_table
+    data = {'Name':['Tom', 'nick', 'krish', 'jack'], 
+            'Age':[20, 21, 19, 18]}
+    feat_table = pd.DataFrame(data)
+    return feat_table['Age']

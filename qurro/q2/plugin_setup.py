@@ -7,6 +7,8 @@
 #
 # The full license is in the file LICENSE.txt, distributed with this software.
 # ----------------------------------------------------------------------------
+import importlib
+
 import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
@@ -46,7 +48,7 @@ plugin = qiime2.plugin.Plugin(
         "This QIIME 2 plugin supports the interactive visualization of "
         "feature rankings (either differentials or feature loadings -- when "
         "sorted numerically these provide rankings) in tandem with log-ratios "
-        "of features' abundances within samples. Test"
+        "of features' abundances within samples."
     ),
     package="qurro",
 )
@@ -108,7 +110,8 @@ plugin.visualizers.register_function(
 
 qarcoal_params = {
     "num_string": Str,
-    "denom_string": Str
+    "denom_string": Str,
+    "taxonomy": Metadata
 }
 
 qarcoal_param_descs = {
@@ -123,7 +126,9 @@ plugin.methods.register_function(
     },
     parameters=qarcoal_params,
     parameter_descriptions=qarcoal_param_descs,
-    input_descriptions={"table": TABLE},
+    input_descriptions={
+        "table": TABLE
+    },
     outputs=[('qarcoal_log_ratios', SampleData[QarcoalLogRatios])],
     description=(
         "Compute the log ratio of two specified feature strings by" +
@@ -136,5 +141,11 @@ plugin.methods.register_function(
 
 
 # Register types
-#plugin.register_formats(
+plugin.register_formats(QarcoalLogRatiosFormat, QarcoalLogRatiosDirFmt)
 plugin.register_semantic_types(QarcoalLogRatios)
+plugin.register_semantic_type_to_format(
+    SampleData[QarcoalLogRatios],
+    artifact_format=QarcoalLogRatiosDirFmt
+)
+
+importlib.import_module('qurro.q2._transformer')
