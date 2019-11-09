@@ -16,7 +16,7 @@ QarcoalLogRatios = SemanticType(
     variant_of = SampleData.field['type'])
 
 class QarcoalLogRatiosFormat(model.TextFileFormat):
-    def validate(**args):
+    def validate(*args):
         pass
 
 QarcoalLogRatiosDirFmt = model.SingleFileDirectoryFormat(
