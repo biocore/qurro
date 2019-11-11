@@ -111,13 +111,15 @@ plugin.visualizers.register_function(
 qarcoal_params = {
     "num_string": Str,
     "denom_string": Str,
-    "taxonomy": Metadata
+    "taxonomy": Metadata,
+    "samples_to_use": Metadata
 }
 
 qarcoal_param_descs = {
     "num_string": "numerator string to search for in taxonomy",
     "denom_string": "denominator string to search for in taxonomy",
-    "taxonomy": "Qiime2 Metadata with taxonomy information"
+    "taxonomy": "Qiime2 Metadata with taxonomy information",
+    "samples_to_use": "Qiime2 Metadata with samples to use"
 }
 
 plugin.methods.register_function(

@@ -15,9 +15,10 @@ import pandas as pd
 from qiime2 import Metadata
 
 def qarcoal(table: biom.Table,
+            taxonomy: Metadata,
             num_string: str, 
             denom_string: str,
-            taxonomy: Metadata) -> pd.DataFrame:
+            samples_to_use: Metadata = None) -> pd.DataFrame:
     """Calculate sample-wise log-ratios of features with
     num_string in numerator over denom_string in denominator.
 
@@ -27,6 +28,7 @@ def qarcoal(table: biom.Table,
         taxonomy: Qiime2 compliant feature taxonomy metadata file
         num_string: numerator string to search for in taxonomy
         denom_string: denominator string to search for in taxonomy
+        sample_to_use: Q2 Metadata file with samples to use (optional)
 
     Returns:
     --------
@@ -37,7 +39,13 @@ def qarcoal(table: biom.Table,
     """
 
     # biom table is features x samples
-    feat_table = table.to_dataframe()
+    if samples_to_use is not None:
+        samp = set(samples_to_use.to_dataframe().index)
+        feat_table = table.filter(samp, axis = 'sample', inplace = False)
+        feat_table = feat_table.to_dataframe()
+    else:
+        feat_table = table.to_dataframe()
+
     samples = list(feat_table.columns)
     taxonomy_df = taxonomy.to_dataframe()
 
