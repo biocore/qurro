@@ -85,7 +85,7 @@ def qarcoal(table: biom.Table,
     # don't want to check each time so only check if sums are
     # the same
     # e.g. if you are comparing g__A and s__B but g__A only
-    # appears when followd by s__B -> log ratios will all = 1 
+    # appears when followed by s__B -> log ratios will all = 0 
     # TODO: Figure out if this makes sense at all lol
     if tax_num_sample_sum.equals(tax_denom_sample_sum):
         a = set(tax_num_df.index)
