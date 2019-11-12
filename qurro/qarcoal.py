@@ -46,7 +46,6 @@ def qarcoal(table: biom.Table,
     else:
         feat_table = table.to_dataframe()
 
-    samples = list(feat_table.columns)
     taxonomy_df = taxonomy.to_dataframe()
 
     # taxonomy is features x [Taxon, Confidence]
@@ -55,6 +54,16 @@ def qarcoal(table: biom.Table,
         num_string)]
     tax_denom_df = taxonomy_df[taxonomy_df['Taxon'].str.contains(
         denom_string)]
+
+    if tax_num_df.shape[0] == 0:
+        if tax_denom_df.shape[0] == 0:
+            raise(ValueError('neither feature found!'))
+        else:
+            raise(ValueError('numerator not found!'))
+    elif tax_denom_df.shape[0] == 0:
+        raise(ValueError('denominator not found!'))
+    else:
+        pass
 
     # drop columns (samples) in which no feature w/ string is present
     tax_num_df.drop(
