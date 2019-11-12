@@ -40,23 +40,48 @@ def get_mp_data():
 
 @pytest.fixture(scope="module")
 def get_mp_results(get_mp_data):
-    q = qarcoal(get_mp_data.table, get_mp_data.taxonomy, 'Bact', 'Firm')
+    num = "g__Bacteroides"
+    denom = "g__Streptococcus"
+    q = qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
     return q
+
+
+@pytest.fixture(scope="module")
+def get_qurro_mp_results():
+    qurro_url = "input/moving_pictures/qurro_bacteroides_streptococcus.tsv"
+    results = pd.read_csv(qurro_url, sep="\t", index_col=0)
+    # index: Sample ID
+    # columns: Current_Log_Ratio, BodySite, BodySite
+    return results
 
 
 class TestQarcoalOutput:
     def test_type(self, get_mp_results):
         assert isinstance(get_mp_results, pd.DataFrame)
 
-    def test_shape(self, get_mp_data, get_mp_results):
-        nrow_biom = len(get_mp_data.table.ids(axis='sample'))
+    def test_shape(self, get_mp_data, get_mp_results, get_qurro_mp_results):
+        qurro_results = get_qurro_mp_results.dropna()
+        nrow_qurro = qurro_results.shape[0]
         nrow_qarcoal = get_mp_results.shape[0]
-        assert nrow_biom == nrow_qarcoal
+        assert nrow_qurro == nrow_qarcoal
 
-    def test_samples(self, get_mp_data, get_mp_results):
-        samp_biom = set(get_mp_data.table.ids(axis='sample'))
+    def test_samples(self, get_mp_data, get_mp_results, get_qurro_mp_results):
+        qurro_results = get_qurro_mp_results.dropna()
+        samp_qurro = set(qurro_results.index)
         samp_qarcoal = set(get_mp_results.index)
-        assert samp_biom == samp_qarcoal
+        assert samp_qurro == samp_qarcoal
+
+    def test_log_ratios_1(self, get_mp_results, get_qurro_mp_results):
+        qurro_results = get_qurro_mp_results.dropna()
+        qurro_results = qurro_results[['Current_Log_Ratio']]
+        qurro_results = qurro_results.sort_values(by='Current_Log_Ratio')
+        qurro_results = qurro_results.to_numpy()
+
+        qarcoal_results = get_mp_results[['log_ratio']]
+        qarcoal_results = qarcoal_results.sort_values(by='log_ratio')
+        qarcoal_results = qarcoal_results.to_numpy()
+
+        assert qarcoal_results - qurro_results == pytest.approx(0)
 
 
 class TestErrors:
