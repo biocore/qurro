@@ -12,6 +12,8 @@ from qiime2.plugin.testing import TestPluginBase
 from qurro.qarcoal import qarcoal
 from qurro.q2._type import QarcoalLogRatios, QarcoalLogRatiosDirFmt
 
+MP_URL = "qurro/tests/input/moving_pictures"
+
 
 class TestTypes(TestPluginBase):
     package = "qurro.tests"
@@ -21,20 +23,19 @@ class TestTypes(TestPluginBase):
 
     def test_qlr_to_qlr_dir(self):
         self.assertSemanticTypeRegisteredToFormat(
-            SampleData[QarcoalLogRatios], QarcoalLogRatiosDirFmt)
+            SampleData[QarcoalLogRatios], QarcoalLogRatiosDirFmt
+        )
 
 
 @pytest.fixture(scope="module")
 def get_mp_data():
-    mp_url = "input/moving_pictures"
-
-    biom_url = os.path.join(mp_url, "feature-table.biom")
-    taxonomy_url = os.path.join(mp_url, "taxonomy.tsv")
+    biom_url = os.path.join(MP_URL, "feature-table.biom")
+    taxonomy_url = os.path.join(MP_URL, "taxonomy.tsv")
 
     table = biom.load_table(biom_url)
     taxonomy = pd.read_csv(taxonomy_url, sep="\t", index_col=0)
     taxonomy = Metadata(taxonomy)
-    data = namedtuple('Data', 'table taxonomy')
+    data = namedtuple("Data", "table taxonomy")
     return data(table, taxonomy)
 
 
@@ -48,7 +49,7 @@ def get_mp_results(get_mp_data):
 
 @pytest.fixture(scope="module")
 def get_qurro_mp_results():
-    qurro_url = "input/moving_pictures/qurro_bacteroides_streptococcus.tsv"
+    qurro_url = os.path.join(MP_URL, "qurro_bacteroides_streptococcus.tsv")
     results = pd.read_csv(qurro_url, sep="\t", index_col=0)
     # index: Sample ID
     # columns: Current_Log_Ratio, BodySite, BodySite
@@ -73,12 +74,12 @@ class TestQarcoalOutput:
 
     def test_log_ratios_1(self, get_mp_results, get_qurro_mp_results):
         qurro_results = get_qurro_mp_results.dropna()
-        qurro_results = qurro_results[['Current_Log_Ratio']]
-        qurro_results = qurro_results.sort_values(by='Current_Log_Ratio')
+        qurro_results = qurro_results[["Current_Log_Ratio"]]
+        qurro_results = qurro_results.sort_values(by="Current_Log_Ratio")
         qurro_results = qurro_results.to_numpy()
 
-        qarcoal_results = get_mp_results[['log_ratio']]
-        qarcoal_results = qarcoal_results.sort_values(by='log_ratio')
+        qarcoal_results = get_mp_results[["log_ratio"]]
+        qarcoal_results = qarcoal_results.sort_values(by="log_ratio")
         qarcoal_results = qarcoal_results.to_numpy()
 
         assert qarcoal_results - qurro_results == pytest.approx(0)

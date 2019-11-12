@@ -14,11 +14,14 @@ import numpy as np
 import pandas as pd
 from qiime2 import Metadata
 
-def qarcoal(table: biom.Table,
-            taxonomy: Metadata,
-            num_string: str, 
-            denom_string: str,
-            samples_to_use: Metadata = None) -> pd.DataFrame:
+
+def qarcoal(
+    table: biom.Table,
+    taxonomy: Metadata,
+    num_string: str,
+    denom_string: str,
+    samples_to_use: Metadata = None,
+) -> pd.DataFrame:
     """Calculate sample-wise log-ratios of features with
     num_string in numerator over denom_string in denominator.
 
@@ -41,7 +44,7 @@ def qarcoal(table: biom.Table,
     # biom table is features x samples
     if samples_to_use is not None:
         samp = set(samples_to_use.to_dataframe().index)
-        feat_table = table.filter(samp, axis = 'sample', inplace = False)
+        feat_table = table.filter(samp, axis="sample", inplace=False)
         feat_table = feat_table.to_dataframe()
     else:
         feat_table = table.to_dataframe()
@@ -50,62 +53,61 @@ def qarcoal(table: biom.Table,
 
     # taxonomy is features x [Taxon, Confidence]
     taxonomy_df = taxonomy_df.loc[feat_table.index]
-    tax_num_df = taxonomy_df[taxonomy_df['Taxon'].str.contains(
-        num_string)]
-    tax_denom_df = taxonomy_df[taxonomy_df['Taxon'].str.contains(
-        denom_string)]
+    tax_num_df = taxonomy_df[taxonomy_df["Taxon"].str.contains(num_string)]
+    tax_denom_df = taxonomy_df[taxonomy_df["Taxon"].str.contains(denom_string)]
 
     if tax_num_df.shape[0] == 0:
         if tax_denom_df.shape[0] == 0:
-            raise(ValueError('neither feature found!'))
+            raise (ValueError("neither feature found!"))
         else:
-            raise(ValueError('numerator not found!'))
+            raise (ValueError("numerator not found!"))
     elif tax_denom_df.shape[0] == 0:
-        raise(ValueError('denominator not found!'))
+        raise (ValueError("denominator not found!"))
     else:
         pass
 
     # drop columns (samples) in which no feature w/ string is present
-    tax_num_df.drop(
-        columns = ['Taxon', 'Confidence'],
-        inplace = True)
-    tax_denom_df.drop(
-        columns = ['Taxon', 'Confidence'],
-        inplace = True)
+    tax_num_df.drop(columns=["Taxon", "Confidence"], inplace=True)
+    tax_denom_df.drop(columns=["Taxon", "Confidence"], inplace=True)
 
     tax_num_joined_df = tax_num_df.join(feat_table)
     tax_num_joined_df = tax_num_joined_df.loc[
-        :, (tax_num_joined_df != 0).any(axis = 0)]
+        :, (tax_num_joined_df != 0).any(axis=0)
+    ]
     tax_denom_joined_df = tax_denom_df.join(feat_table)
     tax_denom_joined_df = tax_denom_joined_df.loc[
-        :, (tax_denom_joined_df != 0).any(axis = 0)]
+        :, (tax_denom_joined_df != 0).any(axis=0)
+    ]
 
     # keep only intersection of samples in which each feat string
     # is present
     samp_to_keep = set(tax_num_joined_df.columns).intersection(
-        set(tax_denom_joined_df.columns))
+        set(tax_denom_joined_df.columns)
+    )
     tax_num_joined_df = tax_num_joined_df[samp_to_keep]
     tax_denom_joined_df = tax_denom_joined_df[samp_to_keep]
 
-    tax_num_sample_sum = tax_num_joined_df.sum(axis = 0)
-    tax_denom_sample_sum = tax_denom_joined_df.sum(axis = 0)
+    tax_num_sample_sum = tax_num_joined_df.sum(axis=0)
+    tax_denom_sample_sum = tax_denom_joined_df.sum(axis=0)
 
     # sometimes 2 feature labels are the same i.e. same features
     # don't want to check each time so only check if sums are
     # the same
     # e.g. if you are comparing g__A and s__B but g__A only
-    # appears when followed by s__B -> log ratios will all = 0 
+    # appears when followed by s__B -> log ratios will all = 0
     # TODO: Figure out if this makes sense at all lol
     if tax_num_sample_sum.equals(tax_denom_sample_sum):
         a = set(tax_num_df.index)
         b = set(tax_num_df.index)
         if a == b:
-            raise(ValueError('same features!'))
+            raise (ValueError("same features!"))
 
     comparison_df = pd.DataFrame.from_records(
         [tax_num_sample_sum, tax_denom_sample_sum],
-        index = ['Num_Sum', 'Denom_Sum']).T
-    comparison_df['log_ratio'] = comparison_df.apply(
-        lambda x: np.log(x.Num_Sum/x.Denom_Sum), axis = 1)
+        index=["Num_Sum", "Denom_Sum"],
+    ).T
+    comparison_df["log_ratio"] = comparison_df.apply(
+        lambda x: np.log(x.Num_Sum / x.Denom_Sum), axis=1
+    )
 
     return comparison_df

@@ -14,8 +14,11 @@ import qiime2.sdk
 from qurro import __version__
 from qurro.qarcoal import qarcoal
 from ._method import differential_plot, loading_plot
-from ._type import (QarcoalLogRatios, QarcoalLogRatiosDirFmt,
-    QarcoalLogRatiosFormat)
+from ._type import (
+    QarcoalLogRatios,
+    QarcoalLogRatiosDirFmt,
+    QarcoalLogRatiosFormat,
+)
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
 from q2_types.feature_table import FeatureTable, Frequency
@@ -112,34 +115,31 @@ qarcoal_params = {
     "num_string": Str,
     "denom_string": Str,
     "taxonomy": Metadata,
-    "samples_to_use": Metadata
+    "samples_to_use": Metadata,
 }
 
 qarcoal_param_descs = {
     "num_string": "numerator string to search for in taxonomy",
     "denom_string": "denominator string to search for in taxonomy",
     "taxonomy": "Qiime2 Metadata with taxonomy information",
-    "samples_to_use": "Qiime2 Metadata with samples to use"
+    "samples_to_use": "Qiime2 Metadata with samples to use",
 }
 
 plugin.methods.register_function(
     function=qarcoal,
-    inputs={
-        "table": FeatureTable[Frequency]
-    },
+    inputs={"table": FeatureTable[Frequency]},
     parameters=qarcoal_params,
     parameter_descriptions=qarcoal_param_descs,
-    input_descriptions={
-        "table": TABLE
-    },
-    outputs=[('qarcoal_log_ratios', SampleData[QarcoalLogRatios])],
+    input_descriptions={"table": TABLE},
+    outputs=[("qarcoal_log_ratios", SampleData[QarcoalLogRatios])],
     description=(
-        "Compute the log ratio of two specified feature strings by" +
-        "searching taxonomy for incidence of each string, summing" +
-        "all relevant feature counts for each sample, and taking" +
-        "the natural log of the numerator sum divided by denominator" +
-        "sum."),
-    name="Compute numerator:denominator feature log ratios"
+        "Compute the log ratio of two specified feature strings by"
+        + "searching taxonomy for incidence of each string, summing"
+        + "all relevant feature counts for each sample, and taking"
+        + "the natural log of the numerator sum divided by denominator"
+        + "sum."
+    ),
+    name="Compute numerator:denominator feature log ratios",
 )
 
 
@@ -147,8 +147,7 @@ plugin.methods.register_function(
 plugin.register_formats(QarcoalLogRatiosFormat, QarcoalLogRatiosDirFmt)
 plugin.register_semantic_types(QarcoalLogRatios)
 plugin.register_semantic_type_to_format(
-    SampleData[QarcoalLogRatios],
-    artifact_format=QarcoalLogRatiosDirFmt
+    SampleData[QarcoalLogRatios], artifact_format=QarcoalLogRatiosDirFmt
 )
 
-importlib.import_module('qurro.q2._transformer')
+importlib.import_module("qurro.q2._transformer")
