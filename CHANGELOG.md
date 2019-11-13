@@ -9,6 +9,13 @@
   ([#189](https://github.com/biocore/qurro/issues/189))
     - This feature should be useful when quickly assessing how much a given
       ranking field "separates" samples along certain metadata categories.
+- When selecting a log-ratio where feature(s) are present in both the numerator
+  and denominator of the log-ratio, a warning will now be shown explaining the
+  situtation (and recommending that you chose a different log-ratio that
+  doesn't involve this "overlap").
+  ([#249](https://github.com/biocore/qurro/issues/249))
+    - We will try to make selectively removing features from one side or
+      another of log-ratios easier in the future.
 - Added an additional text searching option:
   `is provided, and does not contain the text`. This will select features
   where:
