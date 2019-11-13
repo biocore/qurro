@@ -111,11 +111,13 @@ class TestErrors:
         num = "Firmicutes"
         denom = "Bacilli"
         with pytest.raises(ValueError) as excinfo:
-            qarcoal(get_mp_data.table,
-                    get_mp_data.taxonomy,
-                    num,
-                    denom,
-                    allow_shared_features=False)
+            qarcoal(
+                get_mp_data.table,
+                get_mp_data.taxonomy,
+                num,
+                denom,
+                allow_shared_features=False,
+            )
         assert "Shared features" in str(excinfo.value)
 
 
@@ -123,27 +125,32 @@ class TestOptionalParams:
     def test_shared_features_allowed(self, get_mp_data):
         num = "Firmicutes"
         denom = "Bacilli"
-        qarcoal(get_mp_data.table,
-                get_mp_data.taxonomy,
-                num,
-                denom,
-                allow_shared_features=True)
+        qarcoal(
+            get_mp_data.table,
+            get_mp_data.taxonomy,
+            num,
+            denom,
+            allow_shared_features=True,
+        )
 
     def test_samples_to_use(self, get_mp_data):
         from qiime2 import Metadata
 
         metadata_url = os.path.join(MP_URL, "sample-metadata.tsv")
-        sample_metadata = pd.read_csv(metadata_url, sep="\t", index_col=0,
-                                      skiprows=[1], header=0)
-        gut_samples = sample_metadata[sample_metadata['BodySite'] == 'gut']
+        sample_metadata = pd.read_csv(
+            metadata_url, sep="\t", index_col=0, skiprows=[1], header=0
+        )
+        gut_samples = sample_metadata[sample_metadata["BodySite"] == "gut"]
         num_gut_samples = gut_samples.shape[0]
         gut_samples = Metadata(gut_samples)
 
         num = "p__Bacteroidetes"
         denom = "p__Firmicutes"
-        q = qarcoal(get_mp_data.table,
-                    get_mp_data.taxonomy,
-                    num,
-                    denom,
-                    samples_to_use=gut_samples)
+        q = qarcoal(
+            get_mp_data.table,
+            get_mp_data.taxonomy,
+            num,
+            denom,
+            samples_to_use=gut_samples,
+        )
         assert q.shape[0] == num_gut_samples

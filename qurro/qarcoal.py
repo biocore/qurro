@@ -62,11 +62,11 @@ def qarcoal(
 
     if tax_num_df.shape[0] == 0:
         if tax_denom_df.shape[0] == 0:
-            raise (ValueError("neither feature found!"))
+            raise ValueError("neither feature found!")
         else:
-            raise (ValueError("numerator not found!"))
+            raise ValueError("numerator not found!")
     elif tax_denom_df.shape[0] == 0:
-        raise (ValueError("denominator not found!"))
+        raise ValueError("denominator not found!")
     else:
         pass
 
@@ -99,8 +99,7 @@ def qarcoal(
     if not allow_shared_features:
         shared_features = set(tax_num_df.index) & set(tax_denom_df.index)
         if shared_features:
-            raise(ValueError("Shared features between numerator and \
-                             denominator!"))
+            raise ValueError("Shared features between num and denom!")
 
     comparison_df = pd.DataFrame.from_records(
         [tax_num_sample_sum, tax_denom_sample_sum],

@@ -11,9 +11,7 @@
 from q2_types.sample_data import SampleData
 from qiime2.plugin import model, SemanticType
 
-LogRatios = SemanticType(
-    "LogRatios", variant_of=SampleData.field["type"]
-)
+LogRatios = SemanticType("LogRatios", variant_of=SampleData.field["type"])
 
 
 class LogRatiosFormat(model.TextFileFormat):
