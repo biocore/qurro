@@ -11,16 +11,16 @@
 from q2_types.sample_data import SampleData
 from qiime2.plugin import model, SemanticType
 
-QarcoalLogRatios = SemanticType(
-    "QarcoalLogRatios", variant_of=SampleData.field["type"]
+LogRatios = SemanticType(
+    "LogRatios", variant_of=SampleData.field["type"]
 )
 
 
-class QarcoalLogRatiosFormat(model.TextFileFormat):
+class LogRatiosFormat(model.TextFileFormat):
     def validate(*args):
         pass
 
 
-QarcoalLogRatiosDirFmt = model.SingleFileDirectoryFormat(
-    "QarcoalLogRatiosDirFmt", "log_ratios.tsv", QarcoalLogRatiosFormat
+LogRatiosDirFmt = model.SingleFileDirectoryFormat(
+    "LogRatiosDirFmt", "log_ratios.tsv", LogRatiosFormat
 )

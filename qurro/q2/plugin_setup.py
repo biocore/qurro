@@ -14,11 +14,7 @@ import qiime2.sdk
 from qurro import __version__
 from qurro.qarcoal import qarcoal
 from ._method import differential_plot, loading_plot
-from ._type import (
-    QarcoalLogRatios,
-    QarcoalLogRatiosDirFmt,
-    QarcoalLogRatiosFormat,
-)
+from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
 from q2_types.feature_table import FeatureTable, Frequency
@@ -131,7 +127,7 @@ plugin.methods.register_function(
     parameters=qarcoal_params,
     parameter_descriptions=qarcoal_param_descs,
     input_descriptions={"table": TABLE},
-    outputs=[("qarcoal_log_ratios", SampleData[QarcoalLogRatios])],
+    outputs=[("qarcoal_log_ratios", SampleData[LogRatios])],
     description=(
         "Compute the log ratio of two specified feature strings by"
         + "searching taxonomy for incidence of each string, summing"
@@ -143,11 +139,11 @@ plugin.methods.register_function(
 )
 
 
-# Register types
-plugin.register_formats(QarcoalLogRatiosFormat, QarcoalLogRatiosDirFmt)
-plugin.register_semantic_types(QarcoalLogRatios)
-plugin.register_semantic_type_to_format(
-    SampleData[QarcoalLogRatios], artifact_format=QarcoalLogRatiosDirFmt
-)
-
 importlib.import_module("qurro.q2._transformer")
+
+# Register types
+plugin.register_formats(LogRatiosFormat, LogRatiosDirFmt)
+plugin.register_semantic_types(LogRatios)
+plugin.register_semantic_type_to_format(
+    SampleData[LogRatios], artifact_format=LogRatiosDirFmt
+)

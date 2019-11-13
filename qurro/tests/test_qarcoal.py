@@ -10,7 +10,7 @@ from q2_types.sample_data import SampleData
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
 from qurro.qarcoal import qarcoal
-from qurro.q2._type import QarcoalLogRatios, QarcoalLogRatiosDirFmt
+from qurro.q2._type import LogRatios, LogRatiosDirFmt
 
 MP_URL = "qurro/tests/input/moving_pictures"
 
@@ -19,11 +19,11 @@ class TestTypes(TestPluginBase):
     package = "qurro.tests"
 
     def test_qlr_semantic_type_registration(self):
-        self.assertRegisteredSemanticType(QarcoalLogRatios)
+        self.assertRegisteredSemanticType(LogRatios)
 
     def test_qlr_to_qlr_dir(self):
         self.assertSemanticTypeRegisteredToFormat(
-            SampleData[QarcoalLogRatios], QarcoalLogRatiosDirFmt
+            SampleData[LogRatios], LogRatiosDirFmt
         )
 
 

@@ -2,8 +2,9 @@
 
 import pandas as pd
 import qiime2
-from qurro.q2._type import QarcoalLogRatiosFormat
+from qurro.q2._type import LogRatiosFormat
 from qurro.q2.plugin_setup import plugin
+
 
 # taken from q2-types/sample_data/_transformer.py
 def _read_log_ratios(fh):
@@ -20,27 +21,27 @@ def _read_log_ratios(fh):
 
 
 @plugin.register_transformer
-def _1(ff: QarcoalLogRatiosFormat) -> qiime2.Metadata:
+def _1(ff: LogRatiosFormat) -> qiime2.Metadata:
     return qiime2.Metadata.load(str(ff))
 
 
 @plugin.register_transformer
-def _2(obj: qiime2.Metadata) -> QarcoalLogRatiosFormat:
-    ff = QarcoalLogRatiosFormat()
+def _2(obj: qiime2.Metadata) -> LogRatiosFormat:
+    ff = LogRatiosFormat()
     obj.save(str(ff))
     return ff
 
 
 @plugin.register_transformer
-def _3(data: pd.DataFrame) -> QarcoalLogRatiosFormat:
-    ff = QarcoalLogRatiosFormat()
+def _3(data: pd.DataFrame) -> LogRatiosFormat:
+    ff = LogRatiosFormat()
     with ff.open() as fh:
         data.to_csv(fh, sep="\t", header=True)
     return ff
 
 
 @plugin.register_transformer
-def _4(ff: QarcoalLogRatiosFormat) -> pd.DataFrame:
+def _4(ff: LogRatiosFormat) -> pd.DataFrame:
     with ff.open() as fh:
         df = _read_log_ratios(fh)
     return df
