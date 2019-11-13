@@ -517,6 +517,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // the "states" of the plot re: selected features + sample log
             // ratios are unified.
             var rankDataName = this.rankPlotJSON.data.name;
+            // While we're doing this, keep track of how many features have a
+            // log-ratio classification of "Both" (i.e. they're in both the
+            // numerator and denominator). Since this is Likely A Problem (TM),
+            // we want to warn the user about these features.
+            var bothFeatureCount = 0;
             var rankPlotViewChanged = this.rankPlotView.change(
                 rankDataName,
                 vega
@@ -524,7 +529,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     .modify(vega.truthy, "qurro_classification", function(
                         rankRow
                     ) {
-                        return updateRankColorFunc.call(parentDisplay, rankRow);
+                        var color = updateRankColorFunc.call(
+                            parentDisplay,
+                            rankRow
+                        );
+                        if (color === "Both") {
+                            bothFeatureCount++;
+                        }
+                        return color;
                     })
             );
 
@@ -548,6 +560,30 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "balanceSamplesDroppedDiv",
                 "balance"
             );
+
+            // And hide / show the "both" warning as needed.
+            if (bothFeatureCount > 0) {
+                // Yeah, yeah, I know setting .innerHTML using variables is bad
+                // practice, because if the variable(s) in question have weird
+                // characters then this can result in code injection/etc.
+                // However, bothFeatureCount should always be a number, so this
+                // shouldn't be a problem here.
+                document.getElementById("commonFeatureWarning").innerHTML =
+                    "<strong>Warning:</strong> Currently, " +
+                    vega.stringValue(bothFeatureCount) +
+                    " feature(s) " +
+                    "are selected in <strong>both</strong> the numerator " +
+                    "and denominator of the log-ratio. We strongly suggest " +
+                    "you instead look at a log-ratio that doesn't contain " +
+                    "common features in the numerator and denominator.";
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.remove("invisible");
+            } else {
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.add("invisible");
+            }
         }
 
         /* Updates the rank and sample plot based on "autoselection."
@@ -1316,6 +1352,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
 
                 // Clear the "features text" displays
                 this.updateFeaturesTextDisplays(false, true);
+
+                // Hide (if not already hidden) the warning about feature(s)
+                // being in both the numerator and denominator of a log-ratio
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.add("invisible");
 
                 // Clear <select>s populated with field information from this
                 // RRVDisplay's JSONs
