@@ -112,6 +112,7 @@ qarcoal_params = {
     "denom_string": Str,
     "taxonomy": Metadata,
     "samples_to_use": Metadata,
+    "allow_shared_features": Bool,
 }
 
 qarcoal_param_descs = {
@@ -119,6 +120,8 @@ qarcoal_param_descs = {
     "denom_string": "denominator string to search for in taxonomy",
     "taxonomy": "Qiime2 Metadata with taxonomy information",
     "samples_to_use": "Qiime2 Metadata with samples to use",
+    "allow_shared_features": ("whether to raise error if features \
+        are shared between numerator and denominator")
 }
 
 plugin.methods.register_function(

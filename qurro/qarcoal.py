@@ -21,6 +21,7 @@ def qarcoal(
     num_string: str,
     denom_string: str,
     samples_to_use: Metadata = None,
+    allow_shared_features: bool = False,
 ) -> pd.DataFrame:
     """Calculate sample-wise log-ratios of features with
     num_string in numerator over denom_string in denominator.
@@ -32,6 +33,9 @@ def qarcoal(
         num_string: numerator string to search for in taxonomy
         denom_string: denominator string to search for in taxonomy
         sample_to_use: Q2 Metadata file with samples to use (optional)
+        allow_shared_features: bool denoting whether to raise error
+            if features are shared between numerator and denominator
+            (default: False)
 
     Returns:
     --------
@@ -90,17 +94,13 @@ def qarcoal(
     tax_num_sample_sum = tax_num_joined_df.sum(axis=0)
     tax_denom_sample_sum = tax_denom_joined_df.sum(axis=0)
 
-    # sometimes 2 feature labels are the same i.e. same features
-    # don't want to check each time so only check if sums are
-    # the same
-    # e.g. if you are comparing g__A and s__B but g__A only
-    # appears when followed by s__B -> log ratios will all = 0
-    # TODO: Figure out if this makes sense at all lol
-    if tax_num_sample_sum.equals(tax_denom_sample_sum):
-        a = set(tax_num_df.index)
-        b = set(tax_denom_df.index)
-        if a == b:
-            raise (ValueError("same features!"))
+    # if shared features are disallowed, check to make sure they don't occur
+    # if allowed, can skip this step at user's risk
+    if not allow_shared_features:
+        shared_features = set(tax_num_df.index) & set(tax_denom_df.index)
+        if shared_features:
+            raise(ValueError("Shared features between numerator and \
+                             denominator!"))
 
     comparison_df = pd.DataFrame.from_records(
         [tax_num_sample_sum, tax_denom_sample_sum],
