@@ -127,6 +127,10 @@ define(["display", "dom_utils", "mocha", "chai"], function(
                 document.getElementById("fitBarSizeCheckbox").checked
             );
 
+            // TODO: check that barSizeWarning / commonFeatureWarning are
+            // hidden? Checking barSizeWarning is hidden with the matching test
+            // dataset is going to be kind of a hassle, though...
+
             for (var s = 0; s < dom_utils.statDivs.length; s++) {
                 chai.assert.isEmpty(
                     document.getElementById(dom_utils.statDivs[s]).textContent
