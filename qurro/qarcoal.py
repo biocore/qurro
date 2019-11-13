@@ -98,7 +98,7 @@ def qarcoal(
     # TODO: Figure out if this makes sense at all lol
     if tax_num_sample_sum.equals(tax_denom_sample_sum):
         a = set(tax_num_df.index)
-        b = set(tax_num_df.index)
+        b = set(tax_denom_df.index)
         if a == b:
             raise (ValueError("same features!"))
 
