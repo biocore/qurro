@@ -207,6 +207,64 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             .getElementById("colorSamplesDroppedDiv")
                             .classList.contains("invisible")
                     );
+                    // Ensure that the warning about "Both" features remains
+                    // hidden
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
+                });
+                it("Selecting the same feature as numerator and denominator causes balances to be 0, and causes a warning about 'Both'-classification features to appear; this warning goes away when next selecting a log-ratio without 'Both'-classified features", async function() {
+                    // The only way a feature is in both the numerator and
+                    // denominator for single-feature selections is if the
+                    // same feature is double-clicked
+                    //
+                    // I'm using Taxon4 for this test because it's in every
+                    // sample in the matching test dataset, so we can just
+                    // check that log-ratios are correct by verifying every
+                    // sample has a log-ratio of 0
+                    rrv.newFeatureLow = { "Feature ID": "Taxon4" };
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon4" };
+                    await rrv.regenerateFromClicking();
+
+                    // While we're doing this test (the main purpose of this is
+                    // to verify that the commonFeatureWarning is shown),
+                    // verify that log-ratios are being computed properly (they
+                    // should be all zeroes, since ln(X) - ln(X) = 0).
+                    var data = rrv.samplePlotView.data(dataName);
+                    for (var i = 0; i < data.length; i++) {
+                        chai.assert.equal(0, data[i].qurro_balance);
+                    }
+                    // ...and verify that the selected features headers were
+                    // updated appropriately.
+                    testing_utilities.checkHeaders(1, 1, 5);
+
+                    // Ok, now actually verify that the warning showed up!
+                    chai.assert.isFalse(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
+                    // Furthermore, verify that the warning contains the text
+                    // "Currently, 1 feature(s)"
+                    chai.assert.include(
+                        document.getElementById("commonFeatureWarning")
+                            .textContent,
+                        "Currently, 1 feature(s)"
+                    );
+
+                    // Now, double check that we can make that warning go away
+                    // by switching to a different log-ratio. (I'm not going to
+                    // bother checking the individual samples' log-ratios
+                    // again.)
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    await rrv.regenerateFromClicking();
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
                 });
             });
             describe("Multi-feature selections (text-based filtering, one basic case)", function() {
@@ -322,6 +380,9 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 describe("Empty search fields provided", function() {
                     it("Clears feature classifications and sample balances");
                 });
+                it(
+                    "Selecting the same feature(s) for both the numerator and denominator triggers a warning about 'Both'-classification features"
+                );
             });
             describe("Multi-feature selections (auto-selection)", function() {
                 /* Utility function that lets us essentially integration-test
