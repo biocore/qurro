@@ -409,6 +409,23 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 beforeEach(async function() {
                     await resetRRVDisplay(rrv);
                 });
+                function assertWarningShown(numCommonFeatures) {
+                    // verify that the warning showed up
+                    chai.assert.isFalse(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
+                    // Furthermore, verify that the warning contains the text
+                    // "Currently, N feature(s)" where N is numCommonFeatures
+                    chai.assert.include(
+                        document.getElementById("commonFeatureWarning")
+                            .textContent,
+                        "Currently, " +
+                            numCommonFeatures.toString() +
+                            " feature(s)"
+                    );
+                }
                 describe("Empty search fields provided", function() {
                     it("Clears feature classifications and sample balances");
                 });
@@ -427,19 +444,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             "3",
                             "text"
                         );
-                        // verify that the warning showed up
-                        chai.assert.isFalse(
-                            document
-                                .getElementById("commonFeatureWarning")
-                                .classList.contains("invisible")
-                        );
-                        // Furthermore, verify that the warning contains the text
-                        // "Currently, 1 feature(s)"
-                        chai.assert.include(
-                            document.getElementById("commonFeatureWarning")
-                                .textContent,
-                            "Currently, 1 feature(s)"
-                        );
+                        assertWarningShown(1);
                     });
                     it("Works when multiple features are common", async function() {
                         // Try again, but now select multiple overlapping features
@@ -455,16 +460,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             "9",
                             "lt"
                         );
-                        chai.assert.isFalse(
-                            document
-                                .getElementById("commonFeatureWarning")
-                                .classList.contains("invisible")
-                        );
-                        chai.assert.include(
-                            document.getElementById("commonFeatureWarning")
-                                .textContent,
-                            "Currently, 4 feature(s)"
-                        );
+                        assertWarningShown(4);
                     });
                 });
             });
