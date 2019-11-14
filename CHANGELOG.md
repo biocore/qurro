@@ -4,11 +4,12 @@
 ### Features added
 - Added **autoselection**, another method for selecting multiple features in a
   log-ratio. This method just picks features from the top and bottom of the
-  currently-selected ranking, using a specified threshold (either in
-  percentages of features or just in features).
+  currently-selected ranking, using a specified equal amount of features from
+  each side (either in percentages of features or in numbers of features).
   ([#189](https://github.com/biocore/qurro/issues/189))
     - This feature should be useful when quickly assessing how much a given
-      ranking field "separates" samples along certain metadata categories.
+      ranking field "separates" samples along certain metadata categories. It's
+      a great starting point when looking at a Qurro visualization.
 - When selecting a log-ratio where feature(s) are present in both the numerator
   and denominator of the log-ratio, a warning will now be shown explaining the
   situtation (and recommending that you chose a different log-ratio that
