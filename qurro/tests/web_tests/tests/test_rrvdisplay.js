@@ -120,14 +120,16 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 // being called. The added benefit is that this also tests
                 // that the onclick event of the multiFeatureButton was set
                 // properly :)
-                // ... For some godforsaken reason, awaiting .click() instead
-                // of .onclick() results in the async operations getting out of
-                // order as soon as we get to the part where the plots are
-                // updated via Promise.all() in updateLogRatio(). I don't know
-                // why! I assume it's something weird with how
-                // HTMLElement.click() works. This works, at least.
+                // ... For some godforsaken reason, awaiting .click() (which
+                // I've been doing in these tests instead of .onclick() --
+                // why, you might ask? -- I don't remember :| ) results in the
+                // async operations getting out of order as soon as we get to
+                // the part where the plots are updated via Promise.all() in
+                // updateLogRatio(). And I don't know why! I assume it's
+                // something weird with how HTMLElement.click() works.
+                // Anyway, calling .onclick() (which Qurro sets DIRECTLY in
+                // dom_utils.setUpDOMBindings()) works. PHEW.
                 await document.getElementById("multiFeatureButton").onclick();
-                console.log("were free");
             }
             describe("Single-feature selections", function() {
                 beforeEach(async function() {
@@ -413,7 +415,6 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // denominator to just the "Taxon3" feature.
                     // This lets us check multi-feature selections in the
                     // context of the "Both" warning.
-                    console.log("about to runfeaturefiltering");
                     await runFeatureFiltering(
                         "Feature ID",
                         "Taxon",
@@ -422,17 +423,12 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         "3",
                         "text"
                     );
-                    // try thenning this stuff below here
-                    console.log(
-                        "before the actual assertion. everything should b done"
-                    );
                     // verify that the warning showed up
                     chai.assert.isFalse(
                         document
                             .getElementById("commonFeatureWarning")
                             .classList.contains("invisible")
                     );
-                    console.log("aiowejrowiejr");
                     // Furthermore, verify that the warning contains the text
                     // "Currently, 1 feature(s)"
                     chai.assert.include(

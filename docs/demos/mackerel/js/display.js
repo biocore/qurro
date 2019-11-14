@@ -129,8 +129,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
 
             // Set up relevant DOM bindings
             var display = this;
-            // NOTE: can probably update a few of these callbacks to just refer
-            // to te original function?
+            // NOTE: ideally we'd update a few of these callbacks to just refer
+            // to te original function -- but we need to be able to refer to
+            // "this" via the closure including the "display" variable, and I
+            // haven't found a good way to do that aside from just declaring
+            // individual functions.
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
                 multiFeatureButton: async function() {
                     await display.regenerateFromFiltering();
