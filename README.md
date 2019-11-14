@@ -51,7 +51,7 @@ recommended.
 
 Qurro is still being developed, so backwards-incompatible changes might
 occur. If you have any bug reports, feature requests, questions, or if you just
-want to yell at me then feel free to
+want to yell at me, then feel free to
 [open an issue](https://github.com/biocore/qurro/issues) in this repository!
 
 ## Demos
