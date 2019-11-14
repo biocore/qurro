@@ -12,28 +12,47 @@
 <p>(Pronounced "churro.")</p>
 </div>
 
-Qurro visualizes the output from a tool like
-[Songbird](https://github.com/biocore/songbird) or
-[DEICODE](https://github.com/biocore/DEICODE). It displays a plot of
-__feature rankings__ (either the differentials produced by a tool like
-Songbird, or the loadings in a compositional biplot produced by a tool
-like DEICODE -- when sorted numerically, either of these input types provide
-rankings) alongside a plot showing the __log-ratios__ of
-selected features' abundances within samples.
+### What does this tool do?
+Recent tools for analyzing " 'omic" datasets, like
+[Songbird](https://github.com/biocore/songbird) and
+[DEICODE](https://github.com/biocore/DEICODE), can produce
+__feature rankings__. Regardless of if they're "differentials" produced by a
+tool like Songbird, or the loadings in a compositional biplot produced by a
+tool like DEICODE, either of these input types can be sorted numerically to
+"rank" features based on their association with some sort of variation in your
+dataset. A common use of these rankings is examining the __log-ratios__ of
+particularly high- or low-ranked features across the samples in your dataset,
+and seeing how these log-ratios relate to your sample metadata (e.g. "does
+this log-ratio differ between 'healthy' and 'sick' samples?"). For more
+details (why rankings, why log-ratios, ...), check out
+[this open access paper](https://www.nature.com/articles/s41467-019-10656-5).
+
+__Qurro is an interactive web application for visualizing feature rankings
+and log-ratios.__ It does this
+using a two-plot interface: on the left of the screen, a "rank plot" shows
+how features are ranked for a selected ranking, and on the right of the screen
+a "sample plot" shows the log-ratios of selected features' abundances within
+samples. There are a variety of controls available for selecting features for
+a log-ratio, and changing the selected log-ratio updates both the rank plot
+(highlighting selected features) and the sample plot (changing the y-axis
+value of each sample to match the selected log-ratio).
+
+### How do I use it?
 
 Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
-`qiime tools view`). **Starting with Qurro v0.3.0, Qurro requires a QIIME 2
-version of at least 2019.7.**
+`qiime tools view`). *Starting with Qurro v0.3.0, Qurro requires a QIIME 2
+version of at least 2019.7.*
 
 Qurro should work with most modern web browsers. Firefox or Chrome are
 recommended.
 
 Qurro is still being developed, so backwards-incompatible changes might
-occur. If you have any questions, feel free to contact the development team at
-[mfedarko@ucsd.edu](mailto:mfedarko@ucsd.edu).
+occur. If you have any bug reports, feature requests, questions, or if you just
+want to yell at me then feel free to
+[open an issue](https://github.com/biocore/qurro/issues) in this repository!
 
 ## Demos
 
