@@ -59,8 +59,11 @@ define(["display", "dom_utils", "mocha", "chai"], function(
                 document.getElementById("colorField").innerHTML
             );
         });
+        /* Warning: here be ugly, bulky code that I wrote in a hurry */
         it("Properly resets other UI elements to their defaults", async function() {
             // before calling rrv.destroy(), change a few other things
+            // this way we can check that these modifications are reverted on
+            // calling destroy()
             await document.getElementById("boxplotCheckbox").click();
             document.getElementById("topSearchType").value = "rank";
             document.getElementById("botSearchType").value = "rank";
@@ -84,6 +87,13 @@ define(["display", "dom_utils", "mocha", "chai"], function(
             await document.getElementById("barSizeSlider").onchange();
 
             await document.getElementById("fitBarSizeCheckbox").click();
+
+            document
+                .getElementById("commonFeatureWarning")
+                .classList.remove("invisible");
+            document
+                .getElementById("barSizeWarning")
+                .classList.remove("invisible");
 
             rrv.destroy(true, true, true);
 
@@ -127,9 +137,16 @@ define(["display", "dom_utils", "mocha", "chai"], function(
                 document.getElementById("fitBarSizeCheckbox").checked
             );
 
-            // TODO: check that barSizeWarning / commonFeatureWarning are
-            // hidden? Checking barSizeWarning is hidden with the matching test
-            // dataset is going to be kind of a hassle, though...
+            chai.assert.isTrue(
+                document
+                    .getElementById("barSizeWarning")
+                    .classList.contains("invisible")
+            );
+            chai.assert.isTrue(
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.contains("invisible")
+            );
 
             for (var s = 0; s < dom_utils.statDivs.length; s++) {
                 chai.assert.isEmpty(
