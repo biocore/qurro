@@ -406,59 +406,66 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
             describe("Multi-feature selections (text-based filtering, corner cases)", function() {
+                beforeEach(async function() {
+                    await resetRRVDisplay(rrv);
+                });
                 describe("Empty search fields provided", function() {
                     it("Clears feature classifications and sample balances");
                 });
-                it("Selecting the same feature(s) for both the numerator and denominator triggers a warning about 'Both'-classification features", async function() {
-                    // Filter numerator to all features (since they all have
-                    // feature IDs including the text "Taxon", and filter
-                    // denominator to just the "Taxon3" feature.
-                    // This lets us check multi-feature selections in the
-                    // context of the "Both" warning.
-                    await runFeatureFiltering(
-                        "Feature ID",
-                        "Taxon",
-                        "text",
-                        "Feature ID",
-                        "3",
-                        "text"
-                    );
-                    // verify that the warning showed up
-                    chai.assert.isFalse(
-                        document
-                            .getElementById("commonFeatureWarning")
-                            .classList.contains("invisible")
-                    );
-                    // Furthermore, verify that the warning contains the text
-                    // "Currently, 1 feature(s)"
-                    chai.assert.include(
-                        document.getElementById("commonFeatureWarning")
-                            .textContent,
-                        "Currently, 1 feature(s)"
-                    );
-                    // Try again, but now select multiple overlapping features
-                    // for the denominator (select all features with an
-                    // "Intercept" differential of less than 9 -- this
-                    // should be all features except Taxon4, which has an
-                    // Intercept differential of exactly 9).
-                    await runFeatureFiltering(
-                        "Feature ID",
-                        "Taxon",
-                        "text",
-                        "Intercept",
-                        "9",
-                        "lt"
-                    );
-                    chai.assert.isFalse(
-                        document
-                            .getElementById("commonFeatureWarning")
-                            .classList.contains("invisible")
-                    );
-                    chai.assert.include(
-                        document.getElementById("commonFeatureWarning")
-                            .textContent,
-                        "Currently, 4 feature(s)"
-                    );
+                describe("Selecting the same feature(s) for both the numerator and denominator triggers a warning about 'Both'-classification features", function() {
+                    it("Works when only one feature is common", async function() {
+                        // Filter numerator to all features (since they all have
+                        // feature IDs including the text "Taxon", and filter
+                        // denominator to just the "Taxon3" feature.
+                        // This lets us check multi-feature selections in the
+                        // context of the "Both" warning.
+                        await runFeatureFiltering(
+                            "Feature ID",
+                            "Taxon",
+                            "text",
+                            "Feature ID",
+                            "3",
+                            "text"
+                        );
+                        // verify that the warning showed up
+                        chai.assert.isFalse(
+                            document
+                                .getElementById("commonFeatureWarning")
+                                .classList.contains("invisible")
+                        );
+                        // Furthermore, verify that the warning contains the text
+                        // "Currently, 1 feature(s)"
+                        chai.assert.include(
+                            document.getElementById("commonFeatureWarning")
+                                .textContent,
+                            "Currently, 1 feature(s)"
+                        );
+                    });
+                    it("Works when multiple features are common", async function() {
+                        // Try again, but now select multiple overlapping features
+                        // for the denominator (select all features with an
+                        // "Intercept" differential of less than 9 -- this
+                        // should be all features except Taxon4, which has an
+                        // Intercept differential of exactly 9).
+                        await runFeatureFiltering(
+                            "Feature ID",
+                            "Taxon",
+                            "text",
+                            "Intercept",
+                            "9",
+                            "lt"
+                        );
+                        chai.assert.isFalse(
+                            document
+                                .getElementById("commonFeatureWarning")
+                                .classList.contains("invisible")
+                        );
+                        chai.assert.include(
+                            document.getElementById("commonFeatureWarning")
+                                .textContent,
+                            "Currently, 4 feature(s)"
+                        );
+                    });
                 });
             });
             describe("Multi-feature selections (auto-selection)", function() {
