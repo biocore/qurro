@@ -13,6 +13,7 @@ from qurro._df_utils import (
     sparsify_count_dict,
     check_column_names,
     add_sample_presence_count,
+    vibe_check,
 )
 
 
@@ -893,3 +894,83 @@ def test_add_sample_presence_count_name_error():
     ranks.columns = ["Rank 0", "qurro_spc"]
     with pytest.raises(ValueError):
         add_sample_presence_count(ranks, table)
+
+
+def test_vibe_check_safe_range_invalid_safe_ranges():
+    """Checks cases where the input range specified to vibe_check() is somehow
+       invalid.
+    """
+    table, metadata, ranks = get_test_data()
+
+    ranges = [[1, 2, 3, 4, 5], [], [1], (), (2,)]
+    for r in ranges:
+        with pytest.raises(ValueError) as exception_info:
+            vibe_check(ranks, table, safe_range=r)
+        assert "safe_range must have a length of 2." in str(
+            exception_info.value
+        )
+
+    with pytest.raises(ValueError) as exception_info:
+        vibe_check(ranks, table, safe_range=[10, 1])
+    assert "safe_range[1] must be GREATER THAN safe_range[0]." in str(
+        exception_info.value
+    )
+
+
+def test_vibe_check_successes():
+    table, metadata, ranks = get_test_data()
+
+    # Should succeed since all of the test data, by default, is in the default
+    # safe range
+    vibe_check(ranks, table)
+
+    # Should succeed since the numbers in the test data (table and ranks) range
+    # from 0 to 8
+    vibe_check(ranks, table, safe_range=[0, 8])
+
+
+def test_vibe_check_failures():
+    table, metadata, ranks = get_test_data()
+
+    # Accordingly, should fail
+    with pytest.raises(OverflowError) as exception_info:
+        vibe_check(ranks, table, safe_range=[1, 8])
+    assert (
+        'The input feature table contains entries lower than the "safe" lower '
+        "limit for numbers of 1."
+    ) in str(exception_info.value)
+
+    # Should also fail
+    with pytest.raises(OverflowError) as exception_info:
+        vibe_check(ranks, table, safe_range=[0, 7])
+    assert (
+        'The input feature table contains entries larger than the "safe" '
+        "upper limit for numbers of 7."
+    ) in str(exception_info.value)
+
+    # Test failure, with the default safe range, on a few small cases.
+    lower_lim = -(2 ** 53) - 1
+    upper_lim = (2 ** 53) - 1
+
+    weird_small_values = [lower_lim - 1, lower_lim * 2, lower_lim * 3]
+    for w in weird_small_values:
+        ranks["Rank 0"]["F3"] = w
+
+        with pytest.raises(OverflowError) as exception_info:
+            vibe_check(ranks, table)
+        assert (
+            "The input feature rankings data contains entries lower than the "
+            '"safe" lower limit for numbers of -9007199254740991.'
+        ) in str(exception_info.value)
+
+    # Test failure, with the default safe range, on a few large cases.
+    weird_large_values = [upper_lim + 1, upper_lim * 2, upper_lim * 3]
+    for w in weird_large_values:
+        ranks["Rank 0"]["F3"] = w
+
+        with pytest.raises(OverflowError) as exception_info:
+            vibe_check(ranks, table)
+        assert (
+            "The input feature rankings data contains entries larger than the "
+            '"safe" upper limit for numbers of 9007199254740991.'
+        ) in str(exception_info.value)

@@ -57,6 +57,24 @@
   installed. (This was already a requirement, but it should be enforced when
   installing Qurro now.)
 ### Bug fixes
+- If your input feature table or feature rankings data contain numbers outside
+  of the range of `[-(2**53 - 1), (2**53 - 1)]`, Qurro's Python code will now
+  fail with an error explaining the situation. This is because numbers this big
+  cannot be precisely represented in JavaScript (at least by default).
+  ([#242](https://github.com/biocore/qurro/issues/242))
+    - The reason for this is that [JavaScript is inherently limited in the sizes of numbers it can represent by default](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number).
+      There are a few ways around this,
+      but I do not have the bandwidth to modify and test Qurro to completely
+      support rare corner cases like this (at least right now).
+    - **Note that this is only a partial solution to this problem**; it's still
+      possible to pass in arbitrarily large numbers within your
+      sample/feature metadata to Qurro, and the behavior in these situations is
+      still currently untested.
+    - On the bright side of things :), thanks to the efforts of
+      [@gibsramen](https://github.com/gibsramen), functionality is in
+      development that will enable computing log-ratios directly from the
+      command line. This should work with essentially arbitrarily large
+      numbers, unlike Qurro's visualization interface.
 ### Performance enhancements
 ### Miscellaneous
 - Various aesthetic changes to the Qurro visualization interface (e.g.

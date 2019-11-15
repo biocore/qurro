@@ -30,6 +30,7 @@ from qurro._df_utils import (
     validate_df,
     check_column_names,
     biom_table_to_sparse_df,
+    vibe_check,
     remove_empty_samples_and_features,
     match_table_and_data,
     merge_feature_metadata,
@@ -88,17 +89,21 @@ def process_input(
        3. Converts the BIOM table to a SparseDataFrame by calling
           biom_table_to_sparse_df().
 
-       4. Matches up the table with the feature ranks and sample metadata by
+       4. Runs vibe_check() on the feature ranks and BIOM table to ensure
+          that numbers are within the range of safe IEEE 754 numbers for
+          JavaScript. NOTE: STILL NEED TO CHECK METADATA USING THIS SOMEHOW
+
+       5. Matches up the table with the feature ranks and sample metadata by
           calling match_table_and_data().
 
-       5. Calls filter_unextreme_features() using the provided
+       6. Calls filter_unextreme_features() using the provided
           extreme_feature_count. (If it's None, then nothing will be done.)
 
-       6. Calls remove_empty_samples_and_features() to filter empty samples
+       7. Calls remove_empty_samples_and_features() to filter empty samples
           (and features). This is purposefully done *after*
           filter_unextreme_features() is called.
 
-       7. Calls merge_feature_metadata() on the feature ranks and feature
+       8. Calls merge_feature_metadata() on the feature ranks and feature
           metadata. (If feature metadata is None, nothing will be done.)
 
        Returns
@@ -147,6 +152,9 @@ def process_input(
         feature_metadata = replace_nan(feature_metadata)
 
     table = biom_table_to_sparse_df(biom_table)
+
+    # Check that the solely-numeric data only contains "safe" numbers
+    vibe_check(feature_ranks, table)
 
     # Match up the table with the feature ranks and sample metadata.
     m_table, m_sample_metadata = match_table_and_data(
