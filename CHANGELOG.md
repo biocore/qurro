@@ -59,9 +59,9 @@
 ### Bug fixes
 - If your input feature table or feature rankings data contain numbers outside
   of the range of `[-(2**53 - 1), (2**53 - 1)]`, Qurro's Python code will now
-  fail with an error explaining the situation. This is because numbers this big
-  cannot be precisely represented in JavaScript (at least by default).
-  ([#242](https://github.com/biocore/qurro/issues/242))
+  fail with an error explaining the situation. This is because numbers outside
+  of this range cannot be precisely represented in JavaScript (at least by
+  default). ([#242](https://github.com/biocore/qurro/issues/242))
     - The reason for this is that [JavaScript is inherently limited in the sizes of numbers it can represent by default](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number).
       There are a few ways around this,
       but I do not have the bandwidth to modify and test Qurro to completely
