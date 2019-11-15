@@ -4,6 +4,7 @@ from collections import namedtuple
 import os
 
 import biom
+import numpy as np
 import pandas as pd
 import pytest
 from q2_types.sample_data import SampleData
@@ -134,8 +135,6 @@ class TestOptionalParams:
         )
 
     def test_samples_to_use(self, get_mp_data):
-        from qiime2 import Metadata
-
         metadata_url = os.path.join(MP_URL, "sample-metadata.tsv")
         sample_metadata = pd.read_csv(
             metadata_url, sep="\t", index_col=0, skiprows=[1], header=0
@@ -154,3 +153,26 @@ class TestOptionalParams:
             samples_to_use=gut_samples,
         )
         assert q.shape[0] == num_gut_samples
+
+
+def test_large_numbers():
+    # Qurro fails when x > |2^53 - 1| due to JS implementation
+    bignum = 2 ** 53 - 1
+    large_vals = [np.random.randint(bignum + 1, bignum * 2) for x in range(30)]
+    mat = np.reshape(large_vals, (6, 5))
+    samps = ["S{}".format(i) for i in range(5)]
+    feats = ["F{}".format(i) for i in range(6)]
+    table = biom.table.Table(mat, feats, samps)
+    tax_labels = [
+        "Bulbasaur",
+        "Ivysaur",
+        "Venusaur",
+        "Charmander",
+        "Charmeleon",
+        "Charizard",
+    ]
+    confidence = ["0.99"] * 6
+    taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
+    taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
+    taxonomy.set_index("feature-id", inplace=True, drop=True)
+    qarcoal(table, Metadata(taxonomy), "Char", "saur")
