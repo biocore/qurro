@@ -99,7 +99,7 @@
   `Feature Loadings`.
 - Improved the command-line documentation of the sample and feature metadata
   parameters.
-- Updated citation/link information for references in the README.
+- Various documentation updates in the README.
 - Changed the project structure around slightly to ensure that
   `dependency_licenses/` for libraries distributed with Qurro
   (Vega, Vega-Lite, Vega-Embed, RequireJS, Bootstrap) are now installed in
