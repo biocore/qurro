@@ -17,7 +17,7 @@ from qiime2 import Metadata
 
 def qarcoal(
     table: biom.Table,
-    taxonomy: Metadata,
+    taxonomy: pd.DataFrame,
     num_string: str,
     denom_string: str,
     samples_to_use: Metadata = None,
@@ -53,10 +53,8 @@ def qarcoal(
     else:
         feat_table = table.to_dataframe()
 
-    taxonomy_df = taxonomy.to_dataframe()
-
     # taxonomy is features x [Taxon, Confidence]
-    taxonomy_df = taxonomy_df.loc[feat_table.index]
+    taxonomy_df = taxonomy.loc[feat_table.index]
     tax_num_df = taxonomy_df[taxonomy_df["Taxon"].str.contains(num_string)]
     tax_denom_df = taxonomy_df[taxonomy_df["Taxon"].str.contains(denom_string)]
 

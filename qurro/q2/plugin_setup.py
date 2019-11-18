@@ -17,6 +17,7 @@ from ._method import differential_plot, loading_plot
 from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
+from q2_types.feature_data import FeatureData, Taxonomy, TSVTaxonomyFormat
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.ordination import PCoAResults
 from q2_types.sample_data import SampleData
@@ -110,7 +111,6 @@ plugin.visualizers.register_function(
 qarcoal_params = {
     "num_string": Str,
     "denom_string": Str,
-    "taxonomy": Metadata,
     "samples_to_use": Metadata,
     "allow_shared_features": Bool,
 }
@@ -118,7 +118,6 @@ qarcoal_params = {
 qarcoal_param_descs = {
     "num_string": "numerator string to search for in taxonomy",
     "denom_string": "denominator string to search for in taxonomy",
-    "taxonomy": "Qiime2 Metadata with taxonomy information",
     "samples_to_use": "Qiime2 Metadata with samples to use",
     "allow_shared_features": (
         "whether to raise error if features \
@@ -128,10 +127,16 @@ qarcoal_param_descs = {
 
 plugin.methods.register_function(
     function=qarcoal,
-    inputs={"table": FeatureTable[Frequency]},
+    inputs={
+        "table": FeatureTable[Frequency],
+        "taxonomy": FeatureData[Taxonomy],
+    },
     parameters=qarcoal_params,
     parameter_descriptions=qarcoal_param_descs,
-    input_descriptions={"table": TABLE},
+    input_descriptions={
+        "table": TABLE,
+        "taxonomy": "placeholder"
+    },
     outputs=[("qarcoal_log_ratios", SampleData[LogRatios])],
     description=(
         "Compute the log ratio of two specified feature strings by"

@@ -35,7 +35,6 @@ def get_mp_data():
 
     table = biom.load_table(biom_url)
     taxonomy = pd.read_csv(taxonomy_url, sep="\t", index_col=0)
-    taxonomy = Metadata(taxonomy)
     data = namedtuple("Data", "table taxonomy")
     return data(table, taxonomy)
 
@@ -175,4 +174,4 @@ def test_large_numbers():
     taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
     taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
     taxonomy.set_index("feature-id", inplace=True, drop=True)
-    qarcoal(table, Metadata(taxonomy), "Char", "saur")
+    qarcoal(table, taxonomy, "Char", "saur")
