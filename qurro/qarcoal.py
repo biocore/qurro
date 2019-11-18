@@ -15,6 +15,50 @@ import pandas as pd
 from qiime2 import Metadata
 
 
+def get_taxonomy_dataframes(feat_table, taxonomy, num_string, denom_string):
+    """Placeholder docstring"""
+
+    # taxonomy is features x [Taxon, ...]
+    # want to get rid of these after joining dataframes
+    # retain only features that are in both feature table and taxonomy
+    taxonomy_joined_df = taxonomy.join(feat_table, how="inner")
+    tax_num_df = taxonomy_joined_df[
+        taxonomy_joined_df["Taxon"].str.contains(num_string)]
+    tax_denom_df = taxonomy_joined_df[
+        taxonomy_joined_df["Taxon"].str.contains(denom_string)]
+
+    # is this sufficient?
+    tax_num_df.drop(columns=taxonomy.columns, inplace=True)
+    tax_denom_df.drop(columns=taxonomy.columns, inplace=True)
+
+    if tax_num_df.shape[0] == 0:
+        if tax_denom_df.shape[0] == 0:
+            raise ValueError("neither feature found!")
+        else:
+            raise ValueError("numerator not found!")
+    elif tax_denom_df.shape[0] == 0:
+        raise ValueError("denominator not found!")
+    else:
+        pass
+
+    # drop columns (samples) in which no feature w/ string is present
+    tax_num_df = tax_num_df.loc[
+        :, (tax_num_df != 0).any(axis=0)
+    ]
+    tax_denom_df = tax_denom_df.loc[
+        :, (tax_denom_df != 0).any(axis=0)
+    ]
+
+    # keep only intersection of samples in which each feat string
+    # is present
+    samp_to_keep = set(tax_num_df.columns).intersection(
+        set(tax_denom_df.columns)
+    )
+    tax_num_df = tax_num_df[samp_to_keep]
+    tax_denom_df = tax_denom_df[samp_to_keep]
+    return tax_num_df, tax_denom_df
+
+
 def qarcoal(
     table: biom.Table,
     taxonomy: pd.DataFrame,
@@ -53,44 +97,12 @@ def qarcoal(
     else:
         feat_table = table.to_dataframe()
 
-    # taxonomy is features x [Taxon, Confidence]
-    taxonomy_df = taxonomy.loc[feat_table.index]
-    tax_num_df = taxonomy_df[taxonomy_df["Taxon"].str.contains(num_string)]
-    tax_denom_df = taxonomy_df[taxonomy_df["Taxon"].str.contains(denom_string)]
-
-    if tax_num_df.shape[0] == 0:
-        if tax_denom_df.shape[0] == 0:
-            raise ValueError("neither feature found!")
-        else:
-            raise ValueError("numerator not found!")
-    elif tax_denom_df.shape[0] == 0:
-        raise ValueError("denominator not found!")
-    else:
-        pass
-
-    # drop columns (samples) in which no feature w/ string is present
-    tax_num_df.drop(columns=["Taxon", "Confidence"], inplace=True)
-    tax_denom_df.drop(columns=["Taxon", "Confidence"], inplace=True)
-
-    tax_num_joined_df = tax_num_df.join(feat_table)
-    tax_num_joined_df = tax_num_joined_df.loc[
-        :, (tax_num_joined_df != 0).any(axis=0)
-    ]
-    tax_denom_joined_df = tax_denom_df.join(feat_table)
-    tax_denom_joined_df = tax_denom_joined_df.loc[
-        :, (tax_denom_joined_df != 0).any(axis=0)
-    ]
-
-    # keep only intersection of samples in which each feat string
-    # is present
-    samp_to_keep = set(tax_num_joined_df.columns).intersection(
-        set(tax_denom_joined_df.columns)
+    tax_num_df, tax_denom_df = get_taxonomy_dataframes(
+        feat_table,
+        taxonomy,
+        num_string,
+        denom_string,
     )
-    tax_num_joined_df = tax_num_joined_df[samp_to_keep]
-    tax_denom_joined_df = tax_denom_joined_df[samp_to_keep]
-
-    tax_num_sample_sum = tax_num_joined_df.sum(axis=0)
-    tax_denom_sample_sum = tax_denom_joined_df.sum(axis=0)
 
     # if shared features are disallowed, check to make sure they don't occur
     # if allowed, can skip this step at user's risk
@@ -98,6 +110,9 @@ def qarcoal(
         shared_features = set(tax_num_df.index) & set(tax_denom_df.index)
         if shared_features:
             raise ValueError("Shared features between num and denom!")
+
+    tax_num_sample_sum = tax_num_df.sum(axis=0)
+    tax_denom_sample_sum = tax_denom_df.sum(axis=0)
 
     comparison_df = pd.DataFrame.from_records(
         [tax_num_sample_sum, tax_denom_sample_sum],

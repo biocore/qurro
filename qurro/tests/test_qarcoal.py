@@ -10,7 +10,7 @@ import pytest
 from q2_types.sample_data import SampleData
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
-from qurro.qarcoal import qarcoal
+from qurro.qarcoal import qarcoal, get_taxonomy_dataframes
 from qurro.q2._type import LogRatios, LogRatiosDirFmt
 
 MP_URL = "qurro/tests/input/moving_pictures"
@@ -175,3 +175,44 @@ def test_large_numbers():
     taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
     taxonomy.set_index("feature-id", inplace=True, drop=True)
     qarcoal(table, taxonomy, "Char", "saur")
+
+
+class TestIrregularData():
+    @pytest.fixture(scope="class")
+    def get_testing_data(self):
+        mat = [np.random.randint(0, 10) for x in range(30)]
+        mat = np.reshape(mat, (6, 5))
+        samps = ["S{}".format(i) for i in range(5)]
+        feats = ["F{}".format(i) for i in range(6)]
+        table = biom.table.Table(mat, feats, samps)
+        tax_labels = [
+            "Bulbasaur",
+            "Ivysaur",
+            "Venusaur",
+            "Charmander",
+            "Charmeleon",
+            "Charizard",
+        ]
+        confidence = ["0.99"] * 6
+        taxonomy = pd.DataFrame([
+            feats,
+            tax_labels,
+            confidence,
+        ]).T
+        taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
+        taxonomy.set_index("feature-id", inplace=True, drop=True)
+        data = namedtuple("Data", "table taxonomy")
+        return data(table.to_dataframe(), taxonomy)
+
+    def test_taxonomy_missing_features(self, get_testing_data):
+        """Taxonomy file missing features that are present in feature table"""
+        taxonomy = get_testing_data.taxonomy
+        taxonomy = taxonomy.iloc[:-1, :]  # remove one feature from taxonomy
+        num_df, denom_df = get_taxonomy_dataframes(
+            get_testing_data.table,
+            taxonomy,
+            "Char",
+            "saur",
+        )
+        assert 'F5' not in num_df.index
+        assert 'F5' not in denom_df.index
