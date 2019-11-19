@@ -99,7 +99,6 @@ class TestErrors:
         denom = "beyblade"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        print(str(excinfo.value))
         assert ("No feature found matching denominator string!" ==
                 str(excinfo.value))
 
@@ -123,6 +122,69 @@ class TestErrors:
                 allow_shared_features=False,
             )
         assert "Shared features" in str(excinfo.value)
+
+    def test_no_common_samples(self):
+        """No samples with both numerator and denominator features.
+
+           -----------------------------------------------
+          |                    S0    S1    S2    S3    S4 |
+          | F0/Charmander       0     1    10     0     0 |
+          | F1/Charmeleon       0     2    15     0     0 |
+          | F2/Charizard        0     4     7     0     0 |
+          | F3/Bulbasaur        5     0     0     0     6 |
+          | F4/Ivysaur          7     0     0     0     4 |
+          | F5/Vensaur          9     0     0     0     2 |
+           -----------------------------------------------
+        """
+        samps = ["S{}".format(i) for i in range(5)]
+        feats = ["F{}".format(i) for i in range(6)]
+        s0 = [0, 0, 0, 5, 7, 9]
+        s1 = [1, 2, 4, 0, 0, 0]
+        s2 = [10, 15, 7, 0, 0, 0]
+        s3 = [0, 0, 0, 0, 0, 0]
+        s4 = [0, 0, 0, 6, 4, 2]
+        mat = np.matrix([s0, s1, s2, s3, s4]).T
+        table = biom.table.Table(mat, feats, samps).to_dataframe()
+
+        tax_labels = [
+            "Charmander",
+            "Charmeleon",
+            "Charizard",
+            "Bulbasaur",
+            "Ivysaur",
+            "Venusaur",
+        ]
+        confidence = ["0.99"] * 6
+        taxonomy = pd.DataFrame([
+            feats,
+            tax_labels,
+            confidence,
+        ]).T
+        taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
+        taxonomy.set_index("feature-id", inplace=True, drop=True)
+
+        with pytest.raises(ValueError) as excinfo:
+            filter_and_join_taxonomy(table, taxonomy, "Char", "saur")
+        assert ("No samples contain both numerator and denominator features!"
+                == str(excinfo.value))
+
+    def test_negative_counts(self):
+        samps = ["S{}".format(i) for i in range(3)]
+        feats = ["S{}".format(i) for i in range(4)]
+        mat = [np.random.randint(0, 10) for i in range(12)]
+        mat = np.reshape(mat, (4, 3))
+        mat[0] = -1
+        table = biom.table.Table(mat, feats, samps)
+
+        tax_labels = ["AB", "BC", "CD", "DE"]
+        confidence = ["0.99"] * 4
+        taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
+        taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
+        taxonomy.set_index("feature-id", inplace=True, drop=True)
+
+        with pytest.raises(ValueError) as excinfo:
+            qarcoal(table, taxonomy, "A", "C")
+        assert "Feature table has negative counts!" == str(excinfo.value)
 
 
 class TestOptionalParams:
@@ -314,25 +376,67 @@ class TestIrregularData():
         assert table_denom_taxon_filt.equals(denom_df_taxon_filt)
 
     def test_large_numbers(self):
-        # Qurro fails when x > |2^53 - 1| due to JS implementation
-        bignum = 2 ** 53 - 1
-        large_vals = [
-            np.random.randint(bignum + 1, bignum * 2) for x in range(30)
-        ]
-        mat = np.reshape(large_vals, (6, 5))
-        samps = ["S{}".format(i) for i in range(5)]
+        """Test large numbers on which Qurro fails.
+
+        Qurro fails when |x| > 2^53 - 1 due to JS implementation.
+        Make a sample feature table with large numbers:
+
+           ----------------------------------- ** 53
+          |                    S0    S1    S2 |
+          | F0/Charmander     2.0   2.5   2.2 |
+          | F1/Charmeleon     3.2   2.6   3.5 |
+          | F2/Charizard      4.1   2.9   3.1 |
+          | F3/Bulbasaur      6.2   5.2   3.0 |
+          | F4/Ivysaur        4.3   2.1   2.2 |
+          | F5/Venusaur       3.7   2.5   4.0 |
+           -----------------------------------
+
+        Num: Char
+        Denom: saur
+
+        Output should be (from WolframAlpha):
+
+           -----------------
+          |       log_ratio |
+          | S0     -21.9188 |
+          | S1     -30.9458 |
+          | S2     -7.07556 |
+           -----------------
+        """
+        samps = ["S{}".format(i) for i in range(3)]
         feats = ["F{}".format(i) for i in range(6)]
-        table = biom.table.Table(mat, feats, samps)
+        s0 = [x ** 53 for x in (2.0, 3.2, 4.1, 6.2, 4.3, 3.7)]
+        s1 = [x ** 53 for x in (2.5, 2.6, 2.9, 5.2, 2.1, 2.5)]
+        s2 = [x ** 53 for x in (2.2, 3.5, 3.1, 3.0, 2.2, 4.0)]
+        confidence = ["0.99"] * 6
         tax_labels = [
-            "Bulbasaur",
-            "Ivysaur",
-            "Venusaur",
             "Charmander",
             "Charmeleon",
             "Charizard",
+            "Bulbasaur",
+            "Ivysaur",
+            "Vensaur",
         ]
-        confidence = ["0.99"] * 6
-        taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
+        mat = np.matrix([s0, s1, s2]).T
+        table = biom.table.Table(mat, feats, samps)
+
+        taxonomy = pd.DataFrame([
+            feats,
+            tax_labels,
+            confidence,
+        ]).T
         taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
         taxonomy.set_index("feature-id", inplace=True, drop=True)
-        qarcoal(table, taxonomy, "Char", "saur")
+
+        q = qarcoal(
+            table,
+            taxonomy,
+            "Char",
+            "saur",
+        )
+        wolfram_alpha_vals = np.array([-21.9188, -30.9458, -7.07556])
+        qarcoal_vals = q.sort_index()['log_ratio'].to_numpy()
+        diff = wolfram_alpha_vals - qarcoal_vals
+
+        # differences are ~ 10^-6
+        assert diff == pytest.approx(0, abs=1e-5)

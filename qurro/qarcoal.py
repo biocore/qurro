@@ -78,6 +78,10 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     samp_to_keep = set(tax_num_df.columns).intersection(
         set(tax_denom_df.columns)
     )
+    if not samp_to_keep:
+        raise ValueError(
+            "No samples contain both numerator and denominator features!"
+        )
     tax_num_df = tax_num_df[samp_to_keep]
     tax_denom_df = tax_denom_df[samp_to_keep]
     return tax_num_df, tax_denom_df
@@ -122,6 +126,10 @@ def qarcoal(
         feat_table = feat_table.to_dataframe()
     else:
         feat_table = table.to_dataframe()
+
+    # raise error if there are any negative counts in the feature table
+    if feat_table.lt(0).any().any():
+        raise ValueError("Feature table has negative counts!")
 
     tax_num_df, tax_denom_df = filter_and_join_taxonomy(
         feat_table,
