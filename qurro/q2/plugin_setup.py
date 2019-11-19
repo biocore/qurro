@@ -16,8 +16,11 @@ from qurro.qarcoal import qarcoal
 from ._method import differential_plot, loading_plot
 from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
+from qurro._qarcoal_param_descriptions import (QARCOAL_TAXONOMY, QARCOAL_DESC,
+                                               QARCOAL_TBL, QARCOAL_SMP_TO_USE,
+                                               QARCOAL_SHARED_FEAT)
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
-from q2_types.feature_data import FeatureData, Taxonomy, TSVTaxonomyFormat
+from q2_types.feature_data import FeatureData, Taxonomy
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.ordination import PCoAResults
 from q2_types.sample_data import SampleData
@@ -119,10 +122,7 @@ qarcoal_param_descs = {
     "num_string": "numerator string to search for in taxonomy",
     "denom_string": "denominator string to search for in taxonomy",
     "samples_to_use": "Qiime2 Metadata with samples to use",
-    "allow_shared_features": (
-        "whether to raise error if features \
-        are shared between numerator and denominator"
-    ),
+    "allow_shared_features": QARCOAL_SHARED_FEAT,
 }
 
 plugin.methods.register_function(
@@ -138,14 +138,8 @@ plugin.methods.register_function(
         "taxonomy": "placeholder"
     },
     outputs=[("qarcoal_log_ratios", SampleData[LogRatios])],
-    description=(
-        "Compute the log ratio of two specified feature strings by"
-        + "searching taxonomy for incidence of each string, summing"
-        + "all relevant feature counts for each sample, and taking"
-        + "the natural log of the numerator sum divided by denominator"
-        + "sum."
-    ),
-    name="Compute numerator:denominator feature log ratios",
+    description=QARCOAL_DESC,
+    name="Compute feature log-ratios based on taxonomy searching",
 )
 
 
