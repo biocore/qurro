@@ -171,7 +171,7 @@ class TestErrors:
     def test_negative_counts(self):
         samps = ["S{}".format(i) for i in range(3)]
         feats = ["S{}".format(i) for i in range(4)]
-        mat = [np.random.randint(0, 10) for i in range(12)]
+        mat = [np.random.randint(1, 10) for i in range(12)]
         mat = np.reshape(mat, (4, 3))
         mat[0] = -1
         table = biom.table.Table(mat, feats, samps)
@@ -223,7 +223,7 @@ class TestOptionalParams:
 class TestIrregularData():
     @pytest.fixture(scope="class")
     def get_testing_data(self):
-        mat = [np.random.randint(0, 10) for x in range(30)]
+        mat = [np.random.randint(1, 10) for x in range(30)]
         mat = np.reshape(mat, (6, 5))
         samps = ["S{}".format(i) for i in range(5)]
         feats = ["F{}".format(i) for i in range(6)]
@@ -321,10 +321,10 @@ class TestIrregularData():
         table = get_testing_data.table.to_dataframe()
         taxonomy = get_testing_data.taxonomy.copy()
 
-        taxonomy["Overlap1"] = [np.random.randint(0, 10) for x in range(6)]
-        table["Overlap1"] = [np.random.randint(0, 10) for x in range(6)]
-        taxonomy["Overlap2"] = [np.random.randint(0, 10) for x in range(6)]
-        table["Overlap2"] = [np.random.randint(0, 10) for x in range(6)]
+        taxonomy["Overlap1"] = [np.random.randint(1, 10) for x in range(6)]
+        table["Overlap1"] = [np.random.randint(1, 10) for x in range(6)]
+        taxonomy["Overlap2"] = [np.random.randint(1, 10) for x in range(6)]
+        table["Overlap2"] = [np.random.randint(1, 10) for x in range(6)]
         table = table.apply(lambda x: x.astype(np.float64))
 
         num_df, denom_df = filter_and_join_taxonomy(
@@ -354,7 +354,7 @@ class TestIrregularData():
     def test_taxon_as_sample_name(self, get_testing_data):
         """Feature table has sample called Taxon"""
         table = get_testing_data.table.to_dataframe().copy()
-        table["Taxon"] = [np.random.randint(0, 10) for x in range(6)]
+        table["Taxon"] = [np.random.randint(1, 10) for x in range(6)]
         table["Taxon"] = table["Taxon"].astype(np.float64)
 
         num_df, denom_df = filter_and_join_taxonomy(
