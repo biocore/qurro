@@ -15,21 +15,44 @@ import pandas as pd
 from qiime2 import Metadata
 
 
-def get_taxonomy_dataframes(feat_table, taxonomy, num_string, denom_string):
-    """Placeholder docstring"""
+def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
+    """Perform taxonomy searching and join with feature table.
 
-    # taxonomy is features x [Taxon, ...]
-    # want to get rid of these after joining dataframes
+    Parameters:
+    -----------
+        feat_table: pd.DataFrame of features x samples
+        taxonomy: pd.DataFrame of features x [Taxon, ...]
+        num_string: numerator string to search for in taxonomy
+        denom_string: denominator string to search for in taxonomy
+
+    Returns:
+    --------
+        num_df: pd.DataFrame of numerator features x samples
+        denom_df: pd.DataFrame of denominator features x samples
+    """
+
+    # need to keep Taxon temporarily to match up with feature table
+    # can immediately discard non-Taxon columns
+    taxonomy = taxonomy.copy()
+    taxonomy = taxonomy[["Taxon"]]
+
     # retain only features that are in both feature table and taxonomy
-    taxonomy_joined_df = taxonomy.join(feat_table, how="inner")
+    # rsuffix provided in unlikely case that a sample is called Taxon
+    taxonomy_joined_df = taxonomy.join(feat_table, how="inner", rsuffix="_q")
+
     tax_num_df = taxonomy_joined_df[
         taxonomy_joined_df["Taxon"].str.contains(num_string)]
     tax_denom_df = taxonomy_joined_df[
         taxonomy_joined_df["Taxon"].str.contains(denom_string)]
 
-    # is this sufficient?
-    tax_num_df.drop(columns=taxonomy.columns, inplace=True)
-    tax_denom_df.drop(columns=taxonomy.columns, inplace=True)
+    # want to drop Taxon column because we want the dfs to be only numeric
+    tax_num_df.drop(columns="Taxon", inplace=True)
+    tax_denom_df.drop(columns="Taxon", inplace=True)
+
+    # if _q suffix was added due to sample called Taxon, change back to Taxon
+    if "Taxon_q" in taxonomy_joined_df:
+        tax_num_df.rename(columns={"Taxon_q": "Taxon"}, inplace=True)
+        tax_denom_df.rename(columns={"Taxon_q": "Taxon"}, inplace=True)
 
     if tax_num_df.shape[0] == 0:
         if tax_denom_df.shape[0] == 0:
@@ -67,13 +90,13 @@ def qarcoal(
     samples_to_use: Metadata = None,
     allow_shared_features: bool = False,
 ) -> pd.DataFrame:
-    """Calculate sample-wise log-ratios of features with
-    num_string in numerator over denom_string in denominator.
+    """Calculate sample-wise log-ratios of features based on taxonomy.
 
     Parameters:
     -----------
         table: biom file with which to calculate log ratios
-        taxonomy: Qiime2 compliant feature taxonomy metadata file
+        taxonomy: pd.DataFrame with taxonomy information (should have Taxon
+            column in which features will be searched)
         num_string: numerator string to search for in taxonomy
         denom_string: denominator string to search for in taxonomy
         sample_to_use: Q2 Metadata file with samples to use (optional)
@@ -97,7 +120,7 @@ def qarcoal(
     else:
         feat_table = table.to_dataframe()
 
-    tax_num_df, tax_denom_df = get_taxonomy_dataframes(
+    tax_num_df, tax_denom_df = filter_and_join_taxonomy(
         feat_table,
         taxonomy,
         num_string,
