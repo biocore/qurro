@@ -56,15 +56,16 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
 
     if tax_num_df.shape[0] == 0:
         if tax_denom_df.shape[0] == 0:
-            raise ValueError("neither feature found!")
+            raise ValueError(
+                "No feature found matching either numerator or "
+                "denominator string!"
+            )
         else:
-            raise ValueError("numerator not found!")
-    elif tax_denom_df.shape[0] == 0:
-        raise ValueError("denominator not found!")
-    else:
-        pass
+            raise ValueError("No feature found matching numerator string!")
+    if tax_denom_df.shape[0] == 0:
+        raise ValueError("No feature found matching denominator string!")
 
-    # drop columns (samples) in which no feature w/ string is present
+    # drop columns (samples) in which no feature matching string is present
     tax_num_df = tax_num_df.loc[
         :, (tax_num_df != 0).any(axis=0)
     ]
@@ -72,8 +73,8 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
         :, (tax_denom_df != 0).any(axis=0)
     ]
 
-    # keep only intersection of samples in which each feat string
-    # is present
+    # keep only intersection of samples in which each feature string
+    #  is present
     samp_to_keep = set(tax_num_df.columns).intersection(
         set(tax_denom_df.columns)
     )
@@ -99,11 +100,13 @@ def qarcoal(
             column in which features will be searched)
         num_string: numerator string to search for in taxonomy
         denom_string: denominator string to search for in taxonomy
-        sample_to_use: Q2 Metadata file with samples to use (optional)
-        allow_shared_features: bool denoting whether to raise error
-            if features are shared between numerator and denominator
-            (default: False)
-
+        samples_to_use: Q2 Metadata file with samples to use.
+            If provided, feature table will be filtered to only consider
+            samples present in this file. (optional)
+        allow_shared_features: bool denoting handling of shared features
+            between numerator and denominator. If False, an error is raised
+            if features are shared between numerator and denominator. If True,
+            will allow shared features without throwing an error.
     Returns:
     --------
         comparison_df: pd DataFrame in the form:
@@ -114,8 +117,8 @@ def qarcoal(
 
     # biom table is features x samples
     if samples_to_use is not None:
-        samp = set(samples_to_use.to_dataframe().index)
-        feat_table = table.filter(samp, axis="sample", inplace=False)
+        filt_samples = set(samples_to_use.to_dataframe().index)
+        feat_table = table.filter(filt_samples, axis="sample", inplace=False)
         feat_table = feat_table.to_dataframe()
     else:
         feat_table = table.to_dataframe()

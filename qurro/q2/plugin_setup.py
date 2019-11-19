@@ -139,10 +139,14 @@ plugin.methods.register_function(
     },
     outputs=[("qarcoal_log_ratios", SampleData[LogRatios])],
     description=QARCOAL_DESC,
-    name="Compute feature log-ratios based on taxonomy searching",
+    name="Compute feature log-ratios based on textual taxonomy searching.",
 )
 
 
+# this line may be necessary to register transformers
+# found in songbird's plugin_setup file as well as Q2 forum post
+# https://github.com/biocore/songbird/blob/master/songbird/q2/plugin_setup.py
+# https://forum.qiime2.org/t/question-about-error-no-transformation-class-for-dataframe-to-dir/4576
 importlib.import_module("qurro.q2._transformer")
 
 # Register types

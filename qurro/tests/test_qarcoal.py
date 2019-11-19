@@ -91,21 +91,25 @@ class TestErrors:
         denom = "Firm"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert "numerator not found!" == str(excinfo.value)
+        assert ("No feature found matching numerator string!" ==
+                str(excinfo.value))
 
     def test_invalid_denom(self, get_mp_data):
         num = "Firm"
         denom = "beyblade"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert "denominator not found!" == str(excinfo.value)
+        print(str(excinfo.value))
+        assert ("No feature found matching denominator string!" ==
+                str(excinfo.value))
 
     def test_both_invalid(self, get_mp_data):
         num = "beyblade"
         denom = "yugioh"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert "neither feature found!" == str(excinfo.value)
+        assert ("No feature found matching either numerator or denominator "
+                "string!" == str(excinfo.value))
 
     def test_shared_features_disallowed(self, get_mp_data):
         num = "Firmicutes"
