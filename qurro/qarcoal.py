@@ -57,15 +57,15 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     if tax_num_df.shape[0] == 0:
         if tax_denom_df.shape[0] == 0:
             raise ValueError(
-                "No feature found matching either numerator or "
+                "No feature(s) found matching either numerator or "
                 "denominator string!"
             )
         else:
-            raise ValueError("No feature found matching numerator string!")
+            raise ValueError("No feature(s) found matching numerator string!")
     if tax_denom_df.shape[0] == 0:
-        raise ValueError("No feature found matching denominator string!")
+        raise ValueError("No feature(s) found matching denominator string!")
 
-    # drop columns (samples) in which no feature matching string is present
+    # drop columns (samples) in which no feature(s) matching string is present
     tax_num_df = tax_num_df.loc[
         :, (tax_num_df != 0).any(axis=0)
     ]

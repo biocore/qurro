@@ -91,7 +91,7 @@ class TestErrors:
         denom = "Firm"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert ("No feature found matching numerator string!" ==
+        assert ("No feature(s) found matching numerator string!" ==
                 str(excinfo.value))
 
     def test_invalid_denom(self, get_mp_data):
@@ -99,7 +99,7 @@ class TestErrors:
         denom = "beyblade"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert ("No feature found matching denominator string!" ==
+        assert ("No feature(s) found matching denominator string!" ==
                 str(excinfo.value))
 
     def test_both_invalid(self, get_mp_data):
@@ -107,7 +107,7 @@ class TestErrors:
         denom = "yugioh"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert ("No feature found matching either numerator or denominator "
+        assert ("No feature(s) found matching either numerator or denominator "
                 "string!" == str(excinfo.value))
 
     def test_shared_features_disallowed(self, get_mp_data):
@@ -221,13 +221,14 @@ class TestOptionalParams:
 
 
 class TestIrregularData():
-    @pytest.fixture(scope="class")
+    @pytest.fixture(scope="function")
     def get_testing_data(self):
         mat = [np.random.randint(1, 10) for x in range(30)]
         mat = np.reshape(mat, (6, 5))
         samps = ["S{}".format(i) for i in range(5)]
         feats = ["F{}".format(i) for i in range(6)]
         table = biom.table.Table(mat, feats, samps)
+        table = table.to_dataframe()
         tax_labels = [
             "Bulbasaur",
             "Ivysaur",
@@ -247,23 +248,23 @@ class TestIrregularData():
         data = namedtuple("Data", "table taxonomy")
         return data(table, taxonomy)
 
-    def test_taxonomy_missing_features(self, get_testing_data):
-        """Taxonomy file missing features that are present in feature table"""
-        table = get_testing_data.table.to_dataframe()
-        taxonomy = get_testing_data.taxonomy
-        taxonomy_miss = taxonomy.iloc[:-1, :]  # remove F5 from taxonomy
+    def _check_missing_features_dfs(self, table, taxonomy):
+        """Auxillary function to test missing features
+
+        test_taxonomy_missing_features and test_feat_table_missing_features
+        are essentially the same code, only differing in whether a feature
+        is removed from the table or the taxonomy.
+        """
         num_df, denom_df = filter_and_join_taxonomy(
-            get_testing_data.table.to_dataframe(),
-            taxonomy_miss,
+            table,
+            taxonomy,
             "Char",
             "saur",
         )
-
-        # F5 dropped out
         assert "F5" not in num_df.index
 
         num_features = ["F3", "F4"]
-        denom_features = ["F1", "F2"]
+        denom_features = ["F0", "F1", "F2"]
         sample_order = ["S{}".format(i) for i in range(5)]
 
         table_num_taxon_filt = pd.DataFrame(table.loc[num_features])
@@ -273,6 +274,7 @@ class TestIrregularData():
         denom_df_taxon_filt = denom_df.loc[denom_features]
 
         # set operations in Qarcoal change order of samples
+        # want to make sure order is the same when comparing
         table_num_taxon_filt = table_num_taxon_filt[sample_order]
         table_denom_taxon_filt = table_denom_taxon_filt[sample_order]
         num_df_taxon_filt = num_df_taxon_filt[sample_order]
@@ -281,45 +283,31 @@ class TestIrregularData():
         # test that num/denom df accurately extract values from table
         assert table_num_taxon_filt.equals(num_df_taxon_filt)
         assert table_denom_taxon_filt.equals(denom_df_taxon_filt)
+
+    def test_taxonomy_missing_features(self, get_testing_data):
+        """Taxonomy file missing features that are present in feature table"""
+        table = get_testing_data.table
+        taxonomy = get_testing_data.taxonomy
+        taxonomy_miss = taxonomy.iloc[:-1, :]  # remove F5 from taxonomy
+        self._check_missing_features_dfs(table, taxonomy_miss)
 
     def test_feat_table_missing_features(self, get_testing_data):
         """Feature table missing features that are present in taxonomy"""
-        table = get_testing_data.table.to_dataframe()
+        table = get_testing_data.table
         table = table.iloc[:-1, :]  # remove F5 from feature table
-        num_df, denom_df = filter_and_join_taxonomy(
-            table,
-            get_testing_data.taxonomy,
-            "Char",
-            "saur",
-        )
-
-        # F5 dropped out
-        assert "F5" not in num_df.index
-
-        num_features = ["F3", "F4"]
-        denom_features = ["F1", "F2"]
-        sample_order = ["S{}".format(i) for i in range(5)]
-
-        table_num_taxon_filt = pd.DataFrame(table.loc[num_features])
-        table_denom_taxon_filt = pd.DataFrame(table.loc[denom_features])
-
-        num_df_taxon_filt = num_df.loc[num_features]
-        denom_df_taxon_filt = denom_df.loc[denom_features]
-
-        # set operations in Qarcoal change order of samples
-        table_num_taxon_filt = table_num_taxon_filt[sample_order]
-        table_denom_taxon_filt = table_denom_taxon_filt[sample_order]
-        num_df_taxon_filt = num_df_taxon_filt[sample_order]
-        denom_df_taxon_filt = denom_df_taxon_filt[sample_order]
-
-        # test that num/denom df accurately extract values from table
-        assert table_num_taxon_filt.equals(num_df_taxon_filt)
-        assert table_denom_taxon_filt.equals(denom_df_taxon_filt)
+        self._check_missing_features_dfs(table, get_testing_data.taxonomy)
 
     def test_overlapping_columns(self, get_testing_data):
-        """Feature table and taxonomy have overlapping column(s)"""
-        table = get_testing_data.table.to_dataframe()
-        taxonomy = get_testing_data.taxonomy.copy()
+        """Feature table and taxonomy have overlapping column(s)
+
+        This test is basically making sure that Qarcoal drops all columns
+        except Taxon in the taxonomy table. If there are overlapping columns
+        between the feature table and the taxonomy table (i.e. a sample named
+        Confidence), want to ensure that the feature table columns are retained
+        without causing Pandas join errors.
+        """
+        table = get_testing_data.table
+        taxonomy = get_testing_data.taxonomy
 
         taxonomy["Overlap1"] = [np.random.randint(1, 10) for x in range(6)]
         table["Overlap1"] = [np.random.randint(1, 10) for x in range(6)]
@@ -335,7 +323,7 @@ class TestIrregularData():
         )
 
         num_features = ["F3", "F4", "F5"]
-        denom_features = ["F1", "F2"]
+        denom_features = ["F0", "F1", "F2"]
         for col in ["Overlap1", "Overlap2"]:
             table_num_taxon_filt = pd.Series(
                 table.loc[num_features][col]
@@ -353,7 +341,7 @@ class TestIrregularData():
 
     def test_taxon_as_sample_name(self, get_testing_data):
         """Feature table has sample called Taxon"""
-        table = get_testing_data.table.to_dataframe().copy()
+        table = get_testing_data.table
         table["Taxon"] = [np.random.randint(1, 10) for x in range(6)]
         table["Taxon"] = table["Taxon"].astype(np.float64)
 
@@ -366,7 +354,7 @@ class TestIrregularData():
 
         # test that num/denom df accurately extract table values for Taxon
         num_features = ["F3", "F4", "F5"]
-        denom_features = ["F1", "F2"]
+        denom_features = ["F0", "F1", "F2"]
         table_num_taxon_filt = pd.Series(table.loc[num_features]["Taxon"])
         table_denom_taxon_filt = pd.Series(table.loc[denom_features]["Taxon"])
         num_df_taxon_filt = num_df.loc[num_features]["Taxon"]

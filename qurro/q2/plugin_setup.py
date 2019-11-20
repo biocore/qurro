@@ -16,9 +16,7 @@ from qurro.qarcoal import qarcoal
 from ._method import differential_plot, loading_plot
 from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
 from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
-from qurro._qarcoal_param_descriptions import (QARCOAL_TAXONOMY, QARCOAL_DESC,
-                                               QARCOAL_TBL, QARCOAL_SMP_TO_USE,
-                                               QARCOAL_SHARED_FEAT)
+from qurro import _qarcoal_param_descriptions as QPD
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
 from q2_types.feature_data import Taxonomy
 from q2_types.feature_table import FeatureTable, Frequency
@@ -119,10 +117,10 @@ qarcoal_params = {
 }
 
 qarcoal_param_descs = {
-    "num_string": "Numerator string to search for in taxonomy",
-    "denom_string": "Denominator string to search for in taxonomy",
-    "samples_to_use": QARCOAL_SMP_TO_USE,
-    "allow_shared_features": QARCOAL_SHARED_FEAT,
+    "num_string": QPD.QARCOAL_NUM,
+    "denom_string": QPD.QARCOAL_DENOM,
+    "samples_to_use": QPD.QARCOAL_SMP_TO_USE,
+    "allow_shared_features": QPD.QARCOAL_SHARED_FEAT,
 }
 
 plugin.methods.register_function(
@@ -134,11 +132,11 @@ plugin.methods.register_function(
     parameters=qarcoal_params,
     parameter_descriptions=qarcoal_param_descs,
     input_descriptions={
-        "table": QARCOAL_TBL,
-        "taxonomy": QARCOAL_TAXONOMY,
+        "table": QPD.QARCOAL_TBL,
+        "taxonomy": QPD.QARCOAL_TAXONOMY,
     },
     outputs=[("qarcoal_log_ratios", SampleData[LogRatios])],
-    description=QARCOAL_DESC,
+    description=QPD.QARCOAL_DESC,
     name="Compute feature log-ratios based on textual taxonomy searching.",
 )
 

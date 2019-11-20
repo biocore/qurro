@@ -8,11 +8,11 @@
 
 QARCOAL_TAXONOMY = (
     "Taxonomy information to be used for selecting features in "
-    "log ratio"
+    "log-ratio."
 )
 
 QARCOAL_DESC = (
-    "Compute the log ratio of two specified feature strings by searching "
+    "Compute the log-ratio of two specified feature strings by searching "
     "taxonomy for incidence of each string, summing all relevant feature "
     "counts for each sample, and taking the natural log of the numerator "
     "sum divided by denominator sum."
@@ -31,4 +31,12 @@ QARCOAL_SHARED_FEAT = (
 QARCOAL_SMP_TO_USE = (
     "Sample metadata file. If provided, log-ratios will only be calculated "
     "from sample labels present in this file."
+)
+
+QARCOAL_NUM = (
+    "Numerator string to search for in taxonomy."
+)
+
+QARCOAL_DENOM = (
+    "Denominator string to search for in taxonomy."
 )
