@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 QARCOAL_TAXONOMY = (
-    "Taxonomy information to be used for selecting features in " "log-ratio."
+    "Taxonomy information to be used for selecting features in log-ratio."
 )
 
 QARCOAL_DESC = (
