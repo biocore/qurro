@@ -2,6 +2,14 @@
 
 ## Qurro 0.5.0
 ### Features added
+- Added **Qarcoal**, a new command for Qurro's QIIME 2 plugin that computes
+  log-ratios from the command line by searching through features' taxonomies.
+  This can be useful in a variety of situations -- for example, if you don't
+  care about feature ranking information and just want to look at log-ratios,
+  or if your BIOM table contains super large numbers that would cause
+  JavaScript to start malfunctioning (see the "bug fixes" section below).
+    - Thanks to [@gibsramen](http://github.com/gibsramen/) for adding this in
+      to Qurro!
 - Added **autoselection**, another method for selecting multiple features in a
   log-ratio. This method just picks features from the top and bottom of the
   currently-selected ranking, using a specified equal amount of features from
