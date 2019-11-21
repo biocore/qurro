@@ -91,24 +91,27 @@ class TestErrors:
         denom = "Firm"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert ("No feature(s) found matching numerator string!" ==
-                str(excinfo.value))
+        num_err = "No feature(s) found matching numerator string!"
+        assert num_err == str(excinfo.value)
 
     def test_invalid_denom(self, get_mp_data):
         num = "Firm"
         denom = "beyblade"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert ("No feature(s) found matching denominator string!" ==
-                str(excinfo.value))
+        denom_err = "No feature(s) found matching denominator string!"
+        assert denom_err == str(excinfo.value)
 
     def test_both_invalid(self, get_mp_data):
         num = "beyblade"
         denom = "yugioh"
         with pytest.raises(ValueError) as excinfo:
             qarcoal(get_mp_data.table, get_mp_data.taxonomy, num, denom)
-        assert ("No feature(s) found matching either numerator or denominator "
-                "string!" == str(excinfo.value))
+        both_err = (
+            "No feature(s) found matching either numerator or "
+            "denominator string!"
+        )
+        assert both_err == str(excinfo.value)
 
     def test_shared_features_disallowed(self, get_mp_data):
         num = "Firmicutes"
@@ -121,7 +124,8 @@ class TestErrors:
                 denom,
                 allow_shared_features=False,
             )
-        assert "Shared features" in str(excinfo.value)
+        shared_err = "Shared features between num and denom!"
+        assert shared_err == str(excinfo.value)
 
     def test_no_common_samples(self):
         """No samples with both numerator and denominator features.
