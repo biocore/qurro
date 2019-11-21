@@ -10,10 +10,11 @@ from qurro.q2.plugin_setup import plugin
 # https://github.com/qiime2/q2-types/blob/dc75cdeeb5e5535bc3c8bc703d06ef0adc1b58f9/q2_types/sample_data/_transformer.py#L18-L28
 def _read_log_ratios(fh):
     # Using `dtype=object` and `set_index` to avoid type casting/inference
-    # of any columns or the index.
+    # of any columns
+    # want to keep index name as "Sample-ID"
     df = pd.read_csv(fh, sep="\t", header=0, dtype=object)
     df.set_index(df.columns[0], drop=True, append=False, inplace=True)
-    df.index.name = None
+    # df.index.name = None
     # casting of columns adapted from SO post:
     # https://stackoverflow.com/a/36814203/3424666
     cols = df.columns

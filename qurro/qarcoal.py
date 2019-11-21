@@ -155,5 +155,6 @@ def qarcoal(
     comparison_df["log_ratio"] = comparison_df.apply(
         lambda x: np.log(x.Num_Sum / x.Denom_Sum), axis=1
     )
+    comparison_df.index.name = "Sample-ID"
 
     return comparison_df
