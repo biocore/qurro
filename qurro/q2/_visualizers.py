@@ -10,7 +10,7 @@ import skbio
 import pandas as pd
 import biom
 from .._rank_utils import rename_loadings
-from ._actually_do_stuff import create_q2_visualization
+from ._visualizer_utils import create_q2_visualization
 
 
 def differential_plot(

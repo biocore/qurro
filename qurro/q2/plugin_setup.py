@@ -13,7 +13,7 @@ import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
 from qurro.qarcoal import qarcoal
-from ._method import differential_plot, loading_plot
+from ._visualizers import differential_plot, loading_plot
 from qurro._parameter_descriptions import (
     TABLE,
     EXTREME_FEATURE_COUNT,
