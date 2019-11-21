@@ -54,8 +54,8 @@ plugin = qiime2.plugin.Plugin(
     description=(
         "This QIIME 2 plugin supports the interactive visualization of "
         "feature rankings (either differentials or feature loadings -- when "
-        "sorted numerically these provide rankings) in tandem with log-ratios "
-        "of features' abundances within samples."
+        "sorted numerically these provide rankings) in tandem with feature "
+        "log-ratios across samples."
     ),
     package="qurro",
 )
