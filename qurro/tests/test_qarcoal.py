@@ -159,18 +159,16 @@ class TestErrors:
             "Venusaur",
         ]
         confidence = ["0.99"] * 6
-        taxonomy = pd.DataFrame([
-            feats,
-            tax_labels,
-            confidence,
-        ]).T
+        taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
         taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
         taxonomy.set_index("feature-id", inplace=True, drop=True)
 
         with pytest.raises(ValueError) as excinfo:
             filter_and_join_taxonomy(table, taxonomy, "Char", "saur")
-        assert ("No samples contain both numerator and denominator features!"
-                == str(excinfo.value))
+        assert (
+            "No samples contain both numerator and denominator features!"
+            == str(excinfo.value)
+        )
 
     def test_negative_counts(self):
         samps = ["S{}".format(i) for i in range(3)]
@@ -224,7 +222,7 @@ class TestOptionalParams:
         assert q.shape[0] == num_gut_samples
 
 
-class TestIrregularData():
+class TestIrregularData:
     @pytest.fixture(scope="function")
     def get_testing_data(self):
         mat = [np.random.randint(1, 10) for x in range(30)]
@@ -242,11 +240,7 @@ class TestIrregularData():
             "Charizard",
         ]
         confidence = ["0.99"] * 6
-        taxonomy = pd.DataFrame([
-            feats,
-            tax_labels,
-            confidence,
-        ]).T
+        taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
         taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
         taxonomy.set_index("feature-id", inplace=True, drop=True)
         data = namedtuple("Data", "table taxonomy")
@@ -260,10 +254,7 @@ class TestIrregularData():
         is removed from the table or the taxonomy.
         """
         num_df, denom_df = filter_and_join_taxonomy(
-            table,
-            taxonomy,
-            "Char",
-            "saur",
+            table, taxonomy, "Char", "saur",
         )
         assert "F5" not in num_df.index
 
@@ -320,21 +311,14 @@ class TestIrregularData():
         table = table.apply(lambda x: x.astype(np.float64))
 
         num_df, denom_df = filter_and_join_taxonomy(
-            table,
-            taxonomy,
-            "Char",
-            "saur",
+            table, taxonomy, "Char", "saur",
         )
 
         num_features = ["F3", "F4", "F5"]
         denom_features = ["F0", "F1", "F2"]
         for col in ["Overlap1", "Overlap2"]:
-            table_num_taxon_filt = pd.Series(
-                table.loc[num_features][col]
-            )
-            table_denom_taxon_filt = pd.Series(
-                table.loc[denom_features][col]
-            )
+            table_num_taxon_filt = pd.Series(table.loc[num_features][col])
+            table_denom_taxon_filt = pd.Series(table.loc[denom_features][col])
             num_df_taxon_filt = num_df.loc[num_features][col]
             denom_df_taxon_filt = denom_df.loc[denom_features][col]
 
@@ -350,10 +334,7 @@ class TestIrregularData():
         table["Taxon"] = table["Taxon"].astype(np.float64)
 
         num_df, denom_df = filter_and_join_taxonomy(
-            table,
-            get_testing_data.taxonomy,
-            "Char",
-            "saur",
+            table, get_testing_data.taxonomy, "Char", "saur",
         )
 
         # test that num/denom df accurately extract table values for Taxon
@@ -412,22 +393,13 @@ class TestIrregularData():
         mat = np.matrix([s0, s1, s2]).T
         table = biom.table.Table(mat, feats, samps)
 
-        taxonomy = pd.DataFrame([
-            feats,
-            tax_labels,
-            confidence,
-        ]).T
+        taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T
         taxonomy.columns = ["feature-id", "Taxon", "Confidence"]
         taxonomy.set_index("feature-id", inplace=True, drop=True)
 
-        q = qarcoal(
-            table,
-            taxonomy,
-            "Char",
-            "saur",
-        )
+        q = qarcoal(table, taxonomy, "Char", "saur",)
         wolfram_alpha_vals = np.array([-21.9188, -30.9458, -7.07556])
-        qarcoal_vals = q.sort_index()['log_ratio'].to_numpy()
+        qarcoal_vals = q.sort_index()["log_ratio"].to_numpy()
         diff = wolfram_alpha_vals - qarcoal_vals
 
         # differences are ~ 10^-6

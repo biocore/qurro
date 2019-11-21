@@ -7,8 +7,7 @@
 # ----------------------------------------------------------------------------
 
 QARCOAL_TAXONOMY = (
-    "Taxonomy information to be used for selecting features in "
-    "log-ratio."
+    "Taxonomy information to be used for selecting features in " "log-ratio."
 )
 
 QARCOAL_DESC = (
@@ -33,10 +32,6 @@ QARCOAL_SMP_TO_USE = (
     "from sample labels present in this file."
 )
 
-QARCOAL_NUM = (
-    "Numerator string to search for in taxonomy."
-)
+QARCOAL_NUM = "Numerator string to search for in taxonomy."
 
-QARCOAL_DENOM = (
-    "Denominator string to search for in taxonomy."
-)
+QARCOAL_DENOM = "Denominator string to search for in taxonomy."

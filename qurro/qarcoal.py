@@ -41,9 +41,11 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     taxonomy_joined_df = taxonomy.join(feat_table, how="inner", rsuffix="_q")
 
     tax_num_df = taxonomy_joined_df[
-        taxonomy_joined_df["Taxon"].str.contains(num_string)]
+        taxonomy_joined_df["Taxon"].str.contains(num_string)
+    ]
     tax_denom_df = taxonomy_joined_df[
-        taxonomy_joined_df["Taxon"].str.contains(denom_string)]
+        taxonomy_joined_df["Taxon"].str.contains(denom_string)
+    ]
 
     # want to drop Taxon column because we want the dfs to be only numeric
     tax_num_df.drop(columns="Taxon", inplace=True)
@@ -66,12 +68,8 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
         raise ValueError("No feature(s) found matching denominator string!")
 
     # drop columns (samples) in which no feature(s) matching string is present
-    tax_num_df = tax_num_df.loc[
-        :, (tax_num_df != 0).any(axis=0)
-    ]
-    tax_denom_df = tax_denom_df.loc[
-        :, (tax_denom_df != 0).any(axis=0)
-    ]
+    tax_num_df = tax_num_df.loc[:, (tax_num_df != 0).any(axis=0)]
+    tax_denom_df = tax_denom_df.loc[:, (tax_denom_df != 0).any(axis=0)]
 
     # keep only intersection of samples in which each feature string
     #  is present
@@ -132,10 +130,7 @@ def qarcoal(
         raise ValueError("Feature table has negative counts!")
 
     tax_num_df, tax_denom_df = filter_and_join_taxonomy(
-        feat_table,
-        taxonomy,
-        num_string,
-        denom_string,
+        feat_table, taxonomy, num_string, denom_string,
     )
 
     # if shared features are disallowed, check to make sure they don't occur
