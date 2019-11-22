@@ -1,7 +1,8 @@
 # These "commands" assume some packages in addition to what's installed with
 # setup.py have been installed -- that is, mocha-headless-chrome, nyc, jshint,
-# and prettier. These also assume that the dev requirements have been
-# installed.
+# prettier, and nbconvert. These also assume that the dev requirements have
+# been installed.
+#
 # See the Travis-CI configuration file (.travis.yml) for examples of
 # how to install these extra utilities.
 
@@ -41,6 +42,7 @@ style:
 
 # Runs all of the example Jupyter Notebooks. Manually rerunning notebooks is a
 # pain, so this makes life a bit easier.
+# NOTE: This requires that you have nbconvert installed!
 notebooks:
 	@# See https://nbconvert.readthedocs.io/en/latest/usage.html#notebook-and-preprocessors
 	@# for reference.

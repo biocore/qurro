@@ -117,6 +117,15 @@ available in Qurro's example Jupyter notebooks, which are located
 - [**`songbird_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   demonstrates using [Songbird](https://github.com/biocore/songbird) and then using Qurro to visualize Songbird's output.
 
+## Qarcoal
+**Qarcoal** (pronounced "charcoal") is a new part of Qurro that lets you
+compute log-ratios based on taxonomic searching directly from the command-line.
+This can be useful for a variety of reasons.
+
+Currently, Qarcoal is only available through Qurro's QIIME 2 plugin interface.
+Please see [**`qarcoal_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/qarcoal/qarcoal_example.ipynb)
+for a demonstration of using Qarcoal.
+
 ## Citing Qurro
 
 A manuscript describing Qurro is in preparation. In the meantime, you can cite
@@ -166,6 +175,10 @@ and [prettier](https://prettier.io/).
 
 Qurro also uses [Travis-CI](https://travis-ci.org/) and
 [Codecov](https://codecov.io/).
+
+The Jupyter notebooks in Qurro's `example_notebooks/` folder are automatically
+rerun using [nbconvert](https://nbconvert.readthedocs.io/en/latest/index.html),
+also.
 
 ### Data Sources
 

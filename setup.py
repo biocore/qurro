@@ -84,7 +84,7 @@ setup(
             "pytest-cov >= 2.0",
             "flake8",
             "black",
-            "jupyterlab",
+            "nbconvert",
         ]
     },
     classifiers=classifiers,
