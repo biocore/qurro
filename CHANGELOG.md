@@ -10,7 +10,7 @@
   JavaScript to start malfunctioning (see the "bug fixes" section below).
     - Thanks to [@gibsramen](http://github.com/gibsramen/) for adding this in
       to Qurro!
-- Added **autoselection**, another method for selecting multiple features in a
+- Added **autoselection**, a new method for selecting multiple features in a
   log-ratio. This method just picks features from the top and bottom of the
   currently-selected ranking, using a specified equal amount of features from
   each side (either in percentages of features or in numbers of features).
@@ -79,10 +79,9 @@
       sample/feature metadata to Qurro, and the behavior in these situations is
       still currently untested.
     - On the bright side of things :), thanks to the efforts of
-      [@gibsramen](https://github.com/gibsramen), functionality is in
-      development that will enable computing log-ratios directly from the
-      command line. This should work with essentially arbitrarily large
-      numbers, unlike Qurro's visualization interface.
+      [@gibsramen](https://github.com/gibsramen), Qarcoal is now available, so
+      you should be able to compute log-ratios of essentially arbitrarily large
+      numbers through that interface.
 ### Performance enhancements
 ### Miscellaneous
 - Various aesthetic changes to the Qurro visualization interface (e.g.
@@ -113,7 +112,11 @@
   (Vega, Vega-Lite, Vega-Embed, RequireJS, Bootstrap) are now installed in
   both "source" and "built" distributions of Qurro (previously, these were only
   installed in "source" distributions).
-- Updated the "Mackerel" demo / test data to match the latest output of [this analysis](https://github.com/knightlab-analyses/qurro-mackerel-analysis/). Notable changes include using the `reference-hit` Deblur BIOM output instead of the `all` Deblur BIOM output (i.e. likely non-16S sequences are filtered out), and using SILVA instead of Greengenes for taxonomic classification.
+- Added `nbconvert` to Qurro's `dev` requirements, and added a command to rerun
+  all of the example notebooks in Qurro automatically (`make notebooks`). This
+  command is also run on Travis-CI now in order to ensure that future updates
+  to Qurro don't crash any of these notebooks.
+- Updated the "Mackerel" demo / test data to match the latest output of [this analysis](https://github.com/knightlab-analyses/qurro-mackerel-analysis/). Notable changes include using the `reference-hit` Deblur BIOM output instead of the `all` Deblur BIOM output (which is generally recommended for 16S analyses), and using SILVA instead of Greengenes for taxonomic classification.
 
 ## Qurro 0.4.0 (August 15, 2019)
 ### Features added
