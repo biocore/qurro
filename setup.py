@@ -79,7 +79,13 @@ setup(
     # Based on how Altair splits up its requirements:
     # https://github.com/altair-viz/altair/blob/master/setup.py
     extras_require={
-        "dev": ["pytest >= 4.2", "pytest-cov >= 2.0", "flake8", "black"]
+        "dev": [
+            "pytest >= 4.2",
+            "pytest-cov >= 2.0",
+            "flake8",
+            "black",
+            "jupyterlab",
+        ]
     },
     classifiers=classifiers,
     entry_points={

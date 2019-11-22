@@ -31,7 +31,11 @@ install:
 script:
     # Just to be safe
     - qiime dev refresh-cache
+    # Run actual Qurro tests (both Python and JavaScript)
     - make test
+    # Verify that example notebooks can be run without crashing
+    - make notebooks
+    # Verify that code is properly formatted
     - make stylecheck
 after_success:
     - wget -O codecov.sh https://codecov.io/bash

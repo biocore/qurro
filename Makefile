@@ -38,3 +38,12 @@ style:
 	@# thing by default.)
 	prettier --debug-check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 	prettier --write --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
+
+# Runs all of the example Jupyter Notebooks. Manually rerunning notebooks is a
+# pain, so this makes life a bit easier.
+notebooks:
+	@# See https://nbconvert.readthedocs.io/en/latest/usage.html#notebook-and-preprocessors
+	@# for reference.
+	@# The timeout=None thing is used to allow us to run long processes (e.g.
+	@# Songbird) from within notebooks without Jupyter timing out.
+	jupyter nbconvert --execute --ExecutePreprocessor.timeout=None --to notebook --inplace example_notebooks/*/*.ipynb
