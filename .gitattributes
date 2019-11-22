@@ -1,5 +1,5 @@
 qurro/support_files/vendor/* linguist-vendored=true
 qurro/tests/web_tests/vendor/* linguist-vendored=true
 example_notebooks/* linguist-documentation=true
-dependency_licenses/* linguist-documentation=true
+qurro/dependency_licenses/* linguist-documentation=true
 docs/* linguist-documentation=true
