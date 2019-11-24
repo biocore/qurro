@@ -82,6 +82,16 @@
       [@gibsramen](https://github.com/gibsramen), Qarcoal is now available, so
       you should be able to compute log-ratios of essentially arbitrarily large
       numbers through that interface.
+- Fixed a minor bug in `qurro._df_utils.biom_table_to_sparse_df()` where the
+  specified `min_row_ct` and `min_col_ct` were not being used to validate the
+  output DataFrame.
+    - The validation method was still being called, just with the default
+      `min_row_ct` and `min_col_ct` values directly rather than using the
+      specified parameters.
+    - ...Long story short, this bug should not have impacted you unless you've
+      been using `qurro._df_utils.biom_table_to_sparse_df ()` with custom
+      validation settings directly. If you've just been using Qurro as a
+      standalone tool, you should be unaffected.
 ### Performance enhancements
 ### Miscellaneous
 - Various aesthetic changes to the Qurro visualization interface (e.g.

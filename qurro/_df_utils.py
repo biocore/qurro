@@ -132,7 +132,7 @@ def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
 
     # Validate the table DataFrame -- should be ok since we loaded this through
     # the biom module, but might as well check
-    validate_df(table_sdf, "BIOM table", 2, 1)
+    validate_df(table_sdf, "BIOM table", min_row_ct, min_col_ct)
 
     logging.debug("Converted BIOM table to SparseDataFrame.")
     return table_sdf
