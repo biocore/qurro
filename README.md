@@ -13,14 +13,18 @@
 </div>
 
 ### What does this tool do?
-Recent tools for analyzing " 'omic" datasets, like
-[Songbird](https://github.com/biocore/songbird) and
-[DEICODE](https://github.com/biocore/DEICODE), can produce
-__feature rankings__. Regardless of if they're "differentials" produced by a
-tool like Songbird, or the loadings in a compositional biplot produced by a
-tool like DEICODE, either of these input types can be sorted numerically to
+Lots of tools for analyzing " 'omic" datasets can produce
+__feature rankings__. Regardless of if they're "differentials" (corresponding
+to the log-fold change in relative abundance re: a covariate) produced by a
+tool like [Songbird](https://github.com/biocore/songbird/),
+[ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html),
+etc., or the "feature loadings" in a (compositional)
+biplot produced by a tool like [DEICODE](https://github.com/biocore/DEICODE),
+either of these input types can be sorted numerically to
 "rank" features based on their association with some sort of variation in your
-dataset. A common use of these rankings is examining the __log-ratios__ of
+dataset.
+
+A common use of these rankings is examining the __log-ratios__ of
 particularly high- or low-ranked features across the samples in your dataset,
 and seeing how these log-ratios relate to your sample metadata (e.g. "does
 this log-ratio differ between 'healthy' and 'sick' samples?"). For more
