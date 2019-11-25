@@ -13,6 +13,8 @@
 </div>
 
 ### What does this tool do?
+(mostly taken from our paper abstract/intro.)
+
 Lots of tools for analyzing " 'omic" datasets can produce
 __feature rankings__. Regardless of if they're *differentials* (corresponding
 to the log-fold change in relative abundance re: a covariate) produced by a
