@@ -14,11 +14,11 @@
 
 ### What does this tool do?
 Lots of tools for analyzing " 'omic" datasets can produce
-__feature rankings__. Regardless of if they're "differentials" (corresponding
+__feature rankings__. Regardless of if they're *differentials* (corresponding
 to the log-fold change in relative abundance re: a covariate) produced by a
 tool like [Songbird](https://github.com/biocore/songbird/),
 [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html),
-etc., or the "feature loadings" in a (compositional)
+etc., or the *feature loadings* in a (compositional)
 biplot produced by a tool like [DEICODE](https://github.com/biocore/DEICODE),
 either of these input types can be sorted numerically to
 "rank" features based on their association with some sort of variation in your
