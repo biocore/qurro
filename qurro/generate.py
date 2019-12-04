@@ -30,15 +30,18 @@ from qurro._df_utils import (
     validate_df,
     check_column_names,
     biom_table_to_sparse_df,
+    vibe_check,
     remove_empty_samples_and_features,
     match_table_and_data,
     merge_feature_metadata,
     sparsify_count_dict,
+    add_sample_presence_count,
 )
 
 
 def process_and_generate(
     feature_ranks,
+    rank_type,
     sample_metadata,
     biom_table,
     output_dir,
@@ -54,7 +57,13 @@ def process_and_generate(
         extreme_feature_count,
     )
     return gen_visualization(
-        V, ranking_ids, feature_metadata_cols, processed_table, U, output_dir
+        V,
+        rank_type,
+        ranking_ids,
+        feature_metadata_cols,
+        processed_table,
+        U,
+        output_dir,
     )
 
 
@@ -80,17 +89,21 @@ def process_input(
        3. Converts the BIOM table to a SparseDataFrame by calling
           biom_table_to_sparse_df().
 
-       4. Matches up the table with the feature ranks and sample metadata by
+       4. Runs vibe_check() on the feature ranks and BIOM table to ensure
+          that numbers are within the range of safe IEEE 754 numbers for
+          JavaScript. NOTE: STILL NEED TO CHECK METADATA USING THIS SOMEHOW
+
+       5. Matches up the table with the feature ranks and sample metadata by
           calling match_table_and_data().
 
-       5. Calls filter_unextreme_features() using the provided
+       6. Calls filter_unextreme_features() using the provided
           extreme_feature_count. (If it's None, then nothing will be done.)
 
-       6. Calls remove_empty_samples_and_features() to filter empty samples
+       7. Calls remove_empty_samples_and_features() to filter empty samples
           (and features). This is purposefully done *after*
           filter_unextreme_features() is called.
 
-       7. Calls merge_feature_metadata() on the feature ranks and feature
+       8. Calls merge_feature_metadata() on the feature ranks and feature
           metadata. (If feature metadata is None, nothing will be done.)
 
        Returns
@@ -140,6 +153,9 @@ def process_input(
 
     table = biom_table_to_sparse_df(biom_table)
 
+    # Check that the solely-numeric data only contains "safe" numbers
+    vibe_check(feature_ranks, table)
+
     # Match up the table with the feature ranks and sample metadata.
     m_table, m_sample_metadata = match_table_and_data(
         table, feature_ranks, sample_metadata
@@ -175,7 +191,7 @@ def process_input(
     )
 
 
-def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
+def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
     """Uses Altair to generate a JSON Vega-Lite spec for the rank plot.
 
     Parameters
@@ -189,12 +205,24 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
         This should have already been matched with the BIOM table, filtered (if
         -x passed), had empty features removed, etc.
 
+    rank_type: str
+        Human-readable name for a given ranking column that will be used as the
+        prefix for each y-axis label in the rank plot. (This should be either
+        "Differential" or "Feature Loading".)
+
     ranking_ids: pd.Index
         IDs of the actual "feature ranking" columns in V.
 
     feature_metadata_cols: pd.Index or list
         IDs of the "feature metadata" columns in V (if there wasn't any
         feature metadata provided, this can just be an empty list).
+
+    table_sdf: pd.SparseDataFrame
+        A representation of the input BIOM table containing count data. This
+        is used to calculate qurro_spc (the number of samples a feature is
+        present in) for each feature in V. This should ONLY contain samples
+        that will be used in the Qurro visualization -- the presence of extra
+        samples will mess up _df_utils.add_sample_presence_count().
 
     Returns
     -------
@@ -203,7 +231,8 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
         A dict version of the alt.Chart for the rank plot, with
         qurro_rank_ordering and qurro_feature_metadata_ordering datasets
         added in indicating which columns describe feature rankings and
-        which describe feature metadata.
+        which describe feature metadata. (Also has a qurro_rank_type "dataset"
+        (really just a string) that points to the specified rank_type.)
     """
 
     rank_data = V.copy()
@@ -225,6 +254,10 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     # as part of the numerator, denominator, or both parts of the current log
     # ratio.)
     rank_data["qurro_classification"] = "None"
+
+    # Add a "qurro_spc" column indicating how many samples each feature is
+    # present in.
+    rank_data = add_sample_presence_count(rank_data, table_sdf)
 
     # Replace "index" with "Feature ID". looks nicer in the visualization :)
     rank_data.rename_axis("Feature ID", axis="index", inplace=True)
@@ -276,6 +309,11 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
                     title="Log-Ratio Classification",
                     type="nominal",
                 ),
+                alt.Tooltip(
+                    field="qurro_spc",
+                    title="Sample Presence Count",
+                    type="quantitative",
+                ),
                 "Feature ID",
                 *feature_metadata_cols,
                 *ranking_ids,
@@ -293,7 +331,10 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     rank_chart_json = rank_chart.to_dict()
     rank_ordering = "qurro_rank_ordering"
     fm_col_ordering = "qurro_feature_metadata_ordering"
-    check_json_dataset_names(rank_chart_json, rank_ordering, fm_col_ordering)
+    dataset_name_for_rank_type = "qurro_rank_type"
+    check_json_dataset_names(
+        rank_chart_json, rank_ordering, fm_col_ordering, rank_type
+    )
 
     # Note we don't use rank_data.columns for setting the rank ordering. This
     # is because rank_data's columns now include both the ranking IDs and the
@@ -301,6 +342,7 @@ def gen_rank_plot(V, ranking_ids, feature_metadata_cols):
     # metadata the user saw fit to pass in).
     rank_chart_json["datasets"][rank_ordering] = list(ranking_ids)
     rank_chart_json["datasets"][fm_col_ordering] = list(feature_metadata_cols)
+    rank_chart_json["datasets"][dataset_name_for_rank_type] = rank_type
     return rank_chart_json
 
 
@@ -354,11 +396,13 @@ def gen_sample_plot(metadata):
                 default_metadata_col,
                 type="nominal",
                 axis=alt.Axis(labelAngle=-45),
+                scale=alt.Scale(zero=False),
             ),
             alt.Y(
                 "qurro_balance:Q",
-                title="Current Log-Ratio",
+                title="Current Natural Log-Ratio",
                 type="quantitative",
+                scale=alt.Scale(zero=False),
             ),
             color=alt.Color(default_metadata_col, type="nominal"),
             tooltip=["Sample ID:N", "qurro_balance:Q"],
@@ -401,6 +445,7 @@ def gen_sample_plot(metadata):
 
 def gen_visualization(
     V,
+    rank_type,
     ranking_ids,
     feature_metadata_cols,
     processed_table,
@@ -421,7 +466,9 @@ def gen_visualization(
     alt.data_transformers.enable("default", max_rows=None)
 
     logging.debug("Generating rank plot JSON.")
-    rank_plot_json = gen_rank_plot(V, ranking_ids, feature_metadata_cols)
+    rank_plot_json = gen_rank_plot(
+        V, rank_type, ranking_ids, feature_metadata_cols, processed_table
+    )
     logging.debug("Generating sample plot JSON.")
     sample_plot_json = gen_sample_plot(df_sample_metadata)
     logging.debug("Generating count data JSON.")

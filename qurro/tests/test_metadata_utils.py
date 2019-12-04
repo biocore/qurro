@@ -5,7 +5,7 @@ from pandas.testing import assert_frame_equal
 from pandas.errors import ParserError
 import qiime2
 from qurro._df_utils import replace_nan
-from qurro._metadata_utils import read_metadata_file, get_truncated_feature_id
+from qurro._metadata_utils import read_metadata_file
 
 
 def test_read_metadata_file_basic():
@@ -206,27 +206,3 @@ def test_read_metadata_file_nan_id():
 
     with pytest.raises(qiime2.metadata.MetadataFileError):
         qiime2.Metadata.load(ni)
-
-
-def test_get_truncated_feature_id():
-
-    ffi = "123.4567890123;456.7890123456789"
-    assert get_truncated_feature_id(ffi) == "123.4568;456.7890"
-
-    assert get_truncated_feature_id("1.2;3.4") == "1.2000;3.4000"
-
-    with pytest.raises(ValueError):
-        get_truncated_feature_id("")
-
-    with pytest.raises(ValueError):
-        get_truncated_feature_id(" ")
-
-    with pytest.raises(ValueError):
-        get_truncated_feature_id("abc")
-
-    with pytest.raises(ValueError):
-        get_truncated_feature_id("abc;def")
-
-    # Test case when there's too many semicolons
-    with pytest.raises(ValueError):
-        get_truncated_feature_id("1.0;2.0;3.0")

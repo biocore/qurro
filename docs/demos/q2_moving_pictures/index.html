@@ -12,7 +12,7 @@
     </head>
 
     <body>
-        <div class="centeredBlock marginOnTop" id="loadingMessage">
+        <div class="centeredBlock mt-3" id="loadingMessage">
             <strong>
                 Loading Qurro plots; this might take a few seconds...
             </strong>
@@ -25,9 +25,11 @@
                 -->
                 <div class="input-group input-group-sm mb-1">
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="rankField"
-                            >Ranking</label
-                        >
+                        <label
+                            class="input-group-text"
+                            for="rankField"
+                            id="rankFieldLabel"
+                        ></label>
                     </div>
                     <select id="rankField" class="custom-select"> </select>
                 </div>
@@ -77,7 +79,7 @@
                     <input type="checkbox" id="fitBarSizeCheckbox" />
                     <p
                         id="barSizeWarning"
-                        class="alert alert-warning centeredBlock invisible marginOnTop"
+                        class="alert alert-warning centeredBlock invisible mt-3 mb-3"
                     >
                         <strong>Warning:</strong> The rank plot is currently
                         using a bar width of less than one pixel per bar. This
@@ -281,11 +283,29 @@
                         id="colorSamplesDroppedDiv"
                         class="centeredBlock sampleRemovedDiv invisible"
                     ></div>
+                    <div class="centeredBlock">
+                        <button
+                            id="exportDataButton"
+                            class="btn btn-outline-secondary mt-2 btn-sm"
+                        >
+                            Export current sample plot data
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="twoColumnRow">
             <div id="botLeftDiv">
+                <p
+                    id="commonFeatureWarning"
+                    class="alert alert-warning centeredBlock invisible mt-3 mb-2"
+                >
+                    <strong>Warning:</strong> Currently, ___ feature(s) are
+                    selected in both the numerator and denominator of the
+                    log-ratio. We strongly suggest you instead look at a
+                    log-ratio that doesn't contain common features in the
+                    numerator and denominator.
+                </p>
                 <!-- Note for future reference: whitespace between the
                     start and end tag of a textarea is apparently
                     interpreted as just that, and preserved in the textarea
@@ -308,26 +328,51 @@
                 </div>
             </div>
             <div id="botRightDiv">
-                <h3 class="centeredHeader">Selecting Features</h3>
-                <p
-                    class="alert alert-info centeredBlock marginOnTop"
-                    role="alert"
-                >
-                    To construct a log-ratio, select feature(s) by clicking on
-                    two features in the rank plot or by searching using the
-                    controls below.
-                </p>
-                <h4 class="centeredHeader">Numerator</h4>
+                <h4 class="centeredHeader">Autoselecting Features</h4>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="autoSelectNumber">
+                            Using the current ranking, select the top and bottom
+                        </label>
+                    </div>
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="autoSelectNumber"
+                    />
+                    <select class="custom-select" id="autoSelectType">
+                        <option value="autoPercent">% of features</option>
+                        <option value="autoLiteral">features</option>
+                    </select>
+                    <!-- Based on
+                         https://getbootstrap.com/docs/4.0/components/input-group/#button-addons
+                    -->
+                    <div class="input-group-append">
+                        <button
+                            class="btn btn-outline-secondary"
+                            id="autoSelectButton"
+                        >
+                            Apply
+                        </button>
+                    </div>
+                </div>
+                <h4 class="centeredHeader mt-2">
+                    Selecting Features by Filtering
+                </h4>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="topSearch">
-                            Filter to features where
+                            Filter numerator to features where
                         </label>
                     </div>
                     <select class="custom-select num" id="topSearch"> </select>
                     <select class="custom-select num" id="topSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
+                            <option value="nottext"
+                                >is provided, and does not contain the
+                                text</option
+                            >
                             <option value="rank"
                                 >contains the separated text fragment(s)</option
                             >
@@ -355,17 +400,20 @@
                     </select>
                 </div>
                 <input type="text" class="form-control num" id="topText" />
-                <h4 class="centeredHeader">Denominator</h4>
-                <div class="input-group input-group-sm">
+                <div class="input-group input-group-sm mt-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="botSearch">
-                            Filter to features where
+                            Filter denominator to features where
                         </label>
                     </div>
                     <select class="custom-select den" id="botSearch"> </select>
                     <select class="custom-select den" id="botSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
+                            <option value="nottext"
+                                >is provided, and does not contain the
+                                text</option
+                            >
                             <option value="rank"
                                 >contains the separated text fragment(s)</option
                             >
@@ -399,12 +447,12 @@
                      interface.
                 -->
                 <a id="downloadHelper" class="invisible"></a>
-                <div class="centeredBlock marginOnTop">
-                    <button id="multiFeatureButton" class="btn btn-light">
-                        Regenerate plots
-                    </button>
-                    <button id="exportDataButton" class="btn btn-light">
-                        Export sample data
+                <div class="centeredBlock mt-3">
+                    <button
+                        id="multiFeatureButton"
+                        class="btn btn-outline-secondary btn-sm"
+                    >
+                        Apply Filtering
                     </button>
                 </div>
             </div>

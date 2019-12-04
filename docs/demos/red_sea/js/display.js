@@ -89,6 +89,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
+            // The human-readable "type" of the feature rankings (should be
+            // either "Differential" or "Feature Loading")
+            this.rankType = undefined;
 
             this.rankPlotView = undefined;
             this.samplePlotView = undefined;
@@ -124,13 +127,20 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // current x-axis. (It does the same thing with tooltips, which is
             // why we delete tooltips also when switching to boxplots.)
             this.colorEles = ["colorField", "colorScale"];
+
             // Set up relevant DOM bindings
             var display = this;
-            // NOTE: can probably update a few of these callbacks to just refer
-            // to te original function?
+            // NOTE: ideally we'd update a few of these callbacks to just refer
+            // to te original function -- but we need to be able to refer to
+            // "this" via the closure including the "display" variable, and I
+            // haven't found a good way to do that aside from just declaring
+            // individual functions.
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
                 multiFeatureButton: async function() {
-                    await display.updateSamplePlotMulti();
+                    await display.regenerateFromFiltering();
+                },
+                autoSelectButton: async function() {
+                    await display.regenerateFromAutoSelection();
                 },
                 exportDataButton: function() {
                     display.exportData();
@@ -180,6 +190,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
 
         makeRankPlot(notFirstTime) {
             if (!notFirstTime) {
+                this.rankType = this.rankPlotJSON.datasets.qurro_rank_type;
+                // Update the rank field label to say either "Differential" or
+                // "Feature Loading". I waffled on whether or not to put this
+                // here or in setUpDOM(), but I guess this location makes sense
+                document.getElementById(
+                    "rankFieldLabel"
+                ).textContent = this.rankType;
+
                 this.rankOrdering = this.rankPlotJSON.datasets.qurro_rank_ordering;
                 dom_utils.populateSelect(
                     "rankField",
@@ -189,9 +207,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
                 var searchableFields = {
                     standalone: ["Feature ID"],
-                    "Feature Metadata": this.featureMetadataFields,
-                    "Feature Rankings": this.rankOrdering
+                    "Feature Metadata": this.featureMetadataFields
                 };
+                searchableFields[this.rankType + "s"] = this.rankOrdering;
                 dom_utils.populateSelect(
                     "topSearch",
                     searchableFields,
@@ -256,7 +274,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // just "[rank title]". Use of "Magnitude" here is based on
             // discussion in issue #191.
             this.rankPlotJSON.encoding.y.title =
-                "Magnitude: " + this.rankPlotJSON.encoding.y.field;
+                this.rankType + ": " + this.rankPlotJSON.encoding.y.field;
             // We can use a closure to allow callback functions to access "this"
             // (and thereby change the properties of instances of the RRVDisplay
             // class). See https://stackoverflow.com/a/5106369/10730311.
@@ -289,7 +307,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             console.log(
                                 "Set newFeatureLow: " + display.newFeatureLow
                             );
-                            display.updateSamplePlotSingle();
+                            display.regenerateFromClicking();
                         }
                         display.onHigh = !display.onHigh;
                     }
@@ -490,7 +508,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             }
         }
 
-        async changeSamplePlot(updateBalanceFunc, updateRankColorFunc) {
+        /* Updates the selected log-ratio, which involves updating both plots:
+         *
+         * 1) update sample log-ratios in the sample plot
+         * 2) update the "classifications" of features in the rank plot
+         * 3) update dropped sample information re: the new log-ratios
+         * */
+        async updateLogRatio(updateBalanceFunc, updateRankColorFunc) {
             var dataName = this.samplePlotJSON.data.name;
             var parentDisplay = this;
             var nullBalanceSampleIDs = [];
@@ -528,6 +552,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // the "states" of the plot re: selected features + sample log
             // ratios are unified.
             var rankDataName = this.rankPlotJSON.data.name;
+            // While we're doing this, keep track of how many features have a
+            // log-ratio classification of "Both" (i.e. they're in both the
+            // numerator and denominator). Since this is Likely A Problem (TM),
+            // we want to warn the user about these features.
+            var bothFeatureCount = 0;
             var rankPlotViewChanged = this.rankPlotView.change(
                 rankDataName,
                 vega
@@ -535,7 +564,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     .modify(vega.truthy, "qurro_classification", function(
                         rankRow
                     ) {
-                        return updateRankColorFunc.call(parentDisplay, rankRow);
+                        var color = updateRankColorFunc.call(
+                            parentDisplay,
+                            rankRow
+                        );
+                        if (color === "Both") {
+                            bothFeatureCount++;
+                        }
+                        return color;
                     })
             );
 
@@ -559,9 +595,77 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "balanceSamplesDroppedDiv",
                 "balance"
             );
+
+            // And hide / show the "both" warning as needed.
+            if (bothFeatureCount > 0) {
+                // Yeah, yeah, I know setting .innerHTML using variables is bad
+                // practice, because if the variable(s) in question have weird
+                // characters then this can result in code injection/etc.
+                // However, bothFeatureCount should always be a number, so this
+                // shouldn't be a problem here.
+                document.getElementById("commonFeatureWarning").innerHTML =
+                    "<strong>Warning:</strong> Currently, " +
+                    vega.stringValue(bothFeatureCount) +
+                    " feature(s) " +
+                    "are selected in <strong>both</strong> the numerator " +
+                    "and denominator of the log-ratio. We strongly suggest " +
+                    "you instead look at a log-ratio that doesn't contain " +
+                    "common features in the numerator and denominator.";
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.remove("invisible");
+            } else {
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.add("invisible");
+            }
         }
 
-        async updateSamplePlotMulti() {
+        /* Updates the rank and sample plot based on "autoselection."
+         *
+         * By "autoselection," we just mean picking the top/bottom features for
+         * the current ranking in the rank plot.
+         */
+        async regenerateFromAutoSelection() {
+            var inputNumber = document.getElementById("autoSelectNumber").value;
+            // autoSelectType should be either "autoPercent" or "autoLiteral".
+            // Therefore, there are four possible values of this we can pass in
+            // to filterFeatures:
+            // -autoPercentTop
+            // -autoPercentBot
+            // -autoLiteralTop
+            // -autoLiteralBot
+            var autoSelectType = document.getElementById("autoSelectType")
+                .value;
+            this.topFeatures = feature_computation.filterFeatures(
+                this.rankPlotJSON,
+                inputNumber,
+                this.rankPlotJSON.encoding.y.field,
+                autoSelectType + "Top"
+            );
+            this.botFeatures = feature_computation.filterFeatures(
+                this.rankPlotJSON,
+                inputNumber,
+                this.rankPlotJSON.encoding.y.field,
+                autoSelectType + "Bot"
+            );
+            // TODO: abstract below stuff to a helper function for use by
+            // regenerateFromAutoSelection() and RegenerateFromFiltering()
+            this.updateFeaturesTextDisplays();
+            await this.updateLogRatio(
+                this.updateBalanceMulti,
+                this.updateRankColorMulti
+            );
+        }
+
+        /* Updates the rank and sample plot based on the "filtering" controls.
+         *
+         * Broadly, this just involves applying user-specified queries to get a
+         * list of feature(s) for the numerator and denominator of a log-ratio.
+         *
+         * This then calls updateLogRatio().
+         */
+        async regenerateFromFiltering() {
             // Determine which feature field(s) (Feature ID, anything in the
             // feature metadata, anything in the feature rankings) to look at
             var topField = document.getElementById("topSearch").value;
@@ -582,15 +686,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            await this.changeSamplePlot(
+            this.updateFeaturesTextDisplays();
+            await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
             );
-            // Update features text displays
-            this.updateFeaturesDisplays();
         }
 
-        async updateSamplePlotSingle() {
+        async regenerateFromClicking() {
             if (
                 this.newFeatureLow !== undefined &&
                 this.newFeatureHigh !== undefined
@@ -623,13 +726,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             this.newFeatureHigh["Feature ID"];
                     }
                     if (lowsDiffer || highsDiffer) {
-                        // Time to update the sample scatterplot regarding new
-                        // microbes.
-                        await this.changeSamplePlot(
+                        this.updateFeaturesTextDisplays(true);
+                        // Time to update the plots re: the new log-ratio
+                        await this.updateLogRatio(
                             this.updateBalanceSingle,
                             this.updateRankColorSingle
                         );
-                        this.updateFeaturesDisplays(true);
                     }
                 }
             }
@@ -722,7 +824,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 {
                     type: "quantitative",
                     field: "qurro_balance",
-                    title: "Current Log-Ratio"
+                    title: "Current Natural Log-Ratio"
                 },
                 {
                     type: this.samplePlotJSON.encoding.x.type,
@@ -910,7 +1012,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     this.samplePlotJSON.encoding.color.type === "quantitative";
             } else {
                 throw new Error(
-                    "Unrecognized scale range type specified:" + scaleRangeType
+                    "Unrecognized scale range type specified: " + scaleRangeType
                 );
             }
             this.samplePlotJSON.config.range[scaleRangeType].scheme = newScheme;
@@ -1181,13 +1283,13 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          */
         getSamplePlotData(currXField, currColorField) {
             var outputTSV =
-                '"Sample ID"\tCurrent_Log_Ratio\t' +
+                '"Sample ID"\tCurrent_Natural_Log_Ratio\t' +
                 RRVDisplay.quoteTSVFieldIfNeeded(currXField) +
                 "\t" +
                 RRVDisplay.quoteTSVFieldIfNeeded(currColorField);
             var dataName = this.samplePlotJSON.data.name;
             // Get all of the data available to the sample plot
-            // (Note that changeSamplePlot() causes updates to samples'
+            // (Note that updateLogRatio() causes updates to samples'
             // qurro_balance properties, so we don't have to use the
             // samplePlotView)
             var data = this.samplePlotJSON.datasets[dataName];
@@ -1257,6 +1359,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // Clear the "features text" displays
                 this.updateFeaturesDisplays(false, true);
 
+                // Hide (if not already hidden) the warning about feature(s)
+                // being in both the numerator and denominator of a log-ratio
+                document
+                    .getElementById("commonFeatureWarning")
+                    .classList.add("invisible");
+
                 // Clear <select>s populated with field information from this
                 // RRVDisplay's JSONs
                 dom_utils.clearDiv("rankField");
@@ -1299,6 +1407,14 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         .getElementById(dom_utils.statDivs[s])
                         .classList.add("invisible");
                 }
+
+                // Reset the UI elements that have been updated with the
+                // rankType. At present, we can do this just by clearing the
+                // rankFieldLabel; the only other places the rankType is used
+                // are in the rank plot y-axis (which is cleared in destroy()
+                // if clearRankPlot is truthy) and in the searching <select>s
+                // (which were already cleared via calls to clearDiv()).
+                document.getElementById("rankFieldLabel").textContent = "";
             }
         }
     }

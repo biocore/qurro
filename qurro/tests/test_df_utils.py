@@ -1,5 +1,5 @@
 import pytest
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pandas.testing import assert_frame_equal, assert_series_equal
 import numpy as np
 from qurro._df_utils import (
@@ -12,6 +12,8 @@ from qurro._df_utils import (
     merge_feature_metadata,
     sparsify_count_dict,
     check_column_names,
+    add_sample_presence_count,
+    vibe_check,
 )
 
 
@@ -529,7 +531,7 @@ def test_check_column_names():
     sm.columns = ["Metadata1", "Metadata2", "Metadata3", "Metadata4"]
 
     # 2. Check for problematic names in feature ranking columns ("Feature ID",
-    # "qurro_classification", "qurro_x")
+    # "qurro_classification", "qurro_spc", "qurro_x")
 
     fr.columns = ["R1", "Feature ID"]
     with pytest.raises(ValueError) as exception_info:
@@ -537,12 +539,12 @@ def test_check_column_names():
     assert '"Feature ID"' in str(exception_info.value)
 
     # If multiple problematic names are present, the ID one takes precedence,
-    # then the _classification one, then the _x one.
+    # then the _classification one, then the _x one, then the _spc one.
     # (this is just set by the order of "if" statements in
     # check_column_names().)
     # (also this is an arbitrary choice and doesn't really matter that much in
     # the grand scheme of things but I figure we might as well test these cases
-    # because it's easy to do so.)
+    # somewhat.)
     # (also if you somehow have some or all of these column names in a real
     # dataset then I have a lot of questions)
     fr.columns = ["Feature ID", "qurro_classification"]
@@ -570,11 +572,26 @@ def test_check_column_names():
         check_column_names(sm, fr, fm)
     assert '"Feature ID"' in str(exception_info.value)
 
+    fr.columns = ["qurro_spc", "qurro_x"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_x"' in str(exception_info.value)
+
+    fr.columns = ["qurro_spc", "R2"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_spc"' in str(exception_info.value)
+
+    fr.columns = ["qurro_spc", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_classification"' in str(exception_info.value)
+
     # reset feature ranking columns to be sane
     fr.columns = ["R1", "R2"]
 
     # 3. Check for problematic names in feature metadata columns ("Feature ID",
-    # "qurro_classification")
+    # "qurro_classification", "qurro_spc")
     # This is essentially the same stuff as the feature ranking test above.
 
     fm.columns = ["FM1", "Feature ID"]
@@ -591,6 +608,21 @@ def test_check_column_names():
     with pytest.raises(ValueError) as exception_info:
         check_column_names(sm, fr, fm)
     assert '"qurro_classification"' in str(exception_info.value)
+
+    fm.columns = ["qurro_spc", "qurro_classification"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_classification"' in str(exception_info.value)
+
+    fm.columns = ["qurro_spc", "FM2"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_spc"' in str(exception_info.value)
+
+    fm.columns = ["FM1", "qurro_spc"]
+    with pytest.raises(ValueError) as exception_info:
+        check_column_names(sm, fr, fm)
+    assert '"qurro_spc"' in str(exception_info.value)
 
     # reset feature metadata columns to be sane
     fm.columns = ["FM1", "FM2"]
@@ -788,3 +820,157 @@ def test_match_table_and_data_complex(capsys):
     assert expected_message_1 in captured.out
     assert expected_message_2 in captured.out
     assert expected_message_3 in captured.out
+
+
+def verify_spc_data_integrity(output_feature_data, initial_feature_data):
+    """Checks that add_sample_presence_count() doesn't change any of the
+       initially input feature_data -- it just adds a qurro_spc column, and
+       doesn't change the DF in any other way.
+    """
+    ifd_in_ofd = output_feature_data.drop("qurro_spc", axis="columns")
+    assert_frame_equal(ifd_in_ofd, initial_feature_data)
+
+
+def test_add_sample_presence_count_basic():
+
+    # NOTE: for reference, the get_test_data() table initially looks like this:
+    # "Sample1": [1, 2, 3, 4, 5, 6, 7, 8],
+    # "Sample2": [8, 7, 6, 5, 4, 3, 2, 1],
+    # "Sample3": [1, 0, 0, 0, 0, 0, 0, 0],
+    # "Sample4": [0, 0, 0, 1, 0, 0, 0, 0],
+    table, metadata, ranks = get_test_data()
+
+    # Test a basic case.
+    output_feature_data = add_sample_presence_count(ranks, table)
+    assert_series_equal(
+        output_feature_data["qurro_spc"],
+        Series([3, 2, 2, 3, 2, 2, 2, 2], index=ranks.index, name="qurro_spc"),
+    )
+    # Make sure that the underlying feature data remains the same
+    verify_spc_data_integrity(output_feature_data, ranks)
+
+
+def test_add_sample_presence_count_zeros():
+    """Checks the case when some features aren't present in any samples."""
+
+    table, metadata, ranks = get_test_data()
+
+    # Test 1: zero out all counts for feature F3
+    table.loc["F3"] = 0
+    output_feature_data = add_sample_presence_count(ranks, table)
+    assert_series_equal(
+        output_feature_data["qurro_spc"],
+        Series([3, 2, 0, 3, 2, 2, 2, 2], index=ranks.index, name="qurro_spc"),
+    )
+    verify_spc_data_integrity(output_feature_data, ranks)
+
+    # Test 2: zero out all counts
+    table.loc[:] = 0
+    ofd_2 = add_sample_presence_count(ranks, table)
+    assert_series_equal(
+        ofd_2["qurro_spc"],
+        Series([0] * 8, index=ranks.index, name="qurro_spc"),
+    )
+    verify_spc_data_integrity(ofd_2, ranks)
+
+    # Test 3: just one count for one feature
+    table["Sample4"]["F2"] = 1
+    ofd_3 = add_sample_presence_count(ranks, table)
+    assert_series_equal(
+        ofd_3["qurro_spc"],
+        Series([0, 1, 0, 0, 0, 0, 0, 0], index=ranks.index, name="qurro_spc"),
+    )
+    verify_spc_data_integrity(ofd_3, ranks)
+
+
+def test_add_sample_presence_count_name_error():
+    """Checks the case where the feature data already contains a column
+       called qurro_spc.
+
+       This should never happen due to check_column_names() being called, but
+       we might as well be careful.
+    """
+    table, metadata, ranks = get_test_data()
+    ranks.columns = ["Rank 0", "qurro_spc"]
+    with pytest.raises(ValueError):
+        add_sample_presence_count(ranks, table)
+
+
+def test_vibe_check_safe_range_invalid_safe_ranges():
+    """Checks cases where the input range specified to vibe_check() is somehow
+       invalid.
+    """
+    table, metadata, ranks = get_test_data()
+
+    ranges = [[1, 2, 3, 4, 5], [], [1], (), (2,)]
+    for r in ranges:
+        with pytest.raises(ValueError) as exception_info:
+            vibe_check(ranks, table, safe_range=r)
+        assert "safe_range must have a length of 2." in str(
+            exception_info.value
+        )
+
+    with pytest.raises(ValueError) as exception_info:
+        vibe_check(ranks, table, safe_range=[10, 1])
+    assert "safe_range[1] must be GREATER THAN safe_range[0]." in str(
+        exception_info.value
+    )
+
+
+def test_vibe_check_successes():
+    table, metadata, ranks = get_test_data()
+
+    # Should succeed since all of the test data, by default, is in the default
+    # safe range
+    vibe_check(ranks, table)
+
+    # Should succeed since the numbers in the test data (table and ranks) range
+    # from 0 to 8
+    vibe_check(ranks, table, safe_range=[0, 8])
+
+
+def test_vibe_check_failures():
+    table, metadata, ranks = get_test_data()
+
+    # Accordingly, should fail
+    with pytest.raises(OverflowError) as exception_info:
+        vibe_check(ranks, table, safe_range=[1, 8])
+    assert (
+        'The input feature table contains entries lower than the "safe" lower '
+        "limit for numbers of 1."
+    ) in str(exception_info.value)
+
+    # Should also fail
+    with pytest.raises(OverflowError) as exception_info:
+        vibe_check(ranks, table, safe_range=[0, 7])
+    assert (
+        'The input feature table contains entries larger than the "safe" '
+        "upper limit for numbers of 7."
+    ) in str(exception_info.value)
+
+    # Test failure, with the default safe range, on a few small cases.
+    lower_lim = -(2 ** 53) - 1
+    upper_lim = (2 ** 53) - 1
+
+    weird_small_values = [lower_lim - 1, lower_lim * 2, lower_lim * 3]
+    for w in weird_small_values:
+        ranks["Rank 0"]["F3"] = w
+
+        with pytest.raises(OverflowError) as exception_info:
+            vibe_check(ranks, table)
+        assert (
+            "The input feature rankings data contains entries lower than the "
+            '"safe" lower limit for numbers of -9007199254740991.'
+        ) in str(exception_info.value)
+
+    # Test failure, with the default safe range, on a few large cases.
+    weird_large_values = [upper_lim + 1, upper_lim * 2, upper_lim * 3]
+    for w in weird_large_values:
+        ranks["Rank 0"]["F3"] = w
+
+        with pytest.raises(OverflowError) as exception_info:
+            vibe_check(ranks, table)
+        assert (
+            "The input feature rankings data contains entries larger than the "
+            '"safe" upper limit for numbers of 9007199254740991.'
+        ) in str(exception_info.value)

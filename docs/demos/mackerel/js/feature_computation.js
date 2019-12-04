@@ -19,21 +19,41 @@ define(["./dom_utils"], function(dom_utils) {
     }
 
     /* Given a list of feature "rows", a string of input text, and a feature
-     * field, returns a list of all features that contain that text in
-     * the specified feature field.
+     * field, returns a list of all features that *do* or *do not* contain that
+     * text in the specified feature field.
+     *
+     * If "negate" is truthy, then this will return a list of all features that
+     * *do not* contain the specified text in the specified feature field.
+     * Otherwise, this will return a list of all features that *do* contain the
+     * specified text in the specified feature field.
      *
      * Note that this can lead to some weird results if you're not careful --
      * e.g. just searching on "Staphylococcus" will include Staph phages in the
      * filtering (since their names contain the text "Staphylococcus").
      */
-    function textFilterFeatures(featureRowList, inputText, featureField) {
+    function textFilterFeatures(
+        featureRowList,
+        inputText,
+        featureField,
+        negate
+    ) {
         var filteredFeatures = [];
         var currVal;
+        var decisionFunc;
+        if (negate) {
+            decisionFunc = function(value) {
+                return !value.includes(inputText);
+            };
+        } else {
+            decisionFunc = function(value) {
+                return value.includes(inputText);
+            };
+        }
         for (var ti = 0; ti < featureRowList.length; ti++) {
             currVal = tryTextSearchable(featureRowList[ti][featureField]);
             if (currVal === null) {
                 continue;
-            } else if (currVal.includes(inputText)) {
+            } else if (decisionFunc(currVal)) {
                 filteredFeatures.push(featureRowList[ti]);
             }
         }
@@ -217,10 +237,10 @@ define(["./dom_utils"], function(dom_utils) {
     }
 
     /* Returns list of feature data objects (in the rank plot JSON) based
-     * on a match of a given feature metadata/ranking field (including Feature
-     * ID) with the input text. The input text must be a string (even numbers
-     * aren't allowed -- the conversion is done later on in this function if a
-     * numeric search type is being used).
+     * on some sort of "match" of a given feature metadata/ranking field
+     * (including Feature ID) with the input text. The input text must be a
+     * string (even numbers aren't allowed -- the conversion is done later on
+     * in this function if a numeric search type is being used).
      *
      * If inputText is empty (i.e. its length is 0), this returns an empty
      * array.
@@ -243,17 +263,20 @@ define(["./dom_utils"], function(dom_utils) {
         }
 
         var potentialFeatures = rankPlotJSON.datasets[rankPlotJSON.data.name];
+        var inputNum;
         if (searchType === "rank") {
             return rankFilterFeatures(
                 potentialFeatures,
                 inputText.toLowerCase(),
                 featureField
             );
-        } else if (searchType === "text") {
+        } else if (searchType === "text" || searchType === "nottext") {
+            var negate = searchType === "nottext";
             return textFilterFeatures(
                 potentialFeatures,
                 inputText.toLowerCase(),
-                featureField
+                featureField,
+                negate
             );
         } else if (
             searchType === "lt" ||
@@ -261,7 +284,7 @@ define(["./dom_utils"], function(dom_utils) {
             searchType === "lte" ||
             searchType === "gte"
         ) {
-            var inputNum = dom_utils.getNumberIfValid(inputText);
+            inputNum = dom_utils.getNumberIfValid(inputText);
             if (isNaN(inputNum)) {
                 return [];
             }
@@ -271,8 +294,112 @@ define(["./dom_utils"], function(dom_utils) {
                 featureField,
                 searchType
             );
+        } else if (
+            searchType === "autoPercentTop" ||
+            searchType === "autoPercentBot" ||
+            searchType === "autoLiteralTop" ||
+            searchType === "autoLiteralBot"
+        ) {
+            var inPercentages = searchType.startsWith("autoPercent");
+            var featureCt = potentialFeatures.length;
+            inputNum = dom_utils.getNumberIfValid(inputText);
+            // Initial check for validity: regardless of if inputNum describes
+            // a "literal" or "percentage"-based cutoff, it should be a finite
+            // number that's at least 0
+            if (isNaN(inputNum) || inputNum < 0) {
+                return [];
+            }
+            // If the user asks for more than 100% of the features (aka more
+            // features than are present in the dataset), just go ahead and
+            // return all features
+            else if (
+                (inPercentages && inputNum > 100) ||
+                (!inPercentages && inputNum > featureCt)
+            ) {
+                return potentialFeatures;
+            }
+            // OK, so now we know that inputNum is valid (i.e. is a number and
+            // is in the range [0, 100] for percentage searching or [0, #
+            // features] for number-of-features searching).
+            // Next, let's just figure out how many features to extract from a
+            // given side of the ranking.
+            var numberOfFeaturesToGet;
+            if (inPercentages) {
+                // Why floor? If the user requests, say, the top and bottom
+                // 33.33% of features, and there are 10 features, then it makes
+                // more sense to give 3 features on each side than 4 (IMO).
+                numberOfFeaturesToGet = Math.floor(
+                    (inputNum / 100) * featureCt
+                );
+            } else {
+                // If inputNum is a float, we just take the floor of it (so if
+                // the user asks for the top/bottom 43.7 features we'll just
+                // return the top/bottom 43 features).
+                // We could also reject float values above, but I don't think
+                // that'd be super user-friendly to people going between % and
+                // "literal # of feature" modes.
+                numberOfFeaturesToGet = Math.floor(inputNum);
+            }
+            var useTop = searchType.endsWith("Top");
+            return extremeFilterFeatures(
+                potentialFeatures,
+                numberOfFeaturesToGet,
+                featureField,
+                useTop
+            );
         } else {
             throw new Error("unrecognized searchType");
+        }
+    }
+
+    /* Returns list of "n" feature data objects from either the top or bottom
+     * side of the feature rankings.
+     *
+     * featureRowList is a list of feature rows (same as the other
+     * *FilterFeatures() methods), n is an integer, ranking is a feature
+     * ranking shared by every feature in featureRowList, and useTop is a
+     * boolean value.
+     *
+     * Throws an error if any features don't have the specified ranking.
+     */
+    function extremeFilterFeatures(featureRowList, n, ranking, useTop) {
+        // Sort features by the specified ranking in featureRowList
+        var sortedFeatureRowList = featureRowList.sort(
+            // Compare features by their "ranking field" values, i.e. the
+            // literal differential or feature loading values.
+            // (...These should all explicitly be numbers, as guaranteed by our
+            // use of pd.to_numeric() in qurro.generate.gen_rank_plot().)
+            // Comparison function based on spec here (thanks MDN!) --
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description
+            function(feature1, feature2) {
+                var f1r = feature1[ranking];
+                var f2r = feature2[ranking];
+                // Basic validation to ensure that both features have this
+                // ranking, and that it isn't null or whatever (should never
+                // happen in practice due to validation on the python side of
+                // things, but might as well be careful)
+                if (typeof f1r !== "number" || typeof f2r !== "number") {
+                    throw new Error(
+                        ranking +
+                            " ranking not present and/or numeric for all features"
+                    );
+                }
+                if (f1r < f2r) {
+                    return -1;
+                } else if (f1r > f2r) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        );
+        var featureCt = featureRowList.length;
+        if (useTop) {
+            // get top n features for the given ranking
+            return sortedFeatureRowList.slice(featureCt - n);
+        } else {
+            // get bottom n features for the given ranking
+            return sortedFeatureRowList.slice(0, n);
         }
     }
 
@@ -296,6 +423,7 @@ define(["./dom_utils"], function(dom_utils) {
 
     return {
         filterFeatures: filterFeatures,
+        extremeFilterFeatures: extremeFilterFeatures,
         computeBalance: computeBalance,
         textToRankArray: textToRankArray,
         operatorToCompareFunc: operatorToCompareFunc,

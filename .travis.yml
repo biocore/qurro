@@ -20,6 +20,9 @@ before_install:
     - wget https://raw.githubusercontent.com/qiime2/environment-files/master/latest/staging/qiime2-latest-py36-linux-conda.yml
     - travis_retry conda env create -n qiime2-dev --file qiime2-latest-py36-linux-conda.yml
     - source activate qiime2-dev
+    # 3. Install Songbird and DEICODE
+    # (this will let us rerun the corresponding example notebooks)
+    - conda install -c conda-forge songbird deicode
 install:
     - pip install -e .[dev]
     # Install various JS testing/stylechecking packages that we use for
@@ -31,7 +34,11 @@ install:
 script:
     # Just to be safe
     - qiime dev refresh-cache
+    # Run actual Qurro tests (both Python and JavaScript)
     - make test
+    # Verify that example notebooks can be run without crashing
+    - make notebooks
+    # Verify that code is properly formatted
     - make stylecheck
 after_success:
     - wget -O codecov.sh https://codecov.io/bash

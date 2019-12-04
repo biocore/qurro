@@ -17,25 +17,30 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 1",
             n: 1.2,
-            x: null
+            x: null,
+            same: 5
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Featurelol 2",
             n: 2,
-            x: "asdf"
+            x: "asdf",
+            same: 5
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 3",
             n: 3.0,
-            x: "0"
+            x: "0",
+            same: 5
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 4|lol",
             n: 4.5,
-            x: "Infinity"
+            x: "Infinity",
+            same: 5
         });
         rpJSON1.datasets.qurro_rank_ordering.push("n");
         rpJSON1.datasets.qurro_rank_ordering.push("x");
+        rpJSON1.datasets.qurro_rank_ordering.push("same");
         var inputFeatures = [
             "Feature 1",
             "Featurelol 2",
@@ -242,6 +247,213 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         )
                     ),
                     ["Feature 6"]
+                );
+            });
+        });
+        describe('"Does not contain the text" searching', function() {
+            it("Correctly searches through feature IDs", function() {
+                // Unlike the normal "text" searching version of this
+                // particular test, we want to make sure that the features
+                // returned *do not* contain the given text. So, in this case,
+                // we want all of the features in rpJSON1 that don't have the
+                // text "lol" in their Feature ID.
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "lol",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 3"]
+                );
+                // Similarly, since all of rpJSON1's features' Feature IDs
+                // contain the text "Feature", we'd expect nottext searching to
+                // give us an empty list of features.
+                chai.assert.isEmpty(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "Feature",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    )
+                );
+            });
+
+            it("Correctly searches through feature metadata fields", function() {
+                // Default text search ignores taxonomic ranks (i.e. semicolons)
+                // In this case, get all features with taxonomies that do not
+                // contain the text "Staphylococcus".
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Staphylococcus",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 5", "Feature 6"]
+                );
+                // In this case, get all features with taxonomies that don't
+                // contain the text "Bacteria".
+                // This includes Feature 1 (Archaea), Features 4 and 5
+                // (Viruses), and Feature 6 ("null" -- yes, this is an invalid
+                // taxonomy string, but this isn't checking for validity)
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Bacteria",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 4", "Feature 5", "Feature 6"]
+                );
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "Caudovirales",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 2", "Feature 3", "Feature 6"]
+                );
+                // Only respects taxonomic ranks if the user forces it
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            ";Staphylococcus;",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 4", "Feature 5", "Feature 6"]
+                );
+            });
+
+            it("Searching is case *insensitive*", function() {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "staphylococcus",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    ["Feature 1", "Feature 5", "Feature 6"]
+                );
+                chai.assert.isEmpty(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "feature",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    )
+                );
+            });
+
+            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function() {
+                // If inputText is empty, the searching will automatically end.
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "",
+                        "Feature ID",
+                        "nottext"
+                    )
+                );
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON2,
+                        "",
+                        "Taxonomy",
+                        "nottext"
+                    )
+                );
+                // "Filter to features where Feature ID does not contain the
+                // text ' \n \t '." Since none of the feature IDs for this
+                // dataset contain that weird combo of whitespace, all of the
+                // features should be contained in the results.
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            " \n \t ",
+                            "Feature ID",
+                            "nottext"
+                        )
+                    ),
+                    inputFeatures
+                );
+                // Same thing as above case, but for another dataset and for
+                // taxonomy. (Note that Feature 7 isn't included because its
+                // taxonomy is null.)
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            " \n \t ",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    [
+                        "Feature 1",
+                        "Feature 2",
+                        "Feature 3",
+                        "Feature 4",
+                        "Feature 5",
+                        "Feature 6"
+                    ]
+                );
+                // All feature IDs in rpJSON1 contain a space. Since we're
+                // filtering to features with IDs that *do not* contain a
+                // space, the results here should be empty.
+                chai.assert.isEmpty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        " ",
+                        "Feature ID",
+                        "nottext"
+                    )
+                );
+            });
+            it("Ignores actual null values", function() {
+                // Feature 6's Taxonomy value is "null", while Feature 7's
+                // Taxonomy value is null (literally a null value). So
+                // searching methods shouldn't look at Feature 7's Taxonomy
+                // value.
+                // ...Since we're using "nottext", this should give us all
+                // features where taxonomy is provided *and* taxonomy does not
+                // contain the text "null" -- in this case, this is all
+                // features aside from 6 and 7.
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "null",
+                            "Taxonomy",
+                            "nottext"
+                        )
+                    ),
+                    [
+                        "Feature 1",
+                        "Feature 2",
+                        "Feature 3",
+                        "Feature 4",
+                        "Feature 5"
+                    ]
                 );
             });
         });
@@ -603,6 +815,306 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     chai.assert.isFalse(lt3(3));
                     chai.assert.isFalse(lt3(4));
                 });
+            });
+        });
+        describe("Autoselecting features", function() {
+            var literalSearchTypes = ["autoLiteralTop", "autoLiteralBot"];
+            var percentSearchTypes = ["autoPercentTop", "autoPercentBot"];
+            var autoSearchTypes = literalSearchTypes.concat(percentSearchTypes);
+            describe("Inputs are in numbers of features", function() {
+                it("Returns empty for 0 features", function() {
+                    var literalSearchTypes = [
+                        "autoLiteralTop",
+                        "autoLiteralBot"
+                    ];
+                    for (var s = 0; s < literalSearchTypes.length; s++) {
+                        chai.assert.empty(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "0",
+                                "n",
+                                literalSearchTypes[s]
+                            )
+                        );
+                    }
+                });
+                it("Gets all features if the input number is > number of features", function() {
+                    var vals = [
+                        "4.1",
+                        "4.2",
+                        "4.3",
+                        "4.4",
+                        "20",
+                        "100",
+                        "99999"
+                    ];
+                    for (var i = 0; i < vals.length; i++) {
+                        for (var s = 0; s < literalSearchTypes.length; s++) {
+                            chai.assert.sameMembers(
+                                testing_utilities.getFeatureIDsFromObjectArray(
+                                    feature_computation.filterFeatures(
+                                        rpJSON1,
+                                        vals[i],
+                                        "n",
+                                        literalSearchTypes[s]
+                                    )
+                                ),
+                                inputFeatures
+                            );
+                        }
+                    }
+                });
+                it("Works properly when 1 feature requested", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "1",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "1",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                });
+                it("Works properly when 2 features requested", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "2",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "2",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 1", "Featurelol 2"]
+                    );
+                });
+                it("Chooses correct number of features when all have equal ranking column value", function() {
+                    for (var s = 0; s < literalSearchTypes.length; s++) {
+                        for (var i = 0; i < 5; i++) {
+                            chai.assert.lengthOf(
+                                feature_computation.filterFeatures(
+                                    rpJSON1,
+                                    String(i),
+                                    "same",
+                                    literalSearchTypes[s]
+                                ),
+                                i
+                            );
+                        }
+                    }
+                });
+            });
+            describe("Inputs are in percentages of features", function() {
+                it("Works properly when math is easy (top 25% of 4 features)", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "25",
+                                "n",
+                                "autoPercentTop"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                });
+                it("Works properly when math is less easy (bottom 57% of 4 features)", function() {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "57",
+                                "n",
+                                "autoPercentBot"
+                            )
+                        ),
+                        ["Feature 1", "Featurelol 2"]
+                    );
+                });
+                it("Returns empty if 0% of features are requested", function() {
+                    for (var s = 0; s < percentSearchTypes.length; s++) {
+                        chai.assert.empty(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "0",
+                                "n",
+                                percentSearchTypes[s]
+                            )
+                        );
+                    }
+                });
+                it("Gets all features if the input number is > 100%", function() {
+                    var vals = [
+                        "100.00001",
+                        "101",
+                        "102",
+                        "999",
+                        "99999",
+                        "999999"
+                    ];
+                    for (var i = 0; i < vals.length; i++) {
+                        for (var s = 0; s < percentSearchTypes.length; s++) {
+                            chai.assert.sameMembers(
+                                testing_utilities.getFeatureIDsFromObjectArray(
+                                    feature_computation.filterFeatures(
+                                        rpJSON1,
+                                        vals[i],
+                                        "n",
+                                        percentSearchTypes[s]
+                                    )
+                                ),
+                                inputFeatures
+                            );
+                        }
+                    }
+                });
+                it("Chooses correct percentage of features when all have equal ranking column value", function() {
+                    for (var s = 0; s < percentSearchTypes.length; s++) {
+                        for (var i = 0; i < 125; i += 25) {
+                            chai.assert.lengthOf(
+                                feature_computation.filterFeatures(
+                                    rpJSON1,
+                                    String(i),
+                                    "same",
+                                    percentSearchTypes[s]
+                                ),
+                                i / 25
+                            );
+                        }
+                    }
+                });
+            });
+            it("Works properly when >50% of features requested", function() {
+                /* Tests all auto-selection search types when we expect
+                 * either *all* features to be returned, or 3/4 features to
+                 * be returned
+                 */
+
+                // NOTE the two arrays below are designed to match the order of
+                // autoSearchTypes.
+                // (This is lazy but I don't think making this test any
+                // more elegant will be particularly useful)
+                var searchInputsAll = ["4", "4", "100", "100"];
+                var searchInputs3 = ["3", "3", "75", "75"];
+
+                // these lists are used for determining expected outputs
+                var top3 = ["Featurelol 2", "Feature 3", "Feature 4|lol"];
+                var bot3 = ["Feature 1", "Featurelol 2", "Feature 3"];
+                var expectedOutputFeatures;
+                for (var i = 0; i < autoSearchTypes.length; i++) {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                searchInputsAll[i],
+                                "n",
+                                autoSearchTypes[i]
+                            )
+                        ),
+                        inputFeatures
+                    );
+                    if (autoSearchTypes[i].endsWith("Top")) {
+                        expectedOutputFeatures = top3;
+                    } else {
+                        expectedOutputFeatures = bot3;
+                    }
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                searchInputs3[i],
+                                "n",
+                                autoSearchTypes[i]
+                            )
+                        ),
+                        expectedOutputFeatures
+                    );
+                }
+            });
+            it("Returns empty if input number isn't a finite, nonnegative number", function() {
+                var invalidValsToTest = [
+                    "asdf",
+                    "NaN",
+                    "Infinity",
+                    "-Infinity",
+                    "null",
+                    "NULL",
+                    "Null",
+                    "'); console.log('hello world');",
+                    NaN,
+                    Infinity,
+                    -Infinity,
+                    -1,
+                    "-1",
+                    "-100.23",
+                    -100.23
+                ];
+                for (var i = 0; i < invalidValsToTest.length; i++) {
+                    for (var s = 0; s < autoSearchTypes.length; s++) {
+                        chai.assert.isEmpty(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                invalidValsToTest[i],
+                                "n",
+                                autoSearchTypes[s]
+                            )
+                        );
+                    }
+                }
+            });
+            it("Throws an error if a ranking isn't present in all features", function() {
+                // NOTE: we can use a number (2) here because we're calling
+                // extremeFilterFeatures() directly, instead of calling
+                // filterFeatures() first (which expects inputText to be a
+                // string)
+                chai.assert.throws(function() {
+                    // We get a list of "feature rows" to mimic what
+                    // filterFeatures() would give to extremeFilterFeatures()
+                    var potentialFeatures = rpJSON1.datasets[rpJSON1.data.name];
+                    feature_computation.extremeFilterFeatures(
+                        potentialFeatures,
+                        2,
+                        "aosdifj",
+                        true
+                    );
+                }, /aosdifj ranking not present and\/or numeric for all features/);
+            });
+            it("Throws an error if a ranking isn't numeric for all features", function() {
+                chai.assert.throws(function() {
+                    // We get a list of "feature rows" to mimic what
+                    // filterFeatures() would give to extremeFilterFeatures()
+                    var potentialFeatures = rpJSON1.datasets[rpJSON1.data.name];
+                    feature_computation.extremeFilterFeatures(
+                        potentialFeatures,
+                        2,
+                        "x",
+                        true
+                    );
+                }, /x ranking not present and\/or numeric for all features/);
             });
         });
         describe("existsIntersection()", function() {

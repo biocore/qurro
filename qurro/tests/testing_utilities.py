@@ -264,7 +264,11 @@ def validate_rank_plot_json(
     # TODO check that feature metadata annotations were properly applied to the
     # features. Will need the feature metadata file location to be passed here
 
-    ref_feature_ranks = read_rank_file(input_ranks_loc)
+    ref_feature_ranks, ref_rank_type = read_rank_file(input_ranks_loc)
+
+    # Very quick sanity check: make sure that the identified "rank type"
+    # (Differential or Feature Loading) matches
+    assert rank_json["datasets"]["qurro_rank_type"] == ref_rank_type
 
     # Load the table as a Sparse DF, and then match it up with the sample
     # metadata. This is needed in order to ensure that the table only describes

@@ -7,9 +7,9 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
 ) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
-    var rankPlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"gridColor": "#f2f2f2", "labelBound": true}, "mark": {"tooltip": null}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-d5bf6e97702c9e72a67a25d194eadce5"}, "datasets": {"data-d5bf6e97702c9e72a67a25d194eadce5": [{"Feature ID": "Taxon1", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "qurro_classification": "None"}, {"Feature ID": "Taxon2", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "qurro_classification": "None"}, {"Feature ID": "Taxon3", "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "qurro_classification": "None"}, {"Feature ID": "Taxon4", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "qurro_classification": "None"}, {"Feature ID": "Taxon5", "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "qurro_classification": "None"}], "qurro_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2"]}, "encoding": {"color": {"field": "qurro_classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}, "title": "Log-Ratio Classification", "type": "nominal"}, "tooltip": [{"field": "qurro_x", "title": "Current Ranking", "type": "quantitative"}, {"field": "qurro_classification", "title": "Log-Ratio Classification", "type": "nominal"}, {"field": "Feature ID", "type": "nominal"}, {"field": "FeatureMetadata1", "type": "nominal"}, {"field": "FeatureMetadata2", "type": "nominal"}, {"field": "Intercept", "type": "quantitative"}, {"field": "Rank 1", "type": "quantitative"}, {"field": "Rank 2", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Feature Rankings", "type": "ordinal"}, "y": {"field": "Intercept", "type": "quantitative"}}, "mark": "bar", "selection": {"selector005": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Features", "transform": [{"sort": [{"field": "Intercept", "order": "ascending"}], "window": [{"as": "qurro_x", "op": "row_number"}]}]};
+    var rankPlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"gridColor": "#f2f2f2", "labelBound": true}, "mark": {"tooltip": null}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-ceb3e53dd82dc2b785cc2ba76931c96b"}, "datasets": {"data-ceb3e53dd82dc2b785cc2ba76931c96b": [{"Feature ID": "Taxon1", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 5.0}, {"Feature ID": "Taxon2", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 5.0}, {"Feature ID": "Taxon3", "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 6.0}, {"Feature ID": "Taxon4", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 6.0}, {"Feature ID": "Taxon5", "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 2.0}], "qurro_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2", "Rank 3", "Rank 4"], "qurro_rank_type": "Differential"}, "encoding": {"color": {"field": "qurro_classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}, "title": "Log-Ratio Classification", "type": "nominal"}, "tooltip": [{"field": "qurro_x", "title": "Current Ranking", "type": "quantitative"}, {"field": "qurro_classification", "title": "Log-Ratio Classification", "type": "nominal"}, {"field": "qurro_spc", "title": "Sample Presence Count", "type": "quantitative"}, {"field": "Feature ID", "type": "nominal"}, {"field": "FeatureMetadata1", "type": "nominal"}, {"field": "FeatureMetadata2", "type": "nominal"}, {"field": "Intercept", "type": "quantitative"}, {"field": "Rank 1", "type": "quantitative"}, {"field": "Rank 2", "type": "quantitative"}, {"field": "Rank 3", "type": "quantitative"}, {"field": "Rank 4", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Feature Rankings", "type": "ordinal"}, "y": {"field": "Intercept", "type": "quantitative"}}, "mark": "bar", "selection": {"selector005": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Features", "transform": [{"sort": [{"field": "Intercept", "order": "ascending"}], "window": [{"as": "qurro_x", "op": "row_number"}]}]};
     // prettier-ignore
-    var samplePlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"labelBound": true}, "mark": {"tooltip": null}, "range": {"category": {"scheme": "tableau10"}, "ramp": {"scheme": "blues"}}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-17ad6d7eb8d11fdb67d65d9f4abd5654"}, "datasets": {"data-17ad6d7eb8d11fdb67d65d9f4abd5654": [{"Metadata1": "1", "Metadata2": "2", "Metadata3": "3", "Sample ID": "Sample1", "qurro_balance": null}, {"Metadata1": "4", "Metadata2": "5", "Metadata3": "6", "Sample ID": "Sample2", "qurro_balance": null}, {"Metadata1": "7", "Metadata2": "8", "Metadata3": "9", "Sample ID": "Sample3", "qurro_balance": null}, {"Metadata1": "13", "Metadata2": "14", "Metadata3": "15", "Sample ID": "Sample5", "qurro_balance": null}, {"Metadata1": "16", "Metadata2": "17", "Metadata3": "18", "Sample ID": "Sample6", "qurro_balance": null}, {"Metadata1": "19", "Metadata2": "20", "Metadata3": "21", "Sample ID": "Sample7", "qurro_balance": null}], "qurro_sample_metadata_fields": ["Metadata1", "Metadata2", "Metadata3", "Sample ID"]}, "encoding": {"color": {"field": "Metadata1", "type": "nominal"}, "tooltip": [{"field": "Sample ID", "type": "nominal"}, {"field": "qurro_balance", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "Metadata1", "type": "nominal"}, "y": {"field": "qurro_balance", "title": "Current Log-Ratio", "type": "quantitative"}}, "mark": {"type": "circle"}, "selection": {"selector006": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Samples"};
+    var samplePlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"labelBound": true}, "mark": {"tooltip": null}, "range": {"category": {"scheme": "tableau10"}, "ramp": {"scheme": "blues"}}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-17ad6d7eb8d11fdb67d65d9f4abd5654"}, "datasets": {"data-17ad6d7eb8d11fdb67d65d9f4abd5654": [{"Metadata1": "1", "Metadata2": "2", "Metadata3": "3", "Sample ID": "Sample1", "qurro_balance": null}, {"Metadata1": "4", "Metadata2": "5", "Metadata3": "6", "Sample ID": "Sample2", "qurro_balance": null}, {"Metadata1": "7", "Metadata2": "8", "Metadata3": "9", "Sample ID": "Sample3", "qurro_balance": null}, {"Metadata1": "13", "Metadata2": "14", "Metadata3": "15", "Sample ID": "Sample5", "qurro_balance": null}, {"Metadata1": "16", "Metadata2": "17", "Metadata3": "18", "Sample ID": "Sample6", "qurro_balance": null}, {"Metadata1": "19", "Metadata2": "20", "Metadata3": "21", "Sample ID": "Sample7", "qurro_balance": null}], "qurro_sample_metadata_fields": ["Metadata1", "Metadata2", "Metadata3", "Sample ID"]}, "encoding": {"color": {"field": "Metadata1", "type": "nominal"}, "tooltip": [{"field": "Sample ID", "type": "nominal"}, {"field": "qurro_balance", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "Metadata1", "scale": {"zero": false}, "type": "nominal"}, "y": {"field": "qurro_balance", "scale": {"zero": false}, "title": "Current Natural Log-Ratio", "type": "quantitative"}}, "mark": {"type": "circle"}, "selection": {"selector006": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Samples"};
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
@@ -67,6 +67,13 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         .onclick
                 );
             }
+
+            // Check that the qurro_rank_type has been properly integrated into
+            // the interface
+            chai.assert.equal(
+                "Differential",
+                document.getElementById("rankFieldLabel").textContent
+            );
         });
 
         it("RRVDisplay.validateSampleID() identifies nonexistent sample IDs", function() {
@@ -83,12 +90,46 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
              * before test(s).
              */
             async function updateSingleAndCheckAllBalancesNull() {
-                await rrv.updateSamplePlotSingle();
+                await rrv.regenerateFromClicking();
                 var data = rrv.samplePlotView.data(dataName);
                 for (var i = 0; i < data.length; i++) {
                     chai.assert.isNull(data[i].qurro_balance);
                 }
                 testing_utilities.checkHeaders(0, 0, 5);
+            }
+
+            /* Basically runs an integration test using the feature filtering
+             * controls.
+             */
+            async function runFeatureFiltering(
+                numField,
+                numText,
+                numSearchType,
+                denField,
+                denText,
+                denSearchType
+            ) {
+                await resetRRVDisplay(rrv);
+                document.getElementById("topSearch").value = numField;
+                document.getElementById("botSearch").value = denField;
+                document.getElementById("topSearchType").value = numSearchType;
+                document.getElementById("botSearchType").value = denSearchType;
+                document.getElementById("topText").value = numText;
+                document.getElementById("botText").value = denText;
+                // This should just result in rrv.regenerateFromFiltering()
+                // being called. The added benefit is that this also tests
+                // that the onclick event of the multiFeatureButton was set
+                // properly :)
+                // ... For some godforsaken reason, awaiting .click() (which
+                // I've been doing in these tests instead of .onclick() --
+                // why, you might ask? -- I don't remember :| ) results in the
+                // async operations getting out of order as soon as we get to
+                // the part where the plots are updated via Promise.all() in
+                // updateLogRatio(). And I don't know why! I assume it's
+                // something weird with how HTMLElement.click() works.
+                // Anyway, calling .onclick() (which Qurro sets DIRECTLY in
+                // dom_utils.setUpDOMBindings()) works. PHEW.
+                await document.getElementById("multiFeatureButton").onclick();
             }
             describe("Single-feature selections", function() {
                 beforeEach(async function() {
@@ -137,7 +178,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 it("Works properly when actually changing the plots", async function() {
                     rrv.newFeatureLow = { "Feature ID": "Taxon2" };
                     rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
-                    await rrv.updateSamplePlotSingle();
+                    await rrv.regenerateFromClicking();
                     // Check that the sample log-ratios were properly updated
                     // Sample1 has a Taxon1 count of 0, so its log-ratio should
                     // be null (because log(0/x) is undefined).
@@ -200,23 +241,76 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                             .getElementById("colorSamplesDroppedDiv")
                             .classList.contains("invisible")
                     );
+                    // Ensure that the warning about "Both" features remains
+                    // hidden
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
+                });
+                it("Selecting the same feature as numerator and denominator causes balances to be 0, and causes a warning about 'Both'-classification features to appear; this warning goes away when next selecting a log-ratio without 'Both'-classified features", async function() {
+                    // The only way a feature is in both the numerator and
+                    // denominator for single-feature selections is if the
+                    // same feature is double-clicked
+                    //
+                    // I'm using Taxon4 for this test because it's in every
+                    // sample in the matching test dataset, so we can just
+                    // check that log-ratios are correct by verifying every
+                    // sample has a log-ratio of 0
+                    rrv.newFeatureLow = { "Feature ID": "Taxon4" };
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon4" };
+                    await rrv.regenerateFromClicking();
+
+                    // While we're doing this test (the main purpose of this is
+                    // to verify that the commonFeatureWarning is shown),
+                    // verify that log-ratios are being computed properly (they
+                    // should be all zeroes, since ln(X) - ln(X) = 0).
+                    var data = rrv.samplePlotView.data(dataName);
+                    for (var i = 0; i < data.length; i++) {
+                        chai.assert.equal(0, data[i].qurro_balance);
+                    }
+                    // ...and verify that the selected features headers were
+                    // updated appropriately.
+                    testing_utilities.checkHeaders(1, 1, 5);
+
+                    // Ok, now actually verify that the warning showed up!
+                    chai.assert.isFalse(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
+                    // Furthermore, verify that the warning contains the text
+                    // "Currently, 1 feature(s)"
+                    chai.assert.include(
+                        document.getElementById("commonFeatureWarning")
+                            .textContent,
+                        "Currently, 1 feature(s)"
+                    );
+
+                    // Now, double check that we can make that warning go away
+                    // by switching to a different log-ratio. (I'm not going to
+                    // bother checking the individual samples' log-ratios
+                    // again.)
+                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    await rrv.regenerateFromClicking();
+                    chai.assert.isTrue(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
                 });
             });
-            describe("Multi-feature selections (basic case)", function() {
-                before(async function() {
-                    await resetRRVDisplay(rrv);
-                    document.getElementById("topSearch").value = "Feature ID";
-                    document.getElementById("botSearch").value =
-                        "FeatureMetadata1";
-                    document.getElementById("topSearchType").value = "text";
-                    document.getElementById("botSearchType").value = "text";
-                    document.getElementById("topText").value = "Taxon";
-                    document.getElementById("botText").value = "Yeet";
-                    // This should just result in rrv.updateSamplePlotMulti()
-                    // being called. The added benefit is that this also tests
-                    // that the onclick event of the multiFeatureButton was set
-                    // properly :)
-                    await document.getElementById("multiFeatureButton").click();
+            describe("Multi-feature selections (text-based filtering, one basic case)", function() {
+                beforeEach(async function() {
+                    await runFeatureFiltering(
+                        "Feature ID",
+                        "Taxon",
+                        "text",
+                        "FeatureMetadata1",
+                        "Yeet",
+                        "text"
+                    );
                 });
                 it("Properly updates topFeatures and botFeatures", function() {
                     chai.assert.sameMembers(
@@ -232,14 +326,65 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 });
-                // TODO: We will probably need to change changeSamplePlot() to
-                // be an async function that updates the rank and sample plot
-                // with runAsync() instead of run(), and awaits that result.
-                // Then we can make updateSamplePlotMulti async (and have it
-                // await changeSamplePlot()), and then await
-                // updateSamplePlotMulti's result here. Yay!
-                it("Properly updates the sample plot balances");
-                it("Properly updates the rank plot classifications");
+                it("Properly updates the sample plot balances", function() {
+                    // same delta as in the compute balances tests
+                    var delta = 0.00001;
+                    // Sample1
+                    chai.assert.approximately(
+                        Math.log(9 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][0].qurro_balance,
+                        delta
+                    );
+                    // Sample2
+                    chai.assert.approximately(
+                        Math.log(10 / 3),
+                        rrv.samplePlotJSON.datasets[dataName][1].qurro_balance,
+                        delta
+                    );
+                    // Sample3
+                    chai.assert.approximately(
+                        Math.log(3),
+                        rrv.samplePlotJSON.datasets[dataName][2].qurro_balance,
+                        delta
+                    );
+                    // Sample5
+                    chai.assert.approximately(
+                        Math.log(13 / 4),
+                        rrv.samplePlotJSON.datasets[dataName][3].qurro_balance,
+                        delta
+                    );
+                    // Sample6
+                    chai.assert.approximately(
+                        Math.log(10 / 3),
+                        rrv.samplePlotJSON.datasets[dataName][4].qurro_balance,
+                        delta
+                    );
+                    // Sample7
+                    chai.assert.approximately(
+                        Math.log(9 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][5].qurro_balance,
+                        delta
+                    );
+                });
+                it("Properly updates the rank plot classifications", function() {
+                    // we've selected the log-ratio of (all features) over
+                    // (taxon 3)
+                    var rpData =
+                        rrv.rankPlotJSON.datasets[rrv.rankPlotJSON.data.name];
+                    for (var i = 0; i < rpData.length; i++) {
+                        if (rpData[i]["Feature ID"] === "Taxon3") {
+                            chai.assert.equal(
+                                "Both",
+                                rpData[i].qurro_classification
+                            );
+                        } else {
+                            chai.assert.equal(
+                                "Numerator",
+                                rpData[i].qurro_classification
+                            );
+                        }
+                    }
+                });
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1, 5);
                     chai.assert.sameMembers(
@@ -260,9 +405,190 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Multi-feature selections (corner cases)", function() {
+            describe("Multi-feature selections (text-based filtering, corner cases)", function() {
+                beforeEach(async function() {
+                    await resetRRVDisplay(rrv);
+                });
+                function assertWarningShown(numCommonFeatures) {
+                    // verify that the warning showed up
+                    chai.assert.isFalse(
+                        document
+                            .getElementById("commonFeatureWarning")
+                            .classList.contains("invisible")
+                    );
+                    // Furthermore, verify that the warning contains the text
+                    // "Currently, N feature(s)" where N is numCommonFeatures
+                    chai.assert.include(
+                        document.getElementById("commonFeatureWarning")
+                            .textContent,
+                        "Currently, " +
+                            numCommonFeatures.toString() +
+                            " feature(s)"
+                    );
+                }
                 describe("Empty search fields provided", function() {
                     it("Clears feature classifications and sample balances");
+                });
+                describe("Selecting the same feature(s) for both the numerator and denominator triggers a warning about 'Both'-classification features", function() {
+                    it("Works when only one feature is common", async function() {
+                        // Filter numerator to all features (since they all have
+                        // feature IDs including the text "Taxon", and filter
+                        // denominator to just the "Taxon3" feature.
+                        // This lets us check multi-feature selections in the
+                        // context of the "Both" warning.
+                        await runFeatureFiltering(
+                            "Feature ID",
+                            "Taxon",
+                            "text",
+                            "Feature ID",
+                            "3",
+                            "text"
+                        );
+                        assertWarningShown(1);
+                    });
+                    it("Works when multiple features are common", async function() {
+                        // Try again, but now select multiple overlapping features
+                        // for the denominator (select all features with an
+                        // "Intercept" differential of less than 9 -- this
+                        // should be all features except Taxon4, which has an
+                        // Intercept differential of exactly 9).
+                        await runFeatureFiltering(
+                            "Feature ID",
+                            "Taxon",
+                            "text",
+                            "Intercept",
+                            "9",
+                            "lt"
+                        );
+                        assertWarningShown(4);
+                    });
+                });
+            });
+            describe("Multi-feature selections (auto-selection)", function() {
+                /* Utility function that lets us essentially integration-test
+                 * the auto-selection functionality. Cool!
+                 */
+                async function callAutoSelect(inputNumber, inputType) {
+                    document.getElementById(
+                        "autoSelectNumber"
+                    ).value = inputNumber;
+                    document.getElementById("autoSelectType").value = inputType;
+                    await document.getElementById("autoSelectButton").click();
+                }
+                beforeEach(async function() {
+                    await resetRRVDisplay(rrv);
+                });
+                it("Basic percentage-based filtering works", async function() {
+                    await callAutoSelect("25", "autoPercent");
+                    // 25% of 5 features is 1, so we should see 1 feature on
+                    // the top and bottom (and the current ranking is
+                    // "Intercept" so this should be Taxon2 on the bottom and
+                    // Taxon4 on the top)
+                    chai.assert.sameMembers(
+                        ["Taxon4"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                    // Check that the resulting log-ratios are correct.
+                    // We only bother testing this for auto-selection once,
+                    // since we've already unit-tested the heck out of the
+                    // balance computation stuff (and auto-selection is doing
+                    // the same stuff under the hood -- the only "new" stuff
+                    // it does is before it assigns topFeatures and
+                    // botFeatures).
+                    //
+                    // Sample1
+                    chai.assert.equal(
+                        Math.log(1 / 6),
+                        rrv.samplePlotJSON.datasets[dataName][0].qurro_balance
+                    );
+                    // Sample2
+                    chai.assert.equal(
+                        Math.log(1 / 5),
+                        rrv.samplePlotJSON.datasets[dataName][1].qurro_balance
+                    );
+                    // Sample3
+                    chai.assert.equal(
+                        Math.log(1 / 4),
+                        rrv.samplePlotJSON.datasets[dataName][2].qurro_balance
+                    );
+                    // Sample5
+                    chai.assert.equal(
+                        Math.log(1 / 2),
+                        rrv.samplePlotJSON.datasets[dataName][3].qurro_balance
+                    );
+                    // Sample6
+                    chai.assert.equal(
+                        0,
+                        rrv.samplePlotJSON.datasets[dataName][4].qurro_balance
+                    );
+                    // Sample7
+                    chai.assert.isNull(
+                        rrv.samplePlotJSON.datasets[dataName][5].qurro_balance
+                    );
+
+                    // Yeah, JS considers 1e2 as a valid number! It's
+                    // automatically converted to 100 when you pass it in to
+                    // vega.toNumber() (you can also just straight-up use
+                    // "1e2"-esque syntax in JS, apparently).
+                    await callAutoSelect("1e2", "autoPercent");
+                    var allFeatures = [
+                        "Taxon1",
+                        "Taxon2",
+                        "Taxon3",
+                        "Taxon4",
+                        "Taxon5"
+                    ];
+                    chai.assert.sameMembers(
+                        allFeatures,
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        allFeatures,
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                });
+                it("Basic literal-number-based filtering works", async function() {
+                    await callAutoSelect("3", "autoLiteral");
+                    // 3 features on the bottom and 3 on the top. Since there
+                    // are 5 features, we should see an overlap in the middle
+                    // feature for the current ranking (i.e. Taxon1).
+                    chai.assert.sameMembers(
+                        ["Taxon4", "Taxon5", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2", "Taxon3", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                });
+                it("Invalid inputs result in empty feature selections", async function() {
+                    function assertEmpty(rrv) {
+                        chai.assert.empty(rrv.topFeatures);
+                        chai.assert.empty(rrv.botFeatures);
+                    }
+                    var vals = ["-3", "123eee", "-0.01"];
+                    for (var v = 0; v < vals.length; v++) {
+                        await callAutoSelect(vals[v], "autoLiteral");
+                        assertEmpty(rrv);
+                        await callAutoSelect(vals[v], "autoPercent");
+                        assertEmpty(rrv);
+                    }
                 });
             });
         });
@@ -276,7 +602,10 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     await document.getElementById("rankField").onchange();
                     // Check that the rank plot JSON was updated accordingly:
                     // 1. y-axis field updated
-                    // 2. y-axis title updated to say "Magnitude: [rank name]"
+                    // 2. y-axis title updated to say
+                    //    "Differential: [rank name]"
+                    //    (the "Differential" text comes from the
+                    //    qurro_rank_type "dataset" in the rank plot JSON)
                     // 3. The lone transform of the rank plot JSON should now
                     //    sort by the new rank field
                     chai.assert.equal(
@@ -284,7 +613,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.rankPlotJSON.encoding.y.field
                     );
                     chai.assert.equal(
-                        "Magnitude: Rank 1",
+                        "Differential: Rank 1",
                         rrv.rankPlotJSON.encoding.y.title
                     );
                     // Sanity check -- verify there's only one transform, and
@@ -576,9 +905,27 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.config.range.ramp.scheme
                     );
                 });
-                it(
-                    "updateSamplePlotColorScheme() throws an error for unrecognized scale range types"
-                );
+                it("Invalid scale ranges cause an error", async function() {
+                    // SO! Testing for errors in async functions doesn't
+                    // really work as expected in Chai, at least as of writing.
+                    // See https://github.com/chaijs/chai/issues/415 for
+                    // details. The more explicit (albeit less elegant)
+                    // approach we use to test this was derived from
+                    // https://github.com/chaijs/chai/issues/1254#issue-446313886.
+                    try {
+                        await rrv.updateSamplePlotColorScheme(
+                            "skedaddle skedappen this should never friggin happen"
+                        );
+                        throw new Error(
+                            "function didn't fail when it should have!"
+                        );
+                    } catch (error) {
+                        chai.assert.match(
+                            error,
+                            /Unrecognized scale range type specified: skedaddle/
+                        );
+                    }
+                });
             });
         });
         describe("Boxplot functionality", function() {
