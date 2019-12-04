@@ -13,11 +13,17 @@ import qiime2.plugin
 import qiime2.sdk
 from qurro import __version__
 from qurro.qarcoal import qarcoal
-from ._method import differential_plot, loading_plot
-from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
-from qurro._parameter_descriptions import EXTREME_FEATURE_COUNT, TABLE, DEBUG
-from qurro import _qarcoal_param_descriptions as QPD
+from ._visualizers import differential_plot, loading_plot
+from qurro._parameter_descriptions import (
+    TABLE,
+    EXTREME_FEATURE_COUNT,
+    DEBUG,
+    SAMPLE_METADATA,
+    FEATURE_METADATA,
+)
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
+from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
+from qurro import _qarcoal_param_descriptions as QPD
 from q2_types.feature_data import Taxonomy
 from q2_types.feature_table import FeatureTable, Frequency
 from q2_types.ordination import PCoAResults
@@ -48,8 +54,8 @@ plugin = qiime2.plugin.Plugin(
     description=(
         "This QIIME 2 plugin supports the interactive visualization of "
         "feature rankings (either differentials or feature loadings -- when "
-        "sorted numerically these provide rankings) in tandem with log-ratios "
-        "of features' abundances within samples."
+        "sorted numerically these provide rankings) in tandem with feature "
+        "log-ratios across samples."
     ),
     package="qurro",
 )
@@ -60,17 +66,17 @@ params = {
     "feature_metadata": Metadata,
     "extreme_feature_count": Int,
     "debug": Bool,
-    # "assume_gnps_feature_metadata": Bool,
 }
 
 param_descs = {
+    "sample_metadata": SAMPLE_METADATA,
+    "feature_metadata": FEATURE_METADATA,
     "extreme_feature_count": EXTREME_FEATURE_COUNT,
     "debug": DEBUG
     + (
         " Note that you'll also need to use the --verbose option to see these "
         "messages."
     ),
-    # "assume_gnps_feature_metadata": ASSUME_GNPS_FEATURE_METADATA,
 }
 
 short_desc = "Generate a Qurro visualization from feature {}s"

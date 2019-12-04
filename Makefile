@@ -1,7 +1,8 @@
 # These "commands" assume some packages in addition to what's installed with
 # setup.py have been installed -- that is, mocha-headless-chrome, nyc, jshint,
-# and prettier. These also assume that the dev requirements have been
-# installed.
+# prettier, and nbconvert. These also assume that the dev requirements have
+# been installed.
+#
 # See the Travis-CI configuration file (.travis.yml) for examples of
 # how to install these extra utilities.
 
@@ -31,8 +32,6 @@ stylecheck:
 	jshint $(JSLOCS)
 	prettier --check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 
-# If we'd want to do any automatic python code formatting (e.g. with black), we
-# could do that here
 style:
 	black -l 79 qurro/ setup.py
 	@# To be extra safe, do a dry run of prettier and check that it hasn't
@@ -40,3 +39,13 @@ style:
 	@# thing by default.)
 	prettier --debug-check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 	prettier --write --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
+
+# Runs all of the example Jupyter Notebooks. Manually rerunning notebooks is a
+# pain, so this makes life a bit easier.
+# NOTE: This requires that you have nbconvert installed!
+notebooks:
+	@# See https://nbconvert.readthedocs.io/en/latest/usage.html#notebook-and-preprocessors
+	@# for reference.
+	@# The timeout=None thing is used to allow us to run long processes (e.g.
+	@# Songbird) from within notebooks without Jupyter timing out.
+	jupyter nbconvert --execute --ExecutePreprocessor.timeout=None --to notebook --inplace example_notebooks/*/*.ipynb

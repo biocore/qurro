@@ -132,7 +132,7 @@ def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
 
     # Validate the table DataFrame -- should be ok since we loaded this through
     # the biom module, but might as well check
-    validate_df(table_sdf, "BIOM table", 2, 1)
+    validate_df(table_sdf, "BIOM table", min_row_ct, min_col_ct)
 
     logging.debug("Converted BIOM table to SparseDataFrame.")
     return table_sdf
@@ -468,6 +468,69 @@ def sparsify_count_dict(count_dict):
     return sparse_count_dict
 
 
+def add_sample_presence_count(feature_data, table_sdf):
+    """Adds a "qurro_spc" column to a DataFrame of feature information.
+
+       The value in this column corresponds to the number of samples a given
+       feature is present in, as determined by the count data given in the
+       table_sdf argument.
+
+       Parameters
+       ----------
+
+       feature_data: pd.DataFrame
+            A DataFrame containing some sort of feature information. At the
+            point in Qurro this is called, this will likely include both
+            feature ranking information and feature metadata information.
+
+       table_sdf: pd.SparseDataFrame
+            Representation of a BIOM table containing count data. The index
+            contains feature IDs, and the columns contain sample IDs.
+            This table should only contain samples that will be used in the
+            Qurro visualization (i.e. this table should be the output of all
+            the matching, filtering, removing empty, etc. steps), since the
+            presence of irrelevant samples will result in inaccurate SPC values
+            being computed.
+
+       Returns
+       -------
+
+       output_feature_data: pd.DataFrame
+            feature_data, with a qurro_spc column added.
+
+       Raises
+       ------
+
+       ValueError: if feature_data already contains a column named "qurro_spc".
+                   (Assuming you've already called check_column_names() on this
+                   data this shouldn't be a problem, but this checks anyway.)
+    """
+    # Convert the table into a presence-absence representation (every count
+    # value > 0 is replaced with 1).
+    #
+    # When I was looking around for ways to do this, I googled "pandas
+    # dataframe presence absence" and one of the first hits was the docs for
+    # DF.where() (which led me to DF.mask). Nowhere on either of these pages
+    # is "presence" or "absence" mentioned. But, uh, thanks Google for reading
+    # my mind?
+    table_pa = table_sdf.mask(table_sdf > 0, 1)
+    # Sum each row of the presence-absence table, producing a series with
+    # qurro_spc values
+    spc_series = table_pa.sum(axis="columns")
+    spc_series.name = "qurro_spc"
+
+    # Return merged copy of the feature data with the series named "qurro_spc"
+    # Note the use of suffixes=(False, False) -- this will throw a ValueError
+    # if feature_data already contains a column called "qurro_spc".
+    return feature_data.merge(
+        spc_series,
+        how="left",
+        left_index=True,
+        right_index=True,
+        suffixes=(False, False),
+    )
+
+
 def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
     """Checks that column names in input data will work properly in Qurro.
 
@@ -513,9 +576,99 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
             '"qurro_x".{}'.format(sugg)
         )
 
+    if "qurro_spc" in fr_cols or "qurro_spc" in fm_cols:
+        raise ValueError(
+            "Feature rankings/metadata can't contain any columns called "
+            '"qurro_spc".{}'.format(sugg)
+        )
+
     if len(set(fr_cols) & set(fm_cols)) > 0:
         raise ValueError(
             "Column names for the feature metadata and feature ranks must be "
             "distinct. Try creating a copy of your feature metadata with "
             "identical columns renamed, and use that with Qurro."
         )
+
+
+def vibe_check(
+    feature_ranks, table_sdf, safe_range=[-9007199254740991, 9007199254740991],
+):
+    """Returns an error if the input data can't be safely used in Qurro as is.
+
+       Our definition of "safe" here is that none of these DataFrames contain
+       any numeric values that are outside the specified safe numeric range. By
+       default, this range is [-(2**53 - 1), (2**53 - 1)].
+
+       Primarily, this is useful for validating the BIOM table and feature
+       rankings. I imagine the presence of things like numeric IDs in the
+       metadata will make this hard to properly screen for without introducing
+       a ton of false positives, which will annoy people; maybe we can make the
+       simplifying assumption that if your data is in a categorical metadata
+       column then you don't care about its numeric representation?
+
+       Parameters
+       ----------
+
+       feature_ranks: pd.DataFrame
+            A DataFrame defining feature rankings, where the index corresponds
+            to feature IDs and the columns correspond to ranking names.
+            Critically, every entry in this should be numeric.
+
+       table_sdf: pd.DataFrame (or pd.SparseDataFrame)
+            DataFrame representation of a feature table. Similarly to the
+            feature rankings, every entry in this should be numeric.
+
+       safe_range: collection with exactly two entries
+            The first entry in the safe_range specifies the minimum value we
+            allow, and the second entry specifies the maximum value we allow.
+            Any numbers outside of this range are deemed to "fail the vibe
+            check," in internet meme parlance circa autumn 2019.
+
+       Returns
+       -------
+
+       None
+
+       Raises
+       ------
+
+       ValueError: if safe_range does not contain exactly two entries, or
+                   if the second entry in safe_range is less than or equal to
+                   the first entry in safe_range
+
+       OverflowError: if the feature rankings or BIOM table inputs contain any
+                      numbers outside of the specified safe range
+    """
+    if len(safe_range) != 2:
+        raise ValueError("safe_range must have a length of 2.")
+    if safe_range[1] <= safe_range[0]:
+        raise ValueError("safe_range[1] must be GREATER THAN safe_range[0].")
+    # Note that the above if statement will also cause this to fail if either
+    # of the entries in safe_range can't be compared via <=, >, etc. (Per
+    # python doctrine, we don't explicitly set type restrictions on
+    # safe_range's entries, so its entries can be ints, floats, ...)
+
+    upper_error = (
+        "The input THING contains entries larger than the "
+        '"safe" upper limit for numbers of {}. This means that the Qurro '
+        "visualization interface is not usable, at least not currently. "
+        'We suggest using Qurro\'s "Qarcoal" command to compute '
+        "log-ratios outside of the Qurro visualization interface."
+    ).format(safe_range[1])
+
+    lower_error = (
+        "The input THING contains entries lower than the "
+        '"safe" lower limit for numbers of {}. This means that the Qurro '
+        "visualization interface is not usable, at least not currently. "
+        'We suggest using Qurro\'s "Qarcoal" command to compute '
+        "log-ratios outside of the Qurro visualization interface."
+    ).format(safe_range[0])
+
+    for (df, df_name) in (
+        (table_sdf, "feature table"),
+        (feature_ranks, "feature rankings data"),
+    ):
+        if (df > safe_range[1]).any().any():
+            raise OverflowError(upper_error.replace("THING", df_name))
+        if (df < safe_range[0]).any().any():
+            raise OverflowError(lower_error.replace("THING", df_name))

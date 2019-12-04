@@ -1,11 +1,140 @@
 # Qurro changelog
 
+## Qurro 0.5.0
+### Features added
+- Added **Qarcoal**, a new command for Qurro's QIIME 2 plugin that computes
+  log-ratios from the command line by searching through features' taxonomies.
+  This can be useful in a variety of situations -- for example, if you don't
+  care about feature ranking information and just want to look at log-ratios,
+  or if your BIOM table contains super large numbers that would cause
+  JavaScript to start malfunctioning (see the "bug fixes" section below).
+    - Thanks to [@gibsramen](http://github.com/gibsramen/) for adding this in
+      to Qurro!
+- Added **autoselection**, a new method for selecting multiple features in a
+  log-ratio. This method just picks features from the top and bottom of the
+  currently-selected ranking, using a specified equal amount of features from
+  each side (either in percentages of features or in numbers of features).
+  ([#189](https://github.com/biocore/qurro/issues/189))
+    - This feature should be useful when quickly assessing how much a given
+      ranking field "separates" samples along certain metadata categories. It's
+      a great starting point when looking at a Qurro visualization.
+- When selecting a log-ratio where feature(s) are present in both the numerator
+  and denominator of the log-ratio, a warning will now be shown explaining the
+  situtation (and recommending that you chose a different log-ratio that
+  doesn't involve this "overlap").
+  ([#249](https://github.com/biocore/qurro/issues/249))
+    - We will try to make selectively removing features from one side or
+      another of log-ratios easier in the future.
+- Added an additional text searching option:
+  `is provided, and does not contain the text`. This will select features
+  where:
+    1. The specified feature field (e.g. Feature ID) is provided, and
+    2. The specified feature field does not contain the specified text.
+
+  Note the first clause. If a given field is not provided (e.g. no taxonomy
+  information is provided for `Feature A`), then that feature won't show up in
+  any results that involve searching on feature taxonomy. This behavior is the
+  same as with other text-/number-searching methods, but we've explicitly
+  specified it here so that it's clear (since you could argue that a
+  non-existent taxonomy entry "does not contain" some text).
+  ([#221](https://github.com/biocore/qurro/issues/221))
+- The sample plot's x- and y-axes are now no longer forced to include zero. So
+  if, say, all of your samples have an x-axis value of at least 20, then they
+  won't be squished on the side of the sample plot any more.
+  ([#218](https://github.com/biocore/qurro/issues/218))
+- All features in the rank plot now have a "Sample Presence Count" field shown
+  in their tooltips. A given feature's "Sample Presence Count" value is equal
+  to the number of samples in the Qurro visualization that contain that
+  feature. This should give some context as to why log-ratios between certain
+  features result in more or less samples being dropped from the sample plot.
+  ([#217](https://github.com/biocore/qurro/issues/217))
+### Backward-incompatible changes
+- **Removed the `-gnps`/`--assume-gnps-feature-metadata` argument from the
+  standalone Qurro interface.** If you'd like to use GNPS data in Qurro, you'll
+  just need to supply a "normal" feature metadata file where the first column
+  corresponds to each feature's ID.  (This should be available through GNPS
+  now.) A benefit of this is that you can use this data in either the
+  standalone or QIIME 2 Qurro interfaces.
+  ([#49](https://github.com/biocore/qurro/issues/49))
+- As a side effect of implementing the Sample Presence Count feature, if any of
+  your feature ranks or feature metadata inputs contain a column named
+  `qurro_spc` then an error will be raised when trying to generate a Qurro
+  visualization.
+- Qurro now requires that a Pandas version of at least 0.24.0 is installed.
+- Qurro now (explicitly) requires that a Python version of at least 3.5 is
+  installed. (This was already a requirement, but it should be enforced when
+  installing Qurro now.)
+### Bug fixes
+- If your input feature table or feature rankings data contain numbers outside
+  of the range of `[-(2**53 - 1), (2**53 - 1)]`, Qurro's Python code will now
+  fail with an error explaining the situation. This is because numbers outside
+  of this range cannot be precisely represented in JavaScript (at least by
+  default). ([#242](https://github.com/biocore/qurro/issues/242))
+    - The reason for this is that [JavaScript is inherently limited in the sizes of numbers it can represent by default](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number).
+      There are a few ways around this,
+      but I do not have the bandwidth to modify and test Qurro to completely
+      support rare corner cases like this (at least right now).
+    - **Note that this is only a partial solution to this problem**; it's still
+      possible to pass in arbitrarily large numbers within your
+      sample/feature metadata to Qurro, and the behavior in these situations is
+      still currently untested.
+    - On the bright side of things :), thanks to the efforts of
+      [@gibsramen](https://github.com/gibsramen), Qarcoal is now available, so
+      you should be able to compute log-ratios of essentially arbitrarily large
+      numbers through that interface.
+- Fixed a minor bug in `qurro._df_utils.biom_table_to_sparse_df()` where the
+  specified `min_row_ct` and `min_col_ct` were not being used to validate the
+  output DataFrame.
+    - The validation method was still being called, just with the default
+      `min_row_ct` and `min_col_ct` values directly rather than using the
+      specified parameters.
+    - ...Long story short, this bug should not have impacted you unless you've
+      been using `qurro._df_utils.biom_table_to_sparse_df ()` with custom
+      validation settings directly. If you've just been using Qurro as a
+      standalone tool, you should be unaffected.
+### Performance enhancements
+### Miscellaneous
+- Various aesthetic changes to the Qurro visualization interface (e.g.
+  changing the location/styling of certain buttons).
+- Renamed the y-axis of the sample plot to say `Current Natural Log-Ratio`
+  instead of just `Current Log-Ratio`. (This makes it clearer that these
+  log-ratios are computed using the natural log, i.e. `ln`.) This change has
+  also been applied to TSV files exported from the sample plot
+  (`Current_Log_Ratio` --> `Current_Natural_Log_Ratio`), as well as to the
+  tooltips of samples in the sample plot.
+- Renamed the y-axis of the rank plot to say either `Differential: ` or
+  `Feature Loading: ` instead of `Magnitude: `.
+  ([#223](https://github.com/biocore/qurro/issues/223))
+- Renamed the label for changing the rank plot ranking from `Ranking` to either
+  `Differential` or `Feature Loading`.
+- For searching by the values of a given feature ranking, the header shown
+  above all of the ranking column names said `Feature Rankings`.
+  This was slightly misleading, since searching is being done on the
+  magnitudes of each ranking column for each feature (i.e. based on the
+  y-axis values shown in the rank plot). To make things clearer, this header
+  has been changed from `Feature Rankings` to either `Differentials` or
+  `Feature Loadings`.
+- Improved the command-line documentation of the sample and feature metadata
+  parameters.
+- Various documentation updates in the README.
+- Changed the project structure around slightly to ensure that
+  `dependency_licenses/` for libraries distributed with Qurro
+  (Vega, Vega-Lite, Vega-Embed, RequireJS, Bootstrap) are now installed in
+  both "source" and "built" distributions of Qurro (previously, these were only
+  installed in "source" distributions).
+- Added `nbconvert` to Qurro's `dev` requirements, and added a command to rerun
+  all of the example notebooks in Qurro automatically (`make notebooks`). This
+  command is also run on Travis-CI now in order to ensure that future updates
+  to Qurro don't crash any of these notebooks.
+- Updated the "Mackerel" demo / test data to match the latest output of [this analysis](https://github.com/knightlab-analyses/qurro-mackerel-analysis/). Notable changes include using the `reference-hit` Deblur BIOM output instead of the `all` Deblur BIOM output (which is generally recommended for 16S analyses), and using SILVA instead of Greengenes for taxonomic classification.
+
 ## Qurro 0.4.0 (August 15, 2019)
 ### Features added
 - Started using Bootstrap (v4.3.1) for styling the Qurro visualization
   interface. Although the functionality available in Qurro is still the same,
   this interface has received a significant makeover. The bulk of these
   cosmetic interface changes are not documented here.
+  ([#111](https://github.com/biocore/qurro/issues/111))
 - Added light "grid lines" to the Qurro visualization interface. These clearly
   split up the interface into four distinct sections (rank plot, sample plot,
   selected features, selecting features), making it clearer how the interface
@@ -48,6 +177,7 @@
   consistency between the Vega-Lite specifications generated and the Vega\*
   versions used by Qurro.
 - Various minor updates to Qurro's documentation.
+
 
 ## Qurro 0.3.0 (August 3, 2019)
 ### Features added

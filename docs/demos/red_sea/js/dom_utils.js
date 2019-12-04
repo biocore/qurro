@@ -345,6 +345,21 @@ define(["vega"], function(vega) {
      *
      * This also treats Infinities/NaNs as invalid numbers, which matches the
      * sample metadata processing behavior.
+     *
+     * NOTE: Due to how numbers work in JS, precision here is inherently
+     * limited. If you pass in, e.g,
+     * "3.999999999999999999999999999999999999999999999999999999999", then
+     * that'll get represented as 4 (but that'll happen even if you don't
+     * represent it as a string, and this is also the case if you chuck that
+     * same number into python).
+     *
+     * NOTE / TODO: If the number represented by val is outside of the range of
+     * safe numbers allowed by JS (i.e. if val isn't in the range
+     * [-(2^53 - 1), (2^53 - 1)]), this function will not work as you'd expect.
+     * These problems are inherent to JS Numbers. It would be a good idea to
+     * make this throw an error or something if this is the case, since we
+     * could then let the user know the nature of what went wrong.
+     * (Although using e.g. math.js is probably the best idea here.)
      */
     function getNumberIfValid(val) {
         if (typeof val === "string") {

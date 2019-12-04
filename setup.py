@@ -73,13 +73,19 @@ setup(
         "biom-format[hdf5]",
         "click",
         "numpy >= 1.12.0",
-        "pandas >= 0.20.1",
+        "pandas >= 0.24.0",
         "scikit-bio > 0.5.3",
     ],
     # Based on how Altair splits up its requirements:
     # https://github.com/altair-viz/altair/blob/master/setup.py
     extras_require={
-        "dev": ["pytest >= 4.2", "pytest-cov >= 2.0", "flake8", "black"]
+        "dev": [
+            "pytest >= 4.2",
+            "pytest-cov >= 2.0",
+            "flake8",
+            "black",
+            "nbconvert",
+        ]
     },
     classifiers=classifiers,
     entry_points={
@@ -87,4 +93,5 @@ setup(
         "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
+    python_requires=">=3.5",
 )

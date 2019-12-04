@@ -12,28 +12,53 @@
 <p>(Pronounced "churro.")</p>
 </div>
 
-Qurro visualizes the output from a tool like
-[Songbird](https://github.com/biocore/songbird) or
-[DEICODE](https://github.com/biocore/DEICODE). It displays a plot of
-__feature rankings__ (either the differentials produced by a tool like
-Songbird, or the loadings in a compositional biplot produced by a tool
-like DEICODE -- when sorted numerically, either of these input types provide
-rankings) alongside a plot showing the __log-ratios__ of
-selected features' abundances within samples.
+### What does this tool do?
+(mostly taken from our paper abstract/intro.)
+
+Lots of tools for analyzing " 'omic" datasets can produce
+__feature rankings__. Regardless of if they're *differentials* (corresponding
+to the log-fold change in relative abundance re: a covariate) produced by a
+tool like [Songbird](https://github.com/biocore/songbird/),
+[ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html),
+etc., or the *feature loadings* in a (compositional)
+biplot produced by a tool like [DEICODE](https://github.com/biocore/DEICODE),
+either of these input types can be sorted numerically to
+"rank" features based on their association with some sort of variation in your
+dataset.
+
+A common use of these rankings is examining the __log-ratios__ of
+particularly high- or low-ranked features across the samples in your dataset,
+and seeing how these log-ratios relate to your sample metadata (e.g. "does
+this log-ratio differ between 'healthy' and 'sick' samples?"). For more
+details (why rankings, why log-ratios, ...), check out
+[this open access paper](https://www.nature.com/articles/s41467-019-10656-5).
+
+__Qurro is an interactive web application for visualizing feature rankings
+and log-ratios.__ It does this
+using a two-plot interface: on the left of the screen, a "rank plot" shows
+how features are ranked for a selected ranking, and on the right of the screen
+a "sample plot" shows the log-ratios of selected features' abundances within
+samples. There are a variety of controls available for selecting features for
+a log-ratio, and changing the selected log-ratio updates both the rank plot
+(highlighting selected features) and the sample plot (changing the y-axis
+value of each sample to match the selected log-ratio).
+
+### How do I use it?
 
 Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
-`qiime tools view`). **Starting with Qurro v0.3.0, Qurro requires a QIIME 2
-version of at least 2019.7.**
+`qiime tools view`). *Starting with Qurro v0.3.0, Qurro requires a QIIME 2
+version of at least 2019.7.*
 
 Qurro should work with most modern web browsers. Firefox or Chrome are
 recommended.
 
 Qurro is still being developed, so backwards-incompatible changes might
-occur. If you have any questions, feel free to contact the development team at
-[mfedarko@ucsd.edu](mailto:mfedarko@ucsd.edu).
+occur. If you have any bug reports, feature requests, questions, or if you just
+want to yell at me, then feel free to
+[open an issue](https://github.com/biocore/qurro/issues) in this repository!
 
 ## Demos
 
@@ -76,15 +101,6 @@ This is due to some downstream issues with handling these sorts of characters
 in field names. See [this issue](https://github.com/biocore/qurro/issues/66)
 for context.
 
-### Integration with metabolomics feature metadata
-
-If you have a GNPS feature metadata file (where each row in the file has a
-`parent mass` and `RTConsensus` column), you can pass in the `-gnps`
-(`--assume-gnps-feature-metadata`) command-line argument to Qurro's
-standalone script to make Qurro understand the metadata file. **Please
-note that this functionality is experimental**; furthermore, it is not yet
-available in the QIIME 2 plugin version of Qurro.
-
 ## Tutorials
 
 ### "Moving Pictures" Tutorial
@@ -107,6 +123,15 @@ available in Qurro's example Jupyter notebooks, which are located
 - [**`songbird_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   demonstrates using [Songbird](https://github.com/biocore/songbird) and then using Qurro to visualize Songbird's output.
 
+## Qarcoal
+**Qarcoal** (pronounced "charcoal") is a new part of Qurro that lets you
+compute log-ratios based on taxonomic searching directly from the command-line.
+This can be useful for a variety of reasons.
+
+Currently, Qarcoal is only available through Qurro's QIIME 2 plugin interface.
+Please see [**`qarcoal_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/qarcoal/qarcoal_example.ipynb)
+for a demonstration of using Qarcoal.
+
 ## Citing Qurro
 
 A manuscript describing Qurro is in preparation. In the meantime, you can cite
@@ -119,7 +144,7 @@ the DOI of Qurro's source code (provided by Zenodo). See
 
 Code files for the following projects are distributed within
 `qurro/support_file/vendor/`.
-See the `dependency_licenses/` directory for copies of these software projects'
+See the `qurro/dependency_licenses/` directory for copies of these software projects'
 licenses (each of which includes a respective copyright notice).
 - [Vega](https://vega.github.io/vega/)
 - [Vega-Lite](https://vega.github.io/vega-lite/)
@@ -157,6 +182,10 @@ and [prettier](https://prettier.io/).
 Qurro also uses [Travis-CI](https://travis-ci.org/) and
 [Codecov](https://codecov.io/).
 
+The Jupyter notebooks in Qurro's `example_notebooks/` folder are automatically
+rerun using [nbconvert](https://nbconvert.readthedocs.io/en/latest/index.html),
+also.
+
 ### Data Sources
 
 The test data located in `qurro/tests/input/mackerel/` were exported from
@@ -182,8 +211,7 @@ Lastly, the data located in `qurro/tests/input/red_sea`
 (and in `example_notebooks/songbird_red_sea/input/`, and shown in the
 screenshot above) were taken from Songbird's GitHub repository in its
 [`data/redsea/`](https://github.com/biocore/songbird/tree/master/data/redsea)
-folder, and are associated with
-[this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315489/) [3].
+folder, and are associated with Thompson et al. 2017 [3].
 
 ### Logo
 
@@ -208,17 +236,21 @@ And thanks to a bunch of the Knight Lab for helping name the tool :)
 [1] Minich, J. J., Petrus, S., Michael, J. D., Michael, T. P., Knight, R., &
 Allen, E. E. (2019). Temporal, environmental, and biological
 drivers of the mucosal microbiome in a wild marine fish, Scomber japonicus.
-_Manuscript under review._
+_bioRxiv_, page 721555. [Link](https://www.biorxiv.org/content/10.1101/721555v1).
 
 [2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/28679656).
 
 [3] Thompson, L. R., Williams, G. J., Haroon, M. F., Shibl, A., Larsen, P.,
 Shorenstein, J., ... & Stingl, U. (2017). Metagenomic covariation along densely
 sampled environmental gradients in the Red Sea. _The ISME journal, 11_(1), 138.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/27420030).
 
 [4] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/29896566).
 
 [5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome biology, 12_(5), R50.
+[Link](https://www.ncbi.nlm.nih.gov/pubmed/21624126).
 
 ## License
 

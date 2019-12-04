@@ -11,15 +11,13 @@ import click
 from qurro._parameter_descriptions import (
     TABLE,
     EXTREME_FEATURE_COUNT,
-    ASSUME_GNPS_FEATURE_METADATA,
     DEBUG,
+    SAMPLE_METADATA,
+    FEATURE_METADATA,
 )
 from qurro.generate import process_and_generate
 from qurro._rank_utils import read_rank_file
-from qurro._metadata_utils import (
-    read_metadata_file,
-    read_gnps_feature_metadata_file,
-)
+from qurro._metadata_utils import read_metadata_file
 from qurro._df_utils import escape_columns
 from qurro.__init__ import __version__
 
@@ -35,12 +33,8 @@ from qurro.__init__ import __version__
     ),
 )
 @click.option("-t", "--table", required=True, help=TABLE)
-@click.option(
-    "-sm", "--sample-metadata", required=True, help="Sample metadata file."
-)
-@click.option(
-    "-fm", "--feature-metadata", default=None, help="Feature metadata file."
-)
+@click.option("-sm", "--sample-metadata", required=True, help=SAMPLE_METADATA)
+@click.option("-fm", "--feature-metadata", default=None, help=FEATURE_METADATA)
 @click.option(
     "-o",
     "--output-dir",
@@ -58,12 +52,6 @@ from qurro.__init__ import __version__
     type=int,
     help=EXTREME_FEATURE_COUNT,
 )
-@click.option(
-    "-gnps",
-    "--assume-gnps-feature-metadata",
-    is_flag=True,
-    help=ASSUME_GNPS_FEATURE_METADATA,
-)
 @click.option("--debug", is_flag=True, help=DEBUG)
 @click.version_option(__version__, prog_name="Qurro")
 def plot(
@@ -73,7 +61,6 @@ def plot(
     feature_metadata: str,
     output_dir: str,
     extreme_feature_count: int,
-    assume_gnps_feature_metadata: bool,
     debug: bool,
 ) -> None:
     """Generates a visualization of feature rankings and log-ratios.
@@ -97,22 +84,18 @@ def plot(
     df_sample_metadata = escape_columns(
         read_metadata_file(sample_metadata), "sample metadata"
     )
-    feature_ranks = read_rank_file(ranks)
+    feature_ranks, rank_type = read_rank_file(ranks)
 
     df_feature_metadata = None
     if feature_metadata is not None:
-        if assume_gnps_feature_metadata:
-            df_feature_metadata = read_gnps_feature_metadata_file(
-                feature_metadata, feature_ranks
-            )
-        else:
-            df_feature_metadata = escape_columns(
-                read_metadata_file(feature_metadata), "feature metadata"
-            )
+        df_feature_metadata = escape_columns(
+            read_metadata_file(feature_metadata), "feature metadata"
+        )
     logging.debug("Read in metadata.")
 
     process_and_generate(
         feature_ranks,
+        rank_type,
         df_sample_metadata,
         loaded_biom,
         output_dir,

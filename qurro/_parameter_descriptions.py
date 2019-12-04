@@ -12,6 +12,16 @@ TABLE = (
     "Qurro visualization."
 )
 
+SAMPLE_METADATA = (
+    "Sample metadata. You can use sample metadata fields to change the "
+    "x-axis and coloring in the sample plot."
+)
+
+FEATURE_METADATA = (
+    "Feature metadata. You can use feature metadata fields to filter features "
+    "in the rank plot when selecting them for log-ratios."
+)
+
 EXTREME_FEATURE_COUNT = (
     "If specified, Qurro will only use this many "
     '"extreme" features from both ends of all of the rankings. '
@@ -21,17 +31,6 @@ EXTREME_FEATURE_COUNT = (
     "time or crash due to memory limits. Note that the automatic removal of "
     "empty samples and features from the table will be done *after* this "
     "filtering step."
-)
-
-ASSUME_GNPS_FEATURE_METADATA = (
-    "If specified, Qurro will assume that the input feature metadata "
-    "was obtained from GNPS. This means that Qurro will read each "
-    'feature\'s ID as "A;B", where A is the mass-to-charge ratio of the '
-    'feature (corresponding to the "parent mass" column in the feature '
-    "metadata) and B is the discharge time of the feature (corresponding to "
-    'the "RTConsensus" column in the feature metadata). Qurro will then only '
-    'annotate features with their corresponding "LibraryID" column from the '
-    "feature metadata."
 )
 
 DEBUG = "If this flag is used, Qurro will output debug messages."
