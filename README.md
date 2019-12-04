@@ -149,6 +149,8 @@ licenses (each of which includes a respective copyright notice).
 - [Vega](https://vega.github.io/vega/)
 - [Vega-Lite](https://vega.github.io/vega-lite/)
 - [Vega-Embed](https://github.com/vega/vega-embed)
+- [jQuery](https://jquery.com/)
+- [DataTables](https://datatables.net/)
 - [RequireJS](https://requirejs.org/)
 - [Bootstrap](https://getbootstrap.com/docs/4.3/getting-started/introduction/)
 
