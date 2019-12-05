@@ -89,6 +89,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
+            // Ordered, combined list of feature ranking and metadata fields --
+            // used in populating the DataTables
+            this.featureColumns = undefined;
+
             // The human-readable "type" of the feature rankings (should be
             // either "Differential" or "Feature Loading")
             this.rankType = undefined;
@@ -768,7 +772,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         updateFeaturesDisplays(single, clear) {
             var topDisplay = $("#topFeaturesDisplay").DataTable();
             var botDisplay = $("#botFeaturesDisplay").DataTable();
-            var featureColumns = this.featureColumns;
 
             topDisplay.clear().draw();
             botDisplay.clear().draw();
@@ -788,19 +791,22 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     botFeatures.length
                 );
 
-                $.each(topFeatures, function(index, feature) {
+                // Keep track of feature columns via a closure so that we can
+                // reference it from inside the following function(...s)
+                var columns = this.featureColumns;
+                function getRowOfColumnData(feature) {
                     var row = [];
-                    $.each(featureColumns, function(index, column) {
+                    $.each(columns, function(index, column) {
                         row.push(feature[column["title"]]);
                     });
-                    topDisplay.row.add(row);
+                    return row;
+                }
+
+                $.each(topFeatures, function(index, feature) {
+                    topDisplay.row.add(getRowOfColumnData(feature));
                 });
                 $.each(botFeatures, function(index, feature) {
-                    var row = [];
-                    $.each(featureColumns, function(index, column) {
-                        row.push(feature[column["title"]]);
-                    });
-                    botDisplay.row.add(row);
+                    botDisplay.row.add(getRowOfColumnData(feature));
                 });
 
                 topDisplay.draw();
@@ -1349,8 +1355,16 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 }
                 // Reset various UI elements to their "default" states
 
-                // Clear the "features text" displays
-                this.updateFeaturesDisplays(false, true);
+                // Completely destroy the "features text" displays -- this'll
+                // let us re-initialize the DataTable in makeRankPlot() without
+                // causing this sort of error:
+                // https://datatables.net/manual/tech-notes/3
+                $("#topFeaturesDisplay")
+                    .DataTable()
+                    .destroy();
+                $("#botFeaturesDisplay")
+                    .DataTable()
+                    .destroy();
 
                 // Hide (if not already hidden) the warning about feature(s)
                 // being in both the numerator and denominator of a log-ratio
