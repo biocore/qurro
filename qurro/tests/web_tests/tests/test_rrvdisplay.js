@@ -386,23 +386,41 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     }
                 });
                 it('Properly updates the "feature text" headers', function() {
+                    /* Return an object mapping each row's feature ID to an
+                     * array of the remaining column values for that row.
+                     *
+                     * This function (and the functions that use it) make the
+                     * implicit assumption that the columns in the DataTable
+                     * are in a certain order. This is because accessing column
+                     * names in DataTables versions pre-2 isn't easily doable
+                     * without circumventing the public API somehow (see
+                     * https://datatables.net/forums/discussion/46445).
+                     *
+                     * If this assumption is broken (i.e. due to updating the
+                     * DataTables version), these tests will need to be updated
+                     * -- but I expect that updating to a later version will
+                     * also make it easier to access column names in the first
+                     * place.
+                     */
+                    function extractDataFromDataTable(tableID) {
+                        var d = $("#" + tableID)
+                            .DataTable()
+                            .data();
+                        var featureID2OtherCols = {};
+                        d.each(function(rowContents) {
+                            featureID2OtherCols[d[0]] = d.slice(1);
+                        });
+                        return featureID2OtherCols;
+                    }
                     testing_utilities.checkHeaders(5, 1, 5);
+                    var t = extractDataFromDataTable("topFeaturesDisplay");
+                    var b = extractDataFromDataTable("botFeaturesDisplay");
+                    // Check that features are the same
                     chai.assert.sameMembers(
-                        [
-                            "Taxon1 / / ",
-                            "Taxon2 / / ",
-                            "Taxon3 / Yeet / 100",
-                            "Taxon4 / / ",
-                            "Taxon5 / null / lol"
-                        ],
-                        document
-                            .getElementById("topFeaturesDisplay")
-                            .value.split("\n")
+                        ["Taxon1", "Taxon2", "Taxon3", "Taxon4", "Taxon5"],
+                        Object.keys(t)
                     );
-                    chai.assert.equal(
-                        "Taxon3 / Yeet / 100",
-                        document.getElementById("botFeaturesDisplay").value
-                    );
+                    chai.assert.sameMembers(["Taxon3"], Object.keys(b));
                 });
             });
             describe("Multi-feature selections (text-based filtering, corner cases)", function() {
