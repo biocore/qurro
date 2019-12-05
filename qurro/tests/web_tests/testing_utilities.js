@@ -58,9 +58,38 @@ define(["chai"], function(chai) {
         }
     }
 
+    /* For a given DataTable's ID, return an Object describing its data.
+     *
+     * ... in particular, the returned Object is a mapping of each row's
+     * feature ID (column 0) to an array of the remaining column values for
+     * that row.
+     *
+     * This function makes the implicit assumption that the columns in the
+     * DataTable are in a certain order. This is because accessing column
+     * names in DataTables versions pre-2 isn't easily doable without
+     * circumventing the public API somehow (see
+     * https://datatables.net/forums/discussion/46445).
+     *
+     * If this assumption is broken (i.e. due to updating the DataTables
+     * version used by Qurro), these tests will need to be updated -- but I
+     * expect that updating to a later version will also make it easier to
+     * access column names in the first place.
+     */
+    function extractDataFromDataTable(tableID) {
+        var d = $("#" + tableID)
+            .DataTable()
+            .data();
+        var featureID2OtherCols = {};
+        d.each(function(rowContents) {
+            featureID2OtherCols[d[0]] = d.slice(1);
+        });
+        return featureID2OtherCols;
+    }
+
     return {
         getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray,
         checkHeaders: checkHeaders,
-        assertEnabled: assertEnabled
+        assertEnabled: assertEnabled,
+        extractDataFromDataTable: extractDataFromDataTable
     };
 });
