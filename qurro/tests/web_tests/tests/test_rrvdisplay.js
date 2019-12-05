@@ -387,8 +387,12 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1, 5);
-                    var t = testing_utilities.extractDataFromDataTable("topFeaturesDisplay");
-                    var b = testing_utilities.extractDataFromDataTable("botFeaturesDisplay");
+                    var t = testing_utilities.extractDataFromDataTable(
+                        "topFeaturesDisplay"
+                    );
+                    var b = testing_utilities.extractDataFromDataTable(
+                        "botFeaturesDisplay"
+                    );
                     // Check that features are the same
                     chai.assert.sameMembers(
                         ["Taxon1", "Taxon2", "Taxon3", "Taxon4", "Taxon5"],
