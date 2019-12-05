@@ -138,5 +138,9 @@ textarea {
 }
 
 /* formating for tables */
-th { font-size: 12px; }
-td { font-size: 11px; }
+th {
+    font-size: 12px;
+}
+td {
+    font-size: 11px;
+}

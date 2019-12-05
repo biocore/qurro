@@ -184,8 +184,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 },
                 "onchange"
             );
-
-
         }
 
         makeRankPlot(notFirstTime) {
@@ -223,33 +221,32 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     true
                 );
                 // Initialize tables and update them
-                var columns = [{"title": "Feature ID"}];
-                $.each($.merge(this.rankOrdering, this.featureMetadataFields), function( index, value ) {
-                    columns.push({"title": value})
-                });
+                var columns = [{ title: "Feature ID" }];
+                $.each(
+                    $.merge(this.rankOrdering, this.featureMetadataFields),
+                    function(index, value) {
+                        columns.push({ title: value });
+                    }
+                );
                 this.featureColumns = columns;
-                $('#topFeaturesDisplay').DataTable({
-                    scrollY:        "200px",
-                    paging:         false,
-                    scrollX:        true,
+                $("#topFeaturesDisplay").DataTable({
+                    scrollY: "200px",
+                    paging: false,
+                    scrollX: true,
                     scrollCollapse: true,
                     columns: this.featureColumns,
                     data: [],
-                    columnDefs: [
-                        { width: '20%', targets: 0 }
-                    ],
+                    columnDefs: [{ width: "20%", targets: 0 }],
                     fixedColumns: true
                 });
-                $('#botFeaturesDisplay').DataTable({
-                    scrollY:        "200px",
-                    paging:         false,
-                    scrollX:        true,
+                $("#botFeaturesDisplay").DataTable({
+                    scrollY: "200px",
+                    paging: false,
+                    scrollX: true,
                     scrollCollapse: true,
                     columns: this.featureColumns,
                     data: [],
-                    columnDefs: [
-                        { width: '20%', targets: 0 }
-                    ],
+                    columnDefs: [{ width: "20%", targets: 0 }],
                     fixedColumns: true
                 });
                 this.updateFeaturesDisplays(false, true);
@@ -651,7 +648,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
             // TODO: abstract below stuff to a helper function for use by
             // regenerateFromAutoSelection() and RegenerateFromFiltering()
-            this.updateFeaturesTextDisplays();
+            this.updateFeaturesDisplays();
             await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
@@ -686,7 +683,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            this.updateFeaturesTextDisplays();
+            this.updateFeaturesDisplays();
             await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
@@ -726,7 +723,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             this.newFeatureHigh["Feature ID"];
                     }
                     if (lowsDiffer || highsDiffer) {
-                        this.updateFeaturesTextDisplays(true);
+                        this.updateFeaturesDisplays(true);
                         // Time to update the plots re: the new log-ratio
                         await this.updateLogRatio(
                             this.updateBalanceSingle,
@@ -769,45 +766,41 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * instead update based on the single selection values.
          */
         updateFeaturesDisplays(single, clear) {
-            var topDisplay = $('#topFeaturesDisplay').DataTable();
-            var botDisplay = $('#botFeaturesDisplay').DataTable();
+            var topDisplay = $("#topFeaturesDisplay").DataTable();
+            var botDisplay = $("#botFeaturesDisplay").DataTable();
             var featureColumns = this.featureColumns;
 
-            topDisplay
-                .clear()
-                .draw();
-            botDisplay
-                .clear()
-                .draw();
+            topDisplay.clear().draw();
+            botDisplay.clear().draw();
 
             if (clear) {
                 this.updateFeatureHeaderCounts(0, 0);
             } else {
                 if (single) {
-                  var topFeatures = [this.newFeatureHigh]
-                  var botFeatures = [this.newFeatureLow]
+                    var topFeatures = [this.newFeatureHigh];
+                    var botFeatures = [this.newFeatureLow];
                 } else {
-                    var topFeatures = this.topFeatures
-                    var botFeatures = this.botFeatures
-                    this.updateFeatureHeaderCounts(
-                        this.topFeatures.length,
-                        this.botFeatures.length
-                    );
+                    var topFeatures = this.topFeatures;
+                    var botFeatures = this.botFeatures;
                 }
+                this.updateFeatureHeaderCounts(
+                    topFeatures.length,
+                    botFeatures.length
+                );
 
-                $.each(topFeatures, function( index, feature ) {
-                    var row = []
-                    $.each(featureColumns, function( index, column ) {
-                        row.push(feature[column['title']])
+                $.each(topFeatures, function(index, feature) {
+                    var row = [];
+                    $.each(featureColumns, function(index, column) {
+                        row.push(feature[column["title"]]);
                     });
-                    topDisplay.row.add(row)
+                    topDisplay.row.add(row);
                 });
-                $.each(botFeatures, function( index, feature ) {
-                    var row = []
-                    $.each(featureColumns, function( index, column ) {
-                        row.push(feature[column['title']])
+                $.each(botFeatures, function(index, feature) {
+                    var row = [];
+                    $.each(featureColumns, function(index, column) {
+                        row.push(feature[column["title"]]);
                     });
-                    botDisplay.row.add(row)
+                    botDisplay.row.add(row);
                 });
 
                 topDisplay.draw();
