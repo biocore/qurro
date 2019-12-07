@@ -136,3 +136,6 @@ textarea {
 #vg-tooltip-element.vg-tooltip td {
     padding: 0px 0px 0px 2px;
 }
+.hackySpacerInput {
+    visibility: hidden;
+}

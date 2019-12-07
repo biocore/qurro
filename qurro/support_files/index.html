@@ -61,31 +61,52 @@
                         >
                     </select>
                 </div>
-                <div class="centeredBlock">
-                    <label for="barSizeSlider">Bar width</label>
+                <div class="input-group input-group-sm mb-1">
+                    <!-- HACK: Invisibly fill space: this lets us center the
+                         inputs in this group (by default they're left-aligned)
+                    -->
                     <input
-                        id="barSizeSlider"
-                        type="range"
-                        min="1"
-                        max="10"
-                        value="1"
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="barSizeSlider"
+                            >Bar width</label
+                        >
+                        <div class="input-group-text">
+                            <input
+                                id="barSizeSlider"
+                                type="range"
+                                min="1"
+                                max="10"
+                                value="1"
+                            />
+                        </div>
+                    </div>
+                    <div class="input-group-append">
+                        <label class="input-group-text" for="fitBarSizeCheckbox"
+                            >Fit bar widths to a constant plot width?</label
+                        >
+                        <div class="input-group-text">
+                            <input type="checkbox" id="fitBarSizeCheckbox" />
+                        </div>
+                    </div>
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
                     />
                 </div>
-                <div class="centeredBlock">
-                    <label for="fitBarSizeCheckbox"
-                        >Fit bar widths to the plot's default width?</label
-                    >
-                    <input type="checkbox" id="fitBarSizeCheckbox" />
-                    <p
-                        id="barSizeWarning"
-                        class="alert alert-warning centeredBlock invisible mt-3 mb-3"
-                    >
-                        <strong>Warning:</strong> The rank plot is currently
-                        using a bar width of less than one pixel per bar. This
-                        means that the image shown isn't necessarily going to be
-                        an accurate representation of the rank plot.
-                    </p>
-                </div>
+                <p
+                    id="barSizeWarning"
+                    class="alert alert-warning centeredBlock invisible mt-3 mb-3"
+                >
+                    <strong>Warning:</strong> The rank plot is currently using a
+                    bar width of less than one pixel per bar. This means that
+                    the image shown isn't necessarily going to be an accurate
+                    representation of the rank plot.
+                </p>
             </div>
             <div id="topRightDiv">
                 <div id="samplePlot"></div>
@@ -260,11 +281,42 @@
                             </optgroup>
                         </select>
                     </div>
-                    <div class="centeredBlock">
-                        <label for="boxplotCheckbox"
-                            >Use boxplots for categorical data?</label
-                        >
-                        <input type="checkbox" id="boxplotCheckbox" />
+                    <div class="input-group input-group-sm mb-1">
+                        <input
+                            type="text"
+                            disabled
+                            class="form-control hackySpacerInput"
+                        />
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                for="boxplotCheckbox"
+                                >Use boxplots for categorical data?</label
+                            >
+                            <div class="input-group-text">
+                                <input type="checkbox" id="boxplotCheckbox" />
+                            </div>
+                        </div>
+                        <!-- TODO: un-hide and make usable (#240)
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                for="borderCheckbox"
+                                >Give samples a border?</label
+                            >
+                            <div class="input-group-text">
+                                <input
+                                    type="checkbox"
+                                    id="borderCheckbox"
+                                />
+                            </div>
+                        </div>
+                        -->
+                        <input
+                            type="text"
+                            disabled
+                            class="form-control hackySpacerInput"
+                        />
                     </div>
                     <div
                         id="mainSamplesDroppedDiv"
