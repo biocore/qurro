@@ -132,6 +132,11 @@ Currently, Qarcoal is only available through Qurro's QIIME 2 plugin interface.
 Please see [**`qarcoal_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/qarcoal/qarcoal_example.ipynb)
 for a demonstration of using Qarcoal.
 
+## Poster
+We presented [this poster](https://biocore.github.io/qurro/CRISP-poster.pdf) on Qurro at the
+[2019 CRISP Annual Review](https://crisp.engineering.virginia.edu/2019-crisp-annual-review).
+The data shown here is already slightly outdated compared to the actual Qurro paper (e.g. the differentials are slightly different), but feel free to check out the poster anyway!
+
 ## Citing Qurro
 
 A manuscript describing Qurro is in preparation. In the meantime, you can cite
