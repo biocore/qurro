@@ -3,3 +3,4 @@ qurro/tests/web_tests/vendor/* linguist-vendored=true
 example_notebooks/* linguist-documentation=true
 qurro/dependency_licenses/* linguist-documentation=true
 docs/* linguist-documentation=true
+docs/demos/* linguist-generated=true
