@@ -30,7 +30,7 @@ classes = """
 classifiers = [s.strip() for s in classes.split("\n") if s]
 
 description = (
-    "Visualizes differentially ranked features and log ratios of their "
+    "Visualizes differentially ranked features and log-ratios of their "
     "sample abundances"
 )
 
