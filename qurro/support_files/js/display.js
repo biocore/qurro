@@ -233,7 +233,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     }
                 );
                 this.featureColumns = columns;
-                $("#topFeaturesDisplay").DataTable({
+
+                // Shared configuration between the numerator and denominator
+                // feature DataTables. We define this down here (and not in the
+                // RRVDisplay constructor, for example) because we need access
+                // to this.featureColumns.
+                var dtConfig = {
                     scrollY: "200px",
                     paging: false,
                     scrollX: true,
@@ -242,17 +247,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     data: [],
                     columnDefs: [{ width: "20%", targets: 0 }],
                     fixedColumns: true
-                });
-                $("#botFeaturesDisplay").DataTable({
-                    scrollY: "200px",
-                    paging: false,
-                    scrollX: true,
-                    scrollCollapse: true,
-                    columns: this.featureColumns,
-                    data: [],
-                    columnDefs: [{ width: "20%", targets: 0 }],
-                    fixedColumns: true
-                });
+                };
+                $("#topFeaturesDisplay").DataTable(dtConfig);
+                $("#botFeaturesDisplay").DataTable(dtConfig);
                 this.updateFeaturesDisplays(false, true);
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
