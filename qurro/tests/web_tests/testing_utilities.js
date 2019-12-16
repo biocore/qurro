@@ -80,9 +80,9 @@ define(["chai"], function(chai) {
             .DataTable()
             .data();
         var featureID2OtherCols = {};
-        d.each(function(rowContents) {
-            featureID2OtherCols[d[0]] = d.slice(1);
-        });
+        for (var r = 0; r < d.length; r++) {
+            featureID2OtherCols[d[r][0]] = d[r].slice(1);
+        }
         return featureID2OtherCols;
     }
 
