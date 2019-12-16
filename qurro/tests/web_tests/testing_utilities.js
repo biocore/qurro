@@ -135,7 +135,7 @@ define(["chai"], function(chai) {
             if (row["Feature ID"] === featureID) {
                 return row;
             }
-        }
+        });
         // If we've made it here, the ID passed in wasn't valid
         throw new Error("Feature ID not in rank plot JSON: " + featureID);
     }
