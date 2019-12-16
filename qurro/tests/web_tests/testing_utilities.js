@@ -86,10 +86,38 @@ define(["chai"], function(chai) {
         return featureID2OtherCols;
     }
 
+    /* Given a DataTable ID and a mapping of the "expected data" in the table,
+     * checks that all of the data is the same.
+     *
+     * The mapping argument ("expectedData") should be structured analogously
+     * to how the output from extractDataFromDataTable() is given -- that is,
+     * an Object where each key is a feature ID and each value is an array of
+     * the column values for that row.
+     */
+    function checkDataTable(tableID, expectedData) {
+        var dataInTable = extractDataFromDataTable(tableID);
+        var featureIDsInTable = Object.keys(dataInTable);
+
+        // Check that the feature IDs are exactly the same (ignoring order,
+        // though)
+        chai.assert.sameMembers(featureIDsInTable, Object.keys(expectedData));
+
+        // Check that column data for each feature ID is in the same order
+        $.each(expectedData, function(featureID, expectedRowContents) {
+            for (var i = 0; i < expectedRowContents.length; i++) {
+                chai.assert.equal(
+                    dataInTable[featureID][i],
+                    expectedRowContents[i]
+                );
+            }
+        });
+    }
+
     return {
         getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray,
         checkHeaders: checkHeaders,
         assertEnabled: assertEnabled,
-        extractDataFromDataTable: extractDataFromDataTable
+        extractDataFromDataTable: extractDataFromDataTable,
+        checkDataTable: checkDataTable
     };
 });
