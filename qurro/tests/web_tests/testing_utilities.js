@@ -113,11 +113,40 @@ define(["chai"], function(chai) {
         });
     }
 
+    /* Retrieves a "feature row" from an RRVDisplay object's rank plot
+     * JSON.
+     *
+     * This mimics what we'd get in, e.g.,
+     * RRVDisplay.addClickEventToRankPlotView()'s callback function or
+     * in one of the feature filtering methods.
+     *
+     * The reason we need to get an actual feature row -- not just a
+     * JSON object with just the feature ID, e.g.
+     *
+     *    rrv.newFeatureLow = { "Feature ID": "Taxon4" };
+     *
+     * ...is that our use of DataTables means that when we test
+     * assigning new features, those features need to include all the
+     * columns we expect. This was causing some really funky errors
+     * with PR #235.
+     */
+    function getFeatureRow(rrv, featureID) {
+        $.each(rrv.rankPlotJSON.datasets[rrv.rankPlotJSON.data.name], function(row) {
+            if (row["Feature ID"] === featureID) {
+                return row;
+            }
+        }
+        // If we've made it here, the ID passed in wasn't valid
+        throw new Error("Feature ID not in rank plot JSON: " + featureID);
+    }
+
+
     return {
         getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray,
         checkHeaders: checkHeaders,
         assertEnabled: assertEnabled,
         extractDataFromDataTable: extractDataFromDataTable,
-        checkDataTable: checkDataTable
+        checkDataTable: checkDataTable,
+        getFeatureRow: getFeatureRow
     };
 });
