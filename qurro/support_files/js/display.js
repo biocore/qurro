@@ -1362,6 +1362,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 $("#botFeaturesDisplay")
                     .DataTable()
                     .destroy();
+                dom_utils.clearDiv("topFeaturesDisplay");
+                dom_utils.clearDiv("botFeaturesDisplay");
 
                 // Hide (if not already hidden) the warning about feature(s)
                 // being in both the numerator and denominator of a log-ratio
