@@ -776,39 +776,49 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             if (clear) {
                 this.updateFeatureHeaderCounts(0, 0);
             } else {
+                var topFeatureList, botFeatureList;
                 if (single) {
-                    var topFeatures = [this.newFeatureHigh];
-                    var botFeatures = [this.newFeatureLow];
+                    topFeatureList = [this.newFeatureHigh];
+                    botFeatureList = [this.newFeatureLow];
                 } else {
-                    var topFeatures = this.topFeatures;
-                    var botFeatures = this.botFeatures;
+                    topFeatureList = this.topFeatures;
+                    botFeatureList = this.botFeatures;
                 }
                 this.updateFeatureHeaderCounts(
-                    topFeatures.length,
-                    botFeatures.length
+                    topFeatureList.length,
+                    botFeatureList.length
                 );
 
                 // Keep track of feature columns via a closure so that we can
                 // reference it from inside the following function(...s)
                 var columns = this.featureColumns;
-                function getRowOfColumnData(feature) {
-                    var row = [];
-                    $.each(columns, function(index, column) {
-                        row.push(feature[column["title"]]);
-                    });
-                    return row;
-                }
-
-                $.each(topFeatures, function(index, feature) {
-                    topDisplay.row.add(getRowOfColumnData(feature));
+                $.each(topFeatureList, function(index, feature) {
+                    topDisplay.row.add(
+                        RRVDisplay.getRowOfColumnData(feature, columns)
+                    );
                 });
-                $.each(botFeatures, function(index, feature) {
-                    botDisplay.row.add(getRowOfColumnData(feature));
+                $.each(botFeatureList, function(index, feature) {
+                    botDisplay.row.add(
+                        RRVDisplay.getRowOfColumnData(feature, columns)
+                    );
                 });
 
                 topDisplay.draw();
                 botDisplay.draw();
             }
+        }
+
+        /* Converts a "feature row" (from a V-L spec) to a DataTables-ok row.
+         *
+         * I moved this to a separate function so that jshint would stop
+         * yelling at me for declaring a function inside a block ._.
+         */
+        static getRowOfColumnData(feature, columns) {
+            var row = [];
+            $.each(columns, function(index, column) {
+                row.push(feature[column.title]);
+            });
+            return row;
         }
 
         updateSamplePlotTooltips() {

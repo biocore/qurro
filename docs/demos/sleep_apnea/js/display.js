@@ -89,6 +89,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
+            // Ordered, combined list of feature ranking and metadata fields --
+            // used in populating the DataTables
+            this.featureColumns = undefined;
+
             // The human-readable "type" of the feature rankings (should be
             // either "Differential" or "Feature Loading")
             this.rankType = undefined;
@@ -229,7 +233,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     }
                 );
                 this.featureColumns = columns;
-                $("#topFeaturesDisplay").DataTable({
+
+                // Shared configuration between the numerator and denominator
+                // feature DataTables. We define this down here (and not in the
+                // RRVDisplay constructor, for example) because we need access
+                // to this.featureColumns.
+                var dtConfig = {
                     scrollY: "200px",
                     paging: false,
                     scrollX: true,
@@ -238,17 +247,9 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     data: [],
                     columnDefs: [{ width: "20%", targets: 0 }],
                     fixedColumns: true
-                });
-                $("#botFeaturesDisplay").DataTable({
-                    scrollY: "200px",
-                    paging: false,
-                    scrollX: true,
-                    scrollCollapse: true,
-                    columns: this.featureColumns,
-                    data: [],
-                    columnDefs: [{ width: "20%", targets: 0 }],
-                    fixedColumns: true
-                });
+                };
+                $("#topFeaturesDisplay").DataTable(dtConfig);
+                $("#botFeaturesDisplay").DataTable(dtConfig);
                 this.updateFeaturesDisplays(false, true);
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
@@ -768,7 +769,6 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         updateFeaturesDisplays(single, clear) {
             var topDisplay = $("#topFeaturesDisplay").DataTable();
             var botDisplay = $("#botFeaturesDisplay").DataTable();
-            var featureColumns = this.featureColumns;
 
             topDisplay.clear().draw();
             botDisplay.clear().draw();
@@ -776,36 +776,49 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             if (clear) {
                 this.updateFeatureHeaderCounts(0, 0);
             } else {
+                var topFeatureList, botFeatureList;
                 if (single) {
-                    var topFeatures = [this.newFeatureHigh];
-                    var botFeatures = [this.newFeatureLow];
+                    topFeatureList = [this.newFeatureHigh];
+                    botFeatureList = [this.newFeatureLow];
                 } else {
-                    var topFeatures = this.topFeatures;
-                    var botFeatures = this.botFeatures;
+                    topFeatureList = this.topFeatures;
+                    botFeatureList = this.botFeatures;
                 }
                 this.updateFeatureHeaderCounts(
-                    topFeatures.length,
-                    botFeatures.length
+                    topFeatureList.length,
+                    botFeatureList.length
                 );
 
-                $.each(topFeatures, function(index, feature) {
-                    var row = [];
-                    $.each(featureColumns, function(index, column) {
-                        row.push(feature[column["title"]]);
-                    });
-                    topDisplay.row.add(row);
+                // Keep track of feature columns via a closure so that we can
+                // reference it from inside the following function(...s)
+                var columns = this.featureColumns;
+                $.each(topFeatureList, function(index, feature) {
+                    topDisplay.row.add(
+                        RRVDisplay.getRowOfColumnData(feature, columns)
+                    );
                 });
-                $.each(botFeatures, function(index, feature) {
-                    var row = [];
-                    $.each(featureColumns, function(index, column) {
-                        row.push(feature[column["title"]]);
-                    });
-                    botDisplay.row.add(row);
+                $.each(botFeatureList, function(index, feature) {
+                    botDisplay.row.add(
+                        RRVDisplay.getRowOfColumnData(feature, columns)
+                    );
                 });
 
                 topDisplay.draw();
                 botDisplay.draw();
             }
+        }
+
+        /* Converts a "feature row" (from a V-L spec) to a DataTables-ok row.
+         *
+         * I moved this to a separate function so that jshint would stop
+         * yelling at me for declaring a function inside a block ._.
+         */
+        static getRowOfColumnData(feature, columns) {
+            var row = [];
+            $.each(columns, function(index, column) {
+                row.push(feature[column.title]);
+            });
+            return row;
         }
 
         updateSamplePlotTooltips() {
@@ -1349,8 +1362,18 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 }
                 // Reset various UI elements to their "default" states
 
-                // Clear the "features text" displays
-                this.updateFeaturesDisplays(false, true);
+                // Completely destroy the "features text" displays -- this'll
+                // let us re-initialize the DataTable in makeRankPlot() without
+                // causing this sort of error:
+                // https://datatables.net/manual/tech-notes/3
+                $("#topFeaturesDisplay")
+                    .DataTable()
+                    .destroy();
+                $("#botFeaturesDisplay")
+                    .DataTable()
+                    .destroy();
+                dom_utils.clearDiv("topFeaturesDisplay");
+                dom_utils.clearDiv("botFeaturesDisplay");
 
                 // Hide (if not already hidden) the warning about feature(s)
                 // being in both the numerator and denominator of a log-ratio
