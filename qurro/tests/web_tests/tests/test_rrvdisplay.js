@@ -387,18 +387,16 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1, 5);
-                    var t = testing_utilities.extractDataFromDataTable(
-                        "topFeaturesDisplay"
-                    );
-                    var b = testing_utilities.extractDataFromDataTable(
-                        "botFeaturesDisplay"
-                    );
-                    // Check that features are the same
-                    chai.assert.sameMembers(
-                        ["Taxon1", "Taxon2", "Taxon3", "Taxon4", "Taxon5"],
-                        Object.keys(t)
-                    );
-                    chai.assert.sameMembers(["Taxon3"], Object.keys(b));
+                    testing_utilities.checkDataTable("topFeaturesDisplay", {
+                        Taxon1: [5, 6, 7, 0, 4, null, null],
+                        Taxon2: [1, 2, 3, 0, 4, null, null],
+                        Taxon3: [4, 5, 6, 0, 4, "Yeet", 100],
+                        Taxon4: [9, 8, 7, 0, 4, null, null],
+                        Taxon5: [6, 5, 4, 0, 4, "null", "lol"]
+                    });
+                    testing_utilities.checkDataTable("botFeaturesDisplay", {
+                        Taxon3: [4, 5, 6, 0, 4, "Yeet", 100]
+                    });
                 });
             });
             describe("Multi-feature selections (text-based filtering, corner cases)", function() {

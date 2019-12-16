@@ -12,7 +12,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe('Updating "feature text" DOM elements via RRVDisplay.updateFeaturesDisplays()', function() {
+    describe("Updating the feature DataTables in RRVDisplay.updateFeaturesDisplays()", function() {
         var rrv;
         before(async function() {
             rrv = new display.RRVDisplay(
@@ -37,16 +37,16 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 FeatureMetadata2: 3
             };
             rrv.updateFeaturesDisplays(true);
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                "New feature name high / 5 / test"
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                "New feature name low / 10 / 3"
-            );
+
+            // Check that tables are updated properly
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                "New feature name high": [5, "test"],
+                "New feature name low": [10, 3]
+            });
+            // Check that headers are updated accordingly
             testing_utilities.checkHeaders(1, 1, 5);
-            // Check it again -- ensure that the updating action overwrites the
+
+            // Check stuff again -- ensure that the updating action overwrites the
             // previous values
             rrv.newFeatureHigh = {
                 "Feature ID": "Thing 1!",
@@ -54,14 +54,12 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             };
             rrv.newFeatureLow = { "Feature ID": "Thing 2!" };
             rrv.updateFeaturesDisplays(true);
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                "Thing 1! / / lol"
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                "Thing 2! / / "
-            );
+
+            // ...and check results again
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                "Thing 1!": [null, "lol"],
+                "Thing 2!": [null, null]
+            });
             testing_utilities.checkHeaders(1, 1, 5);
         });
         it("Works for multi-feature selections", function() {
@@ -80,33 +78,31 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 { "Feature ID": "asdf", f1: null },
                 { "Feature ID": "ghjk", f1: 7 }
             ];
-            var expectedTopText =
-                "abc / 1\ndef / 2\nghi / 3\nlmno pqrs / 4\ntuv / ";
-            var expectedBotText = "asdf / \nghjk / 7";
             rrv.updateFeaturesDisplays();
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                expectedTopText
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                expectedBotText
-            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                abc: [1],
+                def: [2],
+                ghi: [3],
+                "lmno pqrs": [4],
+                tuv: [null]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {
+                asdf: [null],
+                ghjk: [7]
+            });
             testing_utilities.checkHeaders(5, 2, 5);
             // Check case where there's only one feature in a list
             // In this case, the denominator + expected bottom text are the
             // same as before
             rrv.topFeatures = [{ "Feature ID": "onlyfeature", f1: 100 }];
-            expectedTopText = "onlyfeature / 100";
             rrv.updateFeaturesDisplays();
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                expectedTopText
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                expectedBotText
-            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                onlyfeature: [100]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {
+                asdf: [null],
+                ghjk: [7]
+            });
             testing_utilities.checkHeaders(1, 2, 5);
             // Check case where lists are empty
             // This could happen if, e.g., both of the user's text queries
@@ -114,12 +110,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             rrv.topFeatures = [];
             rrv.botFeatures = [];
             rrv.updateFeaturesDisplays();
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
         });
         it('Clears the "feature text" DOM elements properly', function() {
@@ -132,12 +124,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing works
             rrv.updateFeaturesDisplays(false, true);
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
             // Repopulate the DOM elements
             rrv.newFeatureHigh = "Thing 1!";
@@ -147,12 +135,8 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             // Check that clearing is done, even if "single" is true
             // (the "clear" argument takes priority)
             rrv.updateFeaturesDisplays(true, true);
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
         });
     });
