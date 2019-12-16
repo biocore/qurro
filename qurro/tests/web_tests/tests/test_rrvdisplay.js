@@ -156,29 +156,53 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
 
                     // Check (low = null, high = an actual feature object)
                     // and (low = undefined, high = an actual feature object)
-                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
                     await updateSingleAndCheckAllBalancesNull();
                     rrv.newFeatureLow = undefined;
                     await updateSingleAndCheckAllBalancesNull();
 
                     // Check (low = an actual feature object, high = null)
                     // and (low = an actual feature object, high = undefined)
-                    rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon1");
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
                     rrv.newFeatureHigh = null;
                     await updateSingleAndCheckAllBalancesNull();
                     rrv.newFeatureHigh = undefined;
                     await updateSingleAndCheckAllBalancesNull();
                 });
                 it("Doesn't do anything if the newly selected features don't differ from the old ones", async function() {
-                    rrv.oldFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon1");
-                    rrv.oldFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon2");
-                    rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon1");
-                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon2");
+                    rrv.oldFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
+                    rrv.oldFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon2"
+                    );
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon2"
+                    );
                     await updateSingleAndCheckAllBalancesNull();
                 });
                 it("Works properly when actually changing the plots", async function() {
-                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
-                    rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon2");
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon2"
+                    );
                     await rrv.regenerateFromClicking();
                     // Check that the sample log-ratios were properly updated
                     // Sample1 has a Taxon1 count of 0, so its log-ratio should
@@ -259,8 +283,14 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // sample in the matching test dataset, so we can just
                     // check that log-ratios are correct by verifying every
                     // sample has a log-ratio of 0
-                    rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon4");
-                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon4");
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon4"
+                    );
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon4"
+                    );
                     await rrv.regenerateFromClicking();
 
                     // While we're doing this test (the main purpose of this is
@@ -293,7 +323,10 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // by switching to a different log-ratio. (I'm not going to
                     // bother checking the individual samples' log-ratios
                     // again.)
-                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
                     await rrv.regenerateFromClicking();
                     chai.assert.isTrue(
                         document

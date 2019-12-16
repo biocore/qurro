@@ -131,7 +131,8 @@ define(["chai"], function(chai) {
      * with PR #235.
      */
     function getFeatureRow(rrv, featureID) {
-        var rankPlotData = rrv.rankPlotJSON.datasets[rrv.rankPlotJSON.data.name];
+        var rankPlotData =
+            rrv.rankPlotJSON.datasets[rrv.rankPlotJSON.data.name];
         for (var i = 0; i < rankPlotData.length; i++) {
             if (rankPlotData[i]["Feature ID"] === featureID) {
                 return rankPlotData[i];
@@ -140,7 +141,6 @@ define(["chai"], function(chai) {
         // If we've made it here, the ID passed in wasn't valid
         throw new Error("Feature ID not in rank plot JSON: " + featureID);
     }
-
 
     return {
         getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray,
