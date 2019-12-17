@@ -24,6 +24,8 @@
   [#232](https://github.com/biocore/qurro/issues/232))
     - Thanks to [@antgonza](https://github.com/antgonza) for adding this in to
       Qurro!
+    - This involved adding some dependencies to Qurro's visualization code:
+      jQuery, DataTables, Bootstrap's JS code, and Popper.js.
 - When selecting a log-ratio where feature(s) are present in both the numerator
   and denominator of the log-ratio, a warning will now be shown explaining the
   situtation (and recommending that you chose a different log-ratio that
