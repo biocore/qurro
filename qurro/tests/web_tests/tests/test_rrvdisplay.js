@@ -109,7 +109,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 denText,
                 denSearchType
             ) {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
                 document.getElementById("topSearch").value = numField;
                 document.getElementById("botSearch").value = denField;
                 document.getElementById("topSearchType").value = numSearchType;
@@ -134,7 +134,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
 
             describe("Single-feature selections", function() {
                 beforeEach(async function() {
-                    await resetRRVDisplay(rrv);
+                    await resetRRVDisplay();
                 });
                 it("Doesn't do anything if .newFeatureLow and/or .newFeatureHigh is null or undefined", async function() {
                     // Since we just called resetRRVDisplay(),
@@ -435,7 +435,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             });
             describe("Multi-feature selections (text-based filtering, corner cases)", function() {
                 beforeEach(async function() {
-                    await resetRRVDisplay(rrv);
+                    await resetRRVDisplay();
                 });
                 function assertWarningShown(numCommonFeatures) {
                     // verify that the warning showed up
@@ -504,7 +504,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     await document.getElementById("autoSelectButton").click();
                 }
                 beforeEach(async function() {
-                    await resetRRVDisplay(rrv);
+                    await resetRRVDisplay();
                 });
                 it("Basic percentage-based filtering works", async function() {
                     await callAutoSelect("25", "autoPercent");
@@ -622,7 +622,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
         });
         describe("Modifying rank plot field/size/color", function() {
             beforeEach(async function() {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
             });
             describe("Changing the ranking used on the rank plot", function() {
                 it("Updates rank plot field, title, and window sort transform", async function() {
@@ -778,7 +778,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
         });
         describe("Modifying sample plot fields/scales/colorschemes", function() {
             beforeEach(async function() {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
             });
             describe("Changing the x-axis field used on the sample plot", function() {
                 var xFieldEle = document.getElementById("xAxisField");
@@ -958,7 +958,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
         });
         describe("Boxplot functionality", function() {
             beforeEach(async function() {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
             });
             function testBoxplotEncodings(xField) {
                 chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
