@@ -18,6 +18,12 @@
     - This feature should be useful when quickly assessing how much a given
       ranking field "separates" samples along certain metadata categories. It's
       a great starting point when looking at a Qurro visualization.
+- Instead of showing selected features in text boxes, these features are now
+  displayed in fancy [DataTable](https://datatables.net/)s!
+  ([#197](https://github.com/biocore/qurro/issues/197)),
+  ([#232](https://github.com/biocore/qurro/issues/232))
+    - Thanks to [@antgonza](https://github.com/antgonza) for adding this in to
+      Qurro!
 - When selecting a log-ratio where feature(s) are present in both the numerator
   and denominator of the log-ratio, a warning will now be shown explaining the
   situtation (and recommending that you chose a different log-ratio that
