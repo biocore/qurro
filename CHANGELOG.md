@@ -20,8 +20,8 @@
       a great starting point when looking at a Qurro visualization.
 - Instead of showing selected features in text boxes, these features are now
   displayed in fancy [DataTable](https://datatables.net/)s!
-  ([#197](https://github.com/biocore/qurro/issues/197)),
-  ([#232](https://github.com/biocore/qurro/issues/232))
+  ([#197](https://github.com/biocore/qurro/issues/197),
+  [#232](https://github.com/biocore/qurro/issues/232))
     - Thanks to [@antgonza](https://github.com/antgonza) for adding this in to
       Qurro!
 - When selecting a log-ratio where feature(s) are present in both the numerator
