@@ -756,7 +756,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "%) selected";
         }
 
-        /* Updates the textareas that list the selected features, as well as
+        /* Updates the DataTables (formerly textareas, in versions of Qurro
+         * before 0.5.0) that list the selected features, as well as
          * the corresponding header elements that indicate the numbers of
          * selected features.
          *

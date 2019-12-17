@@ -144,3 +144,13 @@ th {
 td {
     font-size: 11px;
 }
+
+/* Used because the Bootstrap table-sm class can cause width to go below 100%
+ * sometimes, and that looks ugly.
+ *
+ * (I'm gonna be honest here -- I don't know why this only works if you add on
+ * !important.)
+ */
+.table-sm {
+    width: 100% !important;
+}

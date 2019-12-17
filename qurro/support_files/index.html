@@ -8,7 +8,7 @@
         <link rel="shortcut icon" href="icon.png" />
         <link rel="stylesheet" href="vendor/bootstrap.min.css" />
         <link rel="stylesheet" href="qurro.css" />
-        <link rel="stylesheet" href="vendor/jquery.dataTables.min.css" />
+        <link rel="stylesheet" href="vendor/dataTables.bootstrap4.min.css" />
     </head>
 
     <body>
@@ -307,19 +307,23 @@
                     numerator and denominator.
                 </p>
                 <!-- Note for future reference: whitespace between the
-                    start and end tag of a textarea is apparently
-                    interpreted as just that, and preserved in the textarea
-                    on the page.
-                    (So that's why the textarea declarations below are on
-                    long lines.)
+                     start and end tag of a textarea is apparently
+                     interpreted as just that, and preserved in the textarea
+                     on the page.
+                     (So that's why the textarea declarations below are on
+                     long lines.)
                 -->
                 <div class="centeredBlock">
                     <h4 id="numHeader" class="centeredHeader">
                         Numerator Features
                     </h4>
+                    <!-- Same table classes as in
+                         https://datatables.net/examples/styling/bootstrap4.html
+                         used, but with table-sm added.
+                    -->
                     <table
                         id="topFeaturesDisplay"
-                        class="display compact wrap stripe"
+                        class="table table-striped table-bordered table-sm"
                     ></table>
                 </div>
                 <div id="divide" class="centeredBlock"></div>
@@ -329,7 +333,7 @@
                     </h4>
                     <table
                         id="botFeaturesDisplay"
-                        class="display compact wrap stripe"
+                        class="table table-striped table-bordered table-sm"
                     ></table>
                 </div>
             </div>
