@@ -18,6 +18,14 @@
     - This feature should be useful when quickly assessing how much a given
       ranking field "separates" samples along certain metadata categories. It's
       a great starting point when looking at a Qurro visualization.
+- Instead of showing selected features in text boxes, these features are now
+  displayed in fancy [DataTable](https://datatables.net/)s!
+  ([#197](https://github.com/biocore/qurro/issues/197),
+  [#232](https://github.com/biocore/qurro/issues/232))
+    - Thanks to [@antgonza](https://github.com/antgonza) for adding this in to
+      Qurro!
+    - This involved adding some dependencies to Qurro's visualization code:
+      jQuery, DataTables, Bootstrap's JS code, and Popper.js.
 - When selecting a log-ratio where feature(s) are present in both the numerator
   and denominator of the log-ratio, a warning will now be shown explaining the
   situtation (and recommending that you chose a different log-ratio that
@@ -107,6 +115,9 @@
   ([#223](https://github.com/biocore/qurro/issues/223))
 - Renamed the label for changing the rank plot ranking from `Ranking` to either
   `Differential` or `Feature Loading`.
+- Renamed the `Fit bar widths to the plot's default width?` option (again) to
+  `Fit bar widths to a constant plot width?`. This seems like a clearer way of
+  describing this option...
 - For searching by the values of a given feature ranking, the header shown
   above all of the ranking column names said `Feature Rankings`.
   This was slightly misleading, since searching is being done on the
@@ -116,6 +127,8 @@
   `Feature Loadings`.
 - Improved the command-line documentation of the sample and feature metadata
   parameters.
+- Added the poster from a recent presentation we did on Qurro to this
+  repository, and linked the poster's PDF from the README.
 - Various documentation updates in the README.
 - Changed the project structure around slightly to ensure that
   `dependency_licenses/` for libraries distributed with Qurro
@@ -127,6 +140,9 @@
   command is also run on Travis-CI now in order to ensure that future updates
   to Qurro don't crash any of these notebooks.
 - Updated the "Mackerel" demo / test data to match the latest output of [this analysis](https://github.com/knightlab-analyses/qurro-mackerel-analysis/). Notable changes include using the `reference-hit` Deblur BIOM output instead of the `all` Deblur BIOM output (which is generally recommended for 16S analyses), and using SILVA instead of Greengenes for taxonomic classification.
+- Updated the "Moving Pictures," "Sleep Apnea," and "Mackerel" demo
+  descriptions to just say "ASVs" instead of "ASVs / sOTUs" (for clarity's
+  sake).
 
 ## Qurro 0.4.0 (August 15, 2019)
 ### Features added

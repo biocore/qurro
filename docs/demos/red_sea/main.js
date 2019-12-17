@@ -1,8 +1,13 @@
 requirejs.config({
     // https://github.com/vega/vega-embed/issues/8
+    //
     // Also we name datatables "datatables.net" because the Bootstrap
     // DataTables code necessitates it -- see
     // https://stackoverflow.com/a/33748812/10730311
+    //
+    // Lastly, use of the Bootstrap Bundle based on this blessed comment:
+    // https://stackoverflow.com/a/49839899/10730311 which saved time
+    // debugging require.js and popper.js
     paths: {
         vega: "vendor/vega.min",
         "vega-lite": "vendor/vega-lite.min",

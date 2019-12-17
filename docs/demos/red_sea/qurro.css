@@ -137,6 +137,10 @@ textarea {
     padding: 0px 0px 0px 2px;
 }
 
+.hackySpacerInput {
+    visibility: hidden;
+}
+
 /* formating for tables */
 th {
     font-size: 12px;
