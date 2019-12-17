@@ -138,6 +138,33 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
         });
-        it("Works when selected feature list(s) are empty");
+        it("Works when both selected feature list(s) are empty", async function() {
+            await runFeatureFiltering(
+                "Feature ID",
+                "aoisdjfoisdjfoasidj",
+                "text",
+                "Feature ID",
+                "oijaoqwijedoqwiejqowiejqowiej",
+                "text"
+            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
+            testing_utilities.checkHeaders(0, 0, 5);
+        });
+        it("Works when just one selected feature list is empty", async function() {
+            await runFeatureFiltering(
+                "Feature ID",
+                "Taxon3",
+                "text",
+                "Feature ID",
+                "oijaoqwijedoqwiejqowiejqowiej",
+                "text"
+            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
+            testing_utilities.checkHeaders(1, 0, 5);
+        });
     });
 });
