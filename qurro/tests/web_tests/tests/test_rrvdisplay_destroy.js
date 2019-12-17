@@ -161,6 +161,17 @@ define(["display", "dom_utils", "mocha", "chai"], function(
             chai.assert.isEmpty(
                 document.getElementById("rankFieldLabel").textContent
             );
+
+            /* Check that tables are properly cleared -- otherwise this causes
+             * some nasty errors from DataTables (see #235 for sordid context).
+             * Solution based on https://stackoverflow.com/a/2161646/10730311.
+             */
+            chai.assert.isFalse(
+                document.getElementById("topFeaturesDisplay").hasChildNodes()
+            );
+            chai.assert.isFalse(
+                document.getElementById("botFeaturesDisplay").hasChildNodes()
+            );
         });
     });
 });

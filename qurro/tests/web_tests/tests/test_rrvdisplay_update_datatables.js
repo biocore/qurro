@@ -12,7 +12,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe('Updating "feature text" DOM elements via RRVDisplay.updateFeaturesTextDisplays()', function() {
+    describe("Updating the feature DataTables in RRVDisplay.updateFeaturesDisplays()", function() {
         var rrv;
         before(async function() {
             rrv = new display.RRVDisplay(
@@ -25,135 +25,146 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
         after(async function() {
             await rrv.destroy(true, true, true);
         });
+
+        /* Starts an integration test using the feature filtering controls.
+         *
+         * Assumes that rrv is already in a "blank slate" state, but I don't
+         * think that should matter too much (esp due to the before/after hooks
+         * of these tests).
+         *
+         * Yes, this function is shamelessly copied from test_rrvdisplay.js
+         * because refactoring things so that resetRRVDisplay(),
+         * runFeatureFiltering(), etc. were in testing_utilities was going
+         * to be painful.
+         *
+         * This code duplication is a bandaid solution; ideally this will be
+         * fixed in the future when I have spare time haha haha oh no
+         */
+        async function runFeatureFiltering(
+            numField,
+            numText,
+            numSearchType,
+            denField,
+            denText,
+            denSearchType
+        ) {
+            document.getElementById("topSearch").value = numField;
+            document.getElementById("botSearch").value = denField;
+            document.getElementById("topSearchType").value = numSearchType;
+            document.getElementById("botSearchType").value = denSearchType;
+            document.getElementById("topText").value = numText;
+            document.getElementById("botText").value = denText;
+            // should result in rrv.regenerateFromFiltering() being called
+            await document.getElementById("multiFeatureButton").onclick();
+        }
+
         it("Works for single-feature selections", function() {
-            rrv.newFeatureHigh = {
-                "Feature ID": "New feature name high",
-                FeatureMetadata1: 5,
-                FeatureMetadata2: "test"
-            };
-            rrv.newFeatureLow = {
-                "Feature ID": "New feature name low",
-                FeatureMetadata1: 10,
-                FeatureMetadata2: 3
-            };
-            rrv.updateFeaturesTextDisplays(true);
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                "New feature name high / 5 / test"
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                "New feature name low / 10 / 3"
-            );
+            rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon3");
+            rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon4");
+            rrv.updateFeaturesDisplays(true);
+
+            // Check that tables are updated properly
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {
+                Taxon4: [9, 8, 7, 0, 4, null, null]
+            });
+            // Check that headers are updated accordingly
             testing_utilities.checkHeaders(1, 1, 5);
-            // Check it again -- ensure that the updating action overwrites the
+
+            // Check stuff again -- ensure that the updating action overwrites the
             // previous values
-            rrv.newFeatureHigh = {
-                "Feature ID": "Thing 1!",
-                FeatureMetadata2: "lol"
-            };
-            rrv.newFeatureLow = { "Feature ID": "Thing 2!" };
-            rrv.updateFeaturesTextDisplays(true);
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                "Thing 1! / / lol"
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                "Thing 2! / / "
-            );
+            rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
+            rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon2");
+            rrv.updateFeaturesDisplays(true);
+
+            // ...and check results again
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                Taxon1: [5, 6, 7, 0, 4, null, null]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {
+                Taxon2: [1, 2, 3, 0, 4, null, null]
+            });
             testing_utilities.checkHeaders(1, 1, 5);
         });
-        it("Works for multi-feature selections", function() {
-            // Standard case
-            // only checking a single feature metadata field here, for my
-            // own sanity
-            rrv.featureMetadataFields = ["f1"];
-            rrv.topFeatures = [
-                { "Feature ID": "abc", f1: 1 },
-                { "Feature ID": "def", f1: 2 },
-                { "Feature ID": "ghi", f1: 3 },
-                { "Feature ID": "lmno pqrs", f1: 4 },
-                { "Feature ID": "tuv", f1: null }
-            ];
-            rrv.botFeatures = [
-                { "Feature ID": "asdf", f1: null },
-                { "Feature ID": "ghjk", f1: 7 }
-            ];
-            var expectedTopText =
-                "abc / 1\ndef / 2\nghi / 3\nlmno pqrs / 4\ntuv / ";
-            var expectedBotText = "asdf / \nghjk / 7";
-            rrv.updateFeaturesTextDisplays();
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                expectedTopText
+        it("Works for multi-feature selections", async function() {
+            await runFeatureFiltering(
+                "Feature ID",
+                "Taxon",
+                "text",
+                "Feature ID",
+                "3",
+                "text"
             );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                expectedBotText
-            );
-            testing_utilities.checkHeaders(5, 2, 5);
-            // Check case where there's only one feature in a list
-            // In this case, the denominator + expected bottom text are the
-            // same as before
-            rrv.topFeatures = [{ "Feature ID": "onlyfeature", f1: 100 }];
-            expectedTopText = "onlyfeature / 100";
-            rrv.updateFeaturesTextDisplays();
-            chai.assert.equal(
-                document.getElementById("topFeaturesDisplay").value,
-                expectedTopText
-            );
-            chai.assert.equal(
-                document.getElementById("botFeaturesDisplay").value,
-                expectedBotText
-            );
-            testing_utilities.checkHeaders(1, 2, 5);
-            // Check case where lists are empty
-            // This could happen if, e.g., both of the user's text queries
-            // don't have any results.
-            rrv.topFeatures = [];
-            rrv.botFeatures = [];
-            rrv.updateFeaturesTextDisplays();
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
-            testing_utilities.checkHeaders(0, 0, 5);
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                Taxon1: [5, 6, 7, 0, 4, null, null],
+                Taxon2: [1, 2, 3, 0, 4, null, null],
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"],
+                Taxon4: [9, 8, 7, 0, 4, null, null],
+                Taxon5: [6, 5, 4, 0, 4, "null", "lol"]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+            });
+            testing_utilities.checkHeaders(5, 1, 5);
         });
         it('Clears the "feature text" DOM elements properly', function() {
+            // PART 1
             // Populate the DOM elements
-            rrv.newFeatureHigh = "Thing 1!";
-            rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
+            rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
+            rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon4");
+            rrv.updateFeaturesDisplays(true);
             // Just to be super sure, check that the headers were updated
             // correctly
             testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing works
-            rrv.updateFeaturesTextDisplays(false, true);
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
+            rrv.updateFeaturesDisplays(false, true);
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
+
+            // PART 2
             // Repopulate the DOM elements
-            rrv.newFeatureHigh = "Thing 1!";
-            rrv.newFeatureLow = "Thing 2!";
-            rrv.updateFeaturesTextDisplays(true);
+            rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
+            rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon4");
+            rrv.updateFeaturesDisplays(true);
+            // Again, be paranoid and check that headers were properly updated
             testing_utilities.checkHeaders(1, 1, 5);
             // Check that clearing is done, even if "single" is true
-            // (the "clear" argument takes priority)
-            rrv.updateFeaturesTextDisplays(true, true);
-            chai.assert.isEmpty(
-                document.getElementById("topFeaturesDisplay").value
-            );
-            chai.assert.isEmpty(
-                document.getElementById("botFeaturesDisplay").value
-            );
+            // (the "clear" argument should take priority)
+            rrv.updateFeaturesDisplays(true, true);
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
+        });
+        it("Works when both selected feature list(s) are empty", async function() {
+            await runFeatureFiltering(
+                "Feature ID",
+                "aoisdjfoisdjfoasidj",
+                "text",
+                "Feature ID",
+                "oijaoqwijedoqwiejqowiejqowiej",
+                "text"
+            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {});
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
+            testing_utilities.checkHeaders(0, 0, 5);
+        });
+        it("Works when just one selected feature list is empty", async function() {
+            await runFeatureFiltering(
+                "Feature ID",
+                "Taxon3",
+                "text",
+                "Feature ID",
+                "oijaoqwijedoqwiejqowiejqowiej",
+                "text"
+            );
+            testing_utilities.checkDataTable("topFeaturesDisplay", {
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+            });
+            testing_utilities.checkDataTable("botFeaturesDisplay", {});
+            testing_utilities.checkHeaders(1, 0, 5);
         });
     });
 });

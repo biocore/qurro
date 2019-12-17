@@ -6,6 +6,8 @@ requirejs.config({
         vega: "../../support_files/vendor/vega.min",
         "vega-lite": "../../support_files/vendor/vega-lite.min",
         "vega-embed": "../../support_files/vendor/vega-embed.min",
+        jquery: "../../support_files/vendor/jquery-3.4.1.min",
+        datatables: "../../support_files/vendor/jquery.dataTables.min",
         mocha: "vendor/mocha",
         chai: "vendor/chai",
         testing_utilities: "testing_utilities",
@@ -17,8 +19,8 @@ requirejs.config({
         test_rrvdisplay: "tests/test_rrvdisplay",
         test_rrvdisplay_compute_balance:
             "tests/test_rrvdisplay_compute_balance",
-        test_rrvdisplay_update_feature_text_dom:
-            "tests/test_rrvdisplay_update_feature_text_dom",
+        test_rrvdisplay_update_datatables:
+            "tests/test_rrvdisplay_update_datatables",
         test_rrvdisplay_update_feature_color:
             "tests/test_rrvdisplay_update_feature_color",
         test_rrvdisplay_getinvalidsampleids:
@@ -51,6 +53,8 @@ requirejs(
         "vega",
         "vega-lite",
         "vega-embed",
+        "jquery",
+        "datatables",
         "mocha",
         "chai",
         "testing_utilities",
@@ -61,7 +65,7 @@ requirejs(
         "test_data_export",
         "test_rrvdisplay",
         "test_rrvdisplay_compute_balance",
-        "test_rrvdisplay_update_feature_text_dom",
+        "test_rrvdisplay_update_datatables",
         "test_rrvdisplay_update_feature_color",
         "test_rrvdisplay_getinvalidsampleids",
         "test_rrvdisplay_getinvalidsampleids_samplestatstest",
@@ -74,6 +78,8 @@ requirejs(
         vega,
         vegaLite,
         vegaEmbed,
+        jquery,
+        datatables,
         mocha,
         chai,
         testing_utilities,
@@ -84,7 +90,7 @@ requirejs(
         test_data_export,
         test_rrvdisplay,
         test_rrvdisplay_compute_balance,
-        test_rrvdisplay_update_feature_text_dom,
+        test_rrvdisplay_update_datatables,
         test_rrvdisplay_update_feature_color,
         test_rrvdisplay_getinvalidsampleids,
         test_rrvdisplay_getinvalidsampleids_samplestatstest,

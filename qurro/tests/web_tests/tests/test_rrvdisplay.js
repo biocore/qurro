@@ -109,7 +109,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 denText,
                 denSearchType
             ) {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
                 document.getElementById("topSearch").value = numField;
                 document.getElementById("botSearch").value = denField;
                 document.getElementById("topSearchType").value = numSearchType;
@@ -131,9 +131,10 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 // dom_utils.setUpDOMBindings()) works. PHEW.
                 await document.getElementById("multiFeatureButton").onclick();
             }
+
             describe("Single-feature selections", function() {
                 beforeEach(async function() {
-                    await resetRRVDisplay(rrv);
+                    await resetRRVDisplay();
                 });
                 it("Doesn't do anything if .newFeatureLow and/or .newFeatureHigh is null or undefined", async function() {
                     // Since we just called resetRRVDisplay(),
@@ -155,29 +156,53 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
 
                     // Check (low = null, high = an actual feature object)
                     // and (low = undefined, high = an actual feature object)
-                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
                     await updateSingleAndCheckAllBalancesNull();
                     rrv.newFeatureLow = undefined;
                     await updateSingleAndCheckAllBalancesNull();
 
                     // Check (low = an actual feature object, high = null)
                     // and (low = an actual feature object, high = undefined)
-                    rrv.newFeatureLow = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
                     rrv.newFeatureHigh = null;
                     await updateSingleAndCheckAllBalancesNull();
                     rrv.newFeatureHigh = undefined;
                     await updateSingleAndCheckAllBalancesNull();
                 });
                 it("Doesn't do anything if the newly selected features don't differ from the old ones", async function() {
-                    rrv.oldFeatureLow = { "Feature ID": "Taxon1" };
-                    rrv.oldFeatureHigh = { "Feature ID": "Taxon2" };
-                    rrv.newFeatureLow = { "Feature ID": "Taxon1" };
-                    rrv.newFeatureHigh = { "Feature ID": "Taxon2" };
+                    rrv.oldFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
+                    rrv.oldFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon2"
+                    );
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon2"
+                    );
                     await updateSingleAndCheckAllBalancesNull();
                 });
                 it("Works properly when actually changing the plots", async function() {
-                    rrv.newFeatureLow = { "Feature ID": "Taxon2" };
-                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon2"
+                    );
                     await rrv.regenerateFromClicking();
                     // Check that the sample log-ratios were properly updated
                     // Sample1 has a Taxon1 count of 0, so its log-ratio should
@@ -258,8 +283,14 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // sample in the matching test dataset, so we can just
                     // check that log-ratios are correct by verifying every
                     // sample has a log-ratio of 0
-                    rrv.newFeatureLow = { "Feature ID": "Taxon4" };
-                    rrv.newFeatureHigh = { "Feature ID": "Taxon4" };
+                    rrv.newFeatureLow = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon4"
+                    );
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon4"
+                    );
                     await rrv.regenerateFromClicking();
 
                     // While we're doing this test (the main purpose of this is
@@ -292,7 +323,10 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     // by switching to a different log-ratio. (I'm not going to
                     // bother checking the individual samples' log-ratios
                     // again.)
-                    rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
+                    rrv.newFeatureHigh = testing_utilities.getFeatureRow(
+                        rrv,
+                        "Taxon1"
+                    );
                     await rrv.regenerateFromClicking();
                     chai.assert.isTrue(
                         document
@@ -387,27 +421,21 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
                 it('Properly updates the "feature text" headers', function() {
                     testing_utilities.checkHeaders(5, 1, 5);
-                    chai.assert.sameMembers(
-                        [
-                            "Taxon1 / / ",
-                            "Taxon2 / / ",
-                            "Taxon3 / Yeet / 100",
-                            "Taxon4 / / ",
-                            "Taxon5 / null / lol"
-                        ],
-                        document
-                            .getElementById("topFeaturesDisplay")
-                            .value.split("\n")
-                    );
-                    chai.assert.equal(
-                        "Taxon3 / Yeet / 100",
-                        document.getElementById("botFeaturesDisplay").value
-                    );
+                    testing_utilities.checkDataTable("topFeaturesDisplay", {
+                        Taxon1: [5, 6, 7, 0, 4, null, null],
+                        Taxon2: [1, 2, 3, 0, 4, null, null],
+                        Taxon3: [4, 5, 6, 0, 4, "Yeet", 100],
+                        Taxon4: [9, 8, 7, 0, 4, null, null],
+                        Taxon5: [6, 5, 4, 0, 4, "null", "lol"]
+                    });
+                    testing_utilities.checkDataTable("botFeaturesDisplay", {
+                        Taxon3: [4, 5, 6, 0, 4, "Yeet", 100]
+                    });
                 });
             });
             describe("Multi-feature selections (text-based filtering, corner cases)", function() {
                 beforeEach(async function() {
-                    await resetRRVDisplay(rrv);
+                    await resetRRVDisplay();
                 });
                 function assertWarningShown(numCommonFeatures) {
                     // verify that the warning showed up
@@ -476,7 +504,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
                     await document.getElementById("autoSelectButton").click();
                 }
                 beforeEach(async function() {
-                    await resetRRVDisplay(rrv);
+                    await resetRRVDisplay();
                 });
                 it("Basic percentage-based filtering works", async function() {
                     await callAutoSelect("25", "autoPercent");
@@ -594,7 +622,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
         });
         describe("Modifying rank plot field/size/color", function() {
             beforeEach(async function() {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
             });
             describe("Changing the ranking used on the rank plot", function() {
                 it("Updates rank plot field, title, and window sort transform", async function() {
@@ -750,7 +778,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
         });
         describe("Modifying sample plot fields/scales/colorschemes", function() {
             beforeEach(async function() {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
             });
             describe("Changing the x-axis field used on the sample plot", function() {
                 var xFieldEle = document.getElementById("xAxisField");
@@ -930,7 +958,7 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
         });
         describe("Boxplot functionality", function() {
             beforeEach(async function() {
-                await resetRRVDisplay(rrv);
+                await resetRRVDisplay();
             });
             function testBoxplotEncodings(xField) {
                 chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
