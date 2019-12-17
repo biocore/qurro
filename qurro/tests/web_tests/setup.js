@@ -19,8 +19,8 @@ requirejs.config({
         test_rrvdisplay: "tests/test_rrvdisplay",
         test_rrvdisplay_compute_balance:
             "tests/test_rrvdisplay_compute_balance",
-        test_rrvdisplay_update_feature_text_dom:
-            "tests/test_rrvdisplay_update_feature_text_dom",
+        test_rrvdisplay_update_datatables:
+            "tests/test_rrvdisplay_update_datatables",
         test_rrvdisplay_update_feature_color:
             "tests/test_rrvdisplay_update_feature_color",
         test_rrvdisplay_getinvalidsampleids:
@@ -65,7 +65,7 @@ requirejs(
         "test_data_export",
         "test_rrvdisplay",
         "test_rrvdisplay_compute_balance",
-        "test_rrvdisplay_update_feature_text_dom",
+        "test_rrvdisplay_update_datatables",
         "test_rrvdisplay_update_feature_color",
         "test_rrvdisplay_getinvalidsampleids",
         "test_rrvdisplay_getinvalidsampleids_samplestatstest",
@@ -90,7 +90,7 @@ requirejs(
         test_data_export,
         test_rrvdisplay,
         test_rrvdisplay_compute_balance,
-        test_rrvdisplay_update_feature_text_dom,
+        test_rrvdisplay_update_datatables,
         test_rrvdisplay_update_feature_color,
         test_rrvdisplay_getinvalidsampleids,
         test_rrvdisplay_getinvalidsampleids_samplestatstest,
