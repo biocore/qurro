@@ -89,6 +89,10 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.rankOrdering = undefined;
             // Ordered list of all feature metadata fields
             this.featureMetadataFields = undefined;
+            // Ordered, combined list of feature ranking and metadata fields --
+            // used in populating the DataTables
+            this.featureColumns = undefined;
+
             // The human-readable "type" of the feature rankings (should be
             // either "Differential" or "Feature Loading")
             this.rankType = undefined;
@@ -112,6 +116,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Note that this will fail if either makePlot function fails with
             // an error. This should be ok for Qurro's purposes, though.
             await Promise.all([this.makeRankPlot(), this.makeSamplePlot()]);
+
             this.setUpDOM();
             document
                 .getElementById("loadingMessage")
@@ -219,8 +224,33 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     "Feature ID",
                     true
                 );
-                // Clear the "features text" displays
-                this.updateFeaturesTextDisplays(false, true);
+                // Initialize tables and update them
+                var columns = [{ title: "Feature ID" }];
+                $.each(
+                    $.merge(this.rankOrdering, this.featureMetadataFields),
+                    function(index, value) {
+                        columns.push({ title: value });
+                    }
+                );
+                this.featureColumns = columns;
+
+                // Shared configuration between the numerator and denominator
+                // feature DataTables. We define this down here (and not in the
+                // RRVDisplay constructor, for example) because we need access
+                // to this.featureColumns.
+                var dtConfig = {
+                    scrollY: "200px",
+                    paging: false,
+                    scrollX: true,
+                    scrollCollapse: true,
+                    columns: this.featureColumns,
+                    data: [],
+                    columnDefs: [{ width: "20%", targets: 0 }],
+                    fixedColumns: true
+                };
+                $("#topFeaturesDisplay").DataTable(dtConfig);
+                $("#botFeaturesDisplay").DataTable(dtConfig);
+                this.updateFeaturesDisplays(false, true);
                 // Figure out which bar size type to default to.
                 // We determine this based on how many features there are.
                 // This is intended to address cases where there are only a few
@@ -619,7 +649,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             );
             // TODO: abstract below stuff to a helper function for use by
             // regenerateFromAutoSelection() and RegenerateFromFiltering()
-            this.updateFeaturesTextDisplays();
+            this.updateFeaturesDisplays();
             await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
@@ -654,7 +684,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 botField,
                 botSearchType
             );
-            this.updateFeaturesTextDisplays();
+            this.updateFeaturesDisplays();
             await this.updateLogRatio(
                 this.updateBalanceMulti,
                 this.updateRankColorMulti
@@ -694,7 +724,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                             this.newFeatureHigh["Feature ID"];
                     }
                     if (lowsDiffer || highsDiffer) {
-                        this.updateFeaturesTextDisplays(true);
+                        this.updateFeaturesDisplays(true);
                         // Time to update the plots re: the new log-ratio
                         await this.updateLogRatio(
                             this.updateBalanceSingle,
@@ -726,53 +756,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "%) selected";
         }
 
-        /* Converts a list of feature "rows" from the rank plot JSON to a
-         * human-readable string that will be used to populate a <textarea>
-         * in qurro' output.
-         *
-         * Basically, this goes through each feature and creates a
-         * representation that looks something like
-         * Feature ID / FeatMetadataField1Value / FeatMetadataField2Value ...,
-         * where each feature metadata value is separated by a " / ".
-         *
-         * The output text returned by this function is just a string
-         * containing all of these representations, which are themselves
-         * separated by newline characters.
-         */
-        featureRowListToText(featureRowList) {
-            if (featureRowList.length <= 0) {
-                return "";
-            }
-            var outputText = "";
-            var currVal, anotherFieldLeft;
-            // fmFields is just the feature metadata fields, with "Feature ID"
-            // added on at the beginning
-            var fmFields = this.featureMetadataFields.slice();
-            fmFields.unshift("Feature ID");
-            for (var i = 0; i < featureRowList.length; i++) {
-                if (i > 0) {
-                    outputText += "\n";
-                }
-                for (var c = 0; c < fmFields.length; c++) {
-                    currVal = featureRowList[i][fmFields[c]];
-                    // If currVal *is* null or undefined, this will look like
-                    // / / in the output for this metadata field -- which is
-                    // fine.
-                    anotherFieldLeft = c + 1 < fmFields.length;
-                    if (currVal !== null && currVal !== undefined) {
-                        outputText += currVal;
-                        if (anotherFieldLeft) {
-                            outputText += " / ";
-                        }
-                    } else if (anotherFieldLeft) {
-                        outputText += "/ ";
-                    }
-                }
-            }
-            return outputText;
-        }
-
-        /* Updates the textareas that list the selected features, as well as
+        /* Updates the DataTables (formerly textareas, in versions of Qurro
+         * before 0.5.0) that list the selected features, as well as
          * the corresponding header elements that indicate the numbers of
          * selected features.
          *
@@ -782,34 +767,59 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * value for the single argument (and clear is falsy), this will
          * instead update based on the single selection values.
          */
-        updateFeaturesTextDisplays(single, clear) {
+        updateFeaturesDisplays(single, clear) {
+            var topDisplay = $("#topFeaturesDisplay").DataTable();
+            var botDisplay = $("#botFeaturesDisplay").DataTable();
+
+            topDisplay.clear().draw();
+            botDisplay.clear().draw();
+
             if (clear) {
-                document.getElementById("topFeaturesDisplay").value = "";
-                document.getElementById("botFeaturesDisplay").value = "";
-                // NOTE: this will still include the total number of features
-                // in the headers. Shouldn't be a huge problem; can be changed
-                // if desired.
                 this.updateFeatureHeaderCounts(0, 0);
-            } else if (single) {
-                document.getElementById(
-                    "topFeaturesDisplay"
-                ).value = this.featureRowListToText([this.newFeatureHigh]);
-                document.getElementById(
-                    "botFeaturesDisplay"
-                ).value = this.featureRowListToText([this.newFeatureLow]);
-                this.updateFeatureHeaderCounts(1, 1);
             } else {
-                document.getElementById(
-                    "topFeaturesDisplay"
-                ).value = this.featureRowListToText(this.topFeatures);
-                document.getElementById(
-                    "botFeaturesDisplay"
-                ).value = this.featureRowListToText(this.botFeatures);
+                var topFeatureList, botFeatureList;
+                if (single) {
+                    topFeatureList = [this.newFeatureHigh];
+                    botFeatureList = [this.newFeatureLow];
+                } else {
+                    topFeatureList = this.topFeatures;
+                    botFeatureList = this.botFeatures;
+                }
                 this.updateFeatureHeaderCounts(
-                    this.topFeatures.length,
-                    this.botFeatures.length
+                    topFeatureList.length,
+                    botFeatureList.length
                 );
+
+                // Keep track of feature columns via a closure so that we can
+                // reference it from inside the following function(...s)
+                var columns = this.featureColumns;
+                $.each(topFeatureList, function(index, feature) {
+                    topDisplay.row.add(
+                        RRVDisplay.getRowOfColumnData(feature, columns)
+                    );
+                });
+                $.each(botFeatureList, function(index, feature) {
+                    botDisplay.row.add(
+                        RRVDisplay.getRowOfColumnData(feature, columns)
+                    );
+                });
+
+                topDisplay.draw();
+                botDisplay.draw();
             }
+        }
+
+        /* Converts a "feature row" (from a V-L spec) to a DataTables-ok row.
+         *
+         * I moved this to a separate function so that jshint would stop
+         * yelling at me for declaring a function inside a block ._.
+         */
+        static getRowOfColumnData(feature, columns) {
+            var row = [];
+            $.each(columns, function(index, column) {
+                row.push(feature[column.title]);
+            });
+            return row;
         }
 
         updateSamplePlotTooltips() {
@@ -1353,8 +1363,18 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 }
                 // Reset various UI elements to their "default" states
 
-                // Clear the "features text" displays
-                this.updateFeaturesTextDisplays(false, true);
+                // Completely destroy the "features text" displays -- this'll
+                // let us re-initialize the DataTable in makeRankPlot() without
+                // causing this sort of error:
+                // https://datatables.net/manual/tech-notes/3
+                $("#topFeaturesDisplay")
+                    .DataTable()
+                    .destroy();
+                $("#botFeaturesDisplay")
+                    .DataTable()
+                    .destroy();
+                dom_utils.clearDiv("topFeaturesDisplay");
+                dom_utils.clearDiv("botFeaturesDisplay");
 
                 // Hide (if not already hidden) the warning about feature(s)
                 // being in both the numerator and denominator of a log-ratio
