@@ -1,5 +1,5 @@
 # Qurro + QIIME 2: "Moving Pictures" Tutorial
-*Note: this tutorial uses Qurro v0.3.0.*
+*Note: this tutorial uses Qurro v0.4.0, and is pretty out-of-date. We're working on updating this tutorial to use the latest version of Qurro and its new features, so please stay tuned (and sorry for the inconvenience!).*
 
 ## 0. Introduction
 
