@@ -137,12 +137,6 @@ We presented [this poster](https://biocore.github.io/qurro/CRISP-poster.pdf) on 
 [2019 CRISP Annual Review](https://crisp.engineering.virginia.edu/2019-crisp-annual-review).
 The data shown here is already slightly outdated compared to the actual Qurro paper (e.g. the differentials are slightly different), but feel free to check out the poster anyway!
 
-## Citing Qurro
-
-A manuscript describing Qurro is in preparation. In the meantime, you can cite
-the DOI of Qurro's source code (provided by Zenodo). See
-[this link](https://doi.org/10.5281/zenodo.3257763) for citation instructions.
-
 ## Acknowledgements
 
 ### Dependencies
@@ -238,6 +232,25 @@ Cameron Martino for a ton of work on getting the code in a distributable state
 original code for producing rank and sample plots from which this is derived.
 
 And thanks to a bunch of the Knight Lab for helping name the tool :)
+
+## Citing Qurro
+
+For now, the preferred citation for Qurro is its
+[bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2019.12.17.880047v1).
+Here's the generated BibTeX:
+```
+@article {fedarko2019,
+	author = {Fedarko, Marcus W. and Martino, Cameron and Morton, James T. and Gonz{\'a}lez, Antonio and Rahman, Gibraan and Marotz, Clarisse A. and Minich, Jeremiah J. and Allen, Eric E. and Knight, Rob},
+	title = {Visualizing {\textquoteright}omic feature rankings and log-ratios using {Q}urro},
+	elocation-id = {2019.12.17.880047},
+	year = {2019},
+	doi = {10.1101/2019.12.17.880047},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/early/2019/12/18/2019.12.17.880047},
+	eprint = {https://www.biorxiv.org/content/early/2019/12/18/2019.12.17.880047.full.pdf},
+	journal = {bioRxiv}
+}
+```
 
 ## References
 
