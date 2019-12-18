@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.5.0
+## Qurro 0.5.0 (December 17, 2019)
 ### Features added
 - Added **Qarcoal**, a new command for Qurro's QIIME 2 plugin that computes
   log-ratios from the command line by searching through features' taxonomies.
