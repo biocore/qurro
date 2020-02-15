@@ -17,7 +17,7 @@ mkdir results
 
 The tsv format data and sample metadata can be downloaded following the commands:
 
-- `colour-composition-data` | [download](https://github.com/biocore/qurro/tree/master/docs/tutorials/table-conversion-paintings/data/colour-composition-data.tsv) 
+- `colour-composition-data.tsv` | [download](https://github.com/biocore/qurro/tree/master/docs/tutorials/table-conversion-paintings/data/colour-composition-data.tsv) 
 - `colour-composition-metadata.tsv` | [download](https://docs.qiime2.org/2019.4/data/tutorials/table-conversion-paintings/table.qza) 
 
 From the compositional table of color proportions in the tsv format, we will first convert to biom format through the following command:
