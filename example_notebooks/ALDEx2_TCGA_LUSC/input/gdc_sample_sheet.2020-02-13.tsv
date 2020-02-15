@@ -1,0 +1,150 @@
+File ID	File Name	Data Category	Data Type	Project ID	Case ID	Sample ID	Sample Type
+e4c62f17-d1e8-4543-9b7e-daa2b68306e0	bc5be208-5934-40dd-81df-567599ea2a51.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-33-6737	TCGA-33-6737-01A	Primary Tumor
+220a03f7-7ab6-4233-8f65-7ac5decca4b9	60040f95-8414-4956-bd8a-ec461a49207c.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-18-3410	TCGA-18-3410-01A	Primary Tumor
+8894c42e-ce65-4088-88e3-921ce7165261	950e2ba0-a247-4bd6-8092-f97cc4018a79.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-33-A4WN	TCGA-33-A4WN-01A	Primary Tumor
+daa44ce1-1671-46b9-aa48-2f4155f0ee49	a998a5b1-397d-4497-a58c-9b9e1c7f491e.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7579	TCGA-56-7579-01A	Primary Tumor
+ef056c34-c2b9-47dd-afbf-ed81fc16dc74	840bb854-0669-485e-9d83-c4e1e4f10626.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-34-5236	TCGA-34-5236-01A	Primary Tumor
+92ab7ab5-7695-4aa2-81e9-6c6759f37b49	71550bf2-086d-46ac-aee3-958bbac2d2ab.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-33-6737	TCGA-33-6737-11A	Solid Tissue Normal
+4b607642-7124-4d8c-ae6f-3d3b88ce08ad	9813b5d6-2309-4e67-85c0-1fae01d9672d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2709	TCGA-60-2709-01A	Primary Tumor
+d48dfee4-035f-4daa-a39f-c64026fe3a5d	d92bad56-8e40-42b5-92a9-287491795920.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-63-A5MW	TCGA-63-A5MW-01A	Primary Tumor
+420620ef-b021-41d0-b9b5-6db001877f9e	7de8a287-f8b9-4d49-a030-5be4690a02fa.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-A5GB	TCGA-77-A5GB-01B	Primary Tumor
+98e3175d-db07-4967-bc2f-c80894abecab	9ef0c6dd-6e38-41fd-aff6-ae0800c7755d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-7698	TCGA-85-7698-01A	Primary Tumor
+de0b0e6b-4ccd-47c6-af57-739344ea04a2	837e6048-97d1-4180-b385-683e99e9b628.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2788	TCGA-66-2788-01A	Primary Tumor
+4a8ce207-c99e-4ad1-b508-83e24c99df7f	0bf74e1f-d863-4e04-8d7b-f3b9e87aa3f2.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-58-8390	TCGA-58-8390-01A	Primary Tumor
+663b318c-61c3-4ed3-bb7a-3820d4992a8e	3c050f49-77a0-4055-8c9b-5c0e06a075d0.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2734	TCGA-66-2734-01A	Primary Tumor
+0e18c31d-a77d-41d6-933c-fc3df610a818	01444ada-b1f7-4f08-addd-85f02d177ffd.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8153	TCGA-77-8153-01A	Primary Tumor
+12aa0ca8-5466-4677-a304-0584d1e806d5	84f524b2-4e5b-46bf-aa8a-81779ab29f90.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-6647	TCGA-43-6647-11A	Solid Tissue Normal
+31afa2b8-59df-4353-acfb-dc4fd191fb8c	513de6b7-faa2-4611-9f68-1334204ef397.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2758	TCGA-66-2758-01A	Primary Tumor
+aa225357-a069-44b4-912b-1c97f864fa34	c4087638-cda2-4686-96b4-59b377ddb18d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2795	TCGA-66-2795-01A	Primary Tumor
+e90112d2-6799-47fe-8e61-750aecf74645	17836a04-2edf-4845-955f-97879736f61e.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-98-A539	TCGA-98-A539-01A	Primary Tumor
+1a05dade-259f-4cd7-9d6b-76ab0448e944	97b0d130-7cc6-45e6-9b74-6a43903f5ef4.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-8288	TCGA-85-8288-01A	Primary Tumor
+769b63d1-6fd0-4c84-b89e-cdb95cc537de	cd068064-b4cc-4a34-94be-ce95e3342c6d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-7697	TCGA-85-7697-01A	Primary Tumor
+7323eb33-2306-4f09-8705-802736b64460	4cab9f74-8294-4b98-b6b3-3594dcd83623.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-39-5040	TCGA-39-5040-01A	Primary Tumor
+91a3a180-1b7f-4060-9fe9-2bd22a5e66dd	0b4a2460-8f70-4f60-85b3-95d0012d38c8.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-39-5016	TCGA-39-5016-01A	Primary Tumor
+a4428e1e-de4c-4011-abc1-9ecf1262a51d	3bdbc229-cbc8-401b-836c-90e76ff3866b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-94-7943	TCGA-94-7943-01A	Primary Tumor
+7ddb11e5-e73b-4c06-b266-ac26538f287b	46a20956-b5c5-4bbd-baad-cfcaaad3b3f5.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2719	TCGA-60-2719-01A	Primary Tumor
+19059ef3-3aff-42ef-b3f2-f300cb441d95	544c50ac-30ea-421a-b30e-6b417c389d0a.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-92-7341	TCGA-92-7341-01A	Primary Tumor
+a13550e4-5d4f-424a-a887-b729de6b681c	a13a7cfe-e4dd-4d78-83f9-0179332d9efd.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5473	TCGA-22-5473-01A	Primary Tumor
+e5d0c077-afda-405a-8517-a0ce58497efa	dd752d51-02c4-4850-a355-18770d9be482.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-8582	TCGA-85-8582-01A	Primary Tumor
+1bba5f6d-7583-4592-82b7-4b8e4b6e5530	7936117f-4540-4f26-bde6-878d6ea8b837.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-NK-A5CX	TCGA-NK-A5CX-01A	Primary Tumor
+7b4ef838-74ce-4781-b4c7-765d37e4bcf9	983f2870-96f9-471d-b42e-41b7b84331fc.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-94-A4VJ	TCGA-94-A4VJ-01A	Primary Tumor
+d1773c1f-8e90-45c0-817f-ffdf842db267	856b6c07-2b53-4a35-9722-fd9925793778.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-58-8386	TCGA-58-8386-01A	Primary Tumor
+60e2ca83-58c8-4827-9cbb-63f446b0e29e	9447e559-9df9-4517-9f1e-7b280cc4293b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2800	TCGA-66-2800-01A	Primary Tumor
+56c973c3-545c-4ab7-8cbe-f91be80e8019	c622f68c-e37c-45ee-a266-ae704629f0f6.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2725	TCGA-60-2725-01A	Primary Tumor
+33441b33-8476-4e17-8ade-9ee764c6d270	e3863ab8-9fcd-49f7-aae2-7ac7a8ef0016.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8148	TCGA-77-8148-01A	Primary Tumor
+7813f34d-2a67-40b3-82dd-34f8440e4f23	30a1c765-f211-49e9-b033-a17138a30764.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-4609	TCGA-22-4609-01A	Primary Tumor
+2f0a7016-5225-424e-b6c5-1ce6d4fbd7be	dd6421a8-7d49-4b5e-8e35-21a82f3b351d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-21-1079	TCGA-21-1079-01A	Primary Tumor
+740b6036-50ba-40a6-9137-1cfb06145766	d0add3e1-2ece-4563-8189-41a034ccbec2.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-90-7767	TCGA-90-7767-01A	Primary Tumor
+58fa1ee0-47b4-4a29-b34d-48fd14b6b760	8b8e0f2b-8e64-4237-98d3-1ea4c7eed0c5.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-LA-A7SW	TCGA-LA-A7SW-01A	Primary Tumor
+9f6dc593-e438-4262-88b9-282fa084ab11	294b637b-938a-44a8-abb6-170c6205bbd6.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-90-A4EE	TCGA-90-A4EE-01A	Primary Tumor
+574abc9e-aeb3-4e64-bc64-d21d619401fe	00068002-f4f0-4610-bfe6-67169c760d21.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7823	TCGA-56-7823-01B	Primary Tumor
+519ae60d-ff36-488c-9fe8-6387ba54bd66	b918773c-1920-42aa-8493-22344ea5ac49.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-7657	TCGA-43-7657-01A	Primary Tumor
+6e8386d4-e3c3-41f2-b90f-4ea6ffdadd9a	a21edcea-271f-4402-ac9f-82426ff46f94.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2769	TCGA-66-2769-01A	Primary Tumor
+734b2757-cdcf-4746-adc2-f524cf4ed52d	ec2c4c86-5eaf-4f58-8da7-a9528f9922b9.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-18-4086	TCGA-18-4086-01A	Primary Tumor
+1f144c57-45a9-491c-9530-d755b7ec3913	bd587a68-76f5-44f2-ac6b-f87523560f60.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7580	TCGA-56-7580-01A	Primary Tumor
+4d0eae03-756b-4a68-904a-73fe35e52363	6bc9fb91-4915-4afc-b685-80ce6d6d6650.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-0944	TCGA-22-0944-01A	Primary Tumor
+917f39cb-cd29-41d5-9b72-cc4d14aac2a0	5774022a-7bf2-4fdd-a4a5-f9aa33c2174d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5491	TCGA-22-5491-11A	Solid Tissue Normal
+a61e4a58-aafd-4984-9a84-dab1b75e073f	26918c74-1269-4f63-a871-57855b4aa846.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-63-5131	TCGA-63-5131-01A	Primary Tumor
+2f89d3d9-0480-4213-aab2-b19870c366b5	7e45a7f3-2613-498c-aa3b-d8cdc5001386.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-8309	TCGA-56-8309-11A	Solid Tissue Normal
+0090d3a6-7151-4777-9dcd-2d1182fc8d41	ce9af9d2-2bda-4776-a4d8-0bf394d4cbd3.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-A50Z	TCGA-85-A50Z-01A	Primary Tumor
+c9970d15-4ccd-436d-8fc8-484977257645	cfcc9019-4d83-44ec-840c-684f7664bdc7.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-NC-A5HQ	TCGA-NC-A5HQ-01A	Primary Tumor
+df3625dd-acb1-42f9-b4fc-54cc9447badd	394df3ed-9071-4731-8499-d83624d2a7fa.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-39-5022	TCGA-39-5022-01A	Primary Tumor
+734185ee-8a8b-464b-a0a3-ad2daa0bb29c	d4ab2d5f-6980-4974-8f65-5e260bb6fb7d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-18-3411	TCGA-18-3411-01A	Primary Tumor
+4221fb8c-44e6-4e2a-9207-d8868cfb6ce5	118933b6-86c7-4668-9973-424ece352a60.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-33-4587	TCGA-33-4587-11A	Solid Tissue Normal
+8c1ff172-4959-4ef9-b5ac-655af5e302a9	d1051cf3-e258-4250-b31e-26a1711c90ee.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-8308	TCGA-56-8308-01A	Primary Tumor
+cbb56e08-41dd-4c10-90ee-910e7b54ab51	5a7f277a-28b9-403b-959b-51e4b024084b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2757	TCGA-66-2757-01A	Primary Tumor
+d0d1b05c-8518-4ab4-90d5-159a671847c5	94b65d9b-b3d9-45b2-80ac-cb4664fe8428.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5479	TCGA-22-5479-01A	Primary Tumor
+af7e39a0-b585-43ab-99e5-21107fbce16f	461b0b1d-bf31-4e2a-b9c8-fad6703f973b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-52-7810	TCGA-52-7810-01A	Primary Tumor
+a23ee26c-963b-4fc4-9fbe-afbc99453e41	6ef20248-2378-4c89-aac1-8e2d37d01d51.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8131	TCGA-77-8131-01A	Primary Tumor
+42911e89-2317-4792-905e-00d05e89c27f	a761dcfa-a669-404a-9881-81938b1756b8.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-98-A538	TCGA-98-A538-01A	Primary Tumor
+dd35bb2f-57cf-4bd3-a6d8-65a0fcf45e40	d8454c9a-0054-49b0-adfd-7b4ce451ef77.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-34-2600	TCGA-34-2600-01A	Primary Tumor
+ae88e6d8-e4cb-4592-b5c0-c826a7d74f19	b4a0adc9-e64d-4338-bf95-4f93352182cb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-63-A5MI	TCGA-63-A5MI-01A	Primary Tumor
+a2373f57-fa14-4ee7-8c38-cbf9ff0f0352	bf48b226-c7ef-4fc7-bcb5-de5025763bdb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7138	TCGA-77-7138-01A	Primary Tumor
+9fa7fe5a-e703-4541-880d-8a9af8eda681	3b60d859-e094-457a-85d0-e99ed38d7edb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8009	TCGA-77-8009-01A	Primary Tumor
+18cd55a9-2eca-4581-8192-51410f2a2284	0d8dd66a-6753-4472-9c4f-906ad5159ddd.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-A5DR	TCGA-56-A5DR-01A	Primary Tumor
+239633be-52a2-423e-ba21-1a3756d99a98	8cc54da6-dadc-48b1-9dd0-535cf2ac58b1.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5491	TCGA-22-5491-01A	Primary Tumor
+e7fd7e7e-4258-422b-ba60-1ab60dc5b455	8a705b7c-4607-4ede-9486-cbeb1191004e.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2710	TCGA-60-2710-01A	Primary Tumor
+429458b7-7505-44bf-a459-87e6704d792b	ce73fb18-2274-4f66-81e4-4e17ee353aef.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-A475	TCGA-43-A475-01A	Primary Tumor
+bc216cab-29ef-44c6-b448-a55e0e60803e	e3bee637-c8c3-4953-842c-11b16ea1bf73.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-33-4533	TCGA-33-4533-01A	Primary Tumor
+166c6dea-7d97-4043-bc12-7c2740d3220a	0063c2da-4f47-4974-afea-03b4cdb21e33.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-34-2608	TCGA-34-2608-01A	Primary Tumor
+146366e3-fe31-4ef7-8eb3-3ddaaf4910a6	b7fcdf45-6b26-46e8-aa40-2761354d1251.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-3394	TCGA-43-3394-01A	Primary Tumor
+779bce79-5e70-4e84-9886-0a3d3fa9de05	9aad580b-806d-4bb7-bbfd-5c74e074c788.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-LA-A446	TCGA-LA-A446-01A	Primary Tumor
+8f1acf7f-7fee-4fe2-b37c-472a2ed69510	fb97b7ac-e36e-4b49-aa22-1ed7b5a0dd4b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-A5B5	TCGA-85-A5B5-01A	Primary Tumor
+1a0e571e-f07d-4cbf-b5ab-33f94715bdb1	6f8c77f2-67de-411d-a03d-5fef3216b71b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-2581	TCGA-43-2581-01A	Primary Tumor
+58c0f434-7268-4bef-893a-242430dfcd7f	88cf0020-b8b7-4d6e-a5e9-313ee7dcf479.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7338	TCGA-77-7338-01A	Primary Tumor
+4d55e364-91eb-4b5c-b574-36d45c128545	4ea3ac9e-85e8-4506-8c17-f1d9ed349cca.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-7656	TCGA-43-7656-01A	Primary Tumor
+b639cdbd-ac59-44fc-8778-ef99c192a8c9	7b4a2fcb-95eb-4cc2-8fde-ec0851ffb724.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-0940	TCGA-22-0940-01A	Primary Tumor
+ea67e19c-dc0e-4c81-998d-c117177243c5	e06b7e6d-435b-4616-aac5-70193980b950.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-NC-A5HP	TCGA-NC-A5HP-01A	Primary Tumor
+b77be036-796b-4600-9c78-434f3f4e5fbc	2c1a9f5c-aef9-425b-9877-ccaf6832c62f.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7465	TCGA-77-7465-01A	Primary Tumor
+5c3dd63e-d05e-4940-b041-a835f33ba77a	60a2aca4-1635-4343-81cd-9d7f68d3c395.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-3920	TCGA-43-3920-01A	Primary Tumor
+cda92e83-1024-4fbe-9c0d-e2a6fbeb0339	8dda6766-08f1-4f38-944f-30da042d3370.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-18-3416	TCGA-18-3416-01A	Primary Tumor
+0b2396e3-3b9e-42ed-8588-a68a3a4e468a	b3a6f7d7-5669-40ff-9d67-97bcbc71e505.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-A56U	TCGA-43-A56U-01A	Primary Tumor
+6eea3ee3-f4c4-4777-8ff7-bfe0dcc73224	bdd20f06-d976-43e5-91ab-660954f3d9fb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-4605	TCGA-22-4605-01A	Primary Tumor
+fd2b4a95-4886-4582-afa1-1fe89b0bdaef	8714911e-19cb-47ab-bcdd-28d7e37c4a13.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-18-5595	TCGA-18-5595-01A	Primary Tumor
+7520a09f-6692-4681-8500-cdd710b78382	cfffb137-1ebf-4c5b-9f38-ac28c191c132.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2721	TCGA-60-2721-01A	Primary Tumor
+fc28f309-b035-4e92-a8c4-d0eff5b61d12	96978a72-9b98-4238-abab-cbf1c41bf5f8.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2792	TCGA-66-2792-01A	Primary Tumor
+fec44fc3-7842-4ed7-abf0-286a8d32a726	7975e611-5e6d-444e-a773-5e131734a1ec.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2768	TCGA-66-2768-01A	Primary Tumor
+05836a21-86bf-462e-a629-05b80e332980	3d82dd3a-3603-41f9-96c0-e5d839db48d2.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-63-A5M9	TCGA-63-A5M9-01A	Primary Tumor
+3a8e06c5-7331-4b7f-a4aa-443862a75194	a7a24ac0-69a4-49c1-9463-b219a1ac17b8.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2703	TCGA-60-2703-01A	Primary Tumor
+a8c0aa15-1f5a-43fd-afcb-94e9fe86f7b2	2029581a-86cd-4ea2-82d4-0e085ae1f8f9.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-63-6202	TCGA-63-6202-01A	Primary Tumor
+560332ef-6eaa-491b-9d9f-ed29adee16d8	dc55b4b9-f3e6-4772-8421-26b04b750716.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8136	TCGA-77-8136-01A	Primary Tumor
+1f79cc88-2182-4d30-b487-a7a36c0baddd	74a0acc6-747d-4e2e-9cbf-c5b9c8cba8d7.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-98-8020	TCGA-98-8020-01A	Primary Tumor
+a7cae63c-b097-41ca-84fd-847a6d338899	7d9b1591-42eb-4d02-978e-0a194d498d6c.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-21-1070	TCGA-21-1070-01A	Primary Tumor
+cffc15d9-5641-4e22-943a-7d73a9466754	6b1c72e9-ed03-4c02-91f6-cda07c1f9e49.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-96-7544	TCGA-96-7544-01A	Primary Tumor
+d44d06f6-62b4-4330-9cd7-72a9e6b13e4a	7f999574-ea25-4640-be46-a5a88652bbbb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-A4JC	TCGA-85-A4JC-01A	Primary Tumor
+8dc79cdd-6b17-4744-a9a7-7b12e66999ff	83fea6d3-5ae6-48e7-9d09-113dcb39e22b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2782	TCGA-66-2782-01A	Primary Tumor
+1b6720b3-d16c-47d3-b372-dbbe40042b67	f2b50fcc-e5ec-4328-a932-2c06476760cf.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-5670	TCGA-43-5670-01A	Primary Tumor
+83e69d78-e67e-4b87-a444-3631585bce89	80980cc8-30b5-4668-a7ea-e3cca5a44e2f.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-6545	TCGA-56-6545-01A	Primary Tumor
+522327ca-79dc-44ba-9579-f03c3aa183c0	836818ee-32d4-4dad-961a-f38fafb20cc3.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-8276	TCGA-85-8276-01A	Primary Tumor
+a55d88ec-eb25-4990-82e7-e40cde236c3a	feb82116-b8c0-41e6-9afd-43cc6f6c0d62.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2763	TCGA-66-2763-01A	Primary Tumor
+fc61a0c0-4794-41e9-8571-7cef62731a6e	b0546d5c-875e-4086-9155-7ac41b92ba52.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-37-4133	TCGA-37-4133-01A	Primary Tumor
+17d600ad-9043-4280-bf76-25b20e58c08f	fe819208-ff01-49e0-a04a-5fb467351305.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-33-4582	TCGA-33-4582-01A	Primary Tumor
+66d472b3-199d-44d7-bb3c-6dd4f3263796	371bc335-a476-45f3-8195-55a5beac745d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-6843	TCGA-77-6843-01A	Primary Tumor
+a8cfcea7-b428-4dfa-9054-96d4cfd3eedb	13c9e1cd-0deb-44a2-9e7b-21210568c0cb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-98-A53H	TCGA-98-A53H-01A	Primary Tumor
+8068dec6-f51f-495b-b9a2-2b7628e3f438	5f8fb01b-6f79-400b-a3e4-3a775bc64aa5.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-94-8490	TCGA-94-8490-01A	Primary Tumor
+611b1313-27a4-4414-995a-b8c198048940	7f44e5e1-cea0-4cf9-9a2c-972a3f8d6038.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-39-5019	TCGA-39-5019-01A	Primary Tumor
+faab0ce3-6709-4ca9-be8a-9307dc161082	1da49483-5cea-4652-8357-e8fba5f77268.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-66-2794	TCGA-66-2794-01A	Primary Tumor
+d7c588ad-ba23-4399-8d08-b4028a7bed48	18f0b34c-d2f6-4746-b450-8ed3def9e334.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-6773	TCGA-43-6773-11A	Solid Tissue Normal
+b0dadf35-e16a-4783-8b04-f65fca4477c6	f67f1243-3126-4dea-98bf-186ad3b3e164.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7731	TCGA-56-7731-11A	Solid Tissue Normal
+86c23dc5-ce12-4ef1-b874-7f6119c76dc1	95aa5fa8-2945-4ffa-a38f-ee4a6326babb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8007	TCGA-77-8007-11A	Solid Tissue Normal
+c7ca507a-e532-4e59-b0e3-59aa9a522511	c81a6334-9098-4add-8e64-186606676c93.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-8201	TCGA-56-8201-11A	Solid Tissue Normal
+4191f855-52c0-441e-b566-812c6dd5ca65	fb6c4eb2-06bf-44ce-9b90-a669c793ae8b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7222	TCGA-56-7222-11A	Solid Tissue Normal
+3209225e-89f5-4dba-9bd8-f2df19ea6588	ba92f745-0592-4aca-9924-533486427c1b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-90-6837	TCGA-90-6837-11A	Solid Tissue Normal
+9ed7cfc5-da88-486c-a2c9-4ee7dae02fb9	1ea50a97-2adb-4252-aec8-2fe94d49b0a0.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-8623	TCGA-56-8623-11A	Solid Tissue Normal
+946e5313-5d65-49e3-ae63-62f3b29dd167	e00ee63c-c3d2-4233-8d54-bce01194b003.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-92-7340	TCGA-92-7340-11A	Solid Tissue Normal
+f69c5790-cd9d-4bc2-bc72-ffcf0a0068e8	153cb1b1-774c-4e65-b209-6a462b68cfc5.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-6143	TCGA-43-6143-11A	Solid Tissue Normal
+b26599ce-2389-4f0a-94f5-8486e47402f2	779250be-012c-4e5b-9b4e-258192607c4b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-39-5040	TCGA-39-5040-11A	Solid Tissue Normal
+e0e94378-78de-499e-a7f8-de6dcb252902	fa0419a3-7d4d-40fe-aceb-3d70965387e3.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5471	TCGA-22-5471-11A	Solid Tissue Normal
+cffb54e6-03d9-46d1-88a9-5d829aea15e6	8ff70f54-8735-40b1-a556-b96e8889cc0f.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5478	TCGA-22-5478-11A	Solid Tissue Normal
+edfb6fac-0382-4c24-81c2-649713c899e5	dd5a0067-d77e-40e7-a42f-064d7cfab3d6.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5489	TCGA-22-5489-11A	Solid Tissue Normal
+8cf4c669-ab49-41a6-b493-2b95e0e5dc15	5e010a9a-7f65-434b-ae4c-43948461187c.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5482	TCGA-22-5482-11A	Solid Tissue Normal
+d588cd9f-718d-4e00-9cbf-4ebc10cf275e	fc2fcb44-c5cb-4b1a-822d-552f32866fe3.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7730	TCGA-56-7730-11A	Solid Tissue Normal
+931e5b4c-523c-438d-804c-b2d18e8b6d6e	c3479764-edbf-49ba-afd0-9d7981b715c0.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-34-7107	TCGA-34-7107-11A	Solid Tissue Normal
+c8d03a71-5e51-4a39-8652-0ef862453cb0	652ecf99-1af9-41fc-b0a5-d3e5c07a7b5d.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-60-2709	TCGA-60-2709-11A	Solid Tissue Normal
+0d0bc489-f624-48e0-80cc-06498e4efc03	42646557-ce36-4faf-9340-ceb3fc0e969a.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7582	TCGA-56-7582-11A	Solid Tissue Normal
+0eb11f5d-dafc-45aa-bc94-b9f57a0836fb	93b1f14d-cdb5-474f-aeda-b20e3ea8f2fb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-8083	TCGA-56-8083-11A	Solid Tissue Normal
+0dcd932f-b9e7-42dc-b6f5-af199defe29f	4bc9290d-823f-4c98-8cca-f683588cbd49.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-85-7710	TCGA-85-7710-11A	Solid Tissue Normal
+e7140700-7f43-463d-92a3-787b88365303	edafd326-8c3c-4ae5-8617-e1592db868eb.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-5670	TCGA-43-5670-11A	Solid Tissue Normal
+515d4301-f912-4617-bdd1-6fda9e268c56	ab23d90a-ed58-4aec-b9bc-ba14d833ae68.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7823	TCGA-56-7823-11A	Solid Tissue Normal
+547fb1a8-ca5a-4a2f-bbef-ed6b57c6119a	da7e58d4-34e4-4809-95d1-becd983d1da4.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7142	TCGA-77-7142-11A	Solid Tissue Normal
+fc5cfde3-5f25-419a-a44a-308b6d31752b	7fd4d7c0-5dd2-4ce8-a1ec-3f0271bf04d2.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-4593	TCGA-22-4593-11A	Solid Tissue Normal
+8762eacd-dd02-4f83-a202-af8d5057a8df	cf655a50-5d76-4625-a3d1-12643de2c2b3.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7338	TCGA-77-7338-11A	Solid Tissue Normal
+b91b8950-5f5a-4f5a-9bb1-3ccdb3d4a7ec	5cf4c664-9f98-4e1e-a623-317660ee7f6a.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-8008	TCGA-77-8008-11A	Solid Tissue Normal
+4a109268-236f-4bcb-8224-fa841859a5e6	cde3831b-6eaf-4404-8357-f700f77f94e3.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-7657	TCGA-43-7657-11A	Solid Tissue Normal
+c5122166-e673-4315-abaa-121b2da44930	c1edcfd5-32b1-40fd-b5e9-bbc4ab00625c.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-8082	TCGA-56-8082-11A	Solid Tissue Normal
+94a2c73d-9a28-40da-af95-79de2371c35e	cd961e28-af13-4780-a068-35ff5548a3d2.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5472	TCGA-22-5472-11A	Solid Tissue Normal
+2de65f22-7c45-4909-a175-34e5a4570a19	e6862c5b-459e-40b5-9213-5fd7e1448be1.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7138	TCGA-77-7138-11A	Solid Tissue Normal
+29dec939-10b2-4455-8385-8f1184187a41	f490e7cb-8d67-47af-85c0-5dd5c7139efd.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7579	TCGA-56-7579-11A	Solid Tissue Normal
+582343df-3acb-41e5-8940-db6615f634e1	dde579e0-d792-456b-a66b-f7ec72969680.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-58-8386	TCGA-58-8386-11A	Solid Tissue Normal
+8e371293-9e63-47af-bd5a-e78fb74bd5c7	a75a9fcd-cc1d-4ef6-a213-dd468217ad5b.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7337	TCGA-77-7337-11A	Solid Tissue Normal
+5d98c562-3b6c-458d-bc65-079e5d19137b	fa77c95f-1ec9-439f-81bd-7ec7a62ecbe0.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-34-8454	TCGA-34-8454-11A	Solid Tissue Normal
+6220b8a9-3a40-4aba-ba57-b5d76ba3e021	cfb70595-7191-40cc-802d-dad9cb578b1a.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-56-7580	TCGA-56-7580-11A	Solid Tissue Normal
+3fba142f-1099-4b41-a8aa-b04043911424	4f49b63a-11d8-46f2-b359-fddc8b911a60.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-90-7767	TCGA-90-7767-11A	Solid Tissue Normal
+087b7930-d706-4ff0-bf37-ef30b40f525f	045e2535-012c-4cec-b386-9d6f62b91829.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-51-4079	TCGA-51-4079-11A	Solid Tissue Normal
+dd16c5aa-2405-4a34-86b7-6edbc3ee460e	9ccbd5f1-d73c-4e77-b876-4cca362218b7.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-77-7335	TCGA-77-7335-11A	Solid Tissue Normal
+61f87fd7-2eb1-45da-bad8-747dd19e95a8	03611591-08da-45c5-bfe5-ce511a2cc341.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5481	TCGA-22-5481-11A	Solid Tissue Normal
+bee45f00-581a-4a56-a59e-f6b4ba9e0e54	378d4b61-b44c-4aed-86e9-be63913aaf66.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-4609	TCGA-22-4609-11A	Solid Tissue Normal
+2a2f0f28-68dc-4ef8-91de-a051c48013fa	306df79f-3f2c-4631-b527-7d79336bc573.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-7658	TCGA-43-7658-11A	Solid Tissue Normal
+818d01aa-eb94-4461-8586-2d1b7c8ef60d	80dfa38c-5905-4a58-bb0c-246dccc2bbc7.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-43-6771	TCGA-43-6771-11A	Solid Tissue Normal
+a8485548-4791-4e86-95e5-ec22c0fa91c7	631f56be-6fde-4e67-8ce1-83f01325d489.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-51-4081	TCGA-51-4081-11A	Solid Tissue Normal
+9a54baa6-12b6-4b1e-949e-e57810db7ac8	29b6e624-9539-4abc-b80f-b5c7b65948fc.htseq.counts.gz	Transcriptome Profiling	Gene Expression Quantification	TCGA-LUSC	TCGA-22-5483	TCGA-22-5483-11A	Solid Tissue Normal
