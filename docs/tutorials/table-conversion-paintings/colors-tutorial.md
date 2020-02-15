@@ -8,22 +8,19 @@ As an example of how to convert and analyze data from other sources, we will fol
 
 ![table](screenshots/colors-data.png)
 
-First, we will create a directory to store the data and a directory to store the results through the following commands
+First, we will create a directory to store the data and a directory to store the results through the following commands:
 
 ```
 mkdir data
 mkdir results
 ```
 
-The tsv format data and sample metadata can be downloaded following the commands
+The tsv format data and sample metadata can be downloaded following the commands:
 
-```
-wget https://github.com/biocore/qurro/tree/master/docs/tutorials/moving-pictures/data/colour-composition-data.tsv
-wget https://github.com/biocore/qurro/tree/master/docs/tutorials/moving-pictures/data/colour-composition-metadata.tsv
-```
+- `colour-composition-data` | [download](https://github.com/biocore/qurro/tree/master/docs/tutorials/table-conversion-paintings/data/colour-composition-data.tsv) 
+- `colour-composition-metadata.tsv` | [download](https://docs.qiime2.org/2019.4/data/tutorials/table-conversion-paintings/table.qza) 
 
-
-From the compositional table of color proportions in the tsv format, we will first convert to biom format through the following command
+From the compositional table of color proportions in the tsv format, we will first convert to biom format through the following command:
 
 ```
 biom convert \
@@ -32,7 +29,7 @@ biom convert \
 --to-json
 ```
 
-If we would like to use QIIME2 to analyze the data we can then run the following *optional* command
+If we would like to use QIIME2 to analyze the data we can then run the following *optional* command:
 
 ```
 qiime tools import\
@@ -63,7 +60,8 @@ qiime deicode rpca\
 --o-distance-matrix results/rpca-distance.qza
 ```
 
-Next to visualize the ordination we can use [EMPeror](https://biocore.github.io/emperor/). ```Note: this step is available in QIIME2 only. ```
+Next to visualize the ordination we can use [EMPeror](https://biocore.github.io/emperor/):
+```Note: this step is available in QIIME2 only. ```
 
 *with QIIME2*
 ```
@@ -77,7 +75,7 @@ The results of the biplot produced by DEICODE match the example in the original 
 
 ![biplot](screenshots/color-biplot.png)
 
-We can explore the log-ratios based on the axis loadings from the biplot using Qurro through the following command
+We can explore the log-ratios based on the axis loadings from the biplot using Qurro through the following command:
 
 *with standalone*
 ```
