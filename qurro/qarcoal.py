@@ -80,8 +80,9 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
         raise ValueError(
             "No samples contain both numerator and denominator features!"
         )
-    tax_num_df = tax_num_df[samp_to_keep]
-    tax_denom_df = tax_denom_df[samp_to_keep]
+
+    tax_num_df = tax_num_df[samp_to_keep].sparse.to_dense()
+    tax_denom_df = tax_denom_df[samp_to_keep].sparse.to_dense()
     return tax_num_df, tax_denom_df
 
 

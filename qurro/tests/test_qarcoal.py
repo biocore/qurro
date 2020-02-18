@@ -263,7 +263,9 @@ class TestIrregularData:
         sample_order = ["S{}".format(i) for i in range(5)]
 
         table_num_taxon_filt = pd.DataFrame(table.loc[num_features])
+        table_num_taxon_filt = table_num_taxon_filt.sparse.to_dense()
         table_denom_taxon_filt = pd.DataFrame(table.loc[denom_features])
+        table_denom_taxon_filt = table_denom_taxon_filt.sparse.to_dense()
 
         num_df_taxon_filt = num_df.loc[num_features]
         denom_df_taxon_filt = denom_df.loc[denom_features]
@@ -318,7 +320,10 @@ class TestIrregularData:
         denom_features = ["F0", "F1", "F2"]
         for col in ["Overlap1", "Overlap2"]:
             table_num_taxon_filt = pd.Series(table.loc[num_features][col])
+            table_num_taxon_filt = table_num_taxon_filt.sparse.to_dense()
             table_denom_taxon_filt = pd.Series(table.loc[denom_features][col])
+            table_denom_taxon_filt = table_denom_taxon_filt.sparse.to_dense()
+
             num_df_taxon_filt = num_df.loc[num_features][col]
             denom_df_taxon_filt = denom_df.loc[denom_features][col]
 
@@ -341,7 +346,10 @@ class TestIrregularData:
         num_features = ["F3", "F4", "F5"]
         denom_features = ["F0", "F1", "F2"]
         table_num_taxon_filt = pd.Series(table.loc[num_features]["Taxon"])
+        table_num_taxon_filt = table_num_taxon_filt.sparse.to_dense()
         table_denom_taxon_filt = pd.Series(table.loc[denom_features]["Taxon"])
+        table_denom_taxon_filt = table_denom_taxon_filt.sparse.to_dense()
+
         num_df_taxon_filt = num_df.loc[num_features]["Taxon"]
         denom_df_taxon_filt = denom_df.loc[denom_features]["Taxon"]
 
