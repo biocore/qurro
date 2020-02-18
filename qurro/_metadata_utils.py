@@ -128,10 +128,11 @@ def read_metadata_file_sane(md_file_loc):
     """Convenience function for reading metadata non-intrusively.
 
        Basically, this just calls read_metadata_file() (also defined in this
-       module), then calls replace_nan() on that, then returns the result.
+       module), then calls replace_nan() on that (note: replacing NaNs with ""
+       instead of None), then returns the result.
 
        If you're just looking in this module for an easy "read my metadata"
        function, you should use this function instead of read_metadata_file()
        in most cases.
     """
-    return replace_nan(read_metadata_file(md_file_loc))
+    return replace_nan(read_metadata_file(md_file_loc), "")
