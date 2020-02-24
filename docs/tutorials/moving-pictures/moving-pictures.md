@@ -133,7 +133,7 @@ As a silly example, let's say a new order is discovered and named _Fusobacterial
 
 In practice, we can account for this by changing the __search type__ (currently set to `contains the text`) options in Qurro. The `contains the separated text fragment(s)` setting will split up each feature's ID or metadata field at every occurrence of whitespace, commas, or semicolons, and then only search against perfect matches of each of those "fragments". This option is useful for searching against matches with taxonomic classifications -- it would protect us against our hypothetical `o__Fusobacteriales2` scenario.
 
-(This sort of problem is also observable in practice when, for example, the features being investigated include Viruses in addition to Bacteria: there are plenty of _Staphylococcus_ species and plenty of _Staphylococcus_ phages, and a basic text search for just `Staphylococcus` will give you both. Check out a Qurro visualization of the [Byrd demo dataset](https://biocore.github.io/qurro/demos/byrd/index.html) for an example of this.) 
+(This sort of problem is also observable in practice when, for example, the features being investigated include Viruses in addition to Bacteria: there are plenty of _Staphylococcus_ species and plenty of _Staphylococcus_ phages, and a basic text search for just `Staphylococcus` will give you both. Check out a Qurro visualization of the [Byrd demo dataset](https://biocore.github.io/qurro/demos/byrd/index.html) for an example of this.)
 
 ### Customizing the sample plot
 

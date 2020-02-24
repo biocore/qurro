@@ -79,7 +79,6 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 
 ```
-pip install numpy
 pip install qurro
 ```
 
