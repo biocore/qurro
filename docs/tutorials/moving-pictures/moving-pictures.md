@@ -16,6 +16,7 @@ In either case, both of these flavors of "feature rankings" can be interpreted a
 
 <div align="center">
 <img src="https://github.com/mortonjt/probable-bug-bytes/raw/master/images/microbe_fold_change_11252019.png" alt="Feature rankings in an example dataset. Image c/o Jamie Morton." />
+
 <i>Feature rankings in an example dataset. Figure c/o <a href="https://mortonjt.github.io/probable-bug-bytes/probable-bug-bytes/differential-abundance/">Jamie Morton</a>.</i>
 </div>
 
