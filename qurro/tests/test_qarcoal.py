@@ -28,6 +28,27 @@ class TestTypes(TestPluginBase):
         )
 
 
+def _check_dataframe_equality(df1, df2):
+    """Helper function to test whether two dataframes are equal.
+
+    We are using this function instead of the inbuilt testing of dataframes
+    to avoid any issues with sparse structures.
+    """
+    assert df1.shape == df2.shape
+
+    # going to order columns and indices first
+    df1 = df1[sorted(df1.columns)]
+    df2 = df2[sorted(df2.columns)]
+
+    df1 = df1.reindex(sorted(df1.index))
+    df2 = df2.reindex(sorted(df2.index))
+
+    assert list(df1.index) == list(df2.index)
+    for col1, col2 in zip(df1.columns, df2.columns):
+        assert col1 == col2
+        np.testing.assert_equal(df1[col1].values, df2[col1].values)
+
+
 @pytest.fixture(scope="module")
 def get_mp_data():
     biom_url = os.path.join(MP_URL, "feature-table.biom")
@@ -276,8 +297,13 @@ class TestIrregularData:
         denom_df_taxon_filt = denom_df_taxon_filt[sample_order]
 
         # test that num/denom df accurately extract values from table
-        assert table_num_taxon_filt.equals(num_df_taxon_filt)
-        assert table_denom_taxon_filt.equals(denom_df_taxon_filt)
+        _check_dataframe_equality(
+            table_num_taxon_filt, num_df_taxon_filt,
+        )
+
+        _check_dataframe_equality(
+            table_denom_taxon_filt, denom_df_taxon_filt,
+        )
 
     def test_taxonomy_missing_features(self, get_testing_data):
         """Taxonomy file missing features that are present in feature table"""
@@ -316,16 +342,22 @@ class TestIrregularData:
 
         num_features = ["F3", "F4", "F5"]
         denom_features = ["F0", "F1", "F2"]
-        for col in ["Overlap1", "Overlap2"]:
-            table_num_taxon_filt = pd.Series(table.loc[num_features][col])
-            table_denom_taxon_filt = pd.Series(table.loc[denom_features][col])
-            num_df_taxon_filt = num_df.loc[num_features][col]
-            denom_df_taxon_filt = denom_df.loc[denom_features][col]
 
-            # test that num/denom df accurately extract table values for
-            #  Overlap1 and Overlap2
-            assert table_num_taxon_filt.equals(num_df_taxon_filt)
-            assert table_denom_taxon_filt.equals(denom_df_taxon_filt)
+        table_num_taxon_filt = table.loc[num_features]
+        table_denom_taxon_filt = table.loc[denom_features]
+
+        num_df_taxon_filt = num_df.loc[num_features]
+        denom_df_taxon_filt = denom_df.loc[denom_features]
+
+        # test that num/denom df accurately extract table values for
+        # Overlap1 and Overlap2
+        _check_dataframe_equality(
+            table_num_taxon_filt, num_df_taxon_filt,
+        )
+
+        _check_dataframe_equality(
+            table_denom_taxon_filt, denom_df_taxon_filt,
+        )
 
     def test_taxon_as_sample_name(self, get_testing_data):
         """Feature table has sample called Taxon"""
@@ -340,13 +372,20 @@ class TestIrregularData:
         # test that num/denom df accurately extract table values for Taxon
         num_features = ["F3", "F4", "F5"]
         denom_features = ["F0", "F1", "F2"]
-        table_num_taxon_filt = pd.Series(table.loc[num_features]["Taxon"])
-        table_denom_taxon_filt = pd.Series(table.loc[denom_features]["Taxon"])
-        num_df_taxon_filt = num_df.loc[num_features]["Taxon"]
-        denom_df_taxon_filt = denom_df.loc[denom_features]["Taxon"]
 
-        assert table_num_taxon_filt.equals(num_df_taxon_filt)
-        assert table_denom_taxon_filt.equals(denom_df_taxon_filt)
+        table_num_taxon_filt = table.loc[num_features]
+        table_denom_taxon_filt = table.loc[denom_features]
+
+        num_df_taxon_filt = num_df.loc[num_features]
+        denom_df_taxon_filt = denom_df.loc[denom_features]
+
+        _check_dataframe_equality(
+            num_df_taxon_filt, table_num_taxon_filt,
+        )
+
+        _check_dataframe_equality(
+            denom_df_taxon_filt, table_denom_taxon_filt,
+        )
 
     def test_large_numbers(self):
         """Test large numbers on which Qurro fails.
