@@ -35,9 +35,7 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     # this is done here as well as later on based on samples w/o
     # matching features because of some problems with filtering
     # introducing NAs
-    feat_table_copy = feat_table.loc[
-        :, (feat_table != 0).any(axis=0)
-    ]
+    feat_table_copy = feat_table.loc[:, (feat_table != 0).any(axis=0)]
 
     # need to keep Taxon temporarily to match up with feature table
     # can immediately discard non-Taxon columns
