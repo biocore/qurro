@@ -79,10 +79,11 @@ If you've completed the DEICODE tutorial already, you should already have these 
 ### 2.1. Looking at the biplot
 
 DEICODE produces a biplot using Robust Aitchison PCA. As mentioned above, the "feature rankings" we're going to look at here are the feature loadings in this biplot.
-(The biplot's data is contained in the `ordination.qza` artifact produced by DEICODE and is
-visualized in the `biplot.qzv` visualization produced by Emperor.)
+(Just to be clear, the actual data describing the biplot -- the sample and feature
+loadings -- are contained in the `ordination.qza` artifact that DEICODE produces;
+a *visualization* of this data is contained in `biplot.qzv`, a visualization produced by Emperor.)
 
-(If you'd like to learn about how DEICODE generates a biplot, check out [Martino et al. 2019.](https://msystems.asm.org/content/4/1/e00016-19))
+(If you'd like to learn about how DEICODE generates a biplot, check out [Martino et al. 2019](https://msystems.asm.org/content/4/1/e00016-19).)
 
 When using Qurro to look at DEICODE output, it makes sense to look at both the
 biplot and at the Qurro visualization. If we see a pattern in the biplot (e.g.
@@ -90,8 +91,6 @@ biplot and at the Qurro visualization. If we see a pattern in the biplot (e.g.
 to be separated by this metadata field"), then we can use that insight when
 looking for differentially abundant features in Qurro. (And if you _don't_ observe
 these sorts of patterns, that can still be interesting as well!)
-
-
 
 So let's [open up `biplot.qzv` on view.qiime2.org (you can just click here)](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fraw.githubusercontent.com%2Fbiocore%2Fqurro%2Fmaster%2Fdocs%2Ftutorials%2Fmoving-pictures%2Fdata%2Fbiplot.qzv):
 
