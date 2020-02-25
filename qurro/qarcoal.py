@@ -31,11 +31,15 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
         denom_df: pd.DataFrame of denominator features x samples
     """
 
-    feat_table = feat_table.copy()
-    feat_table = feat_table.astype(pd.SparseDtype("float", fill_value=0))
+    feat_table_copy = feat_table.copy()
 
     # drop samples with total 0 features
-    feat_table = feat_table.loc[:, (feat_table != 0).any(axis=0)]
+    # this is done here as well as later on based on samples w/o
+    # matching features because of some problems with filtering
+    # introducing NAs
+    feat_table_copy = feat_table_copy.loc[
+        :, (feat_table_copy != 0).any(axis=0)
+    ]
 
     # need to keep Taxon temporarily to match up with feature table
     # can immediately discard non-Taxon columns
@@ -44,7 +48,12 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
 
     # retain only features that are in both feature table and taxonomy
     # rsuffix provided in unlikely case that a sample is called Taxon
-    taxonomy_joined_df = taxonomy.join(feat_table, how="inner", rsuffix="_q")
+    taxonomy_joined_df = taxonomy.join(
+        feat_table_copy,
+        how="inner",
+        rsuffix="_q"
+    )
+
     num_indices = taxonomy_joined_df["Taxon"].str.contains(num_string)
     denom_indices = taxonomy_joined_df["Taxon"].str.contains(denom_string)
 
@@ -85,10 +94,8 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
             "No samples contain both numerator and denominator features!"
         )
 
-    # convert to dense to avoid issues with sparse data structures
-    # because these are filtered, sparsity shouldn't be a concern anyway
-    tax_num_df = tax_num_df[samp_to_keep].sparse.to_dense()
-    tax_denom_df = tax_denom_df[samp_to_keep].sparse.to_dense()
+    tax_num_df = tax_num_df[samp_to_keep]
+    tax_denom_df = tax_denom_df[samp_to_keep]
     return tax_num_df, tax_denom_df
 
 
