@@ -31,6 +31,12 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
         denom_df: pd.DataFrame of denominator features x samples
     """
 
+    # drop samples with total 0 features
+    # this is done here as well as later on based on samples w/o
+    # matching features because of some problems with filtering
+    # introducing NAs
+    feat_table_copy = feat_table.loc[:, (feat_table != 0).any(axis=0)]
+
     # need to keep Taxon temporarily to match up with feature table
     # can immediately discard non-Taxon columns
     taxonomy = taxonomy.copy()
@@ -38,14 +44,15 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
 
     # retain only features that are in both feature table and taxonomy
     # rsuffix provided in unlikely case that a sample is called Taxon
-    taxonomy_joined_df = taxonomy.join(feat_table, how="inner", rsuffix="_q")
+    taxonomy_joined_df = taxonomy.join(
+        feat_table_copy, how="inner", rsuffix="_q"
+    )
 
-    tax_num_df = taxonomy_joined_df[
-        taxonomy_joined_df["Taxon"].str.contains(num_string)
-    ]
-    tax_denom_df = taxonomy_joined_df[
-        taxonomy_joined_df["Taxon"].str.contains(denom_string)
-    ]
+    num_indices = taxonomy_joined_df["Taxon"].str.contains(num_string)
+    denom_indices = taxonomy_joined_df["Taxon"].str.contains(denom_string)
+
+    tax_num_df = taxonomy_joined_df.loc[num_indices]
+    tax_denom_df = taxonomy_joined_df.loc[denom_indices]
 
     # want to drop Taxon column because we want the dfs to be only numeric
     tax_num_df.drop(columns="Taxon", inplace=True)
@@ -76,10 +83,12 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     samp_to_keep = set(tax_num_df.columns).intersection(
         set(tax_denom_df.columns)
     )
+
     if not samp_to_keep:
         raise ValueError(
             "No samples contain both numerator and denominator features!"
         )
+
     tax_num_df = tax_num_df[samp_to_keep]
     tax_denom_df = tax_denom_df[samp_to_keep]
     return tax_num_df, tax_denom_df
