@@ -30,12 +30,6 @@ You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 pip install qurro
 ```
 
-Note that
-
-```
-
-```
-
 **Note 1:** A python version of at least 3.5 is required to use Qurro. (You can check this by running `conda info | grep python`; if you're in the latest QIIME 2 conda environment, you should already be using a good enough version of Python.)
 
 **Note 2:** We recommend using the latest version of pip, to update: `pip install -U pip`.
