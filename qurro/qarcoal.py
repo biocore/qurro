@@ -49,9 +49,7 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     # retain only features that are in both feature table and taxonomy
     # rsuffix provided in unlikely case that a sample is called Taxon
     taxonomy_joined_df = taxonomy.join(
-        feat_table_copy,
-        how="inner",
-        rsuffix="_q"
+        feat_table_copy, how="inner", rsuffix="_q"
     )
 
     num_indices = taxonomy_joined_df["Taxon"].str.contains(num_string)

@@ -298,13 +298,11 @@ class TestIrregularData:
 
         # test that num/denom df accurately extract values from table
         _check_dataframe_equality(
-            table_num_taxon_filt,
-            num_df_taxon_filt,
+            table_num_taxon_filt, num_df_taxon_filt,
         )
 
         _check_dataframe_equality(
-            table_denom_taxon_filt,
-            denom_df_taxon_filt,
+            table_denom_taxon_filt, denom_df_taxon_filt,
         )
 
     def test_taxonomy_missing_features(self, get_testing_data):
@@ -354,13 +352,11 @@ class TestIrregularData:
         # test that num/denom df accurately extract table values for
         # Overlap1 and Overlap2
         _check_dataframe_equality(
-            table_num_taxon_filt,
-            num_df_taxon_filt,
+            table_num_taxon_filt, num_df_taxon_filt,
         )
 
         _check_dataframe_equality(
-            table_denom_taxon_filt,
-            denom_df_taxon_filt,
+            table_denom_taxon_filt, denom_df_taxon_filt,
         )
 
     def test_taxon_as_sample_name(self, get_testing_data):
@@ -384,13 +380,11 @@ class TestIrregularData:
         denom_df_taxon_filt = denom_df.loc[denom_features]
 
         _check_dataframe_equality(
-            num_df_taxon_filt,
-            table_num_taxon_filt,
+            num_df_taxon_filt, table_num_taxon_filt,
         )
 
         _check_dataframe_equality(
-            denom_df_taxon_filt,
-            table_denom_taxon_filt,
+            denom_df_taxon_filt, table_denom_taxon_filt,
         )
 
     def test_large_numbers(self):
