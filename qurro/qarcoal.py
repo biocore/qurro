@@ -83,6 +83,7 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     samp_to_keep = set(tax_num_df.columns).intersection(
         set(tax_denom_df.columns)
     )
+
     if not samp_to_keep:
         raise ValueError(
             "No samples contain both numerator and denominator features!"
