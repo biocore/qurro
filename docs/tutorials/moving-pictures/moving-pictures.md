@@ -30,9 +30,15 @@ You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 pip install qurro
 ```
 
+Note that
+
+```
+
+```
+
 **Note 1:** A python version of at least 3.5 is required to use Qurro. (You can check this by running `conda info | grep python`; if you're in the latest QIIME 2 conda environment, you should already be using a good enough version of Python.)
 
-**Note 2:** If you don't already have NumPy installed, you'll need to install it before installing Qurro! (However, if you're already in the latest QIIME 2 conda environment, you shouldn't need to worry about that.)
+**Note 2:** We recommend using the latest version of pip, to update: `pip install -U pip`.
 
 Once you've installed Qurro, let's get QIIME 2 to recognize it. Run the following command in a terminal:
 
