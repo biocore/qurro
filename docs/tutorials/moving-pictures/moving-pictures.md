@@ -38,7 +38,7 @@ __Qurro is an interactive web application for visualizing feature rankings and l
 
 In this tutorial, we'll visualize feature loadings in a biplot produced by DEICODE for the "Moving Pictures" dataset. We'll discuss various ways of using these feature loadings as a starting point for investigating log-ratios in a Qurro visualization.
 
-**This tutorial will pick up from where the [DEICODE moving pictures tutorial](https://library.qiime2.org/plugins/deicode/19/) leaves off.** Don't worry if you haven't followed that tutorial yet; we'll provide all the files needed here.
+**This tutorial will pick up from where the [DEICODE moving pictures tutorial](https://github.com/biocore/DEICODE/blob/master/ipynb/tutorials/moving-pictures.ipynb) leaves off.** Don't worry if you haven't followed that tutorial yet; we'll provide all the files needed here.
 
 ## 1. Installing Qurro
 
@@ -301,7 +301,7 @@ Other work has been done on the problem of figuring out how to best select featu
 
 ## 8. Acknowledgements
 
-This tutorial was based on the [DEICODE](https://library.qiime2.org/plugins/deicode/19/) and [QIIME 2](https://docs.qiime2.org/2019.10/tutorials/moving-pictures/) moving pictures tutorials.
+This tutorial was based on the [DEICODE](https://github.com/biocore/DEICODE/blob/master/ipynb/tutorials/moving-pictures.ipynb) and [QIIME 2](https://docs.qiime2.org/2019.10/tutorials/moving-pictures/) moving pictures tutorials.
 
 ## 9. Other Information
 
