@@ -79,8 +79,13 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 
 ```
-pip install numpy
 pip install qurro
+```
+
+Note that we recommend using the latest version of pip, to update:
+
+```
+pip install -U pip
 ```
 
 A python version of at least 3.5 is required to use Qurro.

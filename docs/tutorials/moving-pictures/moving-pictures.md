@@ -50,7 +50,9 @@ You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
 pip install qurro
 ```
 
-(If this gives you trouble, you might need to run `pip install cython` first. However, you shouldn't need to worry about this if you're already in a QIIME 2 environment.)
+**Note 1:** A python version of at least 3.5 is required to use Qurro. (You can check this by running `conda info | grep python`; if you're in the latest QIIME 2 conda environment, you should already be using a good enough version of Python.)
+
+**Note 2:** If the `pip install qurro` command gave you trouble, try to upgrade pip using `pip install -U pip` and then try rerunning the command -- this should resolve any dependency problems. However, as with the above note, you shouldn't need to worry about this if you're already in a QIIME 2 environment.
 
 Once you've installed Qurro, let's get QIIME 2 to recognize it. Run the following command in a terminal:
 
