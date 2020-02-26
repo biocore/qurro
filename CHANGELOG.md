@@ -5,6 +5,9 @@
 - Added tooltips throughout the Qurro interface explaining what certain
   controls do. Just hover your mouse over one of the "?" icons to view the
   tooltips! ([#225](https://github.com/biocore/qurro/issues/225))
+  - Although this is a pretty common user-interface thing, our particular use
+    of this was inspired by [Bandage](https://rrwick.github.io/Bandage/)'s
+    similar tooltips.
 ### Backward-incompatible changes
 - Qurro now (explicitly) requires that a Python version of at least 3.5.3 is
   installed. (This is an increase from the previous 3.5 minimum.)
