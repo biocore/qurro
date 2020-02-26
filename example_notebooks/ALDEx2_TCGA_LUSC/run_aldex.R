@@ -9,13 +9,16 @@ feat.table <- read.csv(
 )
 
 sample.sheet <- read.csv(
-    "input/gdc_sample_sheet.2020-02-13.tsv",
+    "output/sample_metadata.tsv",
     sep="\t",
     stringsAsFactors=FALSE
 )
 
 sample.names <- as.vector(colnames(feat.table))
 
+# for this tutorial, we are going to run ALDEx2 on the sample type group
+# in this example there are two states: Primary Tumor and Solid Tissue Normal
+# between which we will be calculating ranks
 sample.types <- c()
 for (sample in sample.names){
     # R replaces hyphens in TCGA barcodes with dots, so we change back
