@@ -38,8 +38,16 @@
                         <label
                             class="input-group-text"
                             for="rankPlotColorScheme"
-                            >Color scheme</label
                         >
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="You can use this selection to change the colors of selected features in the rank plot."
+                            >
+                            </span>
+                            Color scheme
+                        </label>
                     </div>
                     <select id="rankPlotColorScheme" class="custom-select">
                         <!-- Just normal web colors, with the exception of
@@ -121,15 +129,29 @@
                     -->
                     <div class="input-group input-group-sm mb-1">
                         <div class="input-group-prepend">
-                            <label class="input-group-text" for="xAxisField"
-                                >x-axis field</label
-                            >
+                            <label class="input-group-text" for="xAxisField">
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="You can use this selection to change the sample metadata field used for the above plot's x-axis."
+                                >
+                                </span>
+                                x-axis field
+                            </label>
                         </div>
                         <select class="custom-select" id="xAxisField"> </select>
                         <div class="input-group-prepend">
-                            <label class="input-group-text" for="xAxisScale"
-                                >x-axis scale type</label
-                            >
+                            <label class="input-group-text" for="xAxisScale">
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="You can use this selection to adjust the scale type of the above plot's x-axis. If the sample metadata field you have selected right now is a numeric field (e.g. participant weight), you probably want a quantitative scale type; if it's an ordinal or nominal field (e.g. subject ID, sample body site), you probably want a categorical scale type."
+                                >
+                                </span>
+                                x-axis scale type
+                            </label>
                         </div>
                         <select class="custom-select" id="xAxisScale">
                             <option value="nominal">Categorical</option>
@@ -394,6 +416,13 @@
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="autoSelectNumber">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Autoselection is a quick way of taking the log-ratio of the highest and lowest ranked features in the rank plot."
+                            >
+                            </span>
                             Using the current ranking, select the top and bottom
                         </label>
                     </div>

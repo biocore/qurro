@@ -2,6 +2,9 @@
 
 ## Qurro 0.6.0 (TBD)
 ### Features added
+- Added tooltips throughout the Qurro interface explaining what certain
+  controls do. Just hover your mouse over one of the "?" icons to view the
+  tooltips! ([#225](https://github.com/biocore/qurro/issues/225))
 ### Backward-incompatible changes
 - Qurro now (explicitly) requires that a Python version of at least 3.5.3 is
   installed. (This is an increase from the previous 3.5 minimum.)
@@ -9,6 +12,7 @@
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
+- TODO: mention BIOM / pandas / Cython version / installation stuff
 
 ## Qurro 0.5.0 (December 17, 2019)
 ### Features added

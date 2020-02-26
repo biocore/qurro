@@ -157,6 +157,9 @@ licenses (each of which includes a respective copyright notice).
 - [DataTables](https://datatables.net/)
 - [RequireJS](https://requirejs.org/)
 - [Bootstrap](https://getbootstrap.com/docs/4.3/getting-started/introduction/)
+- [Bootstrap Icons](https://icons.getbootstrap.com/)
+  - We make use of the "Question fill" icon's SVG, as well as some example code
+    for embedding this or other icons in CSS.
 - [Popper.js](https://popper.js.org/) (included within the Bootstrap JS "bundle" file)
 
 The following software projects are required for Qurro's python code

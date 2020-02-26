@@ -188,6 +188,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 },
                 "onchange"
             );
+            // Enable tooltips for the questionmark <span>s
+            $(".questionmark").tooltip();
         }
 
         makeRankPlot(notFirstTime) {
