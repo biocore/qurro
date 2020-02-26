@@ -88,7 +88,7 @@ Note that we recommend using the latest version of pip, to update:
 pip install -U pip
 ```
 
-A python version of at least 3.5 is required to use Qurro.
+A python version of at least 3.5.3 is required to use Qurro.
 
 ### Temporary Caveat
 

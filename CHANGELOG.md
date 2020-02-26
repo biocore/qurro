@@ -1,5 +1,15 @@
 # Qurro changelog
 
+## Qurro 0.6.0 (TBD)
+### Features added
+### Backward-incompatible changes
+- Qurro now (explicitly) requires that a Python version of at least 3.5.3 is
+  installed. (This is an increase from the previous 3.5 minimum.)
+  ([#74](https://github.com/biocore/qurro/issues/74))
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+
 ## Qurro 0.5.0 (December 17, 2019)
 ### Features added
 - Added **Qarcoal**, a new command for Qurro's QIIME 2 plugin that computes

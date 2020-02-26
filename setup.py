@@ -94,5 +94,6 @@ setup(
         "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
-    python_requires=">=3.5",
+    # Fixes an Altair issue: see https://github.com/biocore/qurro/issues/74
+    python_requires=">=3.5.3",
 )
