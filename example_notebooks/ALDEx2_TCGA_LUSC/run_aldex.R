@@ -1,5 +1,4 @@
 library(ALDEx2)
-library(dplyr)
 
 feat.table <- read.csv(
     "output/TCGA_LUSC_expression_feature_table_filt.tsv",
@@ -35,13 +34,12 @@ aldex.results <- aldex(
     effec=TRUE,
     include.sample.summary=FALSE,
     denom="all",
-    verbose=TRUE,
+    verbose=TRUE
 )
 
 aldex.results$Gene <- row.names(aldex.results)
-aldex.results <- select(aldex.results, Gene, everything())
-
-feature.names <- aldex.results$Gene
+num.col = length(aldex.results)
+aldex.results <- aldex.results[,c("Gene", colnames(aldex.results)[1:num.col-1])]
 
 write.table(
     aldex.results,
