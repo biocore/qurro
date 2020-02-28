@@ -108,25 +108,25 @@ for context.
 
 ## Tutorials
 
-### "Moving Pictures" Tutorial
+### In-depth
+These tutorials are good places to start, depending on what sort of data and
+differential abundance results you have.
 
-In the style of the QIIME 2 and DEICODE moving pictures tutorials, there is a
-draft moving pictures tutorial (showing how to use Qurro within QIIME 2, and
-how to interact with the generated Qurro visualization) **available
-[here](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md).**
-This tutorial is still a work in progress, so feel free to contact us if you
-have any outstanding questions (or any suggestions for improving this
-tutorial).
+- ["Moving Pictures" tutorial](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md)
+  - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
+  - Qurro used through QIIME 2 or standalone?: QIIME 2
+- [Transcriptomics tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/ALDEx2_TCGA_LUSC/transcriptomic_example.ipynb)
+  - Feature rankings: [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html) differentials
+  - Qurro used through QIIME 2 or standalone?: Standalone
 
-### Running Qurro from the command line
+### Basic command-line tutorials
+These tutorials show examples of using Qurro in identical ways both inside and
+outside of QIIME 2.
 
-Examples of using Qurro (both inside and outside of QIIME 2) are
-available in Qurro's example Jupyter notebooks, which are located
-[here](https://github.com/biocore/qurro/tree/master/example_notebooks):
-- [**`deicode_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
-  demonstrates using [DEICODE](https://github.com/biocore/DEICODE) and then using Qurro to visualize DEICODE's output.
-- [**`songbird_example.ipynb`**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
-  demonstrates using [Songbird](https://github.com/biocore/songbird) and then using Qurro to visualize Songbird's output.
+- [Sleep Apnea tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
+  - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
+- [Red Sea tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
+  - Feature rankings: [Songbird](https://github.com/biocore/songbird/) differentials
 
 ## Qarcoal
 **Qarcoal** (pronounced "charcoal") is a new part of Qurro that lets you
