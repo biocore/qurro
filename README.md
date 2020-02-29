@@ -110,7 +110,7 @@ for context.
 
 ### In-depth
 These tutorials are good places to start, depending on what sort of data and
-differential abundance results you have.
+feature rankings you have.
 
 - ["Moving Pictures" tutorial](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md)
   - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
