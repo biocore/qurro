@@ -25,11 +25,20 @@
                 -->
                 <div class="input-group input-group-sm mb-1">
                     <div class="input-group-prepend">
-                        <label
-                            class="input-group-text"
-                            for="rankField"
-                            id="rankFieldLabel"
-                        ></label>
+                        <label class="input-group-text" for="rankField">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This dropdown changes the ranking used in the rank plot. This will adjust each feature's y-axis value, and re-sort the features in ascending order in the rank plot."
+                            >
+                            </span>
+                            <!-- will be filled with either "Differential" or
+                                 "Feature Loading", depending on the input
+                                 ranking type
+                            -->
+                            <span id="rankFieldLabel"></span>
+                        </label>
                     </div>
                     <select id="rankField" class="custom-select"> </select>
                 </div>
@@ -363,7 +372,7 @@
                             <label
                                 class="input-group-text"
                                 for="boxplotCheckbox"
-                                >
+                            >
                                 <span
                                     class="questionmark"
                                     data-toggle="tooltip"
