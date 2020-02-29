@@ -189,7 +189,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 "onchange"
             );
             // Enable tooltips for the questionmark <span>s
-            $(".questionmark").tooltip();
+            //
+            // The container body thing prevents visual glitches due to the
+            // tooltip elements being within input groups -- see
+            // https://stackoverflow.com/a/38058186/10730311.
+            $(".questionmark").tooltip({ container: "body" });
         }
 
         makeRankPlot(notFirstTime) {
