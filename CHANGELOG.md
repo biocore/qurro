@@ -12,6 +12,11 @@
 - Qurro now (explicitly) requires that a Python version of at least 3.5.3 is
   installed. (This is an increase from the previous 3.5 minimum.)
   ([#74](https://github.com/biocore/qurro/issues/74))
+- As a temporary measure, the version of Pandas required to install Qurro from
+  PyPI has been pinned to below version 1.
+  ([#258](https://github.com/biocore/qurro/issues/258))
+  - This isn't really "backwards incompatible" since trying to run Qurro with
+    Pandas 1.0.0 installed would break.
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
