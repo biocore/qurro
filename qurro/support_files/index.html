@@ -43,7 +43,7 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="You can use this selection to change the colors of selected features in the rank plot."
+                                title="This dropdown changes the colors of selected features in the rank plot."
                             >
                             </span>
                             Color scheme
@@ -80,9 +80,16 @@
                         class="form-control hackySpacerInput"
                     />
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="barSizeSlider"
-                            >Bar width</label
-                        >
+                        <label class="input-group-text" for="barSizeSlider">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This slider adjusts the width of each bar in the rank plot."
+                            >
+                            </span>
+                            Bar width
+                        </label>
                         <div class="input-group-text">
                             <input
                                 id="barSizeSlider"
@@ -94,9 +101,19 @@
                         </div>
                     </div>
                     <div class="input-group-append">
-                        <label class="input-group-text" for="fitBarSizeCheckbox"
-                            >Fit bar widths to a constant plot width?</label
+                        <label
+                            class="input-group-text"
+                            for="fitBarSizeCheckbox"
                         >
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="When checked, this scales the widths of bars in the rank plot so that the rank plot takes up a constant width (ignoring what the bar width slider is set to). This is useful for displaying rank plots with either a ton of features or a tiny amount of features."
+                            >
+                            </span>
+                            Fit bar widths to a constant plot width?
+                        </label>
                         <div class="input-group-text">
                             <input type="checkbox" id="fitBarSizeCheckbox" />
                         </div>
@@ -134,7 +151,7 @@
                                     class="questionmark"
                                     data-toggle="tooltip"
                                     data-placement="top"
-                                    title="You can use this selection to change the sample metadata field used for the above plot's x-axis."
+                                    title="This dropdown changes the sample metadata field used for the sample plot's x-axis."
                                 >
                                 </span>
                                 x-axis field
@@ -147,7 +164,7 @@
                                     class="questionmark"
                                     data-toggle="tooltip"
                                     data-placement="top"
-                                    title="You can use this selection to adjust the scale type of the above plot's x-axis. If the sample metadata field you have selected right now is a numeric field (e.g. participant weight), you probably want a quantitative scale type; if it's an ordinal or nominal field (e.g. subject ID, sample body site), you probably want a categorical scale type."
+                                    title="This dropdown changes the scale type of the sample plot's x-axis. If the sample metadata field you have selected for 'x-axis field' right now is numeric (e.g. participant weight), you probably want a quantitative scale type; if it's ordinal or nominal (e.g. subject ID, sample body site), you probably want a categorical scale type."
                                 >
                                 </span>
                                 x-axis scale type
@@ -164,8 +181,16 @@
                                 class="input-group-text"
                                 id="colorFieldLabel"
                                 for="colorField"
-                                >Color field</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the sample metadata field used to color points in the sample plot."
+                                >
+                                </span>
+                                Color field
+                            </label>
                         </div>
                         <select class="custom-select" id="colorField"> </select>
                         <div class="input-group-prepend">
@@ -173,8 +198,16 @@
                                 class="input-group-text"
                                 id="colorScaleLabel"
                                 for="colorScale"
-                                >Color scale type</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the scale type of the sample coloring used in the sample plot. If the sample metadata field you have selected for 'Color field' right now is numeric (e.g. participant weight), you probably want a quantitative scale type; if it's ordinal or nominal (e.g. subject ID, sample body site), you probably want a categorical scale type."
+                                >
+                                </span>
+                                Color scale type
+                            </label>
                         </div>
                         <select class="custom-select" id="colorScale">
                             <option value="nominal">Categorical</option>
@@ -187,8 +220,16 @@
                                 class="input-group-text"
                                 id="catColorSchemeLabel"
                                 for="catColorScheme"
-                                >Categorical color scheme</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the color scheme used for categorical color scales in the sample plot."
+                                >
+                                </span>
+                                Categorical color scheme
+                            </label>
                         </div>
                         <select class="custom-select" id="catColorScheme">
                             <option value="accent">accent</option>
@@ -213,8 +254,16 @@
                                 class="input-group-text"
                                 id="quantColorSchemeLabel"
                                 for="quantColorScheme"
-                                >Quantitative color scheme</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the color scheme used for quantitative color scales in the sample plot."
+                                >
+                                </span>
+                                Quantitative color scheme
+                            </label>
                         </div>
                         <select class="custom-select" id="quantColorScheme">
                             <optgroup label="Sequential Single-Hue">
@@ -314,8 +363,16 @@
                             <label
                                 class="input-group-text"
                                 for="boxplotCheckbox"
-                                >Use boxplots for categorical data?</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="When checked, the sample plot will display a boxplot (rather than a scatterplot) whenever the x-axis scale type is categorical."
+                                >
+                                </span>
+                                Use boxplots for categorical data?
+                            </label>
                             <div class="input-group-text">
                                 <input type="checkbox" id="boxplotCheckbox" />
                             </div>
@@ -420,7 +477,7 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="Autoselection is a quick way of taking the log-ratio of the highest and lowest ranked features in the rank plot."
+                                title="Autoselection is a quick way of taking the log-ratio of the highest- to the lowest- ranked features in the rank plot. The text box in the middle here contains the number of features (or the percentage of features) to select from each side of the rank plot for a log-ratio."
                             >
                             </span>
                             Using the current ranking, select the top and bottom
