@@ -9,6 +9,7 @@
 *simulation_base_truth.csv
 *simulation_subsampled_noisy.csv
 *.gz
+*.gtf
 
 *.py[cod]
 
