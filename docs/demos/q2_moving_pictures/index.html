@@ -145,7 +145,7 @@
                                 class="questionmark mr-0"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="Exports a TSV file listing selected numerator and/or denominator features. Each row in the TSV file contains a feature ID and its log-ratio classification."
+                                title="Exports a TSV file listing just the selected numerator and/or denominator features (in no particular order). Below the header row in the TSV file, each row contains a feature ID and its log-ratio classification."
                             >
                             </span>
                         </label>
@@ -448,7 +448,7 @@
                                     class="questionmark mr-0"
                                     data-toggle="tooltip"
                                     data-placement="top"
-                                    title="Exports a TSV file containing all of the data in the sample plot. Each row in the TSV file contains a sample ID along with the sample's currently selected log-ratio and its metadata values for the current x-axis and color fields."
+                                    title="Exports a TSV file describing the data underlying the sample plot. Below the header row in the TSV file, each row contains a sample's ID along with the sample's currently selected log-ratio and its metadata values for the current x-axis and color fields."
                                 >
                                 </span>
                             </label>
@@ -569,6 +569,13 @@
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="topSearch">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports using various filtering operations to select features in the numerator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                            >
+                            </span>
                             Filter numerator to features where
                         </label>
                     </div>
@@ -610,6 +617,13 @@
                 <div class="input-group input-group-sm mt-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="botSearch">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports using various filtering operations to select features in the denominator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                            >
+                            </span>
                             Filter denominator to features where
                         </label>
                     </div>
@@ -654,13 +668,34 @@
                      interface.
                 -->
                 <a id="downloadHelper" class="invisible"></a>
-                <div class="centeredBlock mt-3">
-                    <button
-                        id="multiFeatureButton"
-                        class="btn btn-outline-secondary btn-sm"
-                    >
-                        Apply Filtering
-                    </button>
+                <div class="input-group input-group-sm mt-3">
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Attempts to select features in a log-ratio based on the filtering controls defined above. Filtering is useful for more focused investigations than in autoselection: for example, imagine filtering to all OTUs classified in a given genus."
+                            >
+                            </span>
+                        </label>
+                        <button
+                            id="multiFeatureButton"
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            Apply Filtering
+                        </button>
+                    </div>
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
                 </div>
             </div>
         </div>

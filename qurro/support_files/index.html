@@ -569,6 +569,13 @@
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="topSearch">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports using various filtering operations to select features in the numerator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                            >
+                            </span>
                             Filter numerator to features where
                         </label>
                     </div>
@@ -610,6 +617,13 @@
                 <div class="input-group input-group-sm mt-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="botSearch">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports using various filtering operations to select features in the denominator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                            >
+                            </span>
                             Filter denominator to features where
                         </label>
                     </div>
@@ -654,13 +668,34 @@
                      interface.
                 -->
                 <a id="downloadHelper" class="invisible"></a>
-                <div class="centeredBlock mt-3">
-                    <button
-                        id="multiFeatureButton"
-                        class="btn btn-outline-secondary btn-sm"
-                    >
-                        Apply Filtering
-                    </button>
+                <div class="input-group input-group-sm mt-3">
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Attempts to select features in a log-ratio based on the filtering controls defined above. Filtering is useful for more focused investigations than in autoselection: for example, imagine filtering to all OTUs classified in a given genus."
+                            >
+                            </span>
+                        </label>
+                        <button
+                            id="multiFeatureButton"
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            Apply Filtering
+                        </button>
+                    </div>
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
                 </div>
             </div>
         </div>

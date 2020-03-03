@@ -1344,7 +1344,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // botFeatures, ignoring the selection-from-clicking case). However
             // this should be fast enough for most purposes.
             for (var i = 0; i < data.length; i++) {
-                if (data[i]["qurro_classification"] != "None") {
+                if (data[i].qurro_classification != "None") {
                     currFeatureID = RRVDisplay.quoteTSVFieldIfNeeded(
                         data[i]["Feature ID"]
                     );
@@ -1356,7 +1356,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                         "\n" +
                         currFeatureID +
                         "\t" +
-                        data[i]["qurro_classification"];
+                        data[i].qurro_classification;
                 }
             }
             return outputTSV;
