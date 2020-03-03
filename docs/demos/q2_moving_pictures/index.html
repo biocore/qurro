@@ -133,6 +133,35 @@
                         class="form-control hackySpacerInput"
                     />
                 </div>
+                <div class="input-group input-group-sm mb-1">
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Exports a TSV file listing selected numerator and/or denominator features. Each row in the TSV file contains a feature ID and its log-ratio classification."
+                            >
+                            </span>
+                        </label>
+                        <button
+                            id="exportRankPlotDataButton"
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            Export currently selected features
+                        </button>
+                    </div>
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                </div>
                 <p
                     id="barSizeWarning"
                     class="alert alert-warning centeredBlock invisible mt-3 mb-3"
@@ -407,6 +436,35 @@
                             class="form-control hackySpacerInput"
                         />
                     </div>
+                    <div class="input-group input-group-sm mb-1">
+                        <input
+                            type="text"
+                            disabled
+                            class="form-control hackySpacerInput"
+                        />
+                        <div class="input-group-prepend">
+                            <label class="input-group-text">
+                                <span
+                                    class="questionmark mr-0"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Exports a TSV file containing all of the data in the sample plot. Each row in the TSV file contains a sample ID along with the sample's currently selected log-ratio and its metadata values for the current x-axis and color fields."
+                                >
+                                </span>
+                            </label>
+                            <button
+                                id="exportDataButton"
+                                class="btn btn-outline-secondary btn-sm"
+                            >
+                                Export current sample plot data
+                            </button>
+                        </div>
+                        <input
+                            type="text"
+                            disabled
+                            class="form-control hackySpacerInput"
+                        />
+                    </div>
                     <div
                         id="mainSamplesDroppedDiv"
                         class="centeredBlock sampleRemovedDiv invisible"
@@ -423,14 +481,6 @@
                         id="colorSamplesDroppedDiv"
                         class="centeredBlock sampleRemovedDiv invisible"
                     ></div>
-                    <div class="centeredBlock">
-                        <button
-                            id="exportDataButton"
-                            class="btn btn-outline-secondary mt-2 btn-sm"
-                        >
-                            Export current sample plot data
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
