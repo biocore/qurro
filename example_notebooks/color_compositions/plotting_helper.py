@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from scipy.linalg import svd
+from skbio import OrdinationResults
 from skbio.stats.composition import clr
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -30,9 +31,10 @@ def apca(df):
     """
     U, s, V = svd(clr(df))
 
-    # Rename columns.
+    # Rename columns; we use "Axis 1", etc. to be consistent with the Qurro
+    # interface
     pcs = min(df.shape)
-    cols = ["PC{}".format(pc+1) for pc in range(min(df.shape))]
+    cols = ["Axis {}".format(pc+1) for pc in range(pcs)]
 
     # Make DataFrames from the feature (U) and sample (V) loadings
     U = pd.DataFrame(U[:, :pcs], df.index, cols)
@@ -44,32 +46,40 @@ def apca(df):
 
     # get prop. var. explained
     p = s**2 / np.sum(s**2)
-    p = pd.DataFrame(p.T, cols, ["proportion_explained"])
+    p = pd.Series(p.T, index=cols)
 
-    return U, p, V
+    # format eigenvalues in a way that OrdinationResults expects
+    eigvals = pd.Series(s.T, index=cols)
 
-def draw_painting_biplot(U, p, V, axis_1, axis_2):
+    return OrdinationResults(
+        "apca",
+        "Aitchison PCA",
+        eigvals,
+        samples=V,
+        features=U,
+        proportion_explained=p
+    )
+
+def draw_painting_biplot(ordination, axis_1, axis_2):
     """Draws a biplot using Seaborn and Matplotlib.
 
     Parameters
     ----------
-        U: pd.DataFrame
-            Feature loadings.
-
-        p: pd.DataFrame
-            Proportion of variance explained for each PC.
-
-        V: pd.DataFrame
-            Sample loadings.
+        ordination: skbio.OrdinationResults
+            Biplot ordination created from apca() above.
 
         axis_1: str
-            Name of the first PC to draw in the biplot.
+            Name of the first Axis to draw in the biplot.
 
         axis_2: str
-            Name of the second PC to draw in the biplot.
+            Name of the second Axis to draw in the biplot.
     """
 
     fig, ax = plt.subplots(1,1,figsize=(5,5))
+
+    V = ordination.samples
+    U = ordination.features
+    p = ordination.proportion_explained
 
     # Draw points using a Seaborn scatterplot
     sns.scatterplot(
@@ -105,12 +115,8 @@ def draw_painting_biplot(U, p, V, axis_1, axis_2):
     ax.set_facecolor("#f0f0f0")
 
     # get axis labels
-    ax.set_xlabel("%s (%.2f%%)" %\
-                  (axis_1, p.loc[axis_1,
-                                 "proportion_explained"] *100),
+    ax.set_xlabel("%s (%.2f%%)" % (axis_1, p.loc[axis_1] * 100),
                  fontsize=16, color="#000000")
-    ax.set_ylabel("%s (%.2f%%)" %\
-                  (axis_2, p.loc[axis_2,
-                                 "proportion_explained"] * 100),
+    ax.set_ylabel("%s (%.2f%%)" % (axis_2, p.loc[axis_2] * 100),
                  fontsize=16, color="#000000")
     plt.show()
