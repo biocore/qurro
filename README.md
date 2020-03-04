@@ -113,9 +113,12 @@ These tutorials are good places to start, depending on what sort of data and
 feature rankings you have.
 
 - ["Moving Pictures" tutorial](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md)
+  - **Data Summary:** Microbiome 16S rRNA marker gene sequencing data from fecal samples
   - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
   - Qurro used through QIIME 2 or standalone?: QIIME 2
+
 - [Transcriptomics tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/ALDEx2_TCGA_LUSC/transcriptomic_example.ipynb)
+  - **Data Summary:** Gene expression ("RNA-Seq") data from TCGA tumor and "solid tissue normal" samples
   - Feature rankings: [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html) differentials
   - Qurro used through QIIME 2 or standalone?: Standalone
 
