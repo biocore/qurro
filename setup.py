@@ -62,7 +62,11 @@ setup(
     maintainer="Qurro development team",
     maintainer_email="mfedarko@ucsd.edu",
     url="https://github.com/biocore/qurro",
-    setup_requires=["cython"],
+    # Although these are needed for setup, it seems like biom will still break
+    # if we don't have numpy/cython manually installed beforehand. I think this
+    # is due to how the setup_requires dependencies are downloaded; they aren't
+    # officially "installed".
+    setup_requires=["cython", "numpy >= 1.12.0"],
     packages=find_packages(),
     # Needed in order to ensure that support_files/*, etc. are installed (in
     # turn, these files are specified in MANIFEST.in).
