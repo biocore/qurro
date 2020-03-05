@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from scipy.linalg import svd
+from scipy.sparse.linalg import svds
 from skbio import OrdinationResults
 from skbio.stats.composition import clr
 import seaborn as sns
@@ -29,11 +29,17 @@ def apca(df):
             V: pd.DataFrame
                 Sample loadings.
     """
-    U, s, V = svd(clr(df))
+    # do A-PCA
+    U, s, V = svds(clr(df), k=2)
+    V = V.T
+    # reverse (see SVDs docs)
+    U = np.flip(U, axis=1)
+    V = np.flip(V, axis=1)
+    s = s[::-1]
 
     # Rename columns; we use "Axis 1", etc. to be consistent with the Qurro
     # interface
-    pcs = min(df.shape)
+    pcs = min(V.shape)
     cols = ["Axis {}".format(pc+1) for pc in range(pcs)]
 
     # Make DataFrames from the feature (U) and sample (V) loadings
@@ -95,6 +101,8 @@ def draw_painting_biplot(ordination, axis_1, axis_2):
              "Yellow":"#ffff33", "Other":"#999999"}
     annots = []
     seqs = []
+    limits_x = []
+    limits_y = []
     for i in U.index:
         annots.append(ax.arrow(0, 0,
                                U.loc[i, axis_1] * .6,
@@ -105,10 +113,16 @@ def draw_painting_biplot(ordination, axis_1, axis_2):
                                ec = "black",
                                length_includes_head=True,
                                head_width=.03, width=.009))
+        limits_x.append(U.loc[i, axis_1] * .8)
+        limits_y.append(U.loc[i, axis_2] * .8)
         ax.text(U.loc[i, axis_1] * .6,
                 U.loc[i, axis_2] * .6,
                 str(i), zorder=-1)
         seqs.append(i)
+    
+    # set axis limits
+    ax.set_xlim(min(limits_x), max(limits_x))
+    ax.set_ylim(min(limits_y), max(limits_y))
 
     # Hide grid lines
     ax.grid(False)
