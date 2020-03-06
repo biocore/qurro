@@ -156,16 +156,16 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     });
     describe("Exporting rank plot data", function() {
         var rrv, dataName;
-        before(async function() {
+        beforeEach(async function() {
             rrv = new display.RRVDisplay(
-                rankPlotJSON,
-                samplePlotJSON,
-                countJSON
+                JSON.parse(JSON.stringify(rankPlotJSON)),
+                JSON.parse(JSON.stringify(samplePlotJSON)),
+                JSON.parse(JSON.stringify(countJSON))
             );
             dataName = rrv.rankPlotJSON.data.name;
             await rrv.makePlots();
         });
-        after(async function() {
+        afterEach(async function() {
             await rrv.destroy(true, true, true);
         });
         it("Works in simple feature / feature log-ratio case", async function() {
@@ -179,6 +179,12 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             await rrv.regenerateFromClicking();
             var outputTSV = rrv.getRankPlotData();
             chai.assert.equal(expectedTSV, outputTSV);
+        });
+        it("Produces a TSV containing just a header if no feature selected", function() {
+            chai.assert.equal(
+                '"Feature ID"\tLog_Ratio_Classification',
+                rrv.getRankPlotData()
+            );
         });
     });
 });
