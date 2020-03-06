@@ -1,5 +1,5 @@
 # Qurro + QIIME 2 "Moving Pictures" Tutorial
-*Note: this tutorial uses Qurro v0.5.0.*
+*Note: this tutorial uses Qurro v0.6.0, and is intended to be run using QIIME 2 2019.7 or later.*
 
 ## 0. Introduction
 
@@ -10,9 +10,9 @@ Lots of tools for analyzing " 'omic" datasets can produce __feature rankings__. 
 #### 0.1.1. ...What are feature rankings?
 The term "feature rankings" includes __differentials__, which we define as the estimated log-fold changes for features' abundances across different sample types. You can get this sort of output from lots of "differential abundance" tools, including but definitely not limited to [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html), [Songbird](https://github.com/biocore/songbird/), [Corncob](https://github.com/bryandmartin/corncob/), [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html), [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), etc.
 
-The term "feature rankings" also includes __feature loadings__ in a [biplot](https://en.wikipedia.org/wiki/Biplot) (see [Aitchison and Greenacre 2002](https://rss.onlinelibrary.wiley.com/doi/full/10.1111/1467-9876.00275)); you can get biplots from running [DEICODE](https://github.com/biocore/DEICODE), a tool designed to do this for microbiome datasets, or from a variety of other methods.
+The term "feature rankings" also includes __feature loadings__ in a [biplot](https://en.wikipedia.org/wiki/Biplot) (see [Aitchison and Greenacre 2002](https://rss.onlinelibrary.wiley.com/doi/full/10.1111/1467-9876.00275)); you can get biplots from running [DEICODE](https://github.com/biocore/DEICODE), which is a tool that works well with microbiome datasets, or from a variety of other methods.
 
-In either case, both of these flavors of "feature rankings" can be interpreted as, well, __rankings__ (i.e. you can just sort them numerically). When we visualize the rankings, we get a list of features in a dataset sorted based on their association with some sort of variation, in either a supervised (in the case of differentials) or unsupervised (in the case of feature loadings) way.
+In either case, both of these flavors of "feature rankings" can be interpreted as, well, __rankings__ (i.e. you can just sort them numerically). Visualizing these rankings gives us a list of features in a dataset sorted based on their association with some sort of variation, in either a supervised (in the case of differentials) or unsupervised (in the case of feature loadings) way.
 
 <div align="center">
 <img src="https://github.com/mortonjt/probable-bug-bytes/raw/master/images/microbe_fold_change_11252019.png" alt="Feature rankings in an example dataset. Image c/o Jamie Morton." />
@@ -51,21 +51,16 @@ pip install cython "numpy >= 1.12.0"
 pip install qurro
 ```
 
-**Note:** A python version of at least 3.5.3 is required to use Qurro. (You can check this by running `conda info | grep python`; if you're in the latest QIIME 2 conda environment, you should already be using a good enough version of Python.)
+**Note:** You shouldn't need to run the first of these commands (`pip install cython ...`) if you're in a QIIME 2 conda environment.
 
-Once you've installed Qurro, let's get QIIME 2 to recognize it. Run the following command in a terminal:
+Once you've installed Qurro, let's make sure that it was installed properly. Run the following commands in a terminal:
 
-```
+```bash
 qiime dev refresh-cache
-```
-
-To verify that Qurro was installed properly, you can run the following command:
-
-```
 qiime qurro --help
 ```
 
-If this command succeeds, you should see information about Qurro's QIIME 2 plugin.
+If these commands succeed, you should see information about Qurro's QIIME 2 plugin.
 
 ## 2. Input files (what we'll need to run Qurro)
 
@@ -82,9 +77,9 @@ If you've completed the DEICODE tutorial already, you should already have these 
 DEICODE produces a biplot using Robust Aitchison PCA. As mentioned above, the "feature rankings" we're going to look at here are the feature loadings in this biplot.
 (Just to be clear, the actual data describing the biplot -- the sample and feature
 loadings -- are contained in the `ordination.qza` artifact that DEICODE produces;
-a *visualization* of this data is contained in `biplot.qzv`, a visualization produced by Emperor.)
+a *visualization* of this data is contained in `biplot.qzv`, a visualization produced by [Emperor](https://github.com/biocore/emperor).)
 
-(If you'd like to learn about how DEICODE generates a biplot, check out [Martino et al. 2019](https://msystems.asm.org/content/4/1/e00016-19).)
+(If you'd like to learn about the math behind how DEICODE generates a biplot, check out [Martino et al. 2019](https://msystems.asm.org/content/4/1/e00016-19).)
 
 When using Qurro to look at DEICODE output, it makes sense to look at both the
 biplot and at the Qurro visualization. If we see a pattern in the biplot (e.g.
