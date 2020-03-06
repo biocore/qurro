@@ -3,11 +3,13 @@
 *~
 \#*#
 
-#big files 
-*simulation_base_truth.csv 
+#big files
+*simulation_base_truth.csv
 *simulation_subsampled_noisy.csv
-*simulation_base_truth.csv 
+*simulation_base_truth.csv
 *simulation_subsampled_noisy.csv
+*.gz
+*.gtf
 
 *.py[cod]
 
@@ -16,6 +18,7 @@
 
 # Packages
 *.egg
+*.eggs
 *.egg-info
 dist
 build

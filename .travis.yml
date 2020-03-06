@@ -27,6 +27,9 @@ before_install:
     # (should be already installed in a QIIME 2 environment, but we may as well
     # make sure that this won't break in the future)
     - conda install seaborn
+    # 5. Install ALDEx2 and mygene
+    # (this will let us rerun the ALDEx2 example notebook)
+    - conda install -c bioconda bioconductor-aldex2 mygene
 install:
     - pip install -e .[dev]
     # Install various JS testing/stylechecking packages that we use for
