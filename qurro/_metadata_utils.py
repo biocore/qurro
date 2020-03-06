@@ -132,7 +132,7 @@ def read_metadata_file_sane(md_file_loc):
        instead of None), then returns the result.
 
        If you're just looking in this module for an easy "read my metadata"
-       function, you should use this function instead of read_metadata_file()
-       in most cases.
+       function, you may prefer to use this function instead of
+       read_metadata_file().
     """
     return replace_nan(read_metadata_file(md_file_loc), "")
