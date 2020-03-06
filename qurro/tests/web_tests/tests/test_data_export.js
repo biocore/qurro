@@ -186,5 +186,27 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 rrv.getRankPlotData()
             );
         });
+        it("Works when multiple features selected in a side of the log-ratio", async function() {
+            var expectedTSV =
+                '"Feature ID"\tLog_Ratio_Classification\n' +
+                "Taxon1\tDenominator\n" +
+                "Taxon2\tDenominator\n" +
+                "Taxon3\tBoth\n" +
+                "Taxon4\tDenominator\n" +
+                "Taxon5\tDenominator";
+            // NOTE / TODO: this is derived from runFeatureFiltering() in
+            // test_rrvdisplay.js. This code assumes that the topSearch
+            // and botSearch default to FeatureID, and that the topSearchType
+            // and botSearchType default to text. If these defaults change,
+            // this test will almost certainly break.
+            // Ideally, runFeatureFiltering() should be located in
+            // testing_utilities, so that all of the JS tests can reuse it
+            // without introducing a bunch of lines of redundant code.
+            document.getElementById("topText").value = "3";
+            document.getElementById("botText").value = "Taxon";
+            await document.getElementById("multiFeatureButton").onclick();
+            var outputTSV = rrv.getRankPlotData();
+            chai.assert.equal(expectedTSV, outputTSV);
+        });
     });
 });
