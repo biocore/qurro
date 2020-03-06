@@ -23,7 +23,11 @@ before_install:
     # 3. Install Songbird and DEICODE
     # (this will let us rerun the corresponding example notebooks)
     - conda install -c conda-forge songbird deicode
-    # 4. Install ALDEx2 and mygene
+    # 4. Install seaborn so we can run the colors example notebook
+    # (should be already installed in a QIIME 2 environment, but we may as well
+    # make sure that this won't break in the future)
+    - conda install seaborn
+    # 5. Install ALDEx2 and mygene
     # (this will let us rerun the ALDEx2 example notebook)
     - conda install -c bioconda bioconductor-aldex2 mygene
 install:
