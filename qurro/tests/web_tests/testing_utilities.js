@@ -1,4 +1,4 @@
-define(["chai"], function(chai) {
+define(["display", "chai"], function(display, chai) {
     /* Return a list of the feature IDs present in an array of feature data
      * "objects" (rows in the data in the rank plot JSON).
      */
@@ -142,12 +142,28 @@ define(["chai"], function(chai) {
         throw new Error("Feature ID not in rank plot JSON: " + featureID);
     }
 
+    /* Creates and returns a new RRVDisplay object from three JSONs.
+     *
+     * Importantly, this does NOT pass in the raw JSONs to the RRVDisplay
+     * constructor -- instead, it round-trip passes them through
+     * JSON.stringify() and JSON.parse(). This prevents the original JSON
+     * objects getting overwritten by the RRVDisplay object at some point.
+     */
+    function getNewRRVDisplay(rankPlotJSON, samplePlotJSON, countJSON) {
+        return new display.RRVDisplay(
+            JSON.parse(JSON.stringify(rankPlotJSON)),
+            JSON.parse(JSON.stringify(samplePlotJSON)),
+            JSON.parse(JSON.stringify(countJSON))
+        );
+    }
+
     return {
         getFeatureIDsFromObjectArray: getFeatureIDsFromObjectArray,
         checkHeaders: checkHeaders,
         assertEnabled: assertEnabled,
         extractDataFromDataTable: extractDataFromDataTable,
         checkDataTable: checkDataTable,
-        getFeatureRow: getFeatureRow
+        getFeatureRow: getFeatureRow,
+        getNewRRVDisplay: getNewRRVDisplay
     };
 });

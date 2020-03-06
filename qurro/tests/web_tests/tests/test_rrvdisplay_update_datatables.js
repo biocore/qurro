@@ -1,5 +1,4 @@
-define(["display", "mocha", "chai", "testing_utilities"], function(
-    display,
+define(["mocha", "chai", "testing_utilities"], function(
     mocha,
     chai,
     testing_utilities
@@ -15,7 +14,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     describe("Updating the feature DataTables in RRVDisplay.updateFeaturesDisplays()", function() {
         var rrv;
         before(async function() {
-            rrv = new display.RRVDisplay(
+            rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
                 countJSON

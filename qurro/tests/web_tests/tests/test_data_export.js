@@ -14,7 +14,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     describe("Exporting sample plot data", function() {
         var rrv, dataName;
         before(async function() {
-            rrv = new display.RRVDisplay(
+            rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
                 countJSON
@@ -157,10 +157,10 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     describe("Exporting rank plot data", function() {
         var rrv, dataName;
         beforeEach(async function() {
-            rrv = new display.RRVDisplay(
-                JSON.parse(JSON.stringify(rankPlotJSON)),
-                JSON.parse(JSON.stringify(samplePlotJSON)),
-                JSON.parse(JSON.stringify(countJSON))
+            rrv = testing_utilities.getNewRRVDisplay(
+                rankPlotJSON,
+                samplePlotJSON,
+                countJSON
             );
             dataName = rrv.rankPlotJSON.data.name;
             await rrv.makePlots();

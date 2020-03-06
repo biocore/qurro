@@ -1,8 +1,8 @@
-define(["display", "dom_utils", "mocha", "chai"], function(
-    display,
+define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
     dom_utils,
     mocha,
-    chai
+    chai,
+    testing_utilities
 ) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
@@ -15,7 +15,7 @@ define(["display", "dom_utils", "mocha", "chai"], function(
     describe("The RRVDisplay destructor (destroy())", function() {
         var rrv;
         beforeEach(async function() {
-            rrv = new display.RRVDisplay(
+            rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
                 countJSON
