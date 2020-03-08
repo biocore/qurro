@@ -4,7 +4,8 @@
 ### Features added
 - Added **tooltips** throughout the Qurro interface explaining what certain
   controls do. Just hover your mouse over one of the "?" icons to view the
-  tooltips! ([#225](https://github.com/biocore/qurro/issues/225))
+  tooltips! ([#225](https://github.com/biocore/qurro/issues/225),
+  [#123](https://github.com/biocore/qurro/issues/123))
   - Although this is a pretty common user-interface thing, our particular use
     of this was inspired by [Bandage](https://rrwick.github.io/Bandage/)'s
     similar tooltips.
