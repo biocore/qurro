@@ -573,13 +573,25 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="This group of controls supports using various filtering operations to select features in the numerator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                                title="This group of controls supports using various filtering methods to select features for the numerator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
                             >
                             </span>
                             Filter numerator to features where
                         </label>
                     </div>
                     <select class="custom-select num" id="topSearch"> </select>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="The next selector adjusts the method used to filter features by a metadata/ranking field. Most of these methods should be self-explanatory; note that 'contains the separated text fragment(s)' filters to features by 1) splitting up the selected field by commas, semicolons, and whitespace, 2) splitting up the input text (in the next text box) in the same way, and 3) selecting features where there's a 'fragment' that matches between that feature's field and the input text. This is useful for filtering on particular taxonomy levels, or by filtering if you have multiple taxonomy level inputs."
+                            >
+                            </span>
+                        </label>
+                    </div>
+
                     <select class="custom-select num" id="topSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
@@ -621,13 +633,24 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="This group of controls supports using various filtering operations to select features in the denominator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                                title="This group of controls supports using various filtering methods to select features for the denominator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
                             >
                             </span>
                             Filter denominator to features where
                         </label>
                     </div>
                     <select class="custom-select den" id="botSearch"> </select>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="The next selector adjusts the method used to filter features by a metadata/ranking field. Most of these methods should be self-explanatory; note that 'contains the separated text fragment(s)' filters to features by 1) splitting up the selected field by commas, semicolons, and whitespace, 2) splitting up the input text (in the next text box) in the same way, and 3) selecting features where there's a 'fragment' that matches between that feature's field and the input text. This is useful for filtering on particular taxonomy levels, or by filtering if you have multiple taxonomy level inputs."
+                            >
+                            </span>
+                        </label>
+                    </div>
                     <select class="custom-select den" id="botSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
