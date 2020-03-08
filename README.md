@@ -107,6 +107,11 @@ for context.
 These tutorials are good places to start, depending on what sort of data and
 feature rankings you have.
 
+- [Color Composition tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/color_compositions/color_example.ipynb)
+  - **Data Summary:** Color composition data from abstract paintings
+  - Feature rankings: Feature loadings in a compositional biplot
+  - Qurro used through QIIME 2 or standalone?: Standalone
+
 - ["Moving Pictures" tutorial](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md)
   - **Data Summary:** Microbiome 16S rRNA marker gene sequencing data from fecal samples
   - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
