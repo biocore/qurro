@@ -9,11 +9,12 @@ import logging
 from biom import load_table
 import click
 from qurro._parameter_descriptions import (
+    RANKS,
     TABLE,
-    EXTREME_FEATURE_COUNT,
-    DEBUG,
     SAMPLE_METADATA,
     FEATURE_METADATA,
+    EXTREME_FEATURE_COUNT,
+    DEBUG,
 )
 from qurro.generate import process_and_generate
 from qurro._rank_utils import read_rank_file
@@ -23,15 +24,7 @@ from qurro.__init__ import __version__
 
 
 @click.command()
-@click.option(
-    "-r",
-    "--ranks",
-    required=True,
-    help=(
-        "Either feature differentials or an ordination containing feature "
-        "loadings. When sorted numerically, these provide feature rankings."
-    ),
-)
+@click.option("-r", "--ranks", required=True, help=RANKS)
 @click.option("-t", "--table", required=True, help=TABLE)
 @click.option("-sm", "--sample-metadata", required=True, help=SAMPLE_METADATA)
 @click.option("-fm", "--feature-metadata", default=None, help=FEATURE_METADATA)
