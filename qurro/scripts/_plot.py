@@ -35,7 +35,11 @@ from qurro.__init__ import __version__
     help=(
         "Directory to write the HTML/JS/... files defining a Qurro "
         "visualization to. If this directory already exists, "
-        "files/directories already within it will be overwritten if necessary."
+        "files/directories already within it will be overwritten if "
+        "necessary. Note that you need to keep the files in this directory "
+        "together -- moving the index.html file in this directory to another "
+        "location, without also moving the JS/etc. files, will break the "
+        "visualization."
     ),
 )
 @click.option(
