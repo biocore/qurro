@@ -214,9 +214,10 @@ The test data located in `qurro/tests/input/sleep_apnea/`
 are from [this Qiita study](https://qiita.ucsd.edu/study/description/10422),
 which is associated with Tripathi et al.'s 2018 study on sleep apnea [4].
 
-The test data located in `qurro/tests/input/moving_pictures/`
+The test data located in `qurro/tests/input/moving_pictures/` (and in
+`example_notebooks/moving_pictures/data/`)
 are from [the QIIME 2 moving pictures tutorial](https://docs.qiime2.org/2019.1/tutorials/moving-pictures/).
-The `ordination.qza` file in this folder was computed based on the
+The `ordination` files in these folders were computed based on the
 [DEICODE moving pictures tutorial](https://library.qiime2.org/plugins/deicode/19/).
 These data (sans the DEICODE ordination) are associated with Caporaso et al. 2011 [5].
 
