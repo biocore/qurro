@@ -13,6 +13,10 @@
   certain types of data: ([#267](https://github.com/biocore/qurro/issues/267))
   - [With transcriptomics data](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/ALDEx2_TCGA_LUSC/transcriptomic_example.ipynb), courtesy of [@gibsramen](http://github.com/gibsramen/)
   - [With arbitrary compositional data](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/color_compositions/color_example.ipynb), courtesy of [@cameronmartino](http://github.com/cameronmartino/)
+- Updated the [**moving pictures tutorial**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/moving_pictures/moving_pictures.ipynb), after a long drought since the last update!
+  - The newest version of the tutorial has more details, more useful examples,
+    demonstrates using the latest version of Qurro, and has been converted from
+    a markdown document to a Jupyter Notebook. Try running it yourself!
 - Added a `Export currently selected features` button that does what it says on the
   tin: it lets you export a TSV file listing the features currently selected in
   a log-ratio. ([#87](https://github.com/biocore/qurro/issues/87))

@@ -104,7 +104,7 @@ for context.
 ## Tutorials
 
 ### In-depth
-These tutorials are good places to start, depending on what sort of data and
+These tutorials are all good places to start, depending on what sort of data and
 feature rankings you have.
 
 - [Color Composition tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/color_compositions/color_example.ipynb)
@@ -112,9 +112,9 @@ feature rankings you have.
   - Feature rankings: Feature loadings in a compositional biplot
   - Qurro used through QIIME 2 or standalone?: Standalone
 
-- ["Moving Pictures" tutorial](https://github.com/biocore/qurro/blob/master/docs/tutorials/moving-pictures/moving-pictures.md)
-  - **Data Summary:** Microbiome 16S rRNA marker gene sequencing data from fecal samples
-  - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
+- ["Moving Pictures" tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/moving_pictures/moving_pictures.ipynb)
+  - **Data Summary:** Microbiome 16S rRNA marker gene sequencing data from four types of body site samples
+  - Feature rankings: Feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
   - Qurro used through QIIME 2 or standalone?: QIIME 2
 
 - [Transcriptomics tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/ALDEx2_TCGA_LUSC/transcriptomic_example.ipynb)
