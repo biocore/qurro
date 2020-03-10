@@ -75,11 +75,13 @@ def read_metadata_file(md_file_loc):
        This treats all metadata values (including the index column) as
        strings, due to the use of dtype=object.
 
-       NOTE THAT THIS WILL CONVERT ""s to np.NaN values in the output
-       DataFrame -- this is done to be consistent with QIIME2's Metadata
-       utilities. If you don't want NaNs in your DataFrame, just call
-       qurro._df_utils.replace_nan() on the DataFrame you get from this
-       function: e.g. metadata_df = replace_nan(read_metadata_file(...)).
+       NOTE THAT THIS WILL CONVERT empty cells in the TSV file to
+       np.NaN values in the output DataFrame -- this is done to be
+       consistent with QIIME2's Metadata utilities. If you don't want
+       NaNs in your DataFrame, just call qurro._df_utils.replace_nan()
+       on the DataFrame you get from this function: e.g.
+       metadata_df = replace_nan(read_metadata_file(...)). (You can also just
+       call read_metadata_file_sane(), which will do this for you.)
     """
     q2_lines = get_q2_comment_lines(md_file_loc)
     metadata_df = pd.read_csv(
