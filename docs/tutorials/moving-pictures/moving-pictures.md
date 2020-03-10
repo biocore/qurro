@@ -12,12 +12,11 @@ The term "feature rankings" includes __differentials__, which we define as the e
 
 The term "feature rankings" also includes __feature loadings__ in a [biplot](https://en.wikipedia.org/wiki/Biplot) (see [Aitchison and Greenacre 2002](https://rss.onlinelibrary.wiley.com/doi/full/10.1111/1467-9876.00275)); you can get biplots from running [DEICODE](https://github.com/biocore/DEICODE), which is a tool that works well with microbiome datasets, or from a variety of other methods.
 
-In either case, both of these flavors of "feature rankings" can be interpreted as, well, __rankings__ (i.e. you can just sort them numerically). Visualizing these rankings gives us a list of features in a dataset sorted based on their association with some sort of variation, in either a supervised (in the case of differentials) or unsupervised (in the case of feature loadings) way.
+In either case, both of these flavors of "feature rankings" can be interpreted as, well, __rankings__ (i.e. you can just sort them numerically). Visualizing these rankings gives us a list of features in a dataset sorted based on their association with some sort of variation, in either a supervised (in the case of differentials) or unsupervised (in the case of feature loadings) way. We call this a **rank plot**.
 
 <div align="center">
-<img src="https://github.com/mortonjt/probable-bug-bytes/raw/master/images/microbe_fold_change_11252019.png" alt="Feature rankings in an example dataset. Image c/o Jamie Morton." />
-
-<i>Feature rankings in an example dataset. Figure c/o <a href="https://mortonjt.github.io/probable-bug-bytes/probable-bug-bytes/differential-abundance/">Jamie Morton</a>.</i>
+<img src="https://raw.githubusercontent.com/fedarko/qurro/master/docs/tutorials/moving-pictures/images/saliva-songbird-example.png" />
+<i>Example rank plot from <a href="https://github.com/knightlab-analyses/reference-frames/blob/master/ipynb/Figure2.ipynb">Fig. 2 in Morton and Marotz et al. 2019</a>.</i>
 </div>
 
 #### 0.1.2. What can we do with feature rankings?
