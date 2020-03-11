@@ -10,6 +10,7 @@
 import pandas as pd
 import numpy as np
 from io import StringIO
+from ._df_utils import replace_nan
 
 
 def get_q2_comment_lines(md_file_loc):
@@ -73,6 +74,14 @@ def read_metadata_file(md_file_loc):
 
        This treats all metadata values (including the index column) as
        strings, due to the use of dtype=object.
+
+       NOTE THAT THIS WILL CONVERT empty cells in the TSV file to
+       np.NaN values in the output DataFrame -- this is done to be
+       consistent with QIIME2's Metadata utilities. If you don't want
+       NaNs in your DataFrame, just call qurro._df_utils.replace_nan()
+       on the DataFrame you get from this function: e.g.
+       metadata_df = replace_nan(read_metadata_file(...)). (You can also just
+       call read_metadata_file_sane(), which will do this for you.)
     """
     q2_lines = get_q2_comment_lines(md_file_loc)
     metadata_df = pd.read_csv(
@@ -115,3 +124,17 @@ def read_metadata_file(md_file_loc):
     # This workaround should address this.
     metadata_df.set_index(metadata_df.columns[0], inplace=True)
     return metadata_df
+
+
+def read_metadata_file_sane(md_file_loc):
+    """Convenience function for reading metadata non-intrusively.
+
+       Basically, this just calls read_metadata_file() (also defined in this
+       module), then calls replace_nan() on that (note: replacing NaNs with ""
+       instead of None), then returns the result.
+
+       If you're just looking in this module for an easy "read my metadata"
+       function, you may prefer to use this function instead of
+       read_metadata_file().
+    """
+    return replace_nan(read_metadata_file(md_file_loc), "")

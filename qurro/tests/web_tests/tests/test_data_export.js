@@ -1,4 +1,9 @@
-define(["display", "mocha", "chai"], function(display, mocha, chai) {
+define(["display", "mocha", "chai", "testing_utilities"], function(
+    display,
+    mocha,
+    chai,
+    testing_utilities
+) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
     var rankPlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"gridColor": "#f2f2f2", "labelBound": true}, "mark": {"tooltip": null}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-ceb3e53dd82dc2b785cc2ba76931c96b"}, "datasets": {"data-ceb3e53dd82dc2b785cc2ba76931c96b": [{"Feature ID": "Taxon1", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 5.0}, {"Feature ID": "Taxon2", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 5.0}, {"Feature ID": "Taxon3", "FeatureMetadata1": "Yeet", "FeatureMetadata2": "100", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 6.0}, {"Feature ID": "Taxon4", "FeatureMetadata1": null, "FeatureMetadata2": null, "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 6.0}, {"Feature ID": "Taxon5", "FeatureMetadata1": "null", "FeatureMetadata2": "lol", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "Rank 3": 0.0, "Rank 4": 4.0, "qurro_classification": "None", "qurro_spc": 2.0}], "qurro_feature_metadata_ordering": ["FeatureMetadata1", "FeatureMetadata2"], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2", "Rank 3", "Rank 4"], "qurro_rank_type": "Differential"}, "encoding": {"color": {"field": "qurro_classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}, "title": "Log-Ratio Classification", "type": "nominal"}, "tooltip": [{"field": "qurro_x", "title": "Current Ranking", "type": "quantitative"}, {"field": "qurro_classification", "title": "Log-Ratio Classification", "type": "nominal"}, {"field": "qurro_spc", "title": "Sample Presence Count", "type": "quantitative"}, {"field": "Feature ID", "type": "nominal"}, {"field": "FeatureMetadata1", "type": "nominal"}, {"field": "FeatureMetadata2", "type": "nominal"}, {"field": "Intercept", "type": "quantitative"}, {"field": "Rank 1", "type": "quantitative"}, {"field": "Rank 2", "type": "quantitative"}, {"field": "Rank 3", "type": "quantitative"}, {"field": "Rank 4", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Feature Rankings", "type": "ordinal"}, "y": {"field": "Intercept", "type": "quantitative"}}, "mark": "bar", "selection": {"selector005": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Features", "transform": [{"sort": [{"field": "Intercept", "order": "ascending"}], "window": [{"as": "qurro_x", "op": "row_number"}]}]};
@@ -9,7 +14,7 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     describe("Exporting sample plot data", function() {
         var rrv, dataName;
         before(async function() {
-            rrv = new display.RRVDisplay(
+            rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
                 countJSON
@@ -147,6 +152,61 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
                 var t3 = '  ABC DEF\tG "what" ';
                 chai.assert.equal('"  ABC DEF\tG ""what"" "', qfunc(t3));
             });
+        });
+    });
+    describe("Exporting rank plot data", function() {
+        var rrv, dataName;
+        beforeEach(async function() {
+            rrv = testing_utilities.getNewRRVDisplay(
+                rankPlotJSON,
+                samplePlotJSON,
+                countJSON
+            );
+            dataName = rrv.rankPlotJSON.data.name;
+            await rrv.makePlots();
+        });
+        afterEach(async function() {
+            await rrv.destroy(true, true, true);
+        });
+        it("Works in simple feature / feature log-ratio case", async function() {
+            var expectedTSV =
+                '"Feature ID"\tLog_Ratio_Classification\n' +
+                "Taxon3\tNumerator\n" +
+                "Taxon4\tDenominator";
+
+            rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon3");
+            rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon4");
+            await rrv.regenerateFromClicking();
+            var outputTSV = rrv.getRankPlotData();
+            chai.assert.equal(expectedTSV, outputTSV);
+        });
+        it("Produces a TSV containing just a header if no feature selected", function() {
+            chai.assert.equal(
+                '"Feature ID"\tLog_Ratio_Classification',
+                rrv.getRankPlotData()
+            );
+        });
+        it("Works when multiple features selected in a side of the log-ratio", async function() {
+            var expectedTSV =
+                '"Feature ID"\tLog_Ratio_Classification\n' +
+                "Taxon1\tDenominator\n" +
+                "Taxon2\tDenominator\n" +
+                "Taxon3\tBoth\n" +
+                "Taxon4\tDenominator\n" +
+                "Taxon5\tDenominator";
+            // NOTE / TODO: this is derived from runFeatureFiltering() in
+            // test_rrvdisplay.js. This code assumes that the topSearch
+            // and botSearch default to FeatureID, and that the topSearchType
+            // and botSearchType default to text. If these defaults change,
+            // this test will almost certainly break.
+            // Ideally, runFeatureFiltering() should be located in
+            // testing_utilities, so that all of the JS tests can reuse it
+            // without introducing a bunch of lines of redundant code.
+            document.getElementById("topText").value = "3";
+            document.getElementById("botText").value = "Taxon";
+            await document.getElementById("multiFeatureButton").onclick();
+            var outputTSV = rrv.getRankPlotData();
+            chai.assert.equal(expectedTSV, outputTSV);
         });
     });
 });

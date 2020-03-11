@@ -18,8 +18,8 @@ from qurro._parameter_descriptions import (
     TABLE,
     EXTREME_FEATURE_COUNT,
     DEBUG,
-    SAMPLE_METADATA,
-    FEATURE_METADATA,
+    Q2_SAMPLE_METADATA,
+    Q2_FEATURE_METADATA,
 )
 from qiime2.plugin import Metadata, Properties, Int, Bool, Str
 from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
@@ -69,8 +69,8 @@ params = {
 }
 
 param_descs = {
-    "sample_metadata": SAMPLE_METADATA,
-    "feature_metadata": FEATURE_METADATA,
+    "sample_metadata": Q2_SAMPLE_METADATA,
+    "feature_metadata": Q2_FEATURE_METADATA,
     "extreme_feature_count": EXTREME_FEATURE_COUNT,
     "debug": DEBUG
     + (

@@ -146,8 +146,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 autoSelectButton: async function() {
                     await display.regenerateFromAutoSelection();
                 },
-                exportDataButton: function() {
-                    display.exportData();
+                exportSamplePlotDataButton: function() {
+                    display.exportSamplePlotData();
+                },
+                exportRankPlotDataButton: function() {
+                    display.exportRankPlotData();
                 }
             });
             this.elementsWithOnChangeBindings = dom_utils.setUpDOMBindings(
@@ -188,6 +191,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 },
                 "onchange"
             );
+            // Enable tooltips for the questionmark <span>s
+            //
+            // The container body thing prevents visual glitches due to the
+            // tooltip elements being within input groups -- see
+            // https://stackoverflow.com/a/38058186/10730311.
+            $(".questionmark").tooltip({ container: "body" });
         }
 
         makeRankPlot(notFirstTime) {
@@ -1240,18 +1249,18 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
         /* Calls dom_utils.downloadDataURI() on the result of
          * getSamplePlotData().
          */
-        exportData() {
+        exportSamplePlotData() {
             var tsv = this.getSamplePlotData(
                 this.samplePlotJSON.encoding.x.field,
                 this.samplePlotJSON.encoding.color.field
             );
             dom_utils.downloadDataURI("sample_plot_data.tsv", tsv, true);
-            // Also I guess export feature IDs somehow.
-            // TODO go through this.topFeatures and this.botFeatures; convert
-            // from two arrays to a string, where each feature is separated by
-            // a newline and the numerator feature list is followed by
-            // "DENOMINATOR FEATURES\n" and then the denominator feature list.
-            // Then I guess uh just save that to a .txt file?
+        }
+
+        /* Like exportSamplePlotData(), but for data from the rank plot. */
+        exportRankPlotData() {
+            var tsv = this.getRankPlotData();
+            dom_utils.downloadDataURI("selected_features.tsv", tsv, true);
         }
 
         /* Adds surrounding quotes if the string t contains any whitespace or
@@ -1314,6 +1323,41 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     String(data[i][currColorField])
                 );
                 outputTSV += "\t" + currXValue + "\t" + currColorValue;
+            }
+            return outputTSV;
+        }
+
+        /* Analogue to getSamplePlotData().
+         *
+         * Differs in that this only exports data for selected features in the
+         * rank plot, since I imagine that will be a lot more useful than like
+         * 1,000 "None"s and a few "Numerator"/"Denominator"s.
+         */
+        getRankPlotData() {
+            var outputTSV = '"Feature ID"\tLog_Ratio_Classification';
+            var dataName = this.rankPlotJSON.data.name;
+            // Get all of the data available to the rank plot
+            var data = this.rankPlotJSON.datasets[dataName];
+            var currFeatureID, currClassification;
+            // NOTE: this is probably inefficient, and we could save time by
+            // just iterating over the selected features (topFeatures and
+            // botFeatures, ignoring the selection-from-clicking case). However
+            // this should be fast enough for most purposes.
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].qurro_classification != "None") {
+                    currFeatureID = RRVDisplay.quoteTSVFieldIfNeeded(
+                        data[i]["Feature ID"]
+                    );
+                    // Note that we don't call quoteTSVFieldIfNeeded()
+                    // on the classification, since we know that the possible
+                    // classifications (None, Numerator, Denominator, Both)
+                    // won't contain quotes or any other funky characters.
+                    outputTSV +=
+                        "\n" +
+                        currFeatureID +
+                        "\t" +
+                        data[i].qurro_classification;
+                }
             }
             return outputTSV;
         }

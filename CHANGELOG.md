@@ -1,5 +1,42 @@
 # Qurro changelog
 
+## Qurro 0.6.0 (TBD)
+### Features added
+- Added **tooltips** throughout the Qurro interface explaining what certain
+  controls do. Just hover your mouse over one of the "?" icons to view the
+  tooltips! ([#225](https://github.com/biocore/qurro/issues/225),
+  [#123](https://github.com/biocore/qurro/issues/123))
+  - Although this is a pretty common user-interface thing, our particular use
+    of this was inspired by [Bandage](https://rrwick.github.io/Bandage/)'s
+    similar tooltips.
+- Added two **comprehensive tutorials** explaining how to use Qurro with
+  certain types of data: ([#267](https://github.com/biocore/qurro/issues/267))
+  - [With transcriptomics data](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/ALDEx2_TCGA_LUSC/transcriptomic_example.ipynb), courtesy of [@gibsramen](http://github.com/gibsramen/)
+  - [With arbitrary compositional data](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/color_compositions/color_example.ipynb), courtesy of [@cameronmartino](http://github.com/cameronmartino/)
+- Updated the [**moving pictures tutorial**](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/moving_pictures/moving_pictures.ipynb), after a long drought since the last update!
+  - The newest version of the tutorial has more details, more useful examples,
+    demonstrates using the latest version of Qurro, and has been converted from
+    a markdown document to a Jupyter Notebook. Try running it yourself!
+- Added a `Export currently selected features` button that does what it says on the
+  tin: it lets you export a TSV file listing the features currently selected in
+  a log-ratio. ([#87](https://github.com/biocore/qurro/issues/87))
+### Backward-incompatible changes
+- Qurro now (explicitly) requires that a Python version of at least 3.5.3 is
+  installed. (This is an increase from the previous 3.5 minimum.)
+  ([#74](https://github.com/biocore/qurro/issues/74))
+- As a temporary measure, the version of Pandas required to install Qurro from
+  PyPI has been pinned to below version 1.
+  ([#258](https://github.com/biocore/qurro/issues/258))
+  - This isn't really "backwards incompatible" since trying to run Qurro with
+    Pandas 1.0.0 installed would break.
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+- Various minor documentation updates.
+  - Updated Qurro's installation instructions: now you need to install `cython`
+    first, alongside NumPy. This addresses a problem some folks started to have
+    when installing Qurro into relatively "fresh" environments.
+
 ## Qurro 0.5.0 (December 17, 2019)
 ### Features added
 - Added **Qarcoal**, a new command for Qurro's QIIME 2 plugin that computes

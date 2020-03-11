@@ -1,4 +1,8 @@
-define(["display", "mocha", "chai"], function(display, mocha, chai) {
+define(["mocha", "chai", "testing_utilities"], function(
+    mocha,
+    chai,
+    testing_utilities
+) {
     // Just the output from the python "matching" integration test
     // prettier-ignore
     var SSTrankPlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"gridColor": "#f2f2f2", "labelBound": true}, "mark": {"tooltip": null}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-3b5191cefd7ec95081e5ed28b5850e8d"}, "datasets": {"data-3b5191cefd7ec95081e5ed28b5850e8d": [{"Feature ID": "Taxon1", "Intercept": 5.0, "Rank 1": 6.0, "Rank 2": 7.0, "qurro_classification": "None", "qurro_spc": 5.0}, {"Feature ID": "Taxon2", "Intercept": 1.0, "Rank 1": 2.0, "Rank 2": 3.0, "qurro_classification": "None", "qurro_spc": 5.0}, {"Feature ID": "Taxon3", "Intercept": 4.0, "Rank 1": 5.0, "Rank 2": 6.0, "qurro_classification": "None", "qurro_spc": 6.0}, {"Feature ID": "Taxon4", "Intercept": 9.0, "Rank 1": 8.0, "Rank 2": 7.0, "qurro_classification": "None", "qurro_spc": 6.0}, {"Feature ID": "Taxon5", "Intercept": 6.0, "Rank 1": 5.0, "Rank 2": 4.0, "qurro_classification": "None", "qurro_spc": 2.0}], "qurro_feature_metadata_ordering": [], "qurro_rank_ordering": ["Intercept", "Rank 1", "Rank 2"], "qurro_rank_type": "Differential"}, "encoding": {"color": {"field": "qurro_classification", "scale": {"domain": ["None", "Numerator", "Denominator", "Both"], "range": ["#e0e0e0", "#f00", "#00f", "#949"]}, "title": "Log-Ratio Classification", "type": "nominal"}, "tooltip": [{"field": "qurro_x", "title": "Current Ranking", "type": "quantitative"}, {"field": "qurro_classification", "title": "Log-Ratio Classification", "type": "nominal"}, {"field": "qurro_spc", "title": "Sample Presence Count", "type": "quantitative"}, {"field": "Feature ID", "type": "nominal"}, {"field": "Intercept", "type": "quantitative"}, {"field": "Rank 1", "type": "quantitative"}, {"field": "Rank 2", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0, "ticks": false}, "field": "qurro_x", "scale": {"paddingInner": 0, "paddingOuter": 1, "rangeStep": 1}, "title": "Feature Rankings", "type": "ordinal"}, "y": {"field": "Intercept", "type": "quantitative"}}, "mark": "bar", "selection": {"selector023": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Features", "transform": [{"sort": [{"field": "Intercept", "order": "ascending"}], "window": [{"as": "qurro_x", "op": "row_number"}]}]};
@@ -10,10 +14,10 @@ define(["display", "mocha", "chai"], function(display, mocha, chai) {
     describe('Sample metadata values in JSON, "samples shown" statistics, and sample plot filtering', function() {
         var rrv, dataName;
         async function resetRRVDisplay() {
-            rrv = new display.RRVDisplay(
-                JSON.parse(JSON.stringify(SSTrankPlotJSON)),
-                JSON.parse(JSON.stringify(SSTsamplePlotJSON)),
-                JSON.parse(JSON.stringify(SSTcountJSON))
+            rrv = testing_utilities.getNewRRVDisplay(
+                SSTrankPlotJSON,
+                SSTsamplePlotJSON,
+                SSTcountJSON
             );
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();

@@ -25,11 +25,20 @@
                 -->
                 <div class="input-group input-group-sm mb-1">
                     <div class="input-group-prepend">
-                        <label
-                            class="input-group-text"
-                            for="rankField"
-                            id="rankFieldLabel"
-                        ></label>
+                        <label class="input-group-text" for="rankField">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This dropdown changes the feature ranking used in the rank plot. Changing this will adjust each feature's y-axis value to match its value for the selected field, and will re-rank the features in ascending order in the rank plot."
+                            >
+                            </span>
+                            <!-- will be filled with either "Differential" or
+                                 "Feature Loading", depending on the input
+                                 ranking type
+                            -->
+                            <span id="rankFieldLabel"></span>
+                        </label>
                     </div>
                     <select id="rankField" class="custom-select"> </select>
                 </div>
@@ -38,8 +47,16 @@
                         <label
                             class="input-group-text"
                             for="rankPlotColorScheme"
-                            >Color scheme</label
                         >
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This dropdown changes the colors of selected features in the rank plot."
+                            >
+                            </span>
+                            Color scheme
+                        </label>
                     </div>
                     <select id="rankPlotColorScheme" class="custom-select">
                         <!-- Just normal web colors, with the exception of
@@ -72,9 +89,16 @@
                         class="form-control hackySpacerInput"
                     />
                     <div class="input-group-prepend">
-                        <label class="input-group-text" for="barSizeSlider"
-                            >Bar width</label
-                        >
+                        <label class="input-group-text" for="barSizeSlider">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This slider adjusts the width of each bar in the rank plot."
+                            >
+                            </span>
+                            Bar width
+                        </label>
                         <div class="input-group-text">
                             <input
                                 id="barSizeSlider"
@@ -86,12 +110,51 @@
                         </div>
                     </div>
                     <div class="input-group-append">
-                        <label class="input-group-text" for="fitBarSizeCheckbox"
-                            >Fit bar widths to a constant plot width?</label
+                        <label
+                            class="input-group-text"
+                            for="fitBarSizeCheckbox"
                         >
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="When checked, this scales the widths of bars in the rank plot so that the rank plot takes up a constant width (ignoring what the bar width slider is set to). This is useful for displaying rank plots with either a ton of features or a tiny amount of features."
+                            >
+                            </span>
+                            Fit bar widths to a constant plot width?
+                        </label>
                         <div class="input-group-text">
                             <input type="checkbox" id="fitBarSizeCheckbox" />
                         </div>
+                    </div>
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                </div>
+                <div class="input-group input-group-sm mb-1">
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This button exports a TSV file listing just the selected numerator and/or denominator features (in no particular order). Below the header row in the TSV file, each row contains a feature ID and its log-ratio classification."
+                            >
+                            </span>
+                        </label>
+                        <button
+                            id="exportRankPlotDataButton"
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            Export currently selected features
+                        </button>
                     </div>
                     <input
                         type="text"
@@ -121,15 +184,29 @@
                     -->
                     <div class="input-group input-group-sm mb-1">
                         <div class="input-group-prepend">
-                            <label class="input-group-text" for="xAxisField"
-                                >x-axis field</label
-                            >
+                            <label class="input-group-text" for="xAxisField">
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the sample metadata field used for the sample plot's x-axis."
+                                >
+                                </span>
+                                x-axis field
+                            </label>
                         </div>
                         <select class="custom-select" id="xAxisField"> </select>
                         <div class="input-group-prepend">
-                            <label class="input-group-text" for="xAxisScale"
-                                >x-axis scale type</label
-                            >
+                            <label class="input-group-text" for="xAxisScale">
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the scale type of the sample plot's x-axis. If the sample metadata field you have selected for 'x-axis field' right now is numeric (e.g. participant weight), you probably want a quantitative scale type; if it's ordinal or nominal (e.g. subject ID, sample body site), you probably want a categorical scale type."
+                                >
+                                </span>
+                                x-axis scale type
+                            </label>
                         </div>
                         <select class="custom-select" id="xAxisScale">
                             <option value="nominal">Categorical</option>
@@ -142,8 +219,16 @@
                                 class="input-group-text"
                                 id="colorFieldLabel"
                                 for="colorField"
-                                >Color field</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the sample metadata field used to color points in the sample plot."
+                                >
+                                </span>
+                                Color field
+                            </label>
                         </div>
                         <select class="custom-select" id="colorField"> </select>
                         <div class="input-group-prepend">
@@ -151,8 +236,16 @@
                                 class="input-group-text"
                                 id="colorScaleLabel"
                                 for="colorScale"
-                                >Color scale type</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the scale type of the sample coloring used in the sample plot. If the sample metadata field you have selected for 'Color field' right now is numeric (e.g. participant weight), you probably want a quantitative scale type; if it's ordinal or nominal (e.g. subject ID, sample body site), you probably want a categorical scale type."
+                                >
+                                </span>
+                                Color scale type
+                            </label>
                         </div>
                         <select class="custom-select" id="colorScale">
                             <option value="nominal">Categorical</option>
@@ -165,8 +258,16 @@
                                 class="input-group-text"
                                 id="catColorSchemeLabel"
                                 for="catColorScheme"
-                                >Categorical color scheme</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the color scheme used for categorical color scales in the sample plot."
+                                >
+                                </span>
+                                Categorical color scheme
+                            </label>
                         </div>
                         <select class="custom-select" id="catColorScheme">
                             <option value="accent">accent</option>
@@ -191,8 +292,16 @@
                                 class="input-group-text"
                                 id="quantColorSchemeLabel"
                                 for="quantColorScheme"
-                                >Quantitative color scheme</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This dropdown changes the color scheme used for quantitative color scales in the sample plot."
+                                >
+                                </span>
+                                Quantitative color scheme
+                            </label>
                         </div>
                         <select class="custom-select" id="quantColorScheme">
                             <optgroup label="Sequential Single-Hue">
@@ -292,8 +401,16 @@
                             <label
                                 class="input-group-text"
                                 for="boxplotCheckbox"
-                                >Use boxplots for categorical data?</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="When checked, the sample plot will display a boxplot (rather than a scatterplot) whenever the x-axis scale type is categorical."
+                                >
+                                </span>
+                                Use boxplots for categorical data?
+                            </label>
                             <div class="input-group-text">
                                 <input type="checkbox" id="boxplotCheckbox" />
                             </div>
@@ -319,6 +436,35 @@
                             class="form-control hackySpacerInput"
                         />
                     </div>
+                    <div class="input-group input-group-sm mb-1">
+                        <input
+                            type="text"
+                            disabled
+                            class="form-control hackySpacerInput"
+                        />
+                        <div class="input-group-prepend">
+                            <label class="input-group-text">
+                                <span
+                                    class="questionmark mr-0"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="This button exports a TSV file describing the data underlying the sample plot. Below the header row in the TSV file, each row contains a sample's ID along with the sample's currently selected log-ratio and its metadata values for the current x-axis and color fields."
+                                >
+                                </span>
+                            </label>
+                            <button
+                                id="exportSamplePlotDataButton"
+                                class="btn btn-outline-secondary btn-sm"
+                            >
+                                Export current sample plot data
+                            </button>
+                        </div>
+                        <input
+                            type="text"
+                            disabled
+                            class="form-control hackySpacerInput"
+                        />
+                    </div>
                     <div
                         id="mainSamplesDroppedDiv"
                         class="centeredBlock sampleRemovedDiv invisible"
@@ -335,14 +481,6 @@
                         id="colorSamplesDroppedDiv"
                         class="centeredBlock sampleRemovedDiv invisible"
                     ></div>
-                    <div class="centeredBlock">
-                        <button
-                            id="exportDataButton"
-                            class="btn btn-outline-secondary mt-2 btn-sm"
-                        >
-                            Export current sample plot data
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -394,6 +532,13 @@
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="autoSelectNumber">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports autoselection, which is a quick way of taking the log-ratio of the highest- to the lowest- ranked features in the rank plot. The text box in the middle here specifies the number of features (or the percentage of features) to select from each side of the rank plot for a log-ratio. Ties are broken arbitrarily."
+                            >
+                            </span>
                             Using the current ranking, select the top and bottom
                         </label>
                     </div>
@@ -424,10 +569,29 @@
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="topSearch">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports using various filtering methods to select features for the numerator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                            >
+                            </span>
                             Filter numerator to features where
                         </label>
                     </div>
                     <select class="custom-select num" id="topSearch"> </select>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="The next selector adjusts the method used to filter features by a metadata/ranking field. Most of these methods should be self-explanatory; note that 'contains the separated text fragment(s)' filters to features by 1) splitting up the selected field by commas, semicolons, and whitespace, 2) splitting up the input text (in the next text box) in the same way, and 3) selecting features where there's a 'fragment' that matches between that feature's field and the input text. This is useful for filtering on particular taxonomy levels, or by filtering if you have multiple taxonomy level inputs."
+                            >
+                            </span>
+                        </label>
+                    </div>
+
                     <select class="custom-select num" id="topSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
@@ -465,10 +629,28 @@
                 <div class="input-group input-group-sm mt-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="botSearch">
+                            <span
+                                class="questionmark"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="This group of controls supports using various filtering methods to select features for the denominator of a log-ratio. To perform selection using these filtering controls, press the 'Apply Filtering' button below."
+                            >
+                            </span>
                             Filter denominator to features where
                         </label>
                     </div>
                     <select class="custom-select den" id="botSearch"> </select>
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="The next selector adjusts the method used to filter features by a metadata/ranking field. Most of these methods should be self-explanatory; note that 'contains the separated text fragment(s)' filters to features by 1) splitting up the selected field by commas, semicolons, and whitespace, 2) splitting up the input text (in the next text box) in the same way, and 3) selecting features where there's a 'fragment' that matches between that feature's field and the input text. This is useful for filtering on particular taxonomy levels, or by filtering if you have multiple taxonomy level inputs."
+                            >
+                            </span>
+                        </label>
+                    </div>
                     <select class="custom-select den" id="botSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
@@ -509,13 +691,34 @@
                      interface.
                 -->
                 <a id="downloadHelper" class="invisible"></a>
-                <div class="centeredBlock mt-3">
-                    <button
-                        id="multiFeatureButton"
-                        class="btn btn-outline-secondary btn-sm"
-                    >
-                        Apply Filtering
-                    </button>
+                <div class="input-group input-group-sm mt-3">
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">
+                            <span
+                                class="questionmark mr-0"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Attempts to select features in a log-ratio based on the filtering controls defined above. Filtering is useful for more focused investigations than in autoselection: for example, imagine filtering to all OTUs classified in a given genus."
+                            >
+                            </span>
+                        </label>
+                        <button
+                            id="multiFeatureButton"
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            Apply Filtering
+                        </button>
+                    </div>
+                    <input
+                        type="text"
+                        disabled
+                        class="form-control hackySpacerInput"
+                    />
                 </div>
             </div>
         </div>

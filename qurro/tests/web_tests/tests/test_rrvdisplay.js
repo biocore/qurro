@@ -1,5 +1,4 @@
-define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
-    display,
+define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
     mocha,
     chai,
     testing_utilities,
@@ -13,19 +12,15 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    function getNewRRVDisplay() {
-        return new display.RRVDisplay(
-            JSON.parse(JSON.stringify(rankPlotJSON)),
-            JSON.parse(JSON.stringify(samplePlotJSON)),
-            JSON.parse(JSON.stringify(countJSON))
-        );
-    }
-
     describe("Dynamic RRVDisplay class functionality", function() {
         var rrv, dataName;
         async function resetRRVDisplay() {
             await rrv.destroy(true, true, true);
-            rrv = getNewRRVDisplay();
+            rrv = testing_utilities.getNewRRVDisplay(
+                rankPlotJSON,
+                samplePlotJSON,
+                countJSON
+            );
             await rrv.makePlots();
         }
         async function testXAxisCategoricalToQuantitative() {
@@ -39,7 +34,11 @@ define(["display", "mocha", "chai", "testing_utilities", "dom_utils"], function(
             chai.assert.notExists(rrv.samplePlotJSON.encoding.x.axis);
         }
         before(async function() {
-            rrv = getNewRRVDisplay();
+            rrv = testing_utilities.getNewRRVDisplay(
+                rankPlotJSON,
+                samplePlotJSON,
+                countJSON
+            );
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
         });
