@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.6.0 (TBD)
+## Qurro 0.6.0 (March 10, 2020)
 ### Features added
 - Added **tooltips** throughout the Qurro interface explaining what certain
   controls do. Just hover your mouse over one of the "?" icons to view the
