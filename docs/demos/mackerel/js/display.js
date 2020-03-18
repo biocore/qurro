@@ -1334,11 +1334,11 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          * 1,000 "None"s and a few "Numerator"/"Denominator"s.
          */
         getRankPlotData() {
-            var outputTSV = '"Feature ID"\tLog_Ratio_Selection_Status';
+            var outputTSV = '"Feature ID"\tLog_Ratio_Classification';
             var dataName = this.rankPlotJSON.data.name;
             // Get all of the data available to the rank plot
             var data = this.rankPlotJSON.datasets[dataName];
-            var currFeatureID;
+            var currFeatureID, currClassification;
             // NOTE: this is probably inefficient, and we could save time by
             // just iterating over the selected features (topFeatures and
             // botFeatures, ignoring the selection-from-clicking case). However

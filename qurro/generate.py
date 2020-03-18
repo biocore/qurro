@@ -292,7 +292,7 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
                 "qurro_classification",
-                title="Log-Ratio Selection Status",
+                title="Log-Ratio Classification",
                 scale=alt.Scale(
                     domain=["None", "Numerator", "Denominator", "Both"],
                     range=["#e0e0e0", "#f00", "#00f", "#949"],
@@ -306,7 +306,7 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
                 ),
                 alt.Tooltip(
                     field="qurro_classification",
-                    title="Log-Ratio Selection Status",
+                    title="Log-Ratio Classification",
                     type="nominal",
                 ),
                 alt.Tooltip(
