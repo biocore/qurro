@@ -236,6 +236,57 @@ define(["./dom_utils"], function(dom_utils) {
         return filteredFeatures;
     }
 
+    /* Assumes the text is all lowercase.
+     *
+     * This is really similar to textToRankArray(), since it's pretty close
+     * under the hood.
+     */
+    function splitAtOrs(text) {
+        var untrimmedTextParts = text.split("|");
+        var trimmedTextParts = untrimmedTextParts.map(function(part) {
+            return part.trim();
+        });
+        return trimmedTextParts.filter(function(part) {
+            return part !== "";
+        });
+    }
+
+    /* Given a list of feature "rows", a string of input text, and a feature
+     * field, this calls splitAtOrs to split the input text into multiple text
+     * parts separated by any "|"s (pipe characters). This then filters to
+     * features where their feature field contains any of these text parts.
+     *
+     * This can be thought of as doing a logical OR. It differs from
+     * rankFilterFeatures (aka "separated text fragment" searching) in that
+     * this ignores semicolons, internal whitespace, etc. -- it's just a way of
+     * doing basic text searching with multiple strings at once.
+     *
+     * See https://github.com/biocore/qurro/issues/224 for details.
+     */
+    function orFilterFeatures(featureRowList, inputText, featureField) {
+        var textParts = splitAtOrs(inputText);
+        if (textParts.length <= 0) {
+            return [];
+        }
+        var filteredFeatures = [];
+        // Check all text parts (the stuff separated by ORs) as being in every
+        // featureField thing.
+        for (var ti = 0; ti < featureRowList.length; ti++) {
+            currVal = tryTextSearchable(featureRowList[ti][featureField]);
+            if (currVal === null) {
+                continue;
+            } else {
+                for (var pi = 0; pi < textParts.length; pi++) {
+                    if (currVal.includes(textParts[pi])) {
+                        filteredFeatures.push(featureRowList[ti]);
+                        break;
+                    }
+                }
+            }
+        }
+        return filteredFeatures;
+    }
+
     /* Returns list of feature data objects (in the rank plot JSON) based
      * on some sort of "match" of a given feature metadata/ranking field
      * (including Feature ID) with the input text. The input text must be a
@@ -277,6 +328,12 @@ define(["./dom_utils"], function(dom_utils) {
                 inputText.toLowerCase(),
                 featureField,
                 negate
+            );
+        } else if (searchType === "or") {
+            return orFilterFeatures(
+                potentialFeatures,
+                inputText.toLowerCase(),
+                featureField
             );
         } else if (
             searchType === "lt" ||
