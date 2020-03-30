@@ -4,12 +4,12 @@
  * RRVDisplay.makeRankPlot() and RRVDisplay.makeSamplePlot() were based on the
  * Basic Example in https://github.com/vega/vega-embed/.
  */
-define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
-    feature_computation,
-    dom_utils,
-    vega,
-    vegaEmbed
-) {
+define([
+    "./feature_computation",
+    "./dom_utils",
+    "vega",
+    "vega-embed",
+], function (feature_computation, dom_utils, vega, vegaEmbed) {
     class RRVDisplay {
         /* Class representing a display in qurro (involving two plots:
          * one bar plot containing feature ranks, and one scatterplot
@@ -78,7 +78,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             this.droppedSamples = {
                 balance: this.sampleIDs,
                 xAxis: null,
-                color: null
+                color: null,
             };
 
             // Set when the sample plot JSON is loaded. Used to populate
@@ -140,54 +140,54 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // haven't found a good way to do that aside from just declaring
             // individual functions.
             this.elementsWithOnClickBindings = dom_utils.setUpDOMBindings({
-                multiFeatureButton: async function() {
+                multiFeatureButton: async function () {
                     await display.regenerateFromFiltering();
                 },
-                autoSelectButton: async function() {
+                autoSelectButton: async function () {
                     await display.regenerateFromAutoSelection();
                 },
-                exportSamplePlotDataButton: function() {
+                exportSamplePlotDataButton: function () {
                     display.exportSamplePlotData();
                 },
-                exportRankPlotDataButton: function() {
+                exportRankPlotDataButton: function () {
                     display.exportRankPlotData();
-                }
+                },
             });
             this.elementsWithOnChangeBindings = dom_utils.setUpDOMBindings(
                 {
-                    xAxisField: async function() {
+                    xAxisField: async function () {
                         await display.updateSamplePlotField("xAxis");
                     },
-                    colorField: async function() {
+                    colorField: async function () {
                         await display.updateSamplePlotField("color");
                     },
-                    xAxisScale: async function() {
+                    xAxisScale: async function () {
                         await display.updateSamplePlotScale("xAxis");
                     },
-                    colorScale: async function() {
+                    colorScale: async function () {
                         await display.updateSamplePlotScale("color");
                     },
-                    rankField: async function() {
+                    rankField: async function () {
                         await display.updateRankField();
                     },
-                    barSizeSlider: async function() {
+                    barSizeSlider: async function () {
                         await display.updateRankPlotBarSizeToSlider(true);
                     },
-                    fitBarSizeCheckbox: async function() {
+                    fitBarSizeCheckbox: async function () {
                         await display.updateRankPlotBarFitting(true);
                     },
-                    boxplotCheckbox: async function() {
+                    boxplotCheckbox: async function () {
                         await display.updateSamplePlotBoxplot();
                     },
-                    catColorScheme: async function() {
+                    catColorScheme: async function () {
                         await display.updateSamplePlotColorScheme("category");
                     },
-                    quantColorScheme: async function() {
+                    quantColorScheme: async function () {
                         await display.updateSamplePlotColorScheme("ramp");
                     },
-                    rankPlotColorScheme: async function() {
+                    rankPlotColorScheme: async function () {
                         await display.updateRankPlotColorScheme();
-                    }
+                    },
                 },
                 "onchange"
             );
@@ -218,7 +218,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 this.featureMetadataFields = this.rankPlotJSON.datasets.qurro_feature_metadata_ordering;
                 var searchableFields = {
                     standalone: ["Feature ID"],
-                    "Feature Metadata": this.featureMetadataFields
+                    "Feature Metadata": this.featureMetadataFields,
                 };
                 searchableFields[this.rankType + "s"] = this.rankOrdering;
                 dom_utils.populateSelect(
@@ -237,7 +237,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 var columns = [{ title: "Feature ID" }];
                 $.each(
                     $.merge(this.rankOrdering, this.featureMetadataFields),
-                    function(index, value) {
+                    function (index, value) {
                         columns.push({ title: value });
                     }
                 );
@@ -255,7 +255,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     columns: this.featureColumns,
                     data: [],
                     columnDefs: [{ width: "20%", targets: 0 }],
-                    fixedColumns: true
+                    fixedColumns: true,
                 };
                 $("#topFeaturesDisplay").DataTable(dtConfig);
                 $("#botFeaturesDisplay").DataTable(dtConfig);
@@ -290,8 +290,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // "custom"-theme tooltip CSS.
             return vegaEmbed("#rankPlot", this.rankPlotJSON, {
                 downloadFileName: "rank_plot",
-                tooltip: { theme: "custom" }
-            }).then(function(result) {
+                tooltip: { theme: "custom" },
+            }).then(function (result) {
                 parentDisplay.rankPlotView = result.view;
                 parentDisplay.addClickEventToRankPlotView(parentDisplay);
             });
@@ -299,7 +299,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
 
         addClickEventToRankPlotView(display) {
             // Set callbacks to let users make selections in the ranks plot
-            display.rankPlotView.addEventListener("click", function(e, i) {
+            display.rankPlotView.addEventListener("click", function (e, i) {
                 if (i !== null && i !== undefined) {
                     if (i.mark.marktype === "rect") {
                         if (display.onHigh) {
@@ -360,8 +360,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
 
             var parentDisplay = this;
             return vegaEmbed("#samplePlot", this.samplePlotJSON, {
-                downloadFileName: "sample_plot"
-            }).then(function(result) {
+                downloadFileName: "sample_plot",
+            }).then(function (result) {
                 parentDisplay.samplePlotView = result.view;
             });
         }
@@ -541,7 +541,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                     vega.truthy,
                     "qurro_balance",
                     // function to run to determine what the new balances are
-                    function(sampleRow) {
+                    function (sampleRow) {
                         var sampleBalance = updateBalanceFunc.call(
                             parentDisplay,
                             sampleRow
@@ -568,7 +568,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 rankDataName,
                 vega
                     .changeset()
-                    .modify(vega.truthy, "qurro_classification", function(
+                    .modify(vega.truthy, "qurro_classification", function (
                         rankRow
                     ) {
                         var color = updateRankColorFunc.call(
@@ -585,7 +585,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
             // Change both the plots, and move on when these changes are done.
             await Promise.all([
                 samplePlotViewChanged.runAsync(),
-                rankPlotViewChanged.runAsync()
+                rankPlotViewChanged.runAsync(),
             ]);
 
             // Now that the plots have been updated, update the dropped sample
@@ -802,12 +802,12 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // Keep track of feature columns via a closure so that we can
                 // reference it from inside the following function(...s)
                 var columns = this.featureColumns;
-                $.each(topFeatureList, function(index, feature) {
+                $.each(topFeatureList, function (index, feature) {
                     topDisplay.row.add(
                         RRVDisplay.getRowOfColumnData(feature, columns)
                     );
                 });
-                $.each(botFeatureList, function(index, feature) {
+                $.each(botFeatureList, function (index, feature) {
                     botDisplay.row.add(
                         RRVDisplay.getRowOfColumnData(feature, columns)
                     );
@@ -825,7 +825,7 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
          */
         static getRowOfColumnData(feature, columns) {
             var row = [];
-            $.each(columns, function(index, column) {
+            $.each(columns, function (index, column) {
                 row.push(feature[column.title]);
             });
             return row;
@@ -840,16 +840,16 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 {
                     type: "quantitative",
                     field: "qurro_balance",
-                    title: "Current Natural Log-Ratio"
+                    title: "Current Natural Log-Ratio",
                 },
                 {
                     type: this.samplePlotJSON.encoding.x.type,
-                    field: this.samplePlotJSON.encoding.x.field
+                    field: this.samplePlotJSON.encoding.x.field,
                 },
                 {
                     type: this.samplePlotJSON.encoding.color.type,
-                    field: this.samplePlotJSON.encoding.color.field
-                }
+                    field: this.samplePlotJSON.encoding.color.field,
+                },
             ];
         }
 
@@ -1411,12 +1411,8 @@ define(["./feature_computation", "./dom_utils", "vega", "vega-embed"], function(
                 // let us re-initialize the DataTable in makeRankPlot() without
                 // causing this sort of error:
                 // https://datatables.net/manual/tech-notes/3
-                $("#topFeaturesDisplay")
-                    .DataTable()
-                    .destroy();
-                $("#botFeaturesDisplay")
-                    .DataTable()
-                    .destroy();
+                $("#topFeaturesDisplay").DataTable().destroy();
+                $("#botFeaturesDisplay").DataTable().destroy();
                 dom_utils.clearDiv("topFeaturesDisplay");
                 dom_utils.clearDiv("botFeaturesDisplay");
 

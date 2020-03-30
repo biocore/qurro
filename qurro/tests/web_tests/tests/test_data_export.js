@@ -1,4 +1,4 @@
-define(["display", "mocha", "chai", "testing_utilities"], function(
+define(["display", "mocha", "chai", "testing_utilities"], function (
     display,
     mocha,
     chai,
@@ -11,9 +11,9 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
     var samplePlotJSON = {"$schema": "https://vega.github.io/schema/vega-lite/v3.3.0.json", "autosize": {"resize": true}, "background": "#FFFFFF", "config": {"axis": {"labelBound": true}, "mark": {"tooltip": null}, "range": {"category": {"scheme": "tableau10"}, "ramp": {"scheme": "blues"}}, "view": {"height": 300, "width": 400}}, "data": {"name": "data-17ad6d7eb8d11fdb67d65d9f4abd5654"}, "datasets": {"data-17ad6d7eb8d11fdb67d65d9f4abd5654": [{"Metadata1": "1", "Metadata2": "2", "Metadata3": "3", "Sample ID": "Sample1", "qurro_balance": null}, {"Metadata1": "4", "Metadata2": "5", "Metadata3": "6", "Sample ID": "Sample2", "qurro_balance": null}, {"Metadata1": "7", "Metadata2": "8", "Metadata3": "9", "Sample ID": "Sample3", "qurro_balance": null}, {"Metadata1": "13", "Metadata2": "14", "Metadata3": "15", "Sample ID": "Sample5", "qurro_balance": null}, {"Metadata1": "16", "Metadata2": "17", "Metadata3": "18", "Sample ID": "Sample6", "qurro_balance": null}, {"Metadata1": "19", "Metadata2": "20", "Metadata3": "21", "Sample ID": "Sample7", "qurro_balance": null}], "qurro_sample_metadata_fields": ["Metadata1", "Metadata2", "Metadata3", "Sample ID"]}, "encoding": {"color": {"field": "Metadata1", "type": "nominal"}, "tooltip": [{"field": "Sample ID", "type": "nominal"}, {"field": "qurro_balance", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "Metadata1", "scale": {"zero": false}, "type": "nominal"}, "y": {"field": "qurro_balance", "scale": {"zero": false}, "title": "Current Natural Log-Ratio", "type": "quantitative"}}, "mark": {"type": "circle"}, "selection": {"selector006": {"bind": "scales", "encodings": ["x", "y"], "type": "interval"}}, "title": "Samples"};
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
-    describe("Exporting sample plot data", function() {
+    describe("Exporting sample plot data", function () {
         var rrv, dataName;
-        before(async function() {
+        before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -22,11 +22,11 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
         });
-        after(async function() {
+        after(async function () {
             await rrv.destroy(true, true, true);
         });
-        it("Works properly even when all samples' balances are null", function() {
-            before(function() {
+        it("Works properly even when all samples' balances are null", function () {
+            before(function () {
                 // set balances to null, mimicking the state of the JSON before any
                 // features have been selected
                 for (
@@ -61,14 +61,14 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             var outputTSV2 = rrv.getSamplePlotData("Metadata1", "Sample ID");
             chai.assert.equal(expectedTSV2, outputTSV2);
         });
-        describe("Works properly when balances are directly set", function() {
+        describe("Works properly when balances are directly set", function () {
             /* Update sample plot balances directly.
              * Most of the balances are set to normal numbers, but two samples'
              * balances are set to null in order to test filtering of
              * some samples without "proper" balances -- i.e. undrawn samples,
              * which should be omitted from the exported data.
              */
-            before(function() {
+            before(function () {
                 rrv.samplePlotJSON.datasets[dataName][0].qurro_balance = 1;
                 rrv.samplePlotJSON.datasets[dataName][1].qurro_balance = null;
                 rrv.samplePlotJSON.datasets[dataName][2].qurro_balance = 3;
@@ -76,7 +76,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 rrv.samplePlotJSON.datasets[dataName][4].qurro_balance = 6.5;
                 rrv.samplePlotJSON.datasets[dataName][5].qurro_balance = 7;
             });
-            it("Works properly when normal metadata categories used", function() {
+            it("Works properly when normal metadata categories used", function () {
                 var expectedTSV =
                     '"Sample ID"\tCurrent_Natural_Log_Ratio\tMetadata1\tMetadata3\n' +
                     "Sample1\t1\t1\t3\n" +
@@ -88,7 +88,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 var outputTSV = rrv.getSamplePlotData("Metadata1", "Metadata3");
                 chai.assert.equal(expectedTSV, outputTSV);
             });
-            it("Works properly when sample ID is used", function() {
+            it("Works properly when sample ID is used", function () {
                 var expectedTSV =
                     '"Sample ID"\tCurrent_Natural_Log_Ratio\t"Sample ID"\t"Sample ID"\n' +
                     "Sample1\t1\tSample1\tSample1\n" +
@@ -105,17 +105,17 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
         // works also as a temporary measure
         it("Works properly when balances are set from user-based selection");
 
-        describe("Quoting TSV fields", function() {
+        describe("Quoting TSV fields", function () {
             // Quick way to avoid writing out "display.RRVDisplay..." every
             // time we want to call that function
             qfunc = display.RRVDisplay.quoteTSVFieldIfNeeded;
-            it("Doesn't modify inputs without whitespace or double-quotes", function() {
+            it("Doesn't modify inputs without whitespace or double-quotes", function () {
                 var t1 = "abcdefg";
                 chai.assert.equal(t1, qfunc(t1));
                 var t2 = "ABC123xyz+-?!@#$%^&*){}|/<>.";
                 chai.assert.equal(t2, qfunc(t2));
             });
-            it("Quotes fields containing whitespace", function() {
+            it("Quotes fields containing whitespace", function () {
                 // Test types of whitespace characters
                 var t1 = "abc defg";
                 chai.assert.equal('"abc defg"', qfunc(t1));
@@ -136,7 +136,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 var t8 = "a\tb\nc\rd\tefg\r";
                 chai.assert.equal('"a\tb\nc\rd\tefg\r"', qfunc(t8));
             });
-            it('Quotes fields containing " and replaces those "s', function() {
+            it('Quotes fields containing " and replaces those "s', function () {
                 var t1 = 'abc"defg';
                 chai.assert.equal('"abc""defg"', qfunc(t1));
                 var t2 = 'abcd"ef"g';
@@ -144,7 +144,7 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
                 var t3 = '"abcdefg"';
                 chai.assert.equal('"""abcdefg"""', qfunc(t3));
             });
-            it('Properly handles fields with both whitespace and "s', function() {
+            it('Properly handles fields with both whitespace and "s', function () {
                 var t1 = 'abc "def" g';
                 chai.assert.equal('"abc ""def"" g"', qfunc(t1));
                 var t2 = 'a"\t"b\nc\rd\tefg""\r';
@@ -154,9 +154,9 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             });
         });
     });
-    describe("Exporting rank plot data", function() {
+    describe("Exporting rank plot data", function () {
         var rrv, dataName;
-        beforeEach(async function() {
+        beforeEach(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -165,10 +165,10 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             dataName = rrv.rankPlotJSON.data.name;
             await rrv.makePlots();
         });
-        afterEach(async function() {
+        afterEach(async function () {
             await rrv.destroy(true, true, true);
         });
-        it("Works in simple feature / feature log-ratio case", async function() {
+        it("Works in simple feature / feature log-ratio case", async function () {
             var expectedTSV =
                 '"Feature ID"\tLog_Ratio_Classification\n' +
                 "Taxon3\tNumerator\n" +
@@ -180,13 +180,13 @@ define(["display", "mocha", "chai", "testing_utilities"], function(
             var outputTSV = rrv.getRankPlotData();
             chai.assert.equal(expectedTSV, outputTSV);
         });
-        it("Produces a TSV containing just a header if no feature selected", function() {
+        it("Produces a TSV containing just a header if no feature selected", function () {
             chai.assert.equal(
                 '"Feature ID"\tLog_Ratio_Classification',
                 rrv.getRankPlotData()
             );
         });
-        it("Works when multiple features selected in a side of the log-ratio", async function() {
+        it("Works when multiple features selected in a side of the log-ratio", async function () {
             var expectedTSV =
                 '"Feature ID"\tLog_Ratio_Classification\n' +
                 "Taxon1\tDenominator\n" +

@@ -1,4 +1,4 @@
-define(["mocha", "chai", "testing_utilities"], function(
+define(["mocha", "chai", "testing_utilities"], function (
     mocha,
     chai,
     testing_utilities
@@ -11,7 +11,7 @@ define(["mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var SSTcountJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe('Sample metadata values in JSON, "samples shown" statistics, and sample plot filtering', function() {
+    describe('Sample metadata values in JSON, "samples shown" statistics, and sample plot filtering', function () {
         var rrv, dataName;
         async function resetRRVDisplay() {
             rrv = testing_utilities.getNewRRVDisplay(
@@ -23,10 +23,10 @@ define(["mocha", "chai", "testing_utilities"], function(
             await rrv.makePlots();
         }
         beforeEach(resetRRVDisplay);
-        afterEach(async function() {
+        afterEach(async function () {
             await rrv.destroy(true, true, true);
         });
-        it("Sample metadata values are passed from python to JSON to JS correctly", function() {
+        it("Sample metadata values are passed from python to JSON to JS correctly", function () {
             var sampleArray = rrv.samplePlotJSON.datasets[dataName];
             chai.assert.equal(6, sampleArray.length);
 
@@ -63,7 +63,7 @@ define(["mocha", "chai", "testing_utilities"], function(
             chai.assert.equal("20", sampleArray[5].Metadata2);
             chai.assert.equal("21", sampleArray[5].Metadata3);
         });
-        describe("Sample plot filters are properly set", function() {
+        describe("Sample plot filters are properly set", function () {
             /* Small helper function. encoding should be "xAxis" or "color",
              * and newValue should be whatever the new value you want to set
              * is.
@@ -85,7 +85,7 @@ define(["mocha", "chai", "testing_utilities"], function(
             // NOTE: if we get around to removing the redundancy in the
             // filters generated when x-axis and color fields are equal,
             // these tests will need to be changed accordingly.
-            it("When both x-axis and color are categorical", async function() {
+            it("When both x-axis and color are categorical", async function () {
                 // Just once, test the "starting" filters
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
@@ -135,7 +135,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                     rrv.getInvalidSampleIDs("Metadata3", "color")
                 );
             });
-            it("When x-axis is quantitative and color is categorical", async function() {
+            it("When x-axis is quantitative and color is categorical", async function () {
                 await changeEncoding("xAxis", "quantitative", true);
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
@@ -185,7 +185,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                         "Sample3",
                         "Sample5",
                         "Sample6",
-                        "Sample7"
+                        "Sample7",
                     ],
                     rrv.getInvalidSampleIDs("Sample ID", "x")
                 );
@@ -193,7 +193,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                     rrv.getInvalidSampleIDs("Metadata2", "color")
                 );
             });
-            it("When x-axis is categorical and color is quantitative", async function() {
+            it("When x-axis is categorical and color is quantitative", async function () {
                 await changeEncoding("color", "quantitative", true);
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +
@@ -240,12 +240,12 @@ define(["mocha", "chai", "testing_utilities"], function(
                         "Sample3",
                         "Sample5",
                         "Sample6",
-                        "Sample7"
+                        "Sample7",
                     ],
                     rrv.getInvalidSampleIDs("Sample ID", "color")
                 );
             });
-            it("When both x-axis and color are quantitative", async function() {
+            it("When both x-axis and color are quantitative", async function () {
                 await changeEncoding("color", "quantitative", true);
                 chai.assert.equal(
                     "datum.qurro_balance != null && " +

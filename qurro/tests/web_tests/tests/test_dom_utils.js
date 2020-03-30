@@ -1,10 +1,10 @@
-define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
+define(["dom_utils", "mocha", "chai", "testing_utilities"], function (
     dom_utils,
     mocha,
     chai,
     testing_utilities
 ) {
-    describe("Various general DOM utilities", function() {
+    describe("Various general DOM utilities", function () {
         /* Returns a list of child values, with optgroups represented in the
          * list as objects mapping the optgroup label to a list of child option
          * values.
@@ -13,7 +13,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
          * necessarily made these utility functions a lot less compact than
          * they used to be.
          */
-        var getChildValuesFromSelect = function(selectID) {
+        var getChildValuesFromSelect = function (selectID) {
             var ele = document.getElementById(selectID);
             var outputValues = [];
             var currOptgroupValues, currOptgroupObject;
@@ -43,7 +43,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             }
             return outputValues;
         };
-        var checkIfOptionShouldBeSelected = function(
+        var checkIfOptionShouldBeSelected = function (
             optionEle,
             expectedSelectedValue
         ) {
@@ -53,7 +53,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 chai.assert.isFalse(optionEle.selected);
             }
         };
-        var assertSelected = function(selectID, expectedSelectedValue) {
+        var assertSelected = function (selectID, expectedSelectedValue) {
             var ele = document.getElementById(selectID);
             var j;
             for (var i = 0; i < ele.children.length; i++) {
@@ -72,9 +72,9 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 }
             }
         };
-        describe("Populating a <select> element with options", function() {
+        describe("Populating a <select> element with options", function () {
             var selectID = "qurro_select_test";
-            it("Works properly in the basic case", function() {
+            it("Works properly in the basic case", function () {
                 var vals = ["Thing 1", "Thing 2", "asdf"];
                 dom_utils.populateSelect(selectID, vals, "asdf");
                 chai.assert.sameMembers(
@@ -83,7 +83,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
                 assertSelected(selectID, "asdf");
             });
-            it("Clears the option list when called on an already-populated <select>", function() {
+            it("Clears the option list when called on an already-populated <select>", function () {
                 // We shouldn't see stuff from the previous test (e.g. "Thing 1",
                 // "asdf") in the select's options
                 var vals = ["Thing 3", "Thing 2"];
@@ -94,7 +94,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
                 assertSelected(selectID, "Thing 2");
             });
-            it("Works properly with only one option", function() {
+            it("Works properly with only one option", function () {
                 var vals = ["lonely string"];
                 dom_utils.populateSelect(selectID, vals, "lonely string");
                 chai.assert.sameMembers(
@@ -103,12 +103,12 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
                 assertSelected(selectID, "lonely string");
             });
-            it("Works properly even with weird HTML characters in values", function() {
+            it("Works properly even with weird HTML characters in values", function () {
                 var vals = [
                     "value<strong>1</strong>",
                     "value</option></select>",
                     "value &2;",
-                    "value<3.>{!$@"
+                    "value<3.>{!$@",
                 ];
                 dom_utils.populateSelect(selectID, vals, "value &2;");
                 chai.assert.sameMembers(
@@ -117,12 +117,12 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
                 assertSelected(selectID, "value &2;");
             });
-            it("Throws an error when passed an empty list", function() {
-                chai.assert.throws(function() {
+            it("Throws an error when passed an empty list", function () {
+                chai.assert.throws(function () {
                     dom_utils.populateSelect(selectID, [], "I'm irrelevant!");
                 }, /options must have at least one value/);
             });
-            it("Creates <optgroup>s when optgroupMap is truthy", function() {
+            it("Creates <optgroup>s when optgroupMap is truthy", function () {
                 var vals = { g1: ["o1", "o2"], g2: ["o3"] };
                 dom_utils.populateSelect(selectID, vals, "o2", true);
                 // Check that the select has two optgroups with the correct
@@ -133,11 +133,11 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
                 assertSelected(selectID, "o2");
             });
-            it('Creates global options for optgroups labelled "standalone"', function() {
+            it('Creates global options for optgroups labelled "standalone"', function () {
                 var vals = {
                     g1: ["o1", "o2"],
                     g2: ["o3"],
-                    standalone: ["o4", "o5"]
+                    standalone: ["o4", "o5"],
                 };
                 dom_utils.populateSelect(selectID, vals, "o3", true);
                 chai.assert.sameDeepMembers(
@@ -146,13 +146,13 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
                 assertSelected(selectID, "o3");
             });
-            it("Throws an error when passed an empty optgroups object", function() {
-                chai.assert.throws(function() {
+            it("Throws an error when passed an empty optgroups object", function () {
+                chai.assert.throws(function () {
                     dom_utils.populateSelect(selectID, {}, "", true);
                 }, /options must have at least one optgroup specified/);
             });
-            it("Throws an error when passed an optgroups object with all empty children", function() {
-                chai.assert.throws(function() {
+            it("Throws an error when passed an optgroups object with all empty children", function () {
+                chai.assert.throws(function () {
                     dom_utils.populateSelect(
                         selectID,
                         { abc: [], def: [] },
@@ -163,8 +163,8 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             });
         });
 
-        describe("Changing the enabled status of an element", function() {
-            it("Properly disables elements", function() {
+        describe("Changing the enabled status of an element", function () {
+            it("Properly disables elements", function () {
                 dom_utils.changeElementsEnabled(
                     ["qurro_enabled_test", "qurro_enabled_test2"],
                     false
@@ -172,7 +172,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 testing_utilities.assertEnabled("qurro_enabled_test", false);
                 testing_utilities.assertEnabled("qurro_enabled_test2", false);
             });
-            it("Properly enables elements", function() {
+            it("Properly enables elements", function () {
                 dom_utils.changeElementsEnabled(
                     ["qurro_enabled_test", "qurro_enabled_test2"],
                     true
@@ -182,8 +182,8 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             });
         });
 
-        describe("Clearing children of an element", function() {
-            it("Works properly on nested elements", function() {
+        describe("Clearing children of an element", function () {
+            it("Works properly on nested elements", function () {
                 var currID = "qurro_cleardiv_test";
                 dom_utils.clearDiv(currID);
                 chai.assert.isEmpty(document.getElementById(currID).children);
@@ -192,7 +192,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     "grandchild",
                     "child2",
                     "grandchild2",
-                    "greatgrandchild"
+                    "greatgrandchild",
                 ];
                 for (var c = 0; c < descendantIDs.length; c++) {
                     chai.assert.notExists(
@@ -200,7 +200,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     );
                 }
             });
-            it("Doesn't do anything on empty elements", function() {
+            it("Doesn't do anything on empty elements", function () {
                 var currID = "qurro_cleardiv_emptyelement";
                 dom_utils.clearDiv(currID);
                 var ele = document.getElementById(currID);
@@ -213,7 +213,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             });
         });
 
-        describe("Setting onchange and onclick element bindings", function() {
+        describe("Setting onchange and onclick element bindings", function () {
             // Silly little test functions
             function give4() {
                 return 4;
@@ -221,7 +221,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             function give8() {
                 return 8;
             }
-            it("Properly sets the onchange attribute", function() {
+            it("Properly sets the onchange attribute", function () {
                 var eleList = dom_utils.setUpDOMBindings(
                     { qurro_bindingtest1: give4 },
                     "onchange"
@@ -233,7 +233,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     4
                 );
             });
-            it("Properly sets the onclick attribute", function() {
+            it("Properly sets the onclick attribute", function () {
                 var eleList = dom_utils.setUpDOMBindings(
                     { qurro_bindingtest2: give4 },
                     "onclick"
@@ -243,7 +243,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     4
                 );
             });
-            it("Works with multiple elements at once", function() {
+            it("Works with multiple elements at once", function () {
                 var eleList = dom_utils.setUpDOMBindings(
                     { qurro_bindingtest1: give8, qurro_bindingtest3: give4 },
                     "onchange"
@@ -263,10 +263,10 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 }
             });
         });
-        describe("Informing the user re: sample dropping statistics", function() {
-            describe('Updating the "main" samples-shown div', function() {
+        describe("Informing the user re: sample dropping statistics", function () {
+            describe('Updating the "main" samples-shown div', function () {
                 var htmlSuffix = " currently shown.";
-                it("Works properly with normal inputs", function() {
+                it("Works properly with normal inputs", function () {
                     dom_utils.updateMainSampleShownDiv(
                         { a: [1, 2, 3], b: [2, 3, 4, 5] },
                         15
@@ -293,30 +293,30 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
 
-                it("Throws an error if totalSampleCount is 0", function() {
-                    chai.assert.throws(function() {
+                it("Throws an error if totalSampleCount is 0", function () {
+                    chai.assert.throws(function () {
                         dom_utils.updateMainSampleShownDiv({ a: [1, 2, 3] }, 0);
                     });
-                    chai.assert.throws(function() {
+                    chai.assert.throws(function () {
                         dom_utils.updateMainSampleShownDiv({ a: [] }, 0);
                     });
-                    chai.assert.throws(function() {
+                    chai.assert.throws(function () {
                         dom_utils.updateMainSampleShownDiv({}, 0);
                     });
                 });
 
-                it("Throws an error if droppedSampleCount > totalSampleCount", function() {
-                    chai.assert.throws(function() {
+                it("Throws an error if droppedSampleCount > totalSampleCount", function () {
+                    chai.assert.throws(function () {
                         dom_utils.updateMainSampleShownDiv({ a: [1, 2, 3] }, 2);
                     });
                 });
 
-                describe("Computing the size of a union of arrays", function() {
-                    it("Works properly with normal inputs", function() {
+                describe("Computing the size of a union of arrays", function () {
+                    it("Works properly with normal inputs", function () {
                         chai.assert.equal(
                             dom_utils.unionSize({
                                 a: [1, 2, 3],
-                                b: [2, 3, 4, 5]
+                                b: [2, 3, 4, 5],
                             }),
                             5
                         );
@@ -328,7 +328,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             dom_utils.unionSize({
                                 a: [1, 2],
                                 b: [2, 3, 4, 5],
-                                c: [6]
+                                c: [6],
                             }),
                             6
                         );
@@ -336,12 +336,12 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             dom_utils.unionSize({
                                 a: ["Sample 1", "Sample 2"],
                                 b: ["Sample 2", "Sample 3"],
-                                c: ["Sample 1"]
+                                c: ["Sample 1"],
                             }),
                             3
                         );
                     });
-                    it("Works properly with empty list(s)", function() {
+                    it("Works properly with empty list(s)", function () {
                         chai.assert.equal(
                             dom_utils.unionSize({ a: [], b: [], c: [6] }),
                             1
@@ -350,7 +350,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             dom_utils.unionSize({
                                 a: ["Sample 1"],
                                 b: [],
-                                c: ["Sample 2"]
+                                c: ["Sample 2"],
                             }),
                             2
                         );
@@ -359,13 +359,13 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             0
                         );
                     });
-                    it("Works properly with an empty input mapping", function() {
+                    it("Works properly with an empty input mapping", function () {
                         chai.assert.equal(dom_utils.unionSize({}), 0);
                     });
                 });
             });
-            describe("Updating the other sample-dropped divs", function() {
-                it('Works properly for the x-axis "reason"', function() {
+            describe("Updating the other sample-dropped divs", function () {
+                it('Works properly for the x-axis "reason"', function () {
                     var divID = "xAxisSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2, 3, 4, 5],
@@ -386,7 +386,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             .classList.contains("invisible")
                     );
                 });
-                it('Works properly for the color "reason"', function() {
+                it('Works properly for the color "reason"', function () {
                     var divID = "colorSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2],
@@ -407,7 +407,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             .classList.contains("invisible")
                     );
                 });
-                it("Properly escapes weird characters in field names due to use of .textContent instead of .innerHTML", function() {
+                it("Properly escapes weird characters in field names due to use of .textContent instead of .innerHTML", function () {
                     var divID = "colorSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2],
@@ -423,7 +423,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             "&lt;p&gt;field!&amp;name; field."
                     );
                 });
-                it('Works properly for the balance "reason"', function() {
+                it('Works properly for the balance "reason"', function () {
                     var divID = "balanceSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv(
                         [1, 2, 3, 4],
@@ -443,7 +443,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             .classList.contains("invisible")
                     );
                 });
-                it("Makes the div invisible if the number of dropped samples is 0", function() {
+                it("Makes the div invisible if the number of dropped samples is 0", function () {
                     var divID = "balanceSamplesDroppedDiv";
                     dom_utils.updateSampleDroppedDiv([], 8, divID, "balance");
                     chai.assert.isTrue(
@@ -452,8 +452,8 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             .classList.contains("invisible")
                     );
                 });
-                it("Throws an error if totalSampleCount is 0", function() {
-                    chai.assert.throws(function() {
+                it("Throws an error if totalSampleCount is 0", function () {
+                    chai.assert.throws(function () {
                         dom_utils.updateSampleDroppedDiv(
                             [1, 2, 3],
                             0,
@@ -462,7 +462,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                             "fieldName"
                         );
                     });
-                    chai.assert.throws(function() {
+                    chai.assert.throws(function () {
                         dom_utils.updateSampleDroppedDiv(
                             [],
                             0,
@@ -473,8 +473,8 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                     });
                 });
 
-                it("Throws an error if droppedSampleCount > totalSampleCount", function() {
-                    chai.assert.throws(function() {
+                it("Throws an error if droppedSampleCount > totalSampleCount", function () {
+                    chai.assert.throws(function () {
                         dom_utils.updateSampleDroppedDiv(
                             [1, 2, 3],
                             2,

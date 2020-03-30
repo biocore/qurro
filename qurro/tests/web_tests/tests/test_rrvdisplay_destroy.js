@@ -1,4 +1,4 @@
-define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
+define(["dom_utils", "mocha", "chai", "testing_utilities"], function (
     dom_utils,
     mocha,
     chai,
@@ -12,9 +12,9 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe("The RRVDisplay destructor (destroy())", function() {
+    describe("The RRVDisplay destructor (destroy())", function () {
         var rrv;
-        beforeEach(async function() {
+        beforeEach(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -25,7 +25,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
 
         // TODO: add tests that leaving certain args as false still lets
         // destroy() work partially?
-        it("Properly clears DOM element bindings", function() {
+        it("Properly clears DOM element bindings", function () {
             rrv.destroy(true, true, true);
             for (var i = 0; i < rrv.elementsWithOnClickBindings.length; i++) {
                 chai.assert.isNull(
@@ -40,14 +40,14 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
                 );
             }
         });
-        it("Properly clears the #rankPlot and #samplePlot divs", function() {
+        it("Properly clears the #rankPlot and #samplePlot divs", function () {
             rrv.destroy(true, true, true);
             chai.assert.isEmpty(document.getElementById("rankPlot").innerHTML);
             chai.assert.isEmpty(
                 document.getElementById("samplePlot").innerHTML
             );
         });
-        it("Properly clears the ranking/metadata field <select>s", function() {
+        it("Properly clears the ranking/metadata field <select>s", function () {
             rrv.destroy(true, true, true);
             chai.assert.isEmpty(document.getElementById("rankField").innerHTML);
             chai.assert.isEmpty(document.getElementById("topSearch").innerHTML);
@@ -60,7 +60,7 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function(
             );
         });
         /* Warning: here be ugly, bulky code that I wrote in a hurry */
-        it("Properly resets other UI elements to their defaults", async function() {
+        it("Properly resets other UI elements to their defaults", async function () {
             // before calling rrv.destroy(), change a few other things
             // this way we can check that these modifications are reverted on
             // calling destroy()

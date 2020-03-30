@@ -1,4 +1,4 @@
-define(["mocha", "chai", "testing_utilities"], function(
+define(["mocha", "chai", "testing_utilities"], function (
     mocha,
     chai,
     testing_utilities
@@ -11,9 +11,9 @@ define(["mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe("Computing sample log-ratios of selected features in an RRVDisplay object", function() {
+    describe("Computing sample log-ratios of selected features in an RRVDisplay object", function () {
         var rrv;
-        before(async function() {
+        before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -21,11 +21,11 @@ define(["mocha", "chai", "testing_utilities"], function(
             );
             await rrv.makePlots();
         });
-        after(async function() {
+        after(async function () {
             await rrv.destroy(true, true, true);
         });
-        describe("Single-feature selections", function() {
-            it("Computes the correct sample log-ratio", function() {
+        describe("Single-feature selections", function () {
+            it("Computes the correct sample log-ratio", function () {
                 rrv.newFeatureHigh = { "Feature ID": "Taxon3" };
                 rrv.newFeatureLow = { "Feature ID": "Taxon4" };
                 chai.assert.equal(
@@ -53,7 +53,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                     rrv.updateBalanceSingle({ "Sample ID": "Sample5" })
                 );
             });
-            it("Returns null when numerator and/or denominator is 0", function() {
+            it("Returns null when numerator and/or denominator is 0", function () {
                 // In this first case, only the numerator is a 0.
                 rrv.newFeatureHigh = { "Feature ID": "Taxon1" };
                 rrv.newFeatureLow = { "Feature ID": "Taxon2" };
@@ -68,24 +68,24 @@ define(["mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Throws an error if sample ID isn't present in data", function() {
-                chai.assert.throws(function() {
+            it("Throws an error if sample ID isn't present in data", function () {
+                chai.assert.throws(function () {
                     rrv.updateBalanceSingle({
-                        "Sample ID": "lolthisisntreal"
+                        "Sample ID": "lolthisisntreal",
                     });
                 });
             });
         });
-        describe("Multi-feature selections", function() {
-            it("Computes the correct sample log-ratio", function() {
+        describe("Multi-feature selections", function () {
+            it("Computes the correct sample log-ratio", function () {
                 // Standard 2-taxon / 2-taxon case
                 rrv.topFeatures = [
                     { "Feature ID": "Taxon1" },
-                    { "Feature ID": "Taxon3" }
+                    { "Feature ID": "Taxon3" },
                 ];
                 rrv.botFeatures = [
                     { "Feature ID": "Taxon2" },
-                    { "Feature ID": "Taxon4" }
+                    { "Feature ID": "Taxon4" },
                 ];
                 chai.assert.equal(
                     Math.log(2 / 7),
@@ -100,7 +100,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                     rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                 );
             });
-            it("Returns null when numerator and/or denominator feature lists are empty", function() {
+            it("Returns null when numerator and/or denominator feature lists are empty", function () {
                 // Test what happens when numerator and/or denominator
                 // feature lists are empty. If either or both of these
                 // feature lists are empty, we should get a null balance
@@ -125,18 +125,18 @@ define(["mocha", "chai", "testing_utilities"], function(
                     rrv.updateBalanceMulti({ "Sample ID": "Sample1" })
                 );
             });
-            it("Throws an error if sample ID isn't present in data", function() {
+            it("Throws an error if sample ID isn't present in data", function () {
                 // Same as in the updateBalanceSingle test -- verify that
                 // a nonexistent sample ID causes an error
-                chai.assert.throws(function() {
+                chai.assert.throws(function () {
                     rrv.updateBalanceMulti({
-                        "Sample ID": "lolthisisntreal"
+                        "Sample ID": "lolthisisntreal",
                     });
                 });
             });
         });
-        describe("Summing feature abundances in a sample", function() {
-            it("Correctly sums feature abundances in a sample", function() {
+        describe("Summing feature abundances in a sample", function () {
+            it("Correctly sums feature abundances in a sample", function () {
                 // Check case when number of features is just one
                 chai.assert.equal(
                     6,
@@ -160,7 +160,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                         [
                             { "Feature ID": "Taxon2" },
                             { "Feature ID": "Taxon4" },
-                            { "Feature ID": "Taxon1" }
+                            { "Feature ID": "Taxon1" },
                         ]
                     )
                 );
@@ -183,7 +183,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                     )
                 );
             });
-            it("Returns 0 when the input list of features is empty", function() {
+            it("Returns 0 when the input list of features is empty", function () {
                 chai.assert.equal(
                     0,
                     rrv.sumAbundancesForSampleFeatures(
@@ -192,9 +192,9 @@ define(["mocha", "chai", "testing_utilities"], function(
                     )
                 );
             });
-            it("Throws an error if sample ID isn't present in data", function() {
+            it("Throws an error if sample ID isn't present in data", function () {
                 // Check that an invalid sample ID causes an error
-                chai.assert.throws(function() {
+                chai.assert.throws(function () {
                     rrv.sumAbundancesForSampleFeatures(
                         { "Sample ID": "lolthisisntreal" },
                         []

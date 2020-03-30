@@ -1,4 +1,4 @@
-define(["display", "chai"], function(display, chai) {
+define(["display", "chai"], function (display, chai) {
     /* Return a list of the feature IDs present in an array of feature data
      * "objects" (rows in the data in the rank plot JSON).
      */
@@ -29,7 +29,7 @@ define(["display", "chai"], function(display, chai) {
                 " (" +
                 topP.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    maximumFractionDigits: 2,
                 }) +
                 "%) selected"
         );
@@ -42,7 +42,7 @@ define(["display", "chai"], function(display, chai) {
                 " (" +
                 botP.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    maximumFractionDigits: 2,
                 }) +
                 "%) selected"
         );
@@ -103,7 +103,7 @@ define(["display", "chai"], function(display, chai) {
         chai.assert.sameMembers(featureIDsInTable, Object.keys(expectedData));
 
         // Check that column data for each feature ID is in the same order
-        $.each(expectedData, function(featureID, expectedRowContents) {
+        $.each(expectedData, function (featureID, expectedRowContents) {
             for (var i = 0; i < expectedRowContents.length; i++) {
                 chai.assert.equal(
                     dataInTable[featureID][i],
@@ -164,6 +164,6 @@ define(["display", "chai"], function(display, chai) {
         extractDataFromDataTable: extractDataFromDataTable,
         checkDataTable: checkDataTable,
         getFeatureRow: getFeatureRow,
-        getNewRRVDisplay: getNewRRVDisplay
+        getNewRRVDisplay: getNewRRVDisplay,
     };
 });

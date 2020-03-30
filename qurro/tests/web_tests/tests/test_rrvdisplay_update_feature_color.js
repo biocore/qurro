@@ -1,4 +1,4 @@
-define(["mocha", "chai", "testing_utilities"], function(
+define(["mocha", "chai", "testing_utilities"], function (
     mocha,
     chai,
     testing_utilities
@@ -11,9 +11,9 @@ define(["mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe("Updating features' colors in the rank plot based on the current selection", function() {
+    describe("Updating features' colors in the rank plot based on the current selection", function () {
         var rrv;
-        before(async function() {
+        before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -21,10 +21,10 @@ define(["mocha", "chai", "testing_utilities"], function(
             );
             await rrv.makePlots();
         });
-        after(async function() {
+        after(async function () {
             await rrv.destroy(true, true, true);
         });
-        it("Works for single-feature selections", function() {
+        it("Works for single-feature selections", function () {
             rrv.newFeatureHigh = { "Feature ID": "FH" };
             rrv.newFeatureLow = { "Feature ID": "FL" };
             chai.assert.equal(
@@ -47,15 +47,15 @@ define(["mocha", "chai", "testing_utilities"], function(
             );
         });
 
-        it("Works for multi-feature selections", function() {
+        it("Works for multi-feature selections", function () {
             rrv.topFeatures = [
                 { "Feature ID": "Feature1" },
                 { "Feature ID": "Feature2" },
-                { "Feature ID": "Feature3" }
+                { "Feature ID": "Feature3" },
             ];
             rrv.botFeatures = [
                 { "Feature ID": "Feature3" },
-                { "Feature ID": "Feature4" }
+                { "Feature ID": "Feature4" },
             ];
             chai.assert.equal(
                 "Numerator",
