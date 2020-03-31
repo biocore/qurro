@@ -1,9 +1,6 @@
 language: python
 python:
     - "3.6"
-node_js:
-    # Prettier needs Node >= 10.13
-    - "11"
 before_install:
     # Here, we install the stuff needed to test the q2-qurro plugin.
     # This will cause tests to take a while, but that's an ok price to pay.
@@ -36,6 +33,10 @@ before_install:
     # 5. Install ALDEx2 and mygene
     # (this will let us rerun the ALDEx2 example notebook)
     - conda install -c bioconda bioconductor-aldex2 mygene
+    # 6. Update Node.js to the latest version, since Prettier relies on us
+    # having at least version 10.13 and the default on Travis as of writing is
+    # apparently 8.12.0. See https://github.com/nvm-sh/nvm#usage.
+    - nvm install node
 install:
     - pip install -e .[dev]
     # Install various JS testing/stylechecking packages that we use for
