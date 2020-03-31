@@ -2,6 +2,9 @@ language: python
 python:
     - "3.6"
     - "3.7"
+node_js:
+    # Prettier needs Node >= 10.13
+    - "11"
 before_install:
     # Here, we install the stuff needed to test the q2-qurro plugin.
     # This will cause tests to take a while, but that's an ok price to pay.
