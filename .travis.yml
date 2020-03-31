@@ -25,6 +25,9 @@ before_install:
     # (this will let us rerun the Sleep Apnea, Moving Pictures, Qarcoal, and
     # Red Sea example notebooks)
     - conda install -c conda-forge songbird deicode
+    # 3.5. Ugly hack: install opt-einsum (with a hyphen) to make QIIME 2 and
+    # TensorFlow get along. See https://github.com/biocore/songbird/issues/126.
+    - conda install -c conda-forge opt-einsum
     # 4. Install seaborn so we can run the colors example notebook
     # (should be already installed in a QIIME 2 environment, but we may as well
     # make sure that this won't break in the future)
