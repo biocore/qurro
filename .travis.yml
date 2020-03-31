@@ -35,7 +35,8 @@ before_install:
     - conda install -c bioconda bioconductor-aldex2 mygene
     # 6. Update Node.js to the latest version, since Prettier relies on us
     # having at least version 10.13 and the default on Travis as of writing is
-    # apparently 8.12.0. See https://github.com/nvm-sh/nvm#usage.
+    # apparently 8.12.0. See https://github.com/nvm-sh/nvm#usage and
+    # https://github.com/travis-ci/travis-ci/issues/4090#issuecomment-122688955
     - nvm install node
 install:
     - pip install -e .[dev]
