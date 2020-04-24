@@ -1,4 +1,4 @@
-define(["./dom_utils"], function(dom_utils) {
+define(["./dom_utils"], function (dom_utils) {
     /* Converts a feature field value to a text-searchable value, if possible.
      *
      * If the input is a string, returns the input (in lower case).
@@ -41,11 +41,11 @@ define(["./dom_utils"], function(dom_utils) {
         var currVal;
         var decisionFunc;
         if (negate) {
-            decisionFunc = function(value) {
+            decisionFunc = function (value) {
                 return !value.includes(inputText);
             };
         } else {
-            decisionFunc = function(value) {
+            decisionFunc = function (value) {
                 return value.includes(inputText);
             };
         }
@@ -73,19 +73,19 @@ define(["./dom_utils"], function(dom_utils) {
      */
     function operatorToCompareFunc(operator, n) {
         if (operator === "lt") {
-            return function(i) {
+            return function (i) {
                 return i < n;
             };
         } else if (operator === "gt") {
-            return function(i) {
+            return function (i) {
                 return i > n;
             };
         } else if (operator === "lte") {
-            return function(i) {
+            return function (i) {
                 return i <= n;
             };
         } else if (operator === "gte") {
-            return function(i) {
+            return function (i) {
                 return i >= n;
             };
         } else {
@@ -170,7 +170,7 @@ define(["./dom_utils"], function(dom_utils) {
         // Filter out ""s caused by repeated commas or whitespace in the input.
         // Why we need this: "a b   c".split(" ") produces
         // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
-        return initialRankArray.filter(function(r) {
+        return initialRankArray.filter(function (r) {
             return r !== "";
         });
     }
@@ -243,10 +243,10 @@ define(["./dom_utils"], function(dom_utils) {
      */
     function splitAtOrs(text) {
         var untrimmedTextParts = text.split("|");
-        var trimmedTextParts = untrimmedTextParts.map(function(part) {
+        var trimmedTextParts = untrimmedTextParts.map(function (part) {
             return part.trim();
         });
-        return trimmedTextParts.filter(function(part) {
+        return trimmedTextParts.filter(function (part) {
             return part !== "";
         });
     }
@@ -428,7 +428,7 @@ define(["./dom_utils"], function(dom_utils) {
             // use of pd.to_numeric() in qurro.generate.gen_rank_plot().)
             // Comparison function based on spec here (thanks MDN!) --
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description
-            function(feature1, feature2) {
+            function (feature1, feature2) {
                 var f1r = feature1[ranking];
                 var f2r = feature2[ranking];
                 // Basic validation to ensure that both features have this
@@ -485,6 +485,6 @@ define(["./dom_utils"], function(dom_utils) {
         textToRankArray: textToRankArray,
         operatorToCompareFunc: operatorToCompareFunc,
         existsIntersection: existsIntersection,
-        tryTextSearchable: tryTextSearchable
+        tryTextSearchable: tryTextSearchable,
     };
 });

@@ -179,6 +179,9 @@ define([
                     boxplotCheckbox: async function () {
                         await display.updateSamplePlotBoxplot();
                     },
+                    borderCheckbox: async function () {
+                        await display.updateSamplePlotBorders();
+                    },
                     catColorScheme: async function () {
                         await display.updateSamplePlotColorScheme("category");
                     },
@@ -1091,6 +1094,30 @@ define([
             }
         }
 
+        /* Analogous to updateSamplePlotBoxplot(), but for the "Draw borders"
+         * checkbox instead.
+         */
+        async updateSamplePlotBorders() {
+            // TODO: either adapt this to boxplot or don't use it in boxplot
+            // entirely
+            // TODO: handle corner cases (switching to/from quantitative, etc.)
+            // TODO: add tests
+            if (document.getElementById("borderCheckbox").checked) {
+                this.samplePlotJSON.mark.stroke = "#000000";
+                this.samplePlotJSON.mark.strokeWidth = 0.5;
+                this.samplePlotJSON.encoding.color.legend = {
+                    symbolStrokeColor: "#000000",
+                    symbolStrokeWidth: 0.5,
+                };
+                await this.remakeSamplePlot();
+            } else {
+                delete this.samplePlotJSON.mark.stroke;
+                delete this.samplePlotJSON.mark.strokeWidth;
+                delete this.samplePlotJSON.encoding.color.legend;
+                await this.remakeSamplePlot();
+            }
+        }
+
         /* Changes the sample plot JSON and DOM elements to get ready for
          * switching to "boxplot mode." If callRemakeSamplePlot is truthy, this
          * will actually call this.remakeSamplePlot(); otherwise, this won't do
@@ -1432,6 +1459,8 @@ define([
 
                 // Un-check the boxplot checkbox
                 document.getElementById("boxplotCheckbox").checked = false;
+                // ... And the sample border checkbox
+                document.getElementById("borderCheckbox").checked = false;
 
                 // Set search types to "text"
                 document.getElementById("topSearchType").value = "text";
