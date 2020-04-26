@@ -512,6 +512,60 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     lolMatches
                 );
             });
+            it("Correctly handles 'polyphyletic taxa' searching problem", function () {
+                var rpJSONn = JSON.parse(JSON.stringify(rankPlotSkeleton));
+                // I based the taxonomy information here on what Wikipedia
+                // said for P. gingivalis and H. gingivalis, please don't
+                // interpret this test data as the *definitive* taxonomy
+                // names of any of this stuff
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "1",
+                    ord: 5,
+                    tax:
+                        "k__Bacteria;p__Bacteroidetes;c__Bacteroidetes;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas;s__gingivalis",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "2",
+                    ord: 5,
+                    tax:
+                        "k__Animalia;p__Nematoda;c__Secernentea;o__Rhabditida;f__Panagrolaimidae;g__Halicephalobus;s__gingivalis",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "3",
+                    ord: 5,
+                    tax:
+                        "k__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Staphylococcaceae;g__Staphylococcus;s__aureus",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "4",
+                    ord: 5,
+                    tax:
+                        "k__Whatever;p__Something;c__This;o__Isnt;f__Supposed;g__ToBe;s__selectedlol",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "5",
+                    ord: 5,
+                    tax:
+                        "k__Bacteria;p__Bacteroidetes;c__Bacteroidetes;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas;s__levii",
+                });
+                rpJSONn.datasets.qurro_rank_ordering.push("ord");
+                rpJSONn.datasets.qurro_feature_metadata_ordering.push("tax");
+                // Test that we can isolate a particular genus and species
+                // as part of a query WITHOUT getting individual hits to that
+                // genus and species. (Note that features 2 and 5 are NOT
+                // selected, which is as intended.)
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSONn,
+                            "g__Porphyromonas;s__gingivalis | s__aureus",
+                            "tax",
+                            "or"
+                        )
+                    ),
+                    ["1", "3"]
+                );
+            });
         });
         describe('"Rank"-mode searching', function () {
             it("Finds matching features based on full, exact taxonomic rank", function () {
@@ -1410,7 +1464,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                             "text"
                         )
                     );
-                });
+                }, /featureField "Taxonomy" not found in data/);
                 // test that feature metadata field names are case-sensitive
                 chai.assert.throws(function () {
                     feature_computation.filterFeatures(
