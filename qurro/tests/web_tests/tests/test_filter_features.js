@@ -512,6 +512,19 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     lolMatches
                 );
             });
+            it("(Still) case insensitive", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "LoL | 1",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
             it("Correctly handles 'polyphyletic taxa' searching problem", function () {
                 var rpJSONn = JSON.parse(JSON.stringify(rankPlotSkeleton));
                 // I based the taxonomy information here on what Wikipedia
