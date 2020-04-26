@@ -113,6 +113,24 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                 );
             });
 
+            it("Supports searching for features containing the | character", function () {
+                // This tests that the "or support" doesn't break things
+                // In the funky case that the user WANTS to filter to some
+                // feature(s) that contain the pipe character, default text
+                // matching will let them do this.
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "|",
+                            "Feature ID",
+                            "text"
+                        )
+                    ),
+                    ["Feature 4|lol"]
+                );
+            });
+
             it("Correctly searches through feature metadata fields", function () {
                 // Default text search ignores taxonomic ranks (i.e. semicolons)
                 chai.assert.sameOrderedMembers(
@@ -523,6 +541,20 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         )
                     ),
                     ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+            it("Doesn't cause matches due to |s being in feature fields", function () {
+                // Although one of the features has a feature ID of
+                // "Feature 4|lol", we can't use |s as part of a query without
+                // using the exact text matching from before. So the following
+                // attempt will be unsuccessful.
+                chai.assert.empty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "butts | FeatureButWithExtraStuffAtTheEndOfTheWordLol",
+                        "Feature ID",
+                        "or"
+                    )
                 );
             });
             it("Doesn't find anything when input only has |s or whitespace", function () {
