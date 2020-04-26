@@ -525,6 +525,40 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     ["Feature 1", "Featurelol 2", "Feature 4|lol"]
                 );
             });
+            it("Doesn't find anything when input only has |s or whitespace", function () {
+                var queries = [
+                    "|",
+                    "  |  ",
+                    "  |",
+                    "||",
+                    "|||",
+                    "||||",
+                    "| | \t | ",
+                ];
+                for (var i = 0; i < queries.length; i++) {
+                    chai.assert.empty(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            queries[i],
+                            "Feature ID",
+                            "or"
+                        )
+                    );
+                }
+            });
+            it("Correctly ignores empty | terms", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            " || | | |\t  | lol |",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    lolMatches
+                );
+            });
             it("Correctly handles 'polyphyletic taxa' searching problem", function () {
                 var rpJSONn = JSON.parse(JSON.stringify(rankPlotSkeleton));
                 // I based the taxonomy information here on what Wikipedia
