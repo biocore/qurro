@@ -459,16 +459,57 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
         });
         describe('"or"-mode searching (with | separators)', function () {
             it("Correctly searches through feature IDs using 2 strings", function () {
+                // Checks that "lol | 1" shows us hits containing either "lol"
+                // or "1"
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
-                            "lol | 1",
+                            "lol|1",
                             "Feature ID",
                             "or"
                         )
                     ),
                     ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+            it("Still works even if no | separators in input text", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "lol",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    lolMatches
+                );
+            });
+            it("Trims leading/trailing whitespace for each |-separated term", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "     lol\t |\n1",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+            it("Trims leading/trailing whitespace even when no | separators", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "  \n lol\t      \t",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    lolMatches
                 );
             });
         });
