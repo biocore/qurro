@@ -457,6 +457,21 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                 );
             });
         });
+        describe('"or"-mode searching (with | separators)', function () {
+            it("Correctly searches through feature IDs using 2 strings", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "lol | 1",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+        });
         describe('"Rank"-mode searching', function () {
             it("Finds matching features based on full, exact taxonomic rank", function () {
                 chai.assert.sameOrderedMembers(
