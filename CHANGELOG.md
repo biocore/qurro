@@ -1,5 +1,27 @@
 # Qurro changelog
 
+## Qurro 0.7.0 (TBD)
+### Features added
+- Added the ability to **easily search using multiple text queries at once**:
+  this is done using the `contains any text separated by | (pipe)` searching
+  option. You can pass in, e.g. `abc | def | ghi` to select any features where
+  the selected field contains at least one of `abc`, `def`, or `ghi`. ([#224](https://github.com/biocore/qurro/issues/224))
+  - This works more intuitively than the `separated text fragment(s)` option,
+    and should be useful for a few cases that that option can't handle (e.g.
+    polyphyletic taxa, as discussed in issue 224).
+- Added a `Draw borders on sample points?` checkbox, which is useful for making
+  light-colored points in the sample plot easier to see on the white background.
+  ([#240](https://github.com/biocore/qurro/issues/240))
+- Added the `Classic QIIME Colors` categorical scheme used in some other
+  visualization tools, including [Emperor](https://biocore.github.io/emperor/)
+  and [Empress](https://github.com/biocore/empress).
+  ([#300](https://github.com/biocore/qurro/issues/300))
+  - (`tableau10` is still the default categorical color scheme in Qurro, though.)
+### Backward-incompatible changes
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+
 ## Qurro 0.6.0 (March 10, 2020)
 ### Features added
 - Added **tooltips** throughout the Qurro interface explaining what certain

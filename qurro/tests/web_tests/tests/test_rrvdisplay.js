@@ -1,4 +1,5 @@
-define(["mocha", "chai", "testing_utilities", "dom_utils"], function (
+define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
+    vega,
     mocha,
     chai,
     testing_utilities,
@@ -73,6 +74,61 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function (
                 "Differential",
                 document.getElementById("rankFieldLabel").textContent
             );
+        });
+
+        it("Adds the 'qiimediscrete' (Classic QIIME Colors) color scheme", function () {
+            // 1. check that the scheme was added to Vega
+            // (see https://vega.github.io/vega/docs/schemes/#registering-additional-schemes)
+            chai.assert.sameOrderedMembers(vega.scheme("qiimediscrete"), [
+                "#ff0000",
+                "#0000ff",
+                "#f27304",
+                "#008000",
+                "#91278d",
+                "#ffff00",
+                "#7cecf4",
+                "#f49ac2",
+                "#5da09e",
+                "#6b440b",
+                "#808080",
+                "#f79679",
+                "#7da9d8",
+                "#fcc688",
+                "#80c99b",
+                "#a287bf",
+                "#fff899",
+                "#c49c6b",
+                "#c0c0c0",
+                "#ed008a",
+                "#00b6ff",
+                "#a54700",
+                "#808000",
+                "#008080",
+            ]);
+            // 2. check that the scheme is accessible in the Categorical color
+            // scheme selection. There is definitely a more elegant way to do
+            // this but here we use a simple DOM way based on
+            // https://stackoverflow.com/a/19130255/10730311.
+            //
+            // (NOTE: this is kind of a silly test because this color scheme is
+            // present in the HTML independently of any of the JS stuff. Also,
+            // the web test index.html and the actual index.html are separate
+            // files as of writing, so I had to manually add in the QIIME color
+            // scheme for both of them. Suffice it to say that the first part
+            // of this test is much more important.)
+            var ccsSelect = document.getElementById("catColorScheme");
+            var foundQIIMEColors = false;
+            for (var i = 0; i < ccsSelect.length; i++) {
+                if (ccsSelect[i].value === "qiimediscrete") {
+                    chai.assert.equal(
+                        ccsSelect[i].text,
+                        "Classic QIIME Colors"
+                    );
+                    foundQIIMEColors = true;
+                    break;
+                }
+            }
+            chai.assert.isTrue(foundQIIMEColors);
         });
 
         it("RRVDisplay.validateSampleID() identifies nonexistent sample IDs", function () {

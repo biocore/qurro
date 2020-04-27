@@ -329,7 +329,9 @@ define([
          *
          * If notFirstTime is falsy, this will initialize some important
          * properties of this RRVDisplay object related to the sample plot
-         * (e.g. the metadata columns and feature count information).
+         * (e.g. the metadata columns and feature count information), and also
+         * set up the "qiimediscrete" (a.k.a. "Classic QIIME Colors") color
+         * scheme.
          *
          * If you're just calling this function to remake the sample plot with
          * one thing changed (e.g. to change a scale), then it's best to set
@@ -350,6 +352,34 @@ define([
                     this.metadataCols,
                     this.samplePlotJSON.encoding.color.field
                 );
+                // Colors copied in from Empress' JS code (which in turn was
+                // taken from qiime/colors.py).
+                vega.scheme("qiimediscrete", [
+                    "#ff0000",
+                    "#0000ff",
+                    "#f27304",
+                    "#008000",
+                    "#91278d",
+                    "#ffff00",
+                    "#7cecf4",
+                    "#f49ac2",
+                    "#5da09e",
+                    "#6b440b",
+                    "#808080",
+                    "#f79679",
+                    "#7da9d8",
+                    "#fcc688",
+                    "#80c99b",
+                    "#a287bf",
+                    "#fff899",
+                    "#c49c6b",
+                    "#c0c0c0",
+                    "#ed008a",
+                    "#00b6ff",
+                    "#a54700",
+                    "#808000",
+                    "#008080",
+                ]);
             }
             this.updateSamplePlotTooltips();
             this.updateSamplePlotFilters();
@@ -1407,6 +1437,8 @@ define([
                 dom_utils.clearDiv("samplePlot");
             }
             if (clearOtherStuff) {
+                // Remove the "qiimediscrete" color scheme from Vega
+                vega.scheme("qiimediscrete", undefined);
                 // Clear the bindings of bound DOM elements
                 for (
                     var i = 0;

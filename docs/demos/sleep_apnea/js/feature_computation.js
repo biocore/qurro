@@ -272,7 +272,7 @@ define(["./dom_utils"], function (dom_utils) {
         // Check all text parts (the stuff separated by ORs) as being in every
         // featureField thing.
         for (var ti = 0; ti < featureRowList.length; ti++) {
-            currVal = tryTextSearchable(featureRowList[ti][featureField]);
+            var currVal = tryTextSearchable(featureRowList[ti][featureField]);
             if (currVal === null) {
                 continue;
             } else {
@@ -308,7 +308,9 @@ define(["./dom_utils"], function (dom_utils) {
             ) < 0 &&
             rankPlotJSON.datasets.qurro_rank_ordering.indexOf(featureField) < 0
         ) {
-            throw new Error("featureField not found in data");
+            throw new Error(
+                'featureField "' + featureField + '" not found in data'
+            );
         } else if (inputText.length === 0) {
             return [];
         }

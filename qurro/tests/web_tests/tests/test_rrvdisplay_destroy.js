@@ -1,4 +1,5 @@
-define(["dom_utils", "mocha", "chai", "testing_utilities"], function (
+define(["vega", "dom_utils", "mocha", "chai", "testing_utilities"], function (
+    vega,
     dom_utils,
     mocha,
     chai,
@@ -58,6 +59,10 @@ define(["dom_utils", "mocha", "chai", "testing_utilities"], function (
             chai.assert.isEmpty(
                 document.getElementById("colorField").innerHTML
             );
+        });
+        it("Removes the 'qiimediscrete' (Classic QIIME Colors) color scheme", function () {
+            rrv.destroy(true, true, true);
+            chai.assert.isUndefined(vega.scheme("qiimediscrete"));
         });
         /* Warning: here be ugly, bulky code that I wrote in a hurry */
         it("Properly resets other UI elements to their defaults", async function () {
