@@ -5,7 +5,8 @@
 - Added the ability to **easily search using multiple text queries at once**:
   this is done using the `contains any text separated by | (pipe)` searching
   option. You can pass in, e.g. `abc | def | ghi` to select any features where
-  the selected field contains at least one of `abc`, `def`, or `ghi`. ([#224](https://github.com/biocore/qurro/issues/224))
+  the selected field contains at least one of `abc`, `def`, or `ghi`.
+  ([#224](https://github.com/biocore/qurro/issues/224))
   - This works more intuitively than the `separated text fragment(s)` option,
     and should be useful for a few cases that that option can't handle (e.g.
     polyphyletic taxa, as discussed in issue 224).
@@ -14,13 +15,20 @@
   ([#240](https://github.com/biocore/qurro/issues/240))
 - Added the `Classic QIIME Colors` categorical scheme used in some other
   visualization tools, including [Emperor](https://biocore.github.io/emperor/)
-  and [Empress](https://github.com/biocore/empress).
+  and [Empress](https://github.com/biocore/empress), to the sample plot's
+  categorical color scheme options.
   ([#300](https://github.com/biocore/qurro/issues/300))
   - (`tableau10` is still the default categorical color scheme in Qurro, though.)
 ### Backward-incompatible changes
+- For the time being, we are only supporting Qurro for Python versions of **at
+  least 3.6 and less than 3.8**. The code hasn't really changed, but this seems
+  like it'll be the simplest option for maintenance in the short term.
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
+- Qurro is now installable on conda through the conda-forge channel!
+  ([#153](https://github.com/biocore/qurro/issues/153))
+- Various minor documentation updates.
 
 ## Qurro 0.6.0 (March 10, 2020)
 ### Features added
