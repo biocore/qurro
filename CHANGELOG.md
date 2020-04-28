@@ -3,7 +3,7 @@
 ## Qurro 0.7.0 (TBD)
 ### Features added
 - Added the ability to **easily search using multiple text queries at once**:
-  this is done using the `contains any text separated by | (pipe)` searching
+  this is done using the `contains text separated by | (pipe)` searching
   option. You can pass in, e.g. `abc | def | ghi` to select any features where
   the selected field contains at least one of `abc`, `def`, or `ghi`.
   ([#224](https://github.com/biocore/qurro/issues/224))
