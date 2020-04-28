@@ -140,6 +140,7 @@ outside of QIIME 2.
 
 - [Sleep Apnea tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
   - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
+
 - [Red Sea tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   - Feature rankings: [Songbird](https://github.com/biocore/songbird/) differentials
 

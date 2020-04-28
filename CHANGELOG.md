@@ -19,6 +19,10 @@
   categorical color scheme options.
   ([#300](https://github.com/biocore/qurro/issues/300))
   - (`tableau10` is still the default categorical color scheme in Qurro, though.)
+- Added a [selection tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/selection/selection.ipynb) describing the various ways of selecting features in Qurro in detail.
+  [#123](https://github.com/biocore/qurro/issues/123))
+  - (This was previously the appendix in the moving pictures tutorial, but now
+    it's been split off into its own thing.)
 ### Backward-incompatible changes
 - For the time being, we are only supporting Qurro for Python versions of **at
   least 3.6 and less than 3.8**. The code hasn't really changed, but this seems
