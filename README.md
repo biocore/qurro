@@ -108,13 +108,13 @@ for context.
 
 ## Tutorials
 
-### In-depth
+### In-depth tutorials
 These tutorials are all good places to start, depending on what sort of data and
 feature rankings you have.
 
 - [Color Composition tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/color_compositions/color_example.ipynb)
   - **Data Summary:** Color composition data from abstract paintings
-  - Feature rankings: Feature loadings in a compositional biplot
+  - Feature rankings: Feature loadings in an arbitrary compositional biplot
   - Qurro used through QIIME 2 or standalone?: Standalone
 
 - ["Moving Pictures" tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/moving_pictures/moving_pictures.ipynb)
@@ -126,6 +126,13 @@ feature rankings you have.
   - **Data Summary:** Gene expression ("RNA-Seq") data from TCGA tumor and "solid tissue normal" samples
   - Feature rankings: [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html) differentials
   - Qurro used through QIIME 2 or standalone?: Standalone
+
+### Selection tutorial
+There are a lot of different ways to select features in Qurro, and the
+interface can be difficult to get used to. This document describes all of these
+methods, and provides some examples of where they could be useful in practice.
+
+- [Selection tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/selection/selection.ipynb)
 
 ### Basic command-line tutorials
 These tutorials show examples of using Qurro in identical ways both inside and
