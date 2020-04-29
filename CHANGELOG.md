@@ -32,7 +32,9 @@
 ### Miscellaneous
 - Qurro is now installable on conda through the conda-forge channel!
   ([#153](https://github.com/biocore/qurro/issues/153))
-- Various minor documentation updates.
+- Various minor documentation updates, including adding citation info for
+  Qurro's recently-published paper to the README.
+  ([#169](https://github.com/biocore/qurro/issues/169))
 
 ## Qurro 0.6.0 (March 10, 2020)
 ### Features added
