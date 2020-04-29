@@ -14,7 +14,6 @@
 </div>
 
 ### What does this tool do?
-(mostly taken from our paper abstract/intro.)
 
 Lots of tools for analyzing " 'omic" datasets can produce
 __feature rankings__. Regardless of if they're *differentials* (corresponding
@@ -43,6 +42,9 @@ samples. There are a variety of controls available for selecting features for
 a log-ratio, and changing the selected log-ratio updates both the rank plot
 (highlighting selected features) and the sample plot (changing the y-axis
 value of each sample to match the selected log-ratio).
+
+**A paper describing Qurro is now available at NAR Genomics and Bioinformatics
+[here](https://academic.oup.com/nargab/article/2/2/lqaa023/5826153).**
 
 ### How do I use it?
 
@@ -260,20 +262,24 @@ And thanks to a bunch of the Knight Lab for helping name the tool :)
 
 ## Citing Qurro
 
-For now, the preferred citation for Qurro is its
-[bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2019.12.17.880047v1).
-Here's the generated BibTeX:
+If you use Qurro in your research, please cite it!
+The preferred citation for Qurro is [this manuscript at NAR Genomics and
+Bioinformatics](https://academic.oup.com/nargab/article/2/2/lqaa023/5826153).
+Here's the BibTeX:
 ```
-@article {fedarko2019,
-	author = {Fedarko, Marcus W. and Martino, Cameron and Morton, James T. and Gonz{\'a}lez, Antonio and Rahman, Gibraan and Marotz, Clarisse A. and Minich, Jeremiah J. and Allen, Eric E. and Knight, Rob},
-	title = {Visualizing {\textquoteright}omic feature rankings and log-ratios using {Q}urro},
-	elocation-id = {2019.12.17.880047},
-	year = {2019},
-	doi = {10.1101/2019.12.17.880047},
-	publisher = {Cold Spring Harbor Laboratory},
-	URL = {https://www.biorxiv.org/content/early/2019/12/18/2019.12.17.880047},
-	eprint = {https://www.biorxiv.org/content/early/2019/12/18/2019.12.17.880047.full.pdf},
-	journal = {bioRxiv}
+@article {fedarko2020,
+    author = {Fedarko, Marcus W and Martino, Cameron and Morton, James T and González, Antonio and Rahman, Gibraan and Marotz, Clarisse A and Minich, Jeremiah J and Allen, Eric E and Knight, Rob},
+    title = "{Visualizing ’omic feature rankings and log-ratios using Qurro}",
+    journal = {NAR Genomics and Bioinformatics},
+    volume = {2},
+    number = {2},
+    year = {2020},
+    month = {04},
+    issn = {2631-9268},
+    doi = {10.1093/nargab/lqaa023},
+    url = {https://doi.org/10.1093/nargab/lqaa023},
+    note = {lqaa023},
+    eprint = {https://academic.oup.com/nargab/article-pdf/2/2/lqaa023/33137933/lqaa023.pdf},
 }
 ```
 
