@@ -130,7 +130,11 @@ define([
             // when the colors have different granularity than the boxplot's
             // current x-axis. (It does the same thing with tooltips, which is
             // why we delete tooltips also when switching to boxplots.)
-            this.colorEles = ["colorField", "colorScale"];
+            this.boxplotDisabledEles = [
+                "colorField",
+                "colorScale",
+                "borderCheckbox",
+            ];
 
             // Set up relevant DOM bindings
             var display = this;
@@ -1175,7 +1179,7 @@ define([
             // which only one sample is available show up on the white
             // background and light-gray axis.
             this.samplePlotJSON.mark.median = { color: "#000000" };
-            dom_utils.changeElementsEnabled(this.colorEles, false);
+            dom_utils.changeElementsEnabled(this.boxplotDisabledEles, false);
             this.setColorForBoxplot();
             if (callRemakeSamplePlot) {
                 await this.remakeSamplePlot();
@@ -1195,7 +1199,7 @@ define([
             }
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
-            dom_utils.changeElementsEnabled(this.colorEles, true);
+            dom_utils.changeElementsEnabled(this.boxplotDisabledEles, true);
             // No need to explicitly adjust color or tooltips here; tooltips
             // will be auto-added in updateSamplePlotTooltips(), and color
             // should have been kept up-to-date every time the field was
