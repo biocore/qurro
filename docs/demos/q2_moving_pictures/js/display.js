@@ -1128,24 +1128,29 @@ define([
          * checkbox instead.
          */
         async updateSamplePlotBorders() {
-            // TODO: either adapt this to boxplot or don't use it in boxplot
-            // entirely
-            // TODO: handle corner cases (switching to/from quantitative, etc.)
             // TODO: add tests
             if (document.getElementById("borderCheckbox").checked) {
-                this.samplePlotJSON.mark.stroke = "#000000";
-                this.samplePlotJSON.mark.strokeWidth = 0.5;
-                this.samplePlotJSON.encoding.color.legend = {
-                    symbolStrokeColor: "#000000",
-                    symbolStrokeWidth: 0.5,
-                };
+                this.addSamplePlotBorders();
                 await this.remakeSamplePlot();
             } else {
-                delete this.samplePlotJSON.mark.stroke;
-                delete this.samplePlotJSON.mark.strokeWidth;
-                delete this.samplePlotJSON.encoding.color.legend;
+                this.removeSamplePlotBorders();
                 await this.remakeSamplePlot();
             }
+        }
+
+        addSamplePlotBorders() {
+            this.samplePlotJSON.mark.stroke = "#000000";
+            this.samplePlotJSON.mark.strokeWidth = 0.5;
+            this.samplePlotJSON.encoding.color.legend = {
+                symbolStrokeColor: "#000000",
+                symbolStrokeWidth: 0.5,
+            };
+        }
+
+        removeSamplePlotBorders() {
+            delete this.samplePlotJSON.mark.stroke;
+            delete this.samplePlotJSON.mark.strokeWidth;
+            delete this.samplePlotJSON.encoding.color.legend;
         }
 
         /* Changes the sample plot JSON and DOM elements to get ready for
@@ -1164,6 +1169,7 @@ define([
          * the "use boxplots" checkbox.
          */
         async changeSamplePlotToBoxplot(callRemakeSamplePlot) {
+            this.removeSamplePlotBorders();
             this.samplePlotJSON.mark.type = "boxplot";
             // Make the middle tick of the boxplot black. This makes boxes for
             // which only one sample is available show up on the white
@@ -1184,6 +1190,9 @@ define([
          * changeSamplePlotToBoxplot().
          */
         async changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
+            if (document.getElementById("borderCheckbox").checked) {
+                this.addSamplePlotBorders();
+            }
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
             dom_utils.changeElementsEnabled(this.colorEles, true);
