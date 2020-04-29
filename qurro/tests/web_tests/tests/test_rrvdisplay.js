@@ -1136,5 +1136,34 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                 });
             });
         });
+        describe("Changing borders on points in the sample plot", function () {
+            beforeEach(async function () {
+                await resetRRVDisplay();
+            });
+            async function testAddBorders() {
+                await document.getElementById("borderCheckbox").click();
+                chai.assert.equal("#000000", rrv.samplePlotJSON.mark.stroke);
+                chai.assert.equal(0.5, rrv.samplePlotJSON.mark.strokeWidth);
+                chai.assert.exists(rrv.samplePlotJSON.encoding.color.legend);
+                chai.assert.equal(
+                    "#000000",
+                    rrv.samplePlotJSON.encoding.color.legend.symbolStrokeColor
+                );
+                chai.assert.equal(
+                    0.5,
+                    rrv.samplePlotJSON.encoding.color.legend.symbolStrokeWidth
+                );
+            }
+            it("Adding borders by checking the checkbox", async function () {
+                await testAddBorders();
+            });
+            it("Removing borders by unchecking the checkbox", async function () {
+                await testAddBorders();
+                await document.getElementById("borderCheckbox").click();
+                chai.assert.notExists(rrv.samplePlotJSON.mark.stroke);
+                chai.assert.notExists(rrv.samplePlotJSON.mark.strokeWidth);
+                chai.assert.notExists(rrv.samplePlotJSON.encoding.color.legend);
+            });
+        });
     });
 });
