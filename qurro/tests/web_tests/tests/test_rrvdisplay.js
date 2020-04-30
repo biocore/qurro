@@ -34,6 +34,32 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
             );
             chai.assert.notExists(rrv.samplePlotJSON.encoding.x.axis);
         }
+        function testBoxplotEncodings(xField) {
+            chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
+            chai.assert.exists(rrv.samplePlotJSON.mark.median);
+            chai.assert.equal("#000000", rrv.samplePlotJSON.mark.median.color);
+            // Also, the color field encoding should match the x-axis
+            // field encoding and be nominal
+            chai.assert.equal(xField, rrv.samplePlotJSON.encoding.x.field);
+            chai.assert.equal(xField, rrv.samplePlotJSON.encoding.color.field);
+            chai.assert.equal(
+                "nominal",
+                rrv.samplePlotJSON.encoding.color.type
+            );
+        }
+        async function testSwitchToBoxplot(currXField) {
+            await document.getElementById("boxplotCheckbox").click();
+            var xScaleEle = document.getElementById("xAxisScale");
+            xScaleEle.value = "nominal";
+            await xScaleEle.onchange();
+            // Now the sample plot should be a boxplot
+            testBoxplotEncodings(currXField);
+            // In "boxplot mode", the color controls (and the sample border
+            // checkbox) should all be disabled
+            testing_utilities.assertEnabled("colorField", false);
+            testing_utilities.assertEnabled("colorScale", false);
+            testing_utilities.assertEnabled("borderCheckbox", false);
+        }
         before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
@@ -1015,38 +1041,6 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
             beforeEach(async function () {
                 await resetRRVDisplay();
             });
-            function testBoxplotEncodings(xField) {
-                chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
-                chai.assert.exists(rrv.samplePlotJSON.mark.median);
-                chai.assert.equal(
-                    "#000000",
-                    rrv.samplePlotJSON.mark.median.color
-                );
-                // Also, the color field encoding should match the x-axis
-                // field encoding and be nominal
-                chai.assert.equal(xField, rrv.samplePlotJSON.encoding.x.field);
-                chai.assert.equal(
-                    xField,
-                    rrv.samplePlotJSON.encoding.color.field
-                );
-                chai.assert.equal(
-                    "nominal",
-                    rrv.samplePlotJSON.encoding.color.type
-                );
-            }
-            async function testSwitchToBoxplot(currXField) {
-                await document.getElementById("boxplotCheckbox").click();
-                var xScaleEle = document.getElementById("xAxisScale");
-                xScaleEle.value = "nominal";
-                await xScaleEle.onchange();
-                // Now the sample plot should be a boxplot
-                testBoxplotEncodings(currXField);
-                // In "boxplot mode", the color controls (and the sample border
-                // checkbox) should all be disabled
-                testing_utilities.assertEnabled("colorField", false);
-                testing_utilities.assertEnabled("colorScale", false);
-                testing_utilities.assertEnabled("borderCheckbox", false);
-            }
             describe("Changing to a boxplot...", function () {
                 it("...By checking the boxplot checkbox", async function () {
                     await testSwitchToBoxplot("Metadata1");
@@ -1143,8 +1137,7 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
             beforeEach(async function () {
                 await resetRRVDisplay();
             });
-            async function testAddBorders() {
-                await document.getElementById("borderCheckbox").click();
+            function checkBordersAdded() {
                 chai.assert.equal("#000000", rrv.samplePlotJSON.mark.stroke);
                 chai.assert.equal(0.5, rrv.samplePlotJSON.mark.strokeWidth);
                 chai.assert.exists(rrv.samplePlotJSON.encoding.color.legend);
@@ -1162,11 +1155,24 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                 chai.assert.notExists(rrv.samplePlotJSON.mark.strokeWidth);
                 chai.assert.notExists(rrv.samplePlotJSON.encoding.color.legend);
             }
+            async function testAddBorders() {
+                await document.getElementById("borderCheckbox").click();
+                checkBordersAdded();
+            }
             describe("Adding borders...", function () {
                 it("...By checking the border checkbox", async function () {
                     await testAddBorders();
                 });
-                it("...By unchecking the boxplot checkbox");
+                it("...By unchecking the boxplot checkbox", async function () {
+                    await testAddBorders();
+                    await testSwitchToBoxplot("Metadata1");
+                    checkBordersRemoved();
+                    // Switch *out* of boxplot mode
+                    await document.getElementById("boxplotCheckbox").click();
+                    // Now, verify that the sample border checkbox being
+                    // checked was "preserved", and that the borders are back
+                    checkBordersAdded();
+                });
             });
             describe("Removing borders...", function () {
                 it("...By unchecking the border checkbox", async function () {
@@ -1174,7 +1180,11 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                     await document.getElementById("borderCheckbox").click();
                     checkBordersRemoved();
                 });
-                it("...By checking the boxplot checkbox");
+                it("...By checking the boxplot checkbox", async function () {
+                    await testAddBorders();
+                    await testSwitchToBoxplot();
+                    checkBordersRemoved();
+                });
             });
         });
     });
