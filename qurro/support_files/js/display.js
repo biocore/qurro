@@ -1132,7 +1132,6 @@ define([
          * checkbox instead.
          */
         async updateSamplePlotBorders() {
-            // TODO: add tests
             if (document.getElementById("borderCheckbox").checked) {
                 this.addSamplePlotBorders();
                 await this.remakeSamplePlot();

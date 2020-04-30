@@ -10,7 +10,7 @@
   - This works more intuitively than the `separated text fragment(s)` option,
     and should be useful for a few cases that that option can't handle (e.g.
     polyphyletic taxa, as discussed in issue 224).
-- Added a `Draw borders on sample points?` checkbox, which is useful for making
+- Added a `Draw borders on scatterplot points?` checkbox, which is useful for making
   light-colored points in the sample plot easier to see on the white background.
   ([#240](https://github.com/biocore/qurro/issues/240))
 - Added the `Classic QIIME Colors` categorical scheme used in some other
