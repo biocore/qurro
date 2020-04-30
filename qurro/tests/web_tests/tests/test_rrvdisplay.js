@@ -1041,9 +1041,11 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                 await xScaleEle.onchange();
                 // Now the sample plot should be a boxplot
                 testBoxplotEncodings(currXField);
-                // In "boxplot mode", the color controls should be disabled
+                // In "boxplot mode", the color controls (and the sample border
+                // checkbox) should all be disabled
                 testing_utilities.assertEnabled("colorField", false);
                 testing_utilities.assertEnabled("colorScale", false);
+                testing_utilities.assertEnabled("borderCheckbox", false);
             }
             describe("Changing to a boxplot...", function () {
                 it("...By checking the boxplot checkbox", async function () {
@@ -1074,6 +1076,7 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                     chai.assert.notExists(rrv.samplePlotJSON.mark.median);
                     testing_utilities.assertEnabled("colorField", true);
                     testing_utilities.assertEnabled("colorScale", true);
+                    testing_utilities.assertEnabled("borderCheckbox", true);
                     // Fields should stay the same, and scales should stay
                     // categorical
                     chai.assert.equal(
@@ -1154,15 +1157,24 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                     rrv.samplePlotJSON.encoding.color.legend.symbolStrokeWidth
                 );
             }
-            it("Adding borders by checking the checkbox", async function () {
-                await testAddBorders();
-            });
-            it("Removing borders by unchecking the checkbox", async function () {
-                await testAddBorders();
-                await document.getElementById("borderCheckbox").click();
+            function checkBordersRemoved() {
                 chai.assert.notExists(rrv.samplePlotJSON.mark.stroke);
                 chai.assert.notExists(rrv.samplePlotJSON.mark.strokeWidth);
                 chai.assert.notExists(rrv.samplePlotJSON.encoding.color.legend);
+            }
+            describe("Adding borders...", function () {
+                it("...By checking the border checkbox", async function () {
+                    await testAddBorders();
+                });
+                it("...By unchecking the boxplot checkbox");
+            });
+            describe("Removing borders...", function () {
+                it("...By unchecking the border checkbox", async function () {
+                    await testAddBorders();
+                    await document.getElementById("borderCheckbox").click();
+                    checkBordersRemoved();
+                });
+                it("...By checking the boxplot checkbox");
             });
         });
     });
