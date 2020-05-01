@@ -1506,6 +1506,10 @@ define([
                 // ... And the sample border checkbox
                 document.getElementById("borderCheckbox").checked = false;
 
+                // Enable the elements that would've been disabled if we were
+                // in boxplot mode
+                dom_utils.changeElementsEnabled(this.boxplotDisabledEles, true);
+
                 // Set search types to "text"
                 document.getElementById("topSearchType").value = "text";
                 document.getElementById("botSearchType").value = "text";
