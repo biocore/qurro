@@ -1182,7 +1182,7 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                 });
                 it("...By checking the boxplot checkbox", async function () {
                     await testAddBorders();
-                    await testSwitchToBoxplot();
+                    await testSwitchToBoxplot("Metadata1");
                     checkBordersRemoved();
                 });
             });

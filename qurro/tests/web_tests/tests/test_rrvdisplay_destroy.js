@@ -69,6 +69,7 @@ define(["vega", "dom_utils", "mocha", "chai", "testing_utilities"], function (
             // before calling rrv.destroy(), change a few other things
             // this way we can check that these modifications are reverted on
             // calling destroy()
+            await document.getElementById("borderCheckbox").click();
             await document.getElementById("boxplotCheckbox").click();
             document.getElementById("topSearchType").value = "rank";
             document.getElementById("botSearchType").value = "rank";
@@ -103,7 +104,16 @@ define(["vega", "dom_utils", "mocha", "chai", "testing_utilities"], function (
             rrv.destroy(true, true, true);
 
             chai.assert.isFalse(
+                document.getElementById("borderCheckbox").checked
+            );
+            chai.assert.isFalse(
                 document.getElementById("boxplotCheckbox").checked
+            );
+            // Check that boxplot mode "disabled" elements were enabled
+            chai.assert.isFalse(document.getElementById("colorField").disabled);
+            chai.assert.isFalse(document.getElementById("colorScale").disabled);
+            chai.assert.isFalse(
+                document.getElementById("borderCheckbox").disabled
             );
             chai.assert.equal(
                 "text",
