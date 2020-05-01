@@ -530,6 +530,19 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     lolMatches
                 );
             });
+            it("Preserves internal whitespace in search terms", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "Feature 1 | Featurelol 2",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2"]
+                );
+            });
             it("(Still) case insensitive", function () {
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
