@@ -658,6 +658,23 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     ["1", "3"]
                 );
             });
+            it("Ignores non-(string or number) values, including nulls", function () {
+                // This test is just copied from the corresponding normal text
+                // filtering tests above. TLDR: Feature 6's Taxonomy value is
+                // "null", and Feature 7's Taxonomy value is null (an actual
+                // null, not a string).
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "null",
+                            "Taxonomy",
+                            "or"
+                        )
+                    ),
+                    ["Feature 6"]
+                );
+            });
         });
         describe('"Rank"-mode searching', function () {
             it("Finds matching features based on full, exact taxonomic rank", function () {
