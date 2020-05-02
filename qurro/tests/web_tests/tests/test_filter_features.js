@@ -1274,7 +1274,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     );
                 }
             });
-            it("Returns empty if input number isn't a finite, nonnegative number", function () {
+            it("Returns empty if input number isn't a finite number", function () {
                 var invalidValsToTest = [
                     "asdf",
                     "NaN",
@@ -1287,10 +1287,6 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                     NaN,
                     Infinity,
                     -Infinity,
-                    -1,
-                    "-1",
-                    "-100.23",
-                    -100.23,
                 ];
                 for (var i = 0; i < invalidValsToTest.length; i++) {
                     for (var s = 0; s < autoSearchTypes.length; s++) {

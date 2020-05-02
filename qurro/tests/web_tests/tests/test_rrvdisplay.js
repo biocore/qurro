@@ -686,12 +686,50 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                         )
                     );
                 });
+                it("Negative numbers correctly flip autoselection", async function () {
+                    // These examples were just copied & flipped from the
+                    // above tests
+                    await callAutoSelect("-25", "autoPercent");
+                    chai.assert.sameMembers(
+                        ["Taxon4"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    await callAutoSelect("-3", "autoLiteral");
+                    chai.assert.sameMembers(
+                        ["Taxon4", "Taxon5", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2", "Taxon3", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                });
                 it("Invalid inputs result in empty feature selections", async function () {
                     function assertEmpty(rrv) {
                         chai.assert.empty(rrv.topFeatures);
                         chai.assert.empty(rrv.botFeatures);
                     }
-                    var vals = ["-3", "123eee", "-0.01"];
+                    var vals = [
+                        "Infinity",
+                        "-Infinity",
+                        "Ten",
+                        "A hundred lol",
+                        "123eee",
+                        "NaN",
+                        "-NaN",
+                    ];
                     for (var v = 0; v < vals.length; v++) {
                         await callAutoSelect(vals[v], "autoLiteral");
                         assertEmpty(rrv);
