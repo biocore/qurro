@@ -1339,7 +1339,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                 });
                 it("Chooses correct percentage of features when all have equal ranking column value", function () {
                     for (var s = 0; s < percentSearchTypes.length; s++) {
-                        for (var i = 0; i < 125; i += 25) {
+                        for (var i = -100; i < 125; i += 25) {
                             chai.assert.lengthOf(
                                 feature_computation.filterFeatures(
                                     rpJSON1,
@@ -1347,7 +1347,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                                     "same",
                                     percentSearchTypes[s]
                                 ),
-                                i / 25
+                                Math.abs(i) / 25
                             );
                         }
                     }
