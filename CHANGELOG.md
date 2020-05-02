@@ -10,16 +10,21 @@
   - This works more intuitively than the `separated text fragment(s)` option,
     and should be useful for a few cases that that option can't handle (e.g.
     polyphyletic taxa, as discussed in issue 224).
-- Added a `Draw borders on scatterplot points?` checkbox, which is useful for making
+- Added a **`Draw borders on scatterplot points?` checkbox**, which is useful for making
   light-colored points in the sample plot easier to see on the white background.
   ([#240](https://github.com/biocore/qurro/issues/240))
-- Added the `Classic QIIME Colors` categorical scheme used in some other
+- Added the ability to **enter in negative numbers in autoselection** to flip
+  the selection (selecting the numerator from the lowest-ranked features and
+  the denominator from the highest-ranked features).
+  ([#264](https://github.com/biocore/qurro/issues/264))
+- Added the **`Classic QIIME Colors` categorical color scheme** used in some other
   visualization tools, including [Emperor](https://biocore.github.io/emperor/)
   and [Empress](https://github.com/biocore/empress), to the sample plot's
   categorical color scheme options.
   ([#300](https://github.com/biocore/qurro/issues/300))
   - (`tableau10` is still the default categorical color scheme in Qurro, though.)
-- Added a [selection tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/selection/selection.ipynb) describing the various ways of selecting features in Qurro in detail.
+- Added a **["selection" tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/selection/selection.ipynb)**
+  describing the various ways of selecting features in Qurro in detail.
   ([#123](https://github.com/biocore/qurro/issues/123))
   - (This was previously the appendix in the moving pictures tutorial, but now
     it's been split off and expanded into its own thing.)
