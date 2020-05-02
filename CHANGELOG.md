@@ -33,6 +33,11 @@
   least 3.6 and less than 3.8**. The code hasn't really changed, but this seems
   like it'll be the simplest option for maintenance in the short term.
 ### Bug fixes
+- Previously, the autoselection number field had an implicit "step size" of 1.
+  I don't think this should have prevented users from entering in
+  floating-point numbers here, but some people's browsers may have complained
+  on seeing a floating-point number. This problem should be resolved now.
+  (See [here](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#step) for details about this.)
 ### Performance enhancements
 ### Miscellaneous
 - Qurro is now installable on conda through the conda-forge channel!
