@@ -1201,6 +1201,30 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         }
                     }
                 });
+                it("Takes the floor of the number of features requested", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-1.99",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "1.99",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                });
             });
             describe("Inputs are in percentages of features", function () {
                 it("Works properly when math is easy (top 25% of 4 features)", function () {
@@ -1248,6 +1272,21 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                             feature_computation.filterFeatures(
                                 rpJSON1,
                                 "-57",
+                                "n",
+                                "autoPercentBot"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                });
+                it("Flooring is done consistently with negative-number inputs", function () {
+                    // 74% of 4 is 2.96 features from each side; this should be
+                    // floored down to 2, even if we pass in -74%
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-74",
                                 "n",
                                 "autoPercentBot"
                             )
