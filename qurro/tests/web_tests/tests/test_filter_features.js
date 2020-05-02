@@ -1057,7 +1057,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         );
                     }
                 });
-                it("Gets all features if the input number is > number of features", function () {
+                it("Gets all features if magnitude of the input number is > number of features", function () {
                     var vals = [
                         "4.1",
                         "4.2",
@@ -1066,6 +1066,13 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         "20",
                         "100",
                         "99999",
+                        "-4.1",
+                        "-4.2",
+                        "-4.3",
+                        "-4.4",
+                        "-20",
+                        "-100",
+                        "-99999",
                     ];
                     for (var i = 0; i < vals.length; i++) {
                         for (var s = 0; s < literalSearchTypes.length; s++) {
@@ -1107,6 +1114,30 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         ["Feature 1"]
                     );
                 });
+                it("Works properly when -1 feature requested", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-1",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-1",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                });
                 it("Works properly when 2 features requested", function () {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
@@ -1131,9 +1162,33 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
+                it("Works properly when -2 features requested", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-2",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 1", "Featurelol 2"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-2",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                });
                 it("Chooses correct number of features when all have equal ranking column value", function () {
                     for (var s = 0; s < literalSearchTypes.length; s++) {
-                        for (var i = 0; i < 5; i++) {
+                        for (var i = -4; i < 5; i++) {
                             chai.assert.lengthOf(
                                 feature_computation.filterFeatures(
                                     rpJSON1,
@@ -1141,7 +1196,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                                     "same",
                                     literalSearchTypes[s]
                                 ),
-                                i
+                                Math.abs(i)
                             );
                         }
                     }
@@ -1174,6 +1229,32 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
+                it("Works properly with top -25% of 4 features", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-25",
+                                "n",
+                                "autoPercentTop"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                });
+                it("Works properly with bottom -57% of 4 features", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-57",
+                                "n",
+                                "autoPercentBot"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                });
                 it("Returns empty if 0% of features are requested", function () {
                     for (var s = 0; s < percentSearchTypes.length; s++) {
                         chai.assert.empty(
@@ -1186,7 +1267,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         );
                     }
                 });
-                it("Gets all features if the input number is > 100%", function () {
+                it("Gets all features if the input number is > 100% or < -100%", function () {
                     var vals = [
                         "100.00001",
                         "101",
@@ -1194,6 +1275,12 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
                         "999",
                         "99999",
                         "999999",
+                        "-100.00001",
+                        "-101",
+                        "-102",
+                        "-999",
+                        "-99999",
+                        "-999999",
                     ];
                     for (var i = 0; i < vals.length; i++) {
                         for (var s = 0; s < percentSearchTypes.length; s++) {
