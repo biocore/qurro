@@ -362,24 +362,23 @@ define(["./dom_utils"], function (dom_utils) {
             var inPercentages = searchType.startsWith("autoPercent");
             var featureCt = potentialFeatures.length;
             inputNum = dom_utils.getNumberIfValid(inputText);
-            // Initial check for validity: regardless of if inputNum describes
-            // a "literal" or "percentage"-based cutoff, it should be a finite
-            // number that's at least 0
-            if (isNaN(inputNum) || inputNum < 0) {
+            var inputMagnitude = Math.abs(inputNum);
+            // check that inputNum is a finite number
+            if (isNaN(inputNum)) {
                 return [];
             }
             // If the user asks for more than 100% of the features (aka more
             // features than are present in the dataset), just go ahead and
             // return all features
             else if (
-                (inPercentages && inputNum > 100) ||
-                (!inPercentages && inputNum > featureCt)
+                (inPercentages && inputMagnitude >= 100) ||
+                (!inPercentages && inputMagnitude >= featureCt)
             ) {
                 return potentialFeatures;
             }
             // OK, so now we know that inputNum is valid (i.e. is a number and
-            // is in the range [0, 100] for percentage searching or [0, #
-            // features] for number-of-features searching).
+            // is in the range (-100, 100) for percentage searching or
+            // (-# features, # features) for number-of-features searching).
             // Next, let's just figure out how many features to extract from a
             // given side of the ranking.
             var numberOfFeaturesToGet;
@@ -388,7 +387,7 @@ define(["./dom_utils"], function (dom_utils) {
                 // 33.33% of features, and there are 10 features, then it makes
                 // more sense to give 3 features on each side than 4 (IMO).
                 numberOfFeaturesToGet = Math.floor(
-                    (inputNum / 100) * featureCt
+                    (inputMagnitude / 100) * featureCt
                 );
             } else {
                 // If inputNum is a float, we just take the floor of it (so if
@@ -397,9 +396,14 @@ define(["./dom_utils"], function (dom_utils) {
                 // We could also reject float values above, but I don't think
                 // that'd be super user-friendly to people going between % and
                 // "literal # of feature" modes.
-                numberOfFeaturesToGet = Math.floor(inputNum);
+                numberOfFeaturesToGet = Math.floor(inputMagnitude);
             }
             var useTop = searchType.endsWith("Top");
+            // For negative autoselection numbers (e.g. -5%), switch "top" and
+            // "bottom".
+            if (inputNum < 0) {
+                useTop = !useTop;
+            }
             return extremeFilterFeatures(
                 potentialFeatures,
                 numberOfFeaturesToGet,
