@@ -28,23 +28,23 @@ requirejs.config({
             "tests/test_rrvdisplay_getinvalidsampleids",
         test_rrvdisplay_getinvalidsampleids_samplestatstest:
             "tests/test_rrvdisplay_getinvalidsampleids_samplestatstest",
-        test_rrvdisplay_destroy: "tests/test_rrvdisplay_destroy"
+        test_rrvdisplay_destroy: "tests/test_rrvdisplay_destroy",
     },
     shim: {
         // Mocha shim based on
         // https://gist.github.com/michaelcox/3800736#gistcomment-1417093.
         // Without using this shim, the mocha module was undefined.
         mocha: {
-            init: function() {
+            init: function () {
                 mocha.setup("bdd");
                 return mocha;
-            }
+            },
         },
         // See https://github.com/vega/vega-embed/issues/8. These are needed to
         // get the Vega* libraries to load properly.
         "vega-lite": { deps: ["vega"] },
-        "vega-embed": { deps: ["vega-lite"] }
-    }
+        "vega-embed": { deps: ["vega-lite"] },
+    },
 });
 requirejs(
     [
@@ -71,9 +71,9 @@ requirejs(
         "test_rrvdisplay_update_feature_color",
         "test_rrvdisplay_getinvalidsampleids",
         "test_rrvdisplay_getinvalidsampleids_samplestatstest",
-        "test_rrvdisplay_destroy"
+        "test_rrvdisplay_destroy",
     ],
-    function(
+    function (
         display,
         dom_utils,
         feature_computation,

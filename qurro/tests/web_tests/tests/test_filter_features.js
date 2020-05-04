@@ -1,4 +1,4 @@
-define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
+define(["feature_computation", "mocha", "chai", "testing_utilities"], function (
     feature_computation,
     mocha,
     chai,
@@ -9,34 +9,34 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
         datasets: {
             dataName: [],
             qurro_feature_metadata_ordering: [],
-            qurro_rank_ordering: []
-        }
+            qurro_rank_ordering: [],
+        },
     };
-    describe("Filtering lists of features based on text/number searching", function() {
+    describe("Filtering lists of features based on text/number searching", function () {
         var rpJSON1 = JSON.parse(JSON.stringify(rankPlotSkeleton));
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 1",
             n: 1.2,
             x: null,
-            same: 5
+            same: 5,
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Featurelol 2",
             n: 2,
             x: "asdf",
-            same: 5
+            same: 5,
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 3",
             n: 3.0,
             x: "0",
-            same: 5
+            same: 5,
         });
         rpJSON1.datasets.dataName.push({
             "Feature ID": "Feature 4|lol",
             n: 4.5,
             x: "Infinity",
-            same: 5
+            same: 5,
         });
         rpJSON1.datasets.qurro_rank_ordering.push("n");
         rpJSON1.datasets.qurro_rank_ordering.push("x");
@@ -45,7 +45,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
             "Feature 1",
             "Featurelol 2",
             "Feature 3",
-            "Feature 4|lol"
+            "Feature 4|lol",
         ];
         var lolMatches = ["Featurelol 2", "Feature 4|lol"];
 
@@ -53,42 +53,42 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 1",
             Taxonomy:
-                "Archaea;Crenarchaeota;Thermoprotei;Desulfurococcales;Desulfurococcaceae;Desulfurococcus;Desulfurococcus_kamchatkensis"
+                "Archaea;Crenarchaeota;Thermoprotei;Desulfurococcales;Desulfurococcaceae;Desulfurococcus;Desulfurococcus_kamchatkensis",
         });
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 2",
             Taxonomy:
-                "Bacteria;Firmicutes;Bacilli;Bacillales;Staphylococcaceae;Staphylococcus;Staphylococcus_aureus"
+                "Bacteria;Firmicutes;Bacilli;Bacillales;Staphylococcaceae;Staphylococcus;Staphylococcus_aureus",
         });
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 3",
             Taxonomy:
-                "Bacteria;Firmicutes;Bacilli;Bacillales;Staphylococcaceae;Staphylococcus;Staphylococcus_epidermidis"
+                "Bacteria;Firmicutes;Bacilli;Bacillales;Staphylococcaceae;Staphylococcus;Staphylococcus_epidermidis",
         });
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 4",
             Taxonomy:
-                "Viruses;Caudovirales;Myoviridae;Twortlikevirus;Staphylococcus_phage_Twort"
+                "Viruses;Caudovirales;Myoviridae;Twortlikevirus;Staphylococcus_phage_Twort",
         });
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 5",
-            Taxonomy: "Viruses;Caudovirales;Xanthomonas_phage_Xp15"
+            Taxonomy: "Viruses;Caudovirales;Xanthomonas_phage_Xp15",
         });
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 6",
-            Taxonomy: "null"
+            Taxonomy: "null",
         });
         rpJSON2.datasets.dataName.push({
             "Feature ID": "Feature 7",
-            Taxonomy: null
+            Taxonomy: null,
         });
         rpJSON2.datasets.qurro_feature_metadata_ordering.push("Taxonomy");
         var bacteriaMatches = ["Feature 2", "Feature 3"];
         var caudoviralesMatches = ["Feature 4", "Feature 5"];
         var staphTextMatches = ["Feature 2", "Feature 3", "Feature 4"];
 
-        describe('"Text"-mode searching', function() {
-            it("Correctly searches through feature IDs", function() {
+        describe('"Text"-mode searching', function () {
+            it("Correctly searches through feature IDs", function () {
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -113,7 +113,25 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Correctly searches through feature metadata fields", function() {
+            it("Supports searching for features containing the | character", function () {
+                // This tests that the "or support" doesn't break things
+                // In the funky case that the user WANTS to filter to some
+                // feature(s) that contain the pipe character, default text
+                // matching will let them do this.
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "|",
+                            "Feature ID",
+                            "text"
+                        )
+                    ),
+                    ["Feature 4|lol"]
+                );
+            });
+
+            it("Correctly searches through feature metadata fields", function () {
                 // Default text search ignores taxonomic ranks (i.e. semicolons)
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
@@ -162,7 +180,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Searching is case *insensitive*", function() {
+            it("Searching is case *insensitive*", function () {
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -187,7 +205,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function() {
+            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function () {
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,
@@ -232,7 +250,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     inputFeatures
                 );
             });
-            it("Ignores actual null values", function() {
+            it("Ignores actual null values", function () {
                 // Feature 6's Taxonomy value is "null", while Feature 7's
                 // Taxonomy value is null (literally a null value). So
                 // searching methods shouldn't look at Feature 7's Taxonomy
@@ -250,8 +268,8 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
-        describe('"Does not contain the text" searching', function() {
-            it("Correctly searches through feature IDs", function() {
+        describe('"Does not contain the text" searching', function () {
+            it("Correctly searches through feature IDs", function () {
                 // Unlike the normal "text" searching version of this
                 // particular test, we want to make sure that the features
                 // returned *do not* contain the given text. So, in this case,
@@ -283,7 +301,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Correctly searches through feature metadata fields", function() {
+            it("Correctly searches through feature metadata fields", function () {
                 // Default text search ignores taxonomic ranks (i.e. semicolons)
                 // In this case, get all features with taxonomies that do not
                 // contain the text "Staphylococcus".
@@ -339,7 +357,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Searching is case *insensitive*", function() {
+            it("Searching is case *insensitive*", function () {
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -363,7 +381,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
 
-            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function() {
+            it("Doesn't find anything if inputText is empty, but can do just-text-searching using whitespace", function () {
                 // If inputText is empty, the searching will automatically end.
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
@@ -414,7 +432,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "Feature 3",
                         "Feature 4",
                         "Feature 5",
-                        "Feature 6"
+                        "Feature 6",
                     ]
                 );
                 // All feature IDs in rpJSON1 contain a space. Since we're
@@ -429,7 +447,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     )
                 );
             });
-            it("Ignores actual null values", function() {
+            it("Ignores actual null values", function () {
                 // Feature 6's Taxonomy value is "null", while Feature 7's
                 // Taxonomy value is null (literally a null value). So
                 // searching methods shouldn't look at Feature 7's Taxonomy
@@ -452,13 +470,214 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "Feature 2",
                         "Feature 3",
                         "Feature 4",
-                        "Feature 5"
+                        "Feature 5",
                     ]
                 );
             });
         });
-        describe('"Rank"-mode searching', function() {
-            it("Finds matching features based on full, exact taxonomic rank", function() {
+        describe('"or"-mode searching (with | separators)', function () {
+            it("Correctly searches through feature IDs using 2 strings", function () {
+                // Checks that "lol | 1" shows us hits containing either "lol"
+                // or "1"
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "lol|1",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+            it("Still works even if no | separators in input text", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "lol",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    lolMatches
+                );
+            });
+            it("Trims leading/trailing whitespace for each |-separated term", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "     lol\t |\n1",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+            it("Trims leading/trailing whitespace even when no | separators", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "  \n lol\t      \t",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    lolMatches
+                );
+            });
+            it("Preserves internal whitespace in search terms", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "Feature 1 | Featurelol 2",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2"]
+                );
+            });
+            it("(Still) case insensitive", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            "LoL | 1",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    ["Feature 1", "Featurelol 2", "Feature 4|lol"]
+                );
+            });
+            it("Doesn't cause matches due to |s being in feature fields", function () {
+                // Although one of the features has a feature ID of
+                // "Feature 4|lol", we can't use |s as part of a query without
+                // using the exact text matching from before. So the following
+                // attempt will be unsuccessful.
+                chai.assert.empty(
+                    feature_computation.filterFeatures(
+                        rpJSON1,
+                        "butts | FeatureButWithExtraStuffAtTheEndOfTheWordLol",
+                        "Feature ID",
+                        "or"
+                    )
+                );
+            });
+            it("Doesn't find anything when input only has |s or whitespace", function () {
+                var queries = [
+                    "|",
+                    "  |  ",
+                    "  |",
+                    "||",
+                    "|||",
+                    "||||",
+                    "| | \t | ",
+                ];
+                for (var i = 0; i < queries.length; i++) {
+                    chai.assert.empty(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            queries[i],
+                            "Feature ID",
+                            "or"
+                        )
+                    );
+                }
+            });
+            it("Correctly ignores empty | terms", function () {
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON1,
+                            " || | | |\t  | lol |",
+                            "Feature ID",
+                            "or"
+                        )
+                    ),
+                    lolMatches
+                );
+            });
+            it("Correctly handles 'polyphyletic taxa' searching problem", function () {
+                var rpJSONn = JSON.parse(JSON.stringify(rankPlotSkeleton));
+                // I based the taxonomy information here on what Wikipedia
+                // said for P. gingivalis and H. gingivalis, please don't
+                // interpret this test data as the *definitive* taxonomy
+                // names of any of this stuff
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "1",
+                    ord: 5,
+                    tax:
+                        "k__Bacteria;p__Bacteroidetes;c__Bacteroidetes;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas;s__gingivalis",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "2",
+                    ord: 5,
+                    tax:
+                        "k__Animalia;p__Nematoda;c__Secernentea;o__Rhabditida;f__Panagrolaimidae;g__Halicephalobus;s__gingivalis",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "3",
+                    ord: 5,
+                    tax:
+                        "k__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Staphylococcaceae;g__Staphylococcus;s__aureus",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "4",
+                    ord: 5,
+                    tax:
+                        "k__Whatever;p__Something;c__This;o__Isnt;f__Supposed;g__ToBe;s__selectedlol",
+                });
+                rpJSONn.datasets.dataName.push({
+                    "Feature ID": "5",
+                    ord: 5,
+                    tax:
+                        "k__Bacteria;p__Bacteroidetes;c__Bacteroidetes;o__Bacteroidales;f__Porphyromonadaceae;g__Porphyromonas;s__levii",
+                });
+                rpJSONn.datasets.qurro_rank_ordering.push("ord");
+                rpJSONn.datasets.qurro_feature_metadata_ordering.push("tax");
+                // Test that we can isolate a particular genus and species
+                // as part of a query WITHOUT getting individual hits to that
+                // genus and species. (Note that features 2 and 5 are NOT
+                // selected, which is as intended.)
+                chai.assert.sameOrderedMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSONn,
+                            "g__Porphyromonas;s__gingivalis | s__aureus",
+                            "tax",
+                            "or"
+                        )
+                    ),
+                    ["1", "3"]
+                );
+            });
+            it("Ignores non-(string or number) values, including nulls", function () {
+                // This test is just copied from the corresponding normal text
+                // filtering tests above. TLDR: Feature 6's Taxonomy value is
+                // "null", and Feature 7's Taxonomy value is null (an actual
+                // null, not a string).
+                chai.assert.sameMembers(
+                    testing_utilities.getFeatureIDsFromObjectArray(
+                        feature_computation.filterFeatures(
+                            rpJSON2,
+                            "null",
+                            "Taxonomy",
+                            "or"
+                        )
+                    ),
+                    ["Feature 6"]
+                );
+            });
+        });
+        describe('"Rank"-mode searching', function () {
+            it("Finds matching features based on full, exact taxonomic rank", function () {
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -489,7 +708,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
             // A TODO here is reducing the redunancy in these tests, but it's
             // not like efficiency in the JS testing process is a super huge
             // priority for us right now.
-            it("Searching is (still) case insensitive", function() {
+            it("Searching is (still) case insensitive", function () {
                 chai.assert.sameOrderedMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -513,7 +732,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ["Feature 1", "Feature 3", "Feature 4|lol"]
                 );
             });
-            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characters", function() {
+            it("Doesn't find anything if inputText is empty or contains just whitespace/separator characters", function () {
                 /* Just a helper function to alleviate redundant code here.
                  *
                  * Asserts that filterFeatures() with the given input text is
@@ -544,7 +763,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 assertEmpty("  ,; \t ;;\n");
                 assertEmpty("\n ,; \t ;;\n");
             });
-            it("Ignores actual null values", function() {
+            it("Ignores actual null values", function () {
                 chai.assert.sameMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -558,8 +777,8 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
-        describe("Basic number-based searching", function() {
-            it('Less than (< or "lt") finds features < a given value', function() {
+        describe("Basic number-based searching", function () {
+            it('Less than (< or "lt") finds features < a given value', function () {
                 chai.assert.sameMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -605,7 +824,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     inputFeatures
                 );
             });
-            it('Greater than (> or "gt") finds features > a given value', function() {
+            it('Greater than (> or "gt") finds features > a given value', function () {
                 chai.assert.sameMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -651,7 +870,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     inputFeatures
                 );
             });
-            it('Less than or equal (<= or "lte") finds features <= a given value', function() {
+            it('Less than or equal (<= or "lte") finds features <= a given value', function () {
                 chai.assert.sameMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -685,7 +904,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     inputFeatures
                 );
             });
-            it('Greater than or equal (>= or "gte") finds features >= a given value', function() {
+            it('Greater than or equal (>= or "gte") finds features >= a given value', function () {
                 chai.assert.sameMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -719,7 +938,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     inputFeatures
                 );
             });
-            it("Non-finite / non-numeric feature field values are ignored", function() {
+            it("Non-finite / non-numeric feature field values are ignored", function () {
                 chai.assert.sameMembers(
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
@@ -732,7 +951,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ["Feature 3"]
                 );
             });
-            it("Non-finite / non-numeric input field values are ignored", function() {
+            it("Non-finite / non-numeric input field values are ignored", function () {
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,
@@ -793,15 +1012,15 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     )
                 );
             });
-            describe("operatorToCompareFunc()", function() {
-                it("Passing in an invalid operator results in an error", function() {
+            describe("operatorToCompareFunc()", function () {
+                it("Passing in an invalid operator results in an error", function () {
                     // This should never happen since we screen for invalid
                     // operators in filterFeatures(), but still good to check for
-                    chai.assert.throws(function() {
+                    chai.assert.throws(function () {
                         feature_computation.operatorToCompareFunc("asdf", 3);
                     }, /unrecognized operator passed/);
                 });
-                it("Passing in a valid operator results in a valid comparison function", function() {
+                it("Passing in a valid operator results in a valid comparison function", function () {
                     // The other basic numerical comparison operators (lte, gt,
                     // gte) have already been unit-tested above. This just
                     // double-checks that operatorToCompareFunc() itself works
@@ -817,15 +1036,15 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 });
             });
         });
-        describe("Autoselecting features", function() {
+        describe("Autoselecting features", function () {
             var literalSearchTypes = ["autoLiteralTop", "autoLiteralBot"];
             var percentSearchTypes = ["autoPercentTop", "autoPercentBot"];
             var autoSearchTypes = literalSearchTypes.concat(percentSearchTypes);
-            describe("Inputs are in numbers of features", function() {
-                it("Returns empty for 0 features", function() {
+            describe("Inputs are in numbers of features", function () {
+                it("Returns empty for 0 features", function () {
                     var literalSearchTypes = [
                         "autoLiteralTop",
-                        "autoLiteralBot"
+                        "autoLiteralBot",
                     ];
                     for (var s = 0; s < literalSearchTypes.length; s++) {
                         chai.assert.empty(
@@ -838,7 +1057,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         );
                     }
                 });
-                it("Gets all features if the input number is > number of features", function() {
+                it("Gets all features if magnitude of the input number is > number of features", function () {
                     var vals = [
                         "4.1",
                         "4.2",
@@ -846,7 +1065,14 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "4.4",
                         "20",
                         "100",
-                        "99999"
+                        "99999",
+                        "-4.1",
+                        "-4.2",
+                        "-4.3",
+                        "-4.4",
+                        "-20",
+                        "-100",
+                        "-99999",
                     ];
                     for (var i = 0; i < vals.length; i++) {
                         for (var s = 0; s < literalSearchTypes.length; s++) {
@@ -864,7 +1090,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         }
                     }
                 });
-                it("Works properly when 1 feature requested", function() {
+                it("Works properly when 1 feature requested", function () {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
                             feature_computation.filterFeatures(
@@ -888,7 +1114,31 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1"]
                     );
                 });
-                it("Works properly when 2 features requested", function() {
+                it("Works properly when -1 feature requested", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-1",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-1",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                });
+                it("Works properly when 2 features requested", function () {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
                             feature_computation.filterFeatures(
@@ -912,9 +1162,33 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
-                it("Chooses correct number of features when all have equal ranking column value", function() {
+                it("Works properly when -2 features requested", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-2",
+                                "n",
+                                "autoLiteralTop"
+                            )
+                        ),
+                        ["Feature 1", "Featurelol 2"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-2",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                });
+                it("Chooses correct number of features when all have equal ranking column value", function () {
                     for (var s = 0; s < literalSearchTypes.length; s++) {
-                        for (var i = 0; i < 5; i++) {
+                        for (var i = -4; i < 5; i++) {
                             chai.assert.lengthOf(
                                 feature_computation.filterFeatures(
                                     rpJSON1,
@@ -922,14 +1196,38 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                                     "same",
                                     literalSearchTypes[s]
                                 ),
-                                i
+                                Math.abs(i)
                             );
                         }
                     }
                 });
+                it("Takes the floor of the number of features requested", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-1.99",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 4|lol"]
+                    );
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "1.99",
+                                "n",
+                                "autoLiteralBot"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                });
             });
-            describe("Inputs are in percentages of features", function() {
-                it("Works properly when math is easy (top 25% of 4 features)", function() {
+            describe("Inputs are in percentages of features", function () {
+                it("Works properly when math is easy (top 25% of 4 features)", function () {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
                             feature_computation.filterFeatures(
@@ -942,7 +1240,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 4|lol"]
                     );
                 });
-                it("Works properly when math is less easy (bottom 57% of 4 features)", function() {
+                it("Works properly when math is less easy (bottom 57% of 4 features)", function () {
                     chai.assert.sameMembers(
                         testing_utilities.getFeatureIDsFromObjectArray(
                             feature_computation.filterFeatures(
@@ -955,7 +1253,48 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         ["Feature 1", "Featurelol 2"]
                     );
                 });
-                it("Returns empty if 0% of features are requested", function() {
+                it("Works properly with top -25% of 4 features", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-25",
+                                "n",
+                                "autoPercentTop"
+                            )
+                        ),
+                        ["Feature 1"]
+                    );
+                });
+                it("Works properly with bottom -57% of 4 features", function () {
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-57",
+                                "n",
+                                "autoPercentBot"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                });
+                it("Flooring is done consistently with negative-number inputs", function () {
+                    // 74% of 4 is 2.96 features from each side; this should be
+                    // floored down to 2, even if we pass in -74%
+                    chai.assert.sameMembers(
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            feature_computation.filterFeatures(
+                                rpJSON1,
+                                "-74",
+                                "n",
+                                "autoPercentBot"
+                            )
+                        ),
+                        ["Feature 3", "Feature 4|lol"]
+                    );
+                });
+                it("Returns empty if 0% of features are requested", function () {
                     for (var s = 0; s < percentSearchTypes.length; s++) {
                         chai.assert.empty(
                             feature_computation.filterFeatures(
@@ -967,14 +1306,20 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         );
                     }
                 });
-                it("Gets all features if the input number is > 100%", function() {
+                it("Gets all features if the input number is > 100% or < -100%", function () {
                     var vals = [
                         "100.00001",
                         "101",
                         "102",
                         "999",
                         "99999",
-                        "999999"
+                        "999999",
+                        "-100.00001",
+                        "-101",
+                        "-102",
+                        "-999",
+                        "-99999",
+                        "-999999",
                     ];
                     for (var i = 0; i < vals.length; i++) {
                         for (var s = 0; s < percentSearchTypes.length; s++) {
@@ -992,9 +1337,9 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         }
                     }
                 });
-                it("Chooses correct percentage of features when all have equal ranking column value", function() {
+                it("Chooses correct percentage of features when all have equal ranking column value", function () {
                     for (var s = 0; s < percentSearchTypes.length; s++) {
-                        for (var i = 0; i < 125; i += 25) {
+                        for (var i = -100; i < 125; i += 25) {
                             chai.assert.lengthOf(
                                 feature_computation.filterFeatures(
                                     rpJSON1,
@@ -1002,13 +1347,13 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                                     "same",
                                     percentSearchTypes[s]
                                 ),
-                                i / 25
+                                Math.abs(i) / 25
                             );
                         }
                     }
                 });
             });
-            it("Works properly when >50% of features requested", function() {
+            it("Works properly when >50% of features requested", function () {
                 /* Tests all auto-selection search types when we expect
                  * either *all* features to be returned, or 3/4 features to
                  * be returned
@@ -1055,7 +1400,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 }
             });
-            it("Returns empty if input number isn't a finite, nonnegative number", function() {
+            it("Returns empty if input number isn't a finite number", function () {
                 var invalidValsToTest = [
                     "asdf",
                     "NaN",
@@ -1068,10 +1413,6 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     NaN,
                     Infinity,
                     -Infinity,
-                    -1,
-                    "-1",
-                    "-100.23",
-                    -100.23
                 ];
                 for (var i = 0; i < invalidValsToTest.length; i++) {
                     for (var s = 0; s < autoSearchTypes.length; s++) {
@@ -1086,12 +1427,12 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     }
                 }
             });
-            it("Throws an error if a ranking isn't present in all features", function() {
+            it("Throws an error if a ranking isn't present in all features", function () {
                 // NOTE: we can use a number (2) here because we're calling
                 // extremeFilterFeatures() directly, instead of calling
                 // filterFeatures() first (which expects inputText to be a
                 // string)
-                chai.assert.throws(function() {
+                chai.assert.throws(function () {
                     // We get a list of "feature rows" to mimic what
                     // filterFeatures() would give to extremeFilterFeatures()
                     var potentialFeatures = rpJSON1.datasets[rpJSON1.data.name];
@@ -1103,8 +1444,8 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 }, /aosdifj ranking not present and\/or numeric for all features/);
             });
-            it("Throws an error if a ranking isn't numeric for all features", function() {
-                chai.assert.throws(function() {
+            it("Throws an error if a ranking isn't numeric for all features", function () {
+                chai.assert.throws(function () {
                     // We get a list of "feature rows" to mimic what
                     // filterFeatures() would give to extremeFilterFeatures()
                     var potentialFeatures = rpJSON1.datasets[rpJSON1.data.name];
@@ -1117,8 +1458,8 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 }, /x ranking not present and\/or numeric for all features/);
             });
         });
-        describe("existsIntersection()", function() {
-            it("Returns true if an intersection exists", function() {
+        describe("existsIntersection()", function () {
+            it("Returns true if an intersection exists", function () {
                 chai.assert.isTrue(
                     feature_computation.existsIntersection(
                         ["a", "b", "c"],
@@ -1129,7 +1470,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     feature_computation.existsIntersection(["a"], ["a"])
                 );
             });
-            it("Returns false if no intersection exists", function() {
+            it("Returns false if no intersection exists", function () {
                 chai.assert.isFalse(
                     feature_computation.existsIntersection(
                         ["a", "b", "c"],
@@ -1140,7 +1481,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     feature_computation.existsIntersection(["a"], ["b"])
                 );
             });
-            it("Returns false when >= 1 input array is empty", function() {
+            it("Returns false when >= 1 input array is empty", function () {
                 chai.assert.isFalse(
                     feature_computation.existsIntersection([], [])
                 );
@@ -1152,8 +1493,8 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
-        describe("textToRankArray()", function() {
-            it("Works with basic, simple taxonomy strings", function() {
+        describe("textToRankArray()", function () {
+            it("Works with basic, simple taxonomy strings", function () {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
                         "Viruses;Caudovirales;Myoviridae;Twortlikevirus;Staphylococcus_phage_Twort"
@@ -1163,11 +1504,11 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "Caudovirales",
                         "Myoviridae",
                         "Twortlikevirus",
-                        "Staphylococcus_phage_Twort"
+                        "Staphylococcus_phage_Twort",
                     ]
                 );
             });
-            it("Works with Greengenes-style taxonomy strings", function() {
+            it("Works with Greengenes-style taxonomy strings", function () {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
                         "k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Bacteroidaceae; g__Bacteroides; s__"
@@ -1179,11 +1520,11 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "o__Bacteroidales",
                         "f__Bacteroidaceae",
                         "g__Bacteroides",
-                        "s__"
+                        "s__",
                     ]
                 );
             });
-            it("Works with SILVA-style taxonomy strings", function() {
+            it("Works with SILVA-style taxonomy strings", function () {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
                         // Thanks to Justin for the example data
@@ -1195,11 +1536,11 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "D_2__Bacteroidia",
                         "D_3__Bacteroidales",
                         "D_4__Bacteroidaceae",
-                        "D_5__Bacteroides"
+                        "D_5__Bacteroides",
                     ]
                 );
             });
-            it('Ignores "empty" taxonomic ranks', function() {
+            it('Ignores "empty" taxonomic ranks', function () {
                 chai.assert.sameOrderedMembers(
                     // Currently, we don't treat __ specially, so it'll get
                     // treated as a taxonomic rank. (See
@@ -1220,7 +1561,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ["Viruses", "Caudovirales", "lol"]
                 );
             });
-            it("Returns [] when strings without actual text are passed in", function() {
+            it("Returns [] when strings without actual text are passed in", function () {
                 chai.assert.isEmpty(feature_computation.textToRankArray(""));
                 chai.assert.isEmpty(
                     feature_computation.textToRankArray("  \n \t  ")
@@ -1229,7 +1570,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     feature_computation.textToRankArray("   ;   ")
                 );
             });
-            it("Behaves as expected when passed a comma-separated list", function() {
+            it("Behaves as expected when passed a comma-separated list", function () {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray("Viruses, Bacteria"),
                     ["Viruses", "Bacteria"]
@@ -1243,7 +1584,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     ["Viruses"]
                 );
             });
-            it("Separates on spaces, in addition to semicolons and commas", function() {
+            it("Separates on spaces, in addition to semicolons and commas", function () {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
                         "Abc def ghi ;,; j[k]l m(nop) , qrs;tuv wxy|z"
@@ -1256,11 +1597,11 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "m(nop)",
                         "qrs",
                         "tuv",
-                        "wxy|z"
+                        "wxy|z",
                     ]
                 );
             });
-            it("Works with oddly formatted input lists", function() {
+            it("Works with oddly formatted input lists", function () {
                 chai.assert.sameOrderedMembers(
                     feature_computation.textToRankArray(
                         "Viruses;Bacteria , Stuff 2; lol,5"
@@ -1283,13 +1624,13 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                         "c__Bacilli",
                         "o__Bacillales",
                         "f__Staphylococcaceae",
-                        "lol"
+                        "lol",
                     ]
                 );
             });
         });
-        describe("tryTextSearchable()", function() {
-            it("Lowercases (but otherwise doesn't modify) strings", function() {
+        describe("tryTextSearchable()", function () {
+            it("Lowercases (but otherwise doesn't modify) strings", function () {
                 chai.assert.equal(
                     feature_computation.tryTextSearchable("abc"),
                     "abc"
@@ -1313,7 +1654,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     "null"
                 );
             });
-            it("Converts numbers to strings", function() {
+            it("Converts numbers to strings", function () {
                 chai.assert.equal(
                     feature_computation.tryTextSearchable(3.14),
                     "3.14"
@@ -1323,7 +1664,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     "5"
                 );
             });
-            it("Returns null when a non-string + non-number passed in", function() {
+            it("Returns null when a non-string + non-number passed in", function () {
                 chai.assert.isNull(feature_computation.tryTextSearchable([3]));
                 chai.assert.isNull(
                     feature_computation.tryTextSearchable([3, 4, 5])
@@ -1343,9 +1684,9 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                 );
             });
         });
-        describe("Various filterFeatures() logistics", function() {
-            it("Throws an error when nonexistent feature metadata field passed", function() {
-                chai.assert.throws(function() {
+        describe("Various filterFeatures() logistics", function () {
+            it("Throws an error when nonexistent feature metadata field passed", function () {
+                chai.assert.throws(function () {
                     testing_utilities.getFeatureIDsFromObjectArray(
                         feature_computation.filterFeatures(
                             rpJSON1,
@@ -1354,9 +1695,9 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                             "text"
                         )
                     );
-                });
+                }, /featureField "Taxonomy" not found in data/);
                 // test that feature metadata field names are case-sensitive
-                chai.assert.throws(function() {
+                chai.assert.throws(function () {
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "I'm the input text!",
@@ -1365,7 +1706,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
                 // test that feature metadata field names "preserve" whitespace
-                chai.assert.throws(function() {
+                chai.assert.throws(function () {
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "I'm the input text!",
@@ -1374,8 +1715,8 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
             });
-            it("Throws an error when nonexistent search type passed", function() {
-                chai.assert.throws(function() {
+            it("Throws an error when nonexistent search type passed", function () {
+                chai.assert.throws(function () {
                     feature_computation.filterFeatures(
                         rpJSON1,
                         "I'm irrelevant!",
@@ -1384,7 +1725,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
                 // test that search type names are case-sensitive
-                chai.assert.throws(function() {
+                chai.assert.throws(function () {
                     feature_computation.filterFeatures(
                         rpJSON2,
                         "I'm the input text!",
@@ -1393,7 +1734,7 @@ define(["feature_computation", "mocha", "chai", "testing_utilities"], function(
                     );
                 });
             });
-            it("Returns [] when inputText.length is 0", function() {
+            it("Returns [] when inputText.length is 0", function () {
                 chai.assert.isEmpty(
                     feature_computation.filterFeatures(
                         rpJSON1,

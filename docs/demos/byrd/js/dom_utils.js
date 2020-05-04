@@ -1,7 +1,7 @@
 /* This file contains some methods for manipulating DOM elements in a
  * client-side web interface.
  */
-define(["vega"], function(vega) {
+define(["vega"], function (vega) {
     /* Assigns DOM bindings to elements.
      *
      * If eventHandler is set to "onchange", this will update the onchange
@@ -271,7 +271,7 @@ define(["vega"], function(vega) {
         var percentage = 100 * (n / total);
         return percentage.toLocaleString(undefined, {
             minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            maximumFractionDigits: 2,
         });
     }
 
@@ -381,7 +381,7 @@ define(["vega"], function(vega) {
         "mainSamplesDroppedDiv",
         "balanceSamplesDroppedDiv",
         "xAxisSamplesDroppedDiv",
-        "colorSamplesDroppedDiv"
+        "colorSamplesDroppedDiv",
     ];
 
     return {
@@ -395,6 +395,6 @@ define(["vega"], function(vega) {
         formatPercentage: formatPercentage,
         downloadDataURI: downloadDataURI,
         getNumberIfValid: getNumberIfValid,
-        statDivs: statDivs
+        statDivs: statDivs,
     };
 });

@@ -1,4 +1,4 @@
-define(["mocha", "chai", "testing_utilities"], function(
+define(["mocha", "chai", "testing_utilities"], function (
     mocha,
     chai,
     testing_utilities
@@ -11,9 +11,9 @@ define(["mocha", "chai", "testing_utilities"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe("Updating the feature DataTables in RRVDisplay.updateFeaturesDisplays()", function() {
+    describe("Updating the feature DataTables in RRVDisplay.updateFeaturesDisplays()", function () {
         var rrv;
-        before(async function() {
+        before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -21,7 +21,7 @@ define(["mocha", "chai", "testing_utilities"], function(
             );
             await rrv.makePlots();
         });
-        after(async function() {
+        after(async function () {
             await rrv.destroy(true, true, true);
         });
 
@@ -57,17 +57,17 @@ define(["mocha", "chai", "testing_utilities"], function(
             await document.getElementById("multiFeatureButton").onclick();
         }
 
-        it("Works for single-feature selections", function() {
+        it("Works for single-feature selections", function () {
             rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon3");
             rrv.newFeatureLow = testing_utilities.getFeatureRow(rrv, "Taxon4");
             rrv.updateFeaturesDisplays(true);
 
             // Check that tables are updated properly
             testing_utilities.checkDataTable("topFeaturesDisplay", {
-                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"],
             });
             testing_utilities.checkDataTable("botFeaturesDisplay", {
-                Taxon4: [9, 8, 7, 0, 4, null, null]
+                Taxon4: [9, 8, 7, 0, 4, null, null],
             });
             // Check that headers are updated accordingly
             testing_utilities.checkHeaders(1, 1, 5);
@@ -80,14 +80,14 @@ define(["mocha", "chai", "testing_utilities"], function(
 
             // ...and check results again
             testing_utilities.checkDataTable("topFeaturesDisplay", {
-                Taxon1: [5, 6, 7, 0, 4, null, null]
+                Taxon1: [5, 6, 7, 0, 4, null, null],
             });
             testing_utilities.checkDataTable("botFeaturesDisplay", {
-                Taxon2: [1, 2, 3, 0, 4, null, null]
+                Taxon2: [1, 2, 3, 0, 4, null, null],
             });
             testing_utilities.checkHeaders(1, 1, 5);
         });
-        it("Works for multi-feature selections", async function() {
+        it("Works for multi-feature selections", async function () {
             await runFeatureFiltering(
                 "Feature ID",
                 "Taxon",
@@ -101,14 +101,14 @@ define(["mocha", "chai", "testing_utilities"], function(
                 Taxon2: [1, 2, 3, 0, 4, null, null],
                 Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"],
                 Taxon4: [9, 8, 7, 0, 4, null, null],
-                Taxon5: [6, 5, 4, 0, 4, "null", "lol"]
+                Taxon5: [6, 5, 4, 0, 4, "null", "lol"],
             });
             testing_utilities.checkDataTable("botFeaturesDisplay", {
-                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"],
             });
             testing_utilities.checkHeaders(5, 1, 5);
         });
-        it('Clears the "feature text" DOM elements properly', function() {
+        it('Clears the "feature text" DOM elements properly', function () {
             // PART 1
             // Populate the DOM elements
             rrv.newFeatureHigh = testing_utilities.getFeatureRow(rrv, "Taxon1");
@@ -137,7 +137,7 @@ define(["mocha", "chai", "testing_utilities"], function(
             testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
         });
-        it("Works when both selected feature list(s) are empty", async function() {
+        it("Works when both selected feature list(s) are empty", async function () {
             await runFeatureFiltering(
                 "Feature ID",
                 "aoisdjfoisdjfoasidj",
@@ -150,7 +150,7 @@ define(["mocha", "chai", "testing_utilities"], function(
             testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(0, 0, 5);
         });
-        it("Works when just one selected feature list is empty", async function() {
+        it("Works when just one selected feature list is empty", async function () {
             await runFeatureFiltering(
                 "Feature ID",
                 "Taxon3",
@@ -160,7 +160,7 @@ define(["mocha", "chai", "testing_utilities"], function(
                 "text"
             );
             testing_utilities.checkDataTable("topFeaturesDisplay", {
-                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"]
+                Taxon3: [4, 5, 6, 0, 4, "Yeet", "100"],
             });
             testing_utilities.checkDataTable("botFeaturesDisplay", {});
             testing_utilities.checkHeaders(1, 0, 5);

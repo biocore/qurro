@@ -1,5 +1,51 @@
 # Qurro changelog
 
+## Qurro 0.7.0 (TBD)
+### Features added
+- Added the ability to **easily search using multiple text queries at once**:
+  this is done using the `contains text separated by | (pipe)` searching
+  option. You can pass in, e.g. `abc | def | ghi` to select any features where
+  the selected field contains at least one of `abc`, `def`, or `ghi`.
+  ([#224](https://github.com/biocore/qurro/issues/224))
+  - This works more intuitively than the `separated text fragment(s)` option,
+    and should be useful for a few cases that that option can't handle (e.g.
+    polyphyletic taxa, as discussed in issue 224).
+- Added a **`Draw borders on scatterplot points?` checkbox**, which is useful for making
+  light-colored points in the sample plot easier to see on the white background.
+  ([#240](https://github.com/biocore/qurro/issues/240))
+- Added the ability to **enter in negative numbers in autoselection** to flip
+  the selection (selecting the numerator from the lowest-ranked features and
+  the denominator from the highest-ranked features).
+  ([#264](https://github.com/biocore/qurro/issues/264))
+- Added the **`Classic QIIME Colors` categorical color scheme** used in some other
+  visualization tools, including [Emperor](https://biocore.github.io/emperor/)
+  and [Empress](https://github.com/biocore/empress), to the sample plot's
+  categorical color scheme options.
+  ([#300](https://github.com/biocore/qurro/issues/300))
+  - (`tableau10` is still the default categorical color scheme in Qurro, though.)
+- Added a **["selection" tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/selection/selection.ipynb)**
+  describing the various ways of selecting features in Qurro in detail.
+  ([#123](https://github.com/biocore/qurro/issues/123))
+  - (This was previously the appendix in the moving pictures tutorial, but now
+    it's been split off and expanded into its own thing.)
+### Backward-incompatible changes
+- For the time being, we are only supporting Qurro for Python versions of **at
+  least 3.6 and less than 3.8**. The code hasn't really changed, but this seems
+  like it'll be the simplest option for maintenance in the short term.
+### Bug fixes
+- Previously, the autoselection number field had an implicit "step size" of 1.
+  I don't think this should have prevented users from entering in
+  floating-point numbers here, but some people's browsers may have complained
+  on seeing a floating-point number. This problem should be resolved now.
+  (See [here](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#step) for details about this.)
+### Performance enhancements
+### Miscellaneous
+- Qurro is now installable on conda through the conda-forge channel!
+  ([#153](https://github.com/biocore/qurro/issues/153))
+- Various minor documentation updates, including adding citation info for
+  Qurro's recently-published paper to the README.
+  ([#169](https://github.com/biocore/qurro/issues/169))
+
 ## Qurro 0.6.0 (March 10, 2020)
 ### Features added
 - Added **tooltips** throughout the Qurro interface explaining what certain

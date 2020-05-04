@@ -1,4 +1,4 @@
-define(["./dom_utils"], function(dom_utils) {
+define(["./dom_utils"], function (dom_utils) {
     /* Converts a feature field value to a text-searchable value, if possible.
      *
      * If the input is a string, returns the input (in lower case).
@@ -41,11 +41,11 @@ define(["./dom_utils"], function(dom_utils) {
         var currVal;
         var decisionFunc;
         if (negate) {
-            decisionFunc = function(value) {
+            decisionFunc = function (value) {
                 return !value.includes(inputText);
             };
         } else {
-            decisionFunc = function(value) {
+            decisionFunc = function (value) {
                 return value.includes(inputText);
             };
         }
@@ -73,19 +73,19 @@ define(["./dom_utils"], function(dom_utils) {
      */
     function operatorToCompareFunc(operator, n) {
         if (operator === "lt") {
-            return function(i) {
+            return function (i) {
                 return i < n;
             };
         } else if (operator === "gt") {
-            return function(i) {
+            return function (i) {
                 return i > n;
             };
         } else if (operator === "lte") {
-            return function(i) {
+            return function (i) {
                 return i <= n;
             };
         } else if (operator === "gte") {
-            return function(i) {
+            return function (i) {
                 return i >= n;
             };
         } else {
@@ -170,7 +170,7 @@ define(["./dom_utils"], function(dom_utils) {
         // Filter out ""s caused by repeated commas or whitespace in the input.
         // Why we need this: "a b   c".split(" ") produces
         // ["a", "b", "", "", "c"] and we just want ["a", "b", "c"]
-        return initialRankArray.filter(function(r) {
+        return initialRankArray.filter(function (r) {
             return r !== "";
         });
     }
@@ -236,6 +236,57 @@ define(["./dom_utils"], function(dom_utils) {
         return filteredFeatures;
     }
 
+    /* Assumes the text is all lowercase.
+     *
+     * This is really similar to textToRankArray(), since it's pretty close
+     * under the hood.
+     */
+    function splitAtOrs(text) {
+        var untrimmedTextParts = text.split("|");
+        var trimmedTextParts = untrimmedTextParts.map(function (part) {
+            return part.trim();
+        });
+        return trimmedTextParts.filter(function (part) {
+            return part !== "";
+        });
+    }
+
+    /* Given a list of feature "rows", a string of input text, and a feature
+     * field, this calls splitAtOrs to split the input text into multiple text
+     * parts separated by any "|"s (pipe characters). This then filters to
+     * features where their feature field contains any of these text parts.
+     *
+     * This can be thought of as doing a logical OR. It differs from
+     * rankFilterFeatures (aka "separated text fragment" searching) in that
+     * this ignores semicolons, internal whitespace, etc. -- it's just a way of
+     * doing basic text searching with multiple strings at once.
+     *
+     * See https://github.com/biocore/qurro/issues/224 for details.
+     */
+    function orFilterFeatures(featureRowList, inputText, featureField) {
+        var textParts = splitAtOrs(inputText);
+        if (textParts.length <= 0) {
+            return [];
+        }
+        var filteredFeatures = [];
+        // Check all text parts (the stuff separated by ORs) as being in every
+        // featureField thing.
+        for (var ti = 0; ti < featureRowList.length; ti++) {
+            var currVal = tryTextSearchable(featureRowList[ti][featureField]);
+            if (currVal === null) {
+                continue;
+            } else {
+                for (var pi = 0; pi < textParts.length; pi++) {
+                    if (currVal.includes(textParts[pi])) {
+                        filteredFeatures.push(featureRowList[ti]);
+                        break;
+                    }
+                }
+            }
+        }
+        return filteredFeatures;
+    }
+
     /* Returns list of feature data objects (in the rank plot JSON) based
      * on some sort of "match" of a given feature metadata/ranking field
      * (including Feature ID) with the input text. The input text must be a
@@ -257,7 +308,9 @@ define(["./dom_utils"], function(dom_utils) {
             ) < 0 &&
             rankPlotJSON.datasets.qurro_rank_ordering.indexOf(featureField) < 0
         ) {
-            throw new Error("featureField not found in data");
+            throw new Error(
+                'featureField "' + featureField + '" not found in data'
+            );
         } else if (inputText.length === 0) {
             return [];
         }
@@ -277,6 +330,12 @@ define(["./dom_utils"], function(dom_utils) {
                 inputText.toLowerCase(),
                 featureField,
                 negate
+            );
+        } else if (searchType === "or") {
+            return orFilterFeatures(
+                potentialFeatures,
+                inputText.toLowerCase(),
+                featureField
             );
         } else if (
             searchType === "lt" ||
@@ -303,24 +362,23 @@ define(["./dom_utils"], function(dom_utils) {
             var inPercentages = searchType.startsWith("autoPercent");
             var featureCt = potentialFeatures.length;
             inputNum = dom_utils.getNumberIfValid(inputText);
-            // Initial check for validity: regardless of if inputNum describes
-            // a "literal" or "percentage"-based cutoff, it should be a finite
-            // number that's at least 0
-            if (isNaN(inputNum) || inputNum < 0) {
+            var inputMagnitude = Math.abs(inputNum);
+            // check that inputNum is a finite number
+            if (isNaN(inputNum)) {
                 return [];
             }
             // If the user asks for more than 100% of the features (aka more
             // features than are present in the dataset), just go ahead and
             // return all features
             else if (
-                (inPercentages && inputNum > 100) ||
-                (!inPercentages && inputNum > featureCt)
+                (inPercentages && inputMagnitude >= 100) ||
+                (!inPercentages && inputMagnitude >= featureCt)
             ) {
                 return potentialFeatures;
             }
             // OK, so now we know that inputNum is valid (i.e. is a number and
-            // is in the range [0, 100] for percentage searching or [0, #
-            // features] for number-of-features searching).
+            // is in the range (-100, 100) for percentage searching or
+            // (-# features, # features) for number-of-features searching).
             // Next, let's just figure out how many features to extract from a
             // given side of the ranking.
             var numberOfFeaturesToGet;
@@ -329,7 +387,7 @@ define(["./dom_utils"], function(dom_utils) {
                 // 33.33% of features, and there are 10 features, then it makes
                 // more sense to give 3 features on each side than 4 (IMO).
                 numberOfFeaturesToGet = Math.floor(
-                    (inputNum / 100) * featureCt
+                    (inputMagnitude / 100) * featureCt
                 );
             } else {
                 // If inputNum is a float, we just take the floor of it (so if
@@ -338,9 +396,14 @@ define(["./dom_utils"], function(dom_utils) {
                 // We could also reject float values above, but I don't think
                 // that'd be super user-friendly to people going between % and
                 // "literal # of feature" modes.
-                numberOfFeaturesToGet = Math.floor(inputNum);
+                numberOfFeaturesToGet = Math.floor(inputMagnitude);
             }
             var useTop = searchType.endsWith("Top");
+            // For negative autoselection numbers (e.g. -5%), switch "top" and
+            // "bottom".
+            if (inputNum < 0) {
+                useTop = !useTop;
+            }
             return extremeFilterFeatures(
                 potentialFeatures,
                 numberOfFeaturesToGet,
@@ -371,7 +434,7 @@ define(["./dom_utils"], function(dom_utils) {
             // use of pd.to_numeric() in qurro.generate.gen_rank_plot().)
             // Comparison function based on spec here (thanks MDN!) --
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description
-            function(feature1, feature2) {
+            function (feature1, feature2) {
                 var f1r = feature1[ranking];
                 var f2r = feature2[ranking];
                 // Basic validation to ensure that both features have this
@@ -428,6 +491,6 @@ define(["./dom_utils"], function(dom_utils) {
         textToRankArray: textToRankArray,
         operatorToCompareFunc: operatorToCompareFunc,
         existsIntersection: existsIntersection,
-        tryTextSearchable: tryTextSearchable
+        tryTextSearchable: tryTextSearchable,
     };
 });

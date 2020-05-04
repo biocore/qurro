@@ -15,15 +15,15 @@ requirejs.config({
         jquery: "vendor/jquery-3.4.1.min",
         bootstrap: "vendor/bootstrap.bundle.min",
         "datatables.net": "vendor/jquery.dataTables.min",
-        datatablesbs: "vendor/dataTables.bootstrap4.min"
+        datatablesbs: "vendor/dataTables.bootstrap4.min",
     },
     shim: {
         "vega-lite": { deps: ["vega"] },
         "vega-embed": { deps: ["vega-lite"] },
         bootstrap: { deps: ["jquery"] },
         "datatables.net": { deps: ["jquery"] },
-        datatablesbs: { deps: ["datatables.net", "bootstrap"] }
-    }
+        datatablesbs: { deps: ["datatables.net", "bootstrap"] },
+    },
 });
 requirejs(
     [
@@ -35,9 +35,9 @@ requirejs(
         "jquery",
         "bootstrap",
         "datatables.net",
-        "datatablesbs"
+        "datatablesbs",
     ],
-    function(display, feature_computation, vega, vegaLite, vegaEmbed) {
+    function (display, feature_computation, vega, vegaLite, vegaEmbed) {
         // DON'T CHANGE THESE LINES unless you know what you're doing -- the
         // "var *JSON = {};" lines are expected to contain that text by Qurro's
         // python code, which replaces the empty {}s with JSON objects that

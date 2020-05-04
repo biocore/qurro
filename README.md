@@ -9,41 +9,49 @@
 <a href="https://codecov.io/gh/biocore/qurro"><img src="https://codecov.io/gh/biocore/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
 <a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
 <a href="https://pypi.org/project/qurro"><img src="https://img.shields.io/pypi/v/qurro.svg" alt="PyPI" /></a>
+<a href="https://anaconda.org/conda-forge/qurro"><img src="https://img.shields.io/conda/vn/conda-forge/qurro.svg" alt="conda-forge" /></a>
 <p>(Pronounced "churro.")</p>
 </div>
 
-### What does this tool do?
-(mostly taken from our paper abstract/intro.)
-
+## What does this tool do?
 Lots of tools for analyzing " 'omic" datasets can produce
-__feature rankings__. Regardless of if they're *differentials* (corresponding
-to the log-fold change in relative abundance re: a covariate) produced by a
-tool like [Songbird](https://github.com/biocore/songbird/),
-[ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html),
-etc., or the *feature loadings* in a (compositional)
-biplot produced by a tool like [DEICODE](https://github.com/biocore/DEICODE),
-either of these input types can be sorted numerically to
-"rank" features based on their association with some sort of variation in your
-dataset.
+__feature rankings__. These rankings can be used as a guide to look at the __log-ratios__ of certain features in a dataset. Qurro is a tool for visualizing and exploring both of these types of data.
+
+### What are feature rankings?
+The term "feature rankings" includes __differentials__, which we define as the estimated log-fold changes for features' abundances across different sample types. You can get this sort of output from lots of "differential abundance" tools, including but definitely not limited to [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html), [Songbird](https://github.com/biocore/songbird/), [Corncob](https://github.com/bryandmartin/corncob/), [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html), [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), etc.
+
+The term "feature rankings" also includes __feature loadings__ in a [biplot](https://en.wikipedia.org/wiki/Biplot) (see [Aitchison and Greenacre 2002](https://rss.onlinelibrary.wiley.com/doi/full/10.1111/1467-9876.00275)); you can get biplots from running [DEICODE](https://github.com/biocore/DEICODE),
+which is a tool that works well with microbiome datasets, or from a variety of other methods.
+
+Differentials and feature loadings alike can be interpreted as rankings -- you
+can sort them numerically to "rank" features based on their association with
+some sort of variation in your dataset.
+
+### What can we do with feature rankings?
 
 A common use of these rankings is examining the __log-ratios__ of
 particularly high- or low-ranked features across the samples in your dataset,
 and seeing how these log-ratios relate to your sample metadata (e.g. "does
-this log-ratio differ between 'healthy' and 'sick' samples?"). For more
-details (why rankings, why log-ratios, ...), check out
+this log-ratio differ between 'healthy' and 'sick' samples?"). For
+details as to why this approach is useful, check out
 [this open access paper](https://www.nature.com/articles/s41467-019-10656-5).
+
+### How does this tool help?
 
 __Qurro is an interactive web application for visualizing feature rankings
 and log-ratios.__ It does this
-using a two-plot interface: on the left of the screen, a "rank plot" shows
-how features are ranked for a selected ranking, and on the right of the screen
-a "sample plot" shows the log-ratios of selected features' abundances within
-samples. There are a variety of controls available for selecting features for
-a log-ratio, and changing the selected log-ratio updates both the rank plot
-(highlighting selected features) and the sample plot (changing the y-axis
-value of each sample to match the selected log-ratio).
+using a two-plot interface: on the left side of the screen, a "rank plot" shows
+how features are ranked for a selected ranking, and on the right side of the
+screen a "sample plot" shows the log-ratios of selected features' abundances
+within samples. There are a variety of controls available for selecting
+features for a log-ratio, and changing the selected log-ratio updates both the
+rank plot (highlighting selected features) and the sample plot (changing the
+y-axis value of each sample to match the selected log-ratio).
 
-### How do I use it?
+**A paper describing Qurro is now available at NAR Genomics and Bioinformatics
+[here](https://academic.oup.com/nargab/article/2/2/lqaa023/5826153).**
+
+### How do I use this tool?
 
 Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
@@ -76,14 +84,18 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 
 ## Installation and Usage
 
-You can install Qurro using [pip](https://pip.pypa.io/en/stable/):
+You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 and less than 3.8 is required to use Qurro.
 
+### Installing with `pip`
 ```bash
 pip install cython "numpy >= 1.12.0"
 pip install qurro
 ```
 
-A python version of at least 3.5.3 is required to use Qurro.
+### Installing with `conda`
+```bash
+conda install -c conda-forge qurro
+```
 
 ### Temporary Caveat
 
@@ -103,13 +115,13 @@ for context.
 
 ## Tutorials
 
-### In-depth
+### In-depth tutorials
 These tutorials are all good places to start, depending on what sort of data and
 feature rankings you have.
 
 - [Color Composition tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/color_compositions/color_example.ipynb)
   - **Data Summary:** Color composition data from abstract paintings
-  - Feature rankings: Feature loadings in a compositional biplot
+  - Feature rankings: Feature loadings in an arbitrary compositional biplot
   - Qurro used through QIIME 2 or standalone?: Standalone
 
 - ["Moving Pictures" tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/moving_pictures/moving_pictures.ipynb)
@@ -122,12 +134,20 @@ feature rankings you have.
   - Feature rankings: [ALDEx2](https://bioconductor.org/packages/release/bioc/html/ALDEx2.html) differentials
   - Qurro used through QIIME 2 or standalone?: Standalone
 
+### Selection tutorial
+There are a lot of different ways to select features in Qurro, and the
+interface can be difficult to get used to. This document describes all of these
+methods, and provides some examples of where they could be useful in practice.
+
+- [Selection tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/selection/selection.ipynb)
+
 ### Basic command-line tutorials
 These tutorials show examples of using Qurro in identical ways both inside and
 outside of QIIME 2.
 
 - [Sleep Apnea tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/DEICODE_sleep_apnea/deicode_example.ipynb)
   - Feature rankings: feature loadings in a [DEICODE](https://github.com/biocore/DEICODE) biplot
+
 - [Red Sea tutorial](https://nbviewer.jupyter.org/github/biocore/qurro/blob/master/example_notebooks/songbird_red_sea/songbird_example.ipynb)
   - Feature rankings: [Songbird](https://github.com/biocore/songbird/) differentials
 
@@ -247,20 +267,24 @@ And thanks to a bunch of the Knight Lab for helping name the tool :)
 
 ## Citing Qurro
 
-For now, the preferred citation for Qurro is its
-[bioRxiv preprint](https://www.biorxiv.org/content/10.1101/2019.12.17.880047v1).
-Here's the generated BibTeX:
+If you use Qurro in your research, please cite it!
+The preferred citation for Qurro is [this manuscript at NAR Genomics and
+Bioinformatics](https://academic.oup.com/nargab/article/2/2/lqaa023/5826153).
+Here's the BibTeX:
 ```
-@article {fedarko2019,
-	author = {Fedarko, Marcus W. and Martino, Cameron and Morton, James T. and Gonz{\'a}lez, Antonio and Rahman, Gibraan and Marotz, Clarisse A. and Minich, Jeremiah J. and Allen, Eric E. and Knight, Rob},
-	title = {Visualizing {\textquoteright}omic feature rankings and log-ratios using {Q}urro},
-	elocation-id = {2019.12.17.880047},
-	year = {2019},
-	doi = {10.1101/2019.12.17.880047},
-	publisher = {Cold Spring Harbor Laboratory},
-	URL = {https://www.biorxiv.org/content/early/2019/12/18/2019.12.17.880047},
-	eprint = {https://www.biorxiv.org/content/early/2019/12/18/2019.12.17.880047.full.pdf},
-	journal = {bioRxiv}
+@article {fedarko2020,
+    author = {Fedarko, Marcus W and Martino, Cameron and Morton, James T and González, Antonio and Rahman, Gibraan and Marotz, Clarisse A and Minich, Jeremiah J and Allen, Eric E and Knight, Rob},
+    title = "{Visualizing ’omic feature rankings and log-ratios using Qurro}",
+    journal = {NAR Genomics and Bioinformatics},
+    volume = {2},
+    number = {2},
+    year = {2020},
+    month = {04},
+    issn = {2631-9268},
+    doi = {10.1093/nargab/lqaa023},
+    url = {https://doi.org/10.1093/nargab/lqaa023},
+    note = {lqaa023},
+    eprint = {https://academic.oup.com/nargab/article-pdf/2/2/lqaa023/33137933/lqaa023.pdf},
 }
 ```
 

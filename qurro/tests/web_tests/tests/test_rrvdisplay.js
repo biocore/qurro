@@ -1,4 +1,5 @@
-define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
+define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
+    vega,
     mocha,
     chai,
     testing_utilities,
@@ -12,7 +13,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
     // prettier-ignore
     var countJSON = {"Taxon1": {"Sample2": 1.0, "Sample3": 2.0, "Sample5": 4.0, "Sample6": 5.0, "Sample7": 6.0}, "Taxon2": {"Sample1": 6.0, "Sample2": 5.0, "Sample3": 4.0, "Sample5": 2.0, "Sample6": 1.0}, "Taxon3": {"Sample1": 2.0, "Sample2": 3.0, "Sample3": 4.0, "Sample5": 4.0, "Sample6": 3.0, "Sample7": 2.0}, "Taxon4": {"Sample1": 1.0, "Sample2": 1.0, "Sample3": 1.0, "Sample5": 1.0, "Sample6": 1.0, "Sample7": 1.0}, "Taxon5": {"Sample3": 1.0, "Sample5": 2.0}};
 
-    describe("Dynamic RRVDisplay class functionality", function() {
+    describe("Dynamic RRVDisplay class functionality", function () {
         var rrv, dataName;
         async function resetRRVDisplay() {
             await rrv.destroy(true, true, true);
@@ -33,7 +34,33 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
             );
             chai.assert.notExists(rrv.samplePlotJSON.encoding.x.axis);
         }
-        before(async function() {
+        function testBoxplotEncodings(xField) {
+            chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
+            chai.assert.exists(rrv.samplePlotJSON.mark.median);
+            chai.assert.equal("#000000", rrv.samplePlotJSON.mark.median.color);
+            // Also, the color field encoding should match the x-axis
+            // field encoding and be nominal
+            chai.assert.equal(xField, rrv.samplePlotJSON.encoding.x.field);
+            chai.assert.equal(xField, rrv.samplePlotJSON.encoding.color.field);
+            chai.assert.equal(
+                "nominal",
+                rrv.samplePlotJSON.encoding.color.type
+            );
+        }
+        async function testSwitchToBoxplot(currXField) {
+            await document.getElementById("boxplotCheckbox").click();
+            var xScaleEle = document.getElementById("xAxisScale");
+            xScaleEle.value = "nominal";
+            await xScaleEle.onchange();
+            // Now the sample plot should be a boxplot
+            testBoxplotEncodings(currXField);
+            // In "boxplot mode", the color controls (and the sample border
+            // checkbox) should all be disabled
+            testing_utilities.assertEnabled("colorField", false);
+            testing_utilities.assertEnabled("colorScale", false);
+            testing_utilities.assertEnabled("borderCheckbox", false);
+        }
+        before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
                 rankPlotJSON,
                 samplePlotJSON,
@@ -42,11 +69,11 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
             dataName = rrv.samplePlotJSON.data.name;
             await rrv.makePlots();
         });
-        after(async function() {
+        after(async function () {
             await rrv.destroy(true, true, true);
         });
 
-        it("Initializes an RRVDisplay object", function() {
+        it("Initializes an RRVDisplay object", function () {
             // We don't bother checking that the JSONs are equal b/c all we do
             // is just set them equal. Also, there are some things done on init
             // (that modify the RRVDisplay object's copy of the JSON) that
@@ -75,16 +102,71 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
             );
         });
 
-        it("RRVDisplay.validateSampleID() identifies nonexistent sample IDs", function() {
-            chai.assert.doesNotThrow(function() {
+        it("Adds the 'qiimediscrete' (Classic QIIME Colors) color scheme", function () {
+            // 1. check that the scheme was added to Vega
+            // (see https://vega.github.io/vega/docs/schemes/#registering-additional-schemes)
+            chai.assert.sameOrderedMembers(vega.scheme("qiimediscrete"), [
+                "#ff0000",
+                "#0000ff",
+                "#f27304",
+                "#008000",
+                "#91278d",
+                "#ffff00",
+                "#7cecf4",
+                "#f49ac2",
+                "#5da09e",
+                "#6b440b",
+                "#808080",
+                "#f79679",
+                "#7da9d8",
+                "#fcc688",
+                "#80c99b",
+                "#a287bf",
+                "#fff899",
+                "#c49c6b",
+                "#c0c0c0",
+                "#ed008a",
+                "#00b6ff",
+                "#a54700",
+                "#808000",
+                "#008080",
+            ]);
+            // 2. check that the scheme is accessible in the Categorical color
+            // scheme selection. There is definitely a more elegant way to do
+            // this but here we use a simple DOM way based on
+            // https://stackoverflow.com/a/19130255/10730311.
+            //
+            // (NOTE: this is kind of a silly test because this color scheme is
+            // present in the HTML independently of any of the JS stuff. Also,
+            // the web test index.html and the actual index.html are separate
+            // files as of writing, so I had to manually add in the QIIME color
+            // scheme for both of them. Suffice it to say that the first part
+            // of this test is much more important.)
+            var ccsSelect = document.getElementById("catColorScheme");
+            var foundQIIMEColors = false;
+            for (var i = 0; i < ccsSelect.length; i++) {
+                if (ccsSelect[i].value === "qiimediscrete") {
+                    chai.assert.equal(
+                        ccsSelect[i].text,
+                        "Classic QIIME Colors"
+                    );
+                    foundQIIMEColors = true;
+                    break;
+                }
+            }
+            chai.assert.isTrue(foundQIIMEColors);
+        });
+
+        it("RRVDisplay.validateSampleID() identifies nonexistent sample IDs", function () {
+            chai.assert.doesNotThrow(function () {
                 rrv.validateSampleID("Sample2");
             });
-            chai.assert.throws(function() {
+            chai.assert.throws(function () {
                 rrv.validateSampleID("SuperFakeSampleName");
             });
         });
 
-        describe("Selecting features to update the plots", function() {
+        describe("Selecting features to update the plots", function () {
             /* Resets an RRVDisplay object so we're working with a blank slate
              * before test(s).
              */
@@ -131,11 +213,11 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                 await document.getElementById("multiFeatureButton").onclick();
             }
 
-            describe("Single-feature selections", function() {
-                beforeEach(async function() {
+            describe("Single-feature selections", function () {
+                beforeEach(async function () {
                     await resetRRVDisplay();
                 });
-                it("Doesn't do anything if .newFeatureLow and/or .newFeatureHigh is null or undefined", async function() {
+                it("Doesn't do anything if .newFeatureLow and/or .newFeatureHigh is null or undefined", async function () {
                     // Since we just called resetRRVDisplay(),
                     // rrv.newFeatureLow and rrv.newFeatureHigh should both be
                     // undefined.
@@ -174,7 +256,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     rrv.newFeatureHigh = undefined;
                     await updateSingleAndCheckAllBalancesNull();
                 });
-                it("Doesn't do anything if the newly selected features don't differ from the old ones", async function() {
+                it("Doesn't do anything if the newly selected features don't differ from the old ones", async function () {
                     rrv.oldFeatureLow = testing_utilities.getFeatureRow(
                         rrv,
                         "Taxon1"
@@ -193,7 +275,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                     await updateSingleAndCheckAllBalancesNull();
                 });
-                it("Works properly when actually changing the plots", async function() {
+                it("Works properly when actually changing the plots", async function () {
                     rrv.newFeatureHigh = testing_utilities.getFeatureRow(
                         rrv,
                         "Taxon1"
@@ -273,7 +355,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                             .classList.contains("invisible")
                     );
                 });
-                it("Selecting the same feature as numerator and denominator causes balances to be 0, and causes a warning about 'Both'-classification features to appear; this warning goes away when next selecting a log-ratio without 'Both'-classified features", async function() {
+                it("Selecting the same feature as numerator and denominator causes balances to be 0, and causes a warning about 'Both'-classification features to appear; this warning goes away when next selecting a log-ratio without 'Both'-classified features", async function () {
                     // The only way a feature is in both the numerator and
                     // denominator for single-feature selections is if the
                     // same feature is double-clicked
@@ -334,8 +416,8 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Multi-feature selections (text-based filtering, one basic case)", function() {
-                beforeEach(async function() {
+            describe("Multi-feature selections (text-based filtering, one basic case)", function () {
+                beforeEach(async function () {
                     await runFeatureFiltering(
                         "Feature ID",
                         "Taxon",
@@ -345,7 +427,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         "text"
                     );
                 });
-                it("Properly updates topFeatures and botFeatures", function() {
+                it("Properly updates topFeatures and botFeatures", function () {
                     chai.assert.sameMembers(
                         ["Taxon1", "Taxon2", "Taxon3", "Taxon4", "Taxon5"],
                         testing_utilities.getFeatureIDsFromObjectArray(
@@ -359,7 +441,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 });
-                it("Properly updates the sample plot balances", function() {
+                it("Properly updates the sample plot balances", function () {
                     // same delta as in the compute balances tests
                     var delta = 0.00001;
                     // Sample1
@@ -399,7 +481,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         delta
                     );
                 });
-                it("Properly updates the rank plot classifications", function() {
+                it("Properly updates the rank plot classifications", function () {
                     // we've selected the log-ratio of (all features) over
                     // (taxon 3)
                     var rpData =
@@ -418,22 +500,22 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         }
                     }
                 });
-                it('Properly updates the "feature text" headers', function() {
+                it('Properly updates the "feature text" headers', function () {
                     testing_utilities.checkHeaders(5, 1, 5);
                     testing_utilities.checkDataTable("topFeaturesDisplay", {
                         Taxon1: [5, 6, 7, 0, 4, null, null],
                         Taxon2: [1, 2, 3, 0, 4, null, null],
                         Taxon3: [4, 5, 6, 0, 4, "Yeet", 100],
                         Taxon4: [9, 8, 7, 0, 4, null, null],
-                        Taxon5: [6, 5, 4, 0, 4, "null", "lol"]
+                        Taxon5: [6, 5, 4, 0, 4, "null", "lol"],
                     });
                     testing_utilities.checkDataTable("botFeaturesDisplay", {
-                        Taxon3: [4, 5, 6, 0, 4, "Yeet", 100]
+                        Taxon3: [4, 5, 6, 0, 4, "Yeet", 100],
                     });
                 });
             });
-            describe("Multi-feature selections (text-based filtering, corner cases)", function() {
-                beforeEach(async function() {
+            describe("Multi-feature selections (text-based filtering, corner cases)", function () {
+                beforeEach(async function () {
                     await resetRRVDisplay();
                 });
                 function assertWarningShown(numCommonFeatures) {
@@ -453,11 +535,11 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                             " feature(s)"
                     );
                 }
-                describe("Empty search fields provided", function() {
+                describe("Empty search fields provided", function () {
                     it("Clears feature classifications and sample balances");
                 });
-                describe("Selecting the same feature(s) for both the numerator and denominator triggers a warning about 'Both'-classification features", function() {
-                    it("Works when only one feature is common", async function() {
+                describe("Selecting the same feature(s) for both the numerator and denominator triggers a warning about 'Both'-classification features", function () {
+                    it("Works when only one feature is common", async function () {
                         // Filter numerator to all features (since they all have
                         // feature IDs including the text "Taxon", and filter
                         // denominator to just the "Taxon3" feature.
@@ -473,7 +555,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         );
                         assertWarningShown(1);
                     });
-                    it("Works when multiple features are common", async function() {
+                    it("Works when multiple features are common", async function () {
                         // Try again, but now select multiple overlapping features
                         // for the denominator (select all features with an
                         // "Intercept" differential of less than 9 -- this
@@ -491,7 +573,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     });
                 });
             });
-            describe("Multi-feature selections (auto-selection)", function() {
+            describe("Multi-feature selections (auto-selection)", function () {
                 /* Utility function that lets us essentially integration-test
                  * the auto-selection functionality. Cool!
                  */
@@ -502,10 +584,10 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     document.getElementById("autoSelectType").value = inputType;
                     await document.getElementById("autoSelectButton").click();
                 }
-                beforeEach(async function() {
+                beforeEach(async function () {
                     await resetRRVDisplay();
                 });
-                it("Basic percentage-based filtering works", async function() {
+                it("Basic percentage-based filtering works", async function () {
                     await callAutoSelect("25", "autoPercent");
                     // 25% of 5 features is 1, so we should see 1 feature on
                     // the top and bottom (and the current ranking is
@@ -571,7 +653,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         "Taxon2",
                         "Taxon3",
                         "Taxon4",
-                        "Taxon5"
+                        "Taxon5",
                     ];
                     chai.assert.sameMembers(
                         allFeatures,
@@ -586,7 +668,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 });
-                it("Basic literal-number-based filtering works", async function() {
+                it("Basic literal-number-based filtering works", async function () {
                     await callAutoSelect("3", "autoLiteral");
                     // 3 features on the bottom and 3 on the top. Since there
                     // are 5 features, we should see an overlap in the middle
@@ -604,12 +686,50 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 });
-                it("Invalid inputs result in empty feature selections", async function() {
+                it("Negative numbers correctly flip autoselection", async function () {
+                    // These examples were just copied & flipped from the
+                    // above tests
+                    await callAutoSelect("-25", "autoPercent");
+                    chai.assert.sameMembers(
+                        ["Taxon4"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                    await callAutoSelect("-3", "autoLiteral");
+                    chai.assert.sameMembers(
+                        ["Taxon4", "Taxon5", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.botFeatures
+                        )
+                    );
+                    chai.assert.sameMembers(
+                        ["Taxon2", "Taxon3", "Taxon1"],
+                        testing_utilities.getFeatureIDsFromObjectArray(
+                            rrv.topFeatures
+                        )
+                    );
+                });
+                it("Invalid inputs result in empty feature selections", async function () {
                     function assertEmpty(rrv) {
                         chai.assert.empty(rrv.topFeatures);
                         chai.assert.empty(rrv.botFeatures);
                     }
-                    var vals = ["-3", "123eee", "-0.01"];
+                    var vals = [
+                        "Infinity",
+                        "-Infinity",
+                        "Ten",
+                        "A hundred lol",
+                        "123eee",
+                        "NaN",
+                        "-NaN",
+                    ];
                     for (var v = 0; v < vals.length; v++) {
                         await callAutoSelect(vals[v], "autoLiteral");
                         assertEmpty(rrv);
@@ -619,12 +739,12 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
         });
-        describe("Modifying rank plot field/size/color", function() {
-            beforeEach(async function() {
+        describe("Modifying rank plot field/size/color", function () {
+            beforeEach(async function () {
                 await resetRRVDisplay();
             });
-            describe("Changing the ranking used on the rank plot", function() {
-                it("Updates rank plot field, title, and window sort transform", async function() {
+            describe("Changing the ranking used on the rank plot", function () {
+                it("Updates rank plot field, title, and window sort transform", async function () {
                     document.getElementById("rankField").value = "Rank 1";
                     await document.getElementById("rankField").onchange();
                     // Check that the rank plot JSON was updated accordingly:
@@ -656,12 +776,12 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Changing the bar width", function() {
+            describe("Changing the bar width", function () {
                 async function triggerBarSizeUpdate(newValue) {
                     document.getElementById("barSizeSlider").value = newValue;
                     await document.getElementById("barSizeSlider").onchange();
                 }
-                it("Changing the bar width to a constant size updates JSON and DOM properly", async function() {
+                it("Changing the bar width to a constant size updates JSON and DOM properly", async function () {
                     await triggerBarSizeUpdate("3");
                     chai.assert.equal(
                         3,
@@ -673,8 +793,8 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                             .classList.contains("invisible")
                     );
                 });
-                describe("Changing the bar width to fit to the rank plot width", function() {
-                    it("Works properly in basic case", async function() {
+                describe("Changing the bar width to fit to the rank plot width", function () {
+                    it("Works properly in basic case", async function () {
                         // Set bar size to 3 using the slider
                         await triggerBarSizeUpdate("3");
                         chai.assert.equal(
@@ -729,7 +849,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                                 .classList.contains("invisible")
                         );
                     });
-                    it("Un-hides a warning element when the bar size is less than 1 pixel", async function() {
+                    it("Un-hides a warning element when the bar size is less than 1 pixel", async function () {
                         function isInvisible() {
                             // Silly helper function to reduce repetitive code
                             return document
@@ -748,8 +868,8 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     });
                 });
             });
-            describe("Changing the rank plot color scheme", function() {
-                it("Updating works properly", async function() {
+            describe("Changing the rank plot color scheme", function () {
+                it("Updating works properly", async function () {
                     document.getElementById("rankPlotColorScheme").value =
                         "#5fa2c8,#daa520,#029e73";
                     await document
@@ -775,13 +895,13 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
         });
-        describe("Modifying sample plot fields/scales/colorschemes", function() {
-            beforeEach(async function() {
+        describe("Modifying sample plot fields/scales/colorschemes", function () {
+            beforeEach(async function () {
                 await resetRRVDisplay();
             });
-            describe("Changing the x-axis field used on the sample plot", function() {
+            describe("Changing the x-axis field used on the sample plot", function () {
                 var xFieldEle = document.getElementById("xAxisField");
-                it("Works properly in the basic case (no boxplots involved)", async function() {
+                it("Works properly in the basic case (no boxplots involved)", async function () {
                     xFieldEle.value = "Metadata2";
                     // Kind of a lazy solution, but we assume that .onchange()
                     // works well enough: this is derived from
@@ -799,7 +919,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.encoding.color.field
                     );
                 });
-                it('Also updates color field when in "boxplot" mode', async function() {
+                it('Also updates color field when in "boxplot" mode', async function () {
                     // There's obviously more stuff we could test here re:
                     // details of the boxplot functionality, but that's for
                     // another test.
@@ -816,14 +936,14 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Changing the x-axis scale type used on the sample plot", function() {
+            describe("Changing the x-axis scale type used on the sample plot", function () {
                 // TODO test filters, tooltips, etc.
                 var xScaleEle = document.getElementById("xAxisScale");
                 it(
                     "Works properly for basic case of (non-boxplot) categorical -> quantitative",
                     testXAxisCategoricalToQuantitative
                 );
-                it("Works properly for basic case of quantitative -> (non-boxplot) categorical", async function() {
+                it("Works properly for basic case of quantitative -> (non-boxplot) categorical", async function () {
                     await testXAxisCategoricalToQuantitative();
                     xScaleEle.value = "nominal";
                     await xScaleEle.onchange();
@@ -839,7 +959,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Changing the color used on the sample plot", function() {
+            describe("Changing the color used on the sample plot", function () {
                 var colorFieldEle = document.getElementById("colorField");
                 async function testColorFieldChange(field) {
                     colorFieldEle.value = field;
@@ -855,7 +975,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         )
                     );
                 }
-                it("Works properly: changes color and updates filter accordingly", async function() {
+                it("Works properly: changes color and updates filter accordingly", async function () {
                     await testColorFieldChange("Metadata3");
                     await testColorFieldChange("Metadata2");
                     // Check that changing the color field overwrites old
@@ -868,7 +988,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     );
                 });
             });
-            describe("Changing the color scale type used on the sample plot", function() {
+            describe("Changing the color scale type used on the sample plot", function () {
                 var colorScaleEle = document.getElementById("colorScale");
 
                 // Analogous to testXAxisCategoricalToQuantitative() above for the
@@ -904,16 +1024,16 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     }
                 }
                 // TODO test filters/TOOLTIPS updated properly
-                it("Works properly for categorical -> quantitative", async function() {
+                it("Works properly for categorical -> quantitative", async function () {
                     await testChangeScaleType("quantitative");
                 });
-                it("Works properly for quantitative -> categorical", async function() {
+                it("Works properly for quantitative -> categorical", async function () {
                     await testChangeScaleType("quantitative");
                     await testChangeScaleType("nominal");
                 });
             });
-            describe("Changing the sample plot color schemes", function() {
-                it("Changing the categorical color scheme works properly", async function() {
+            describe("Changing the sample plot color schemes", function () {
+                it("Changing the categorical color scheme works properly", async function () {
                     document.getElementById("catColorScheme").value = "accent";
                     await document.getElementById("catColorScheme").onchange();
                     chai.assert.equal(
@@ -921,7 +1041,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.config.range.category.scheme
                     );
                 });
-                it("Changing the quantitative color scheme works properly", async function() {
+                it("Changing the quantitative color scheme works properly", async function () {
                     document.getElementById("quantColorScheme").value =
                         "viridis";
                     await document
@@ -932,7 +1052,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.config.range.ramp.scheme
                     );
                 });
-                it("Invalid scale ranges cause an error", async function() {
+                it("Invalid scale ranges cause an error", async function () {
                     // SO! Testing for errors in async functions doesn't
                     // really work as expected in Chai, at least as of writing.
                     // See https://github.com/chaijs/chai/issues/415 for
@@ -955,45 +1075,15 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                 });
             });
         });
-        describe("Boxplot functionality", function() {
-            beforeEach(async function() {
+        describe("Boxplot functionality", function () {
+            beforeEach(async function () {
                 await resetRRVDisplay();
             });
-            function testBoxplotEncodings(xField) {
-                chai.assert.equal("boxplot", rrv.samplePlotJSON.mark.type);
-                chai.assert.exists(rrv.samplePlotJSON.mark.median);
-                chai.assert.equal(
-                    "#000000",
-                    rrv.samplePlotJSON.mark.median.color
-                );
-                // Also, the color field encoding should match the x-axis
-                // field encoding and be nominal
-                chai.assert.equal(xField, rrv.samplePlotJSON.encoding.x.field);
-                chai.assert.equal(
-                    xField,
-                    rrv.samplePlotJSON.encoding.color.field
-                );
-                chai.assert.equal(
-                    "nominal",
-                    rrv.samplePlotJSON.encoding.color.type
-                );
-            }
-            async function testSwitchToBoxplot(currXField) {
-                await document.getElementById("boxplotCheckbox").click();
-                var xScaleEle = document.getElementById("xAxisScale");
-                xScaleEle.value = "nominal";
-                await xScaleEle.onchange();
-                // Now the sample plot should be a boxplot
-                testBoxplotEncodings(currXField);
-                // In "boxplot mode", the color controls should be disabled
-                testing_utilities.assertEnabled("colorField", false);
-                testing_utilities.assertEnabled("colorScale", false);
-            }
-            describe("Changing to a boxplot...", function() {
-                it("...By checking the boxplot checkbox", async function() {
+            describe("Changing to a boxplot...", function () {
+                it("...By checking the boxplot checkbox", async function () {
                     await testSwitchToBoxplot("Metadata1");
                 });
-                it("...By changing the x-axis scale type to categorical", async function() {
+                it("...By changing the x-axis scale type to categorical", async function () {
                     // change the x-axis scale from categorical to
                     // quantitative. Then check the boxplot checkbox (which
                     // won't change anything yet, since the x-axis scale is
@@ -1008,7 +1098,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     testBoxplotEncodings("Sample ID");
                 });
             });
-            describe("Changing from a boxplot...", function() {
+            describe("Changing from a boxplot...", function () {
                 async function testSamplePlotStateAfterBoxplot(
                     currXField,
                     currXScaleType,
@@ -1018,6 +1108,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                     chai.assert.notExists(rrv.samplePlotJSON.mark.median);
                     testing_utilities.assertEnabled("colorField", true);
                     testing_utilities.assertEnabled("colorScale", true);
+                    testing_utilities.assertEnabled("borderCheckbox", true);
                     // Fields should stay the same, and scales should stay
                     // categorical
                     chai.assert.equal(
@@ -1058,7 +1149,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         rrv.samplePlotJSON.encoding.color.type
                     );
                 }
-                it("...By unchecking the boxplot checkbox", async function() {
+                it("...By unchecking the boxplot checkbox", async function () {
                     await testSwitchToBoxplot("Metadata1");
                     await document.getElementById("boxplotCheckbox").click();
                     await testSamplePlotStateAfterBoxplot(
@@ -1067,7 +1158,7 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         "Sample ID"
                     );
                 });
-                it("...By changing the x-axis scale type to quantitative", async function() {
+                it("...By changing the x-axis scale type to quantitative", async function () {
                     await testSwitchToBoxplot("Metadata1");
                     document.getElementById("xAxisScale").value =
                         "quantitative";
@@ -1077,6 +1168,60 @@ define(["mocha", "chai", "testing_utilities", "dom_utils"], function(
                         "quantitative",
                         "Sample ID"
                     );
+                });
+            });
+        });
+        describe("Changing borders on points in the sample plot", function () {
+            beforeEach(async function () {
+                await resetRRVDisplay();
+            });
+            function checkBordersAdded() {
+                chai.assert.equal("#000000", rrv.samplePlotJSON.mark.stroke);
+                chai.assert.equal(0.5, rrv.samplePlotJSON.mark.strokeWidth);
+                chai.assert.exists(rrv.samplePlotJSON.encoding.color.legend);
+                chai.assert.equal(
+                    "#000000",
+                    rrv.samplePlotJSON.encoding.color.legend.symbolStrokeColor
+                );
+                chai.assert.equal(
+                    0.5,
+                    rrv.samplePlotJSON.encoding.color.legend.symbolStrokeWidth
+                );
+            }
+            function checkBordersRemoved() {
+                chai.assert.notExists(rrv.samplePlotJSON.mark.stroke);
+                chai.assert.notExists(rrv.samplePlotJSON.mark.strokeWidth);
+                chai.assert.notExists(rrv.samplePlotJSON.encoding.color.legend);
+            }
+            async function testAddBorders() {
+                await document.getElementById("borderCheckbox").click();
+                checkBordersAdded();
+            }
+            describe("Adding borders...", function () {
+                it("...By checking the border checkbox", async function () {
+                    await testAddBorders();
+                });
+                it("...By unchecking the boxplot checkbox", async function () {
+                    await testAddBorders();
+                    await testSwitchToBoxplot("Metadata1");
+                    checkBordersRemoved();
+                    // Switch *out* of boxplot mode
+                    await document.getElementById("boxplotCheckbox").click();
+                    // Now, verify that the sample border checkbox being
+                    // checked was "preserved", and that the borders are back
+                    checkBordersAdded();
+                });
+            });
+            describe("Removing borders...", function () {
+                it("...By unchecking the border checkbox", async function () {
+                    await testAddBorders();
+                    await document.getElementById("borderCheckbox").click();
+                    checkBordersRemoved();
+                });
+                it("...By checking the boxplot checkbox", async function () {
+                    await testAddBorders();
+                    await testSwitchToBoxplot("Metadata1");
+                    checkBordersRemoved();
                 });
             });
         });

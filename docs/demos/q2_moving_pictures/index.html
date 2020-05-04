@@ -94,7 +94,7 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="This slider adjusts the width of each bar in the rank plot."
+                                title='This slider adjusts the width of each bar in the rank plot. In order for this slider to take effect, the "fit bar widths" checkbox must be unchecked.'
                             >
                             </span>
                             Bar width
@@ -275,6 +275,9 @@
                             <option value="category20">category20</option>
                             <option value="category20b">category20b</option>
                             <option value="category20c">category20c</option>
+                            <option value="qiimediscrete"
+                                >Classic QIIME Colors</option
+                            >
                             <option value="dark2">dark2</option>
                             <option value="paired">paired</option>
                             <option value="pastel1">pastel1</option>
@@ -415,21 +418,24 @@
                                 <input type="checkbox" id="boxplotCheckbox" />
                             </div>
                         </div>
-                        <!-- TODO: un-hide and make usable (#240)
                         <div class="input-group-prepend">
                             <label
                                 class="input-group-text"
                                 for="borderCheckbox"
-                                >Give samples a border?</label
                             >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="When checked, all samples in the sample plot will have black borders drawn around them. This can be useful if the selected color scheme includes colors that are hard to see on a white background. Will only take effect when the sample plot is a scatterplot, not a boxplot."
+                                >
+                                </span>
+                                Draw borders on scatterplot points?
+                            </label>
                             <div class="input-group-text">
-                                <input
-                                    type="checkbox"
-                                    id="borderCheckbox"
-                                />
+                                <input type="checkbox" id="borderCheckbox" />
                             </div>
                         </div>
-                        -->
                         <input
                             type="text"
                             disabled
@@ -536,7 +542,7 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="This group of controls supports autoselection, which is a quick way of taking the log-ratio of the highest- to the lowest- ranked features in the rank plot. The text box in the middle here specifies the number of features (or the percentage of features) to select from each side of the rank plot for a log-ratio. Ties are broken arbitrarily."
+                                title="This group of controls supports autoselection, which is a quick way of taking the log-ratio of the highest- to the lowest- ranked features in the rank plot. The text box in the middle here specifies the number of features (or the percentage of features) to select from each side of the rank plot for a log-ratio. You can put down a negative number to flip the selection (selecting the log-ratio of the lowest- to highest-ranked features). Ties are broken arbitrarily."
                             >
                             </span>
                             Using the current ranking, select the top and bottom
@@ -546,6 +552,7 @@
                         type="number"
                         class="form-control"
                         id="autoSelectNumber"
+                        step="any"
                     />
                     <select class="custom-select" id="autoSelectType">
                         <option value="autoPercent">% of features</option>
@@ -586,7 +593,7 @@
                                 class="questionmark mr-0"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="The next selector adjusts the method used to filter features by a metadata/ranking field. Most of these methods should be self-explanatory; note that 'contains the separated text fragment(s)' filters to features by 1) splitting up the selected field by commas, semicolons, and whitespace, 2) splitting up the input text (in the next text box) in the same way, and 3) selecting features where there's a 'fragment' that matches between that feature's field and the input text. This is useful for filtering on particular taxonomy levels, or by filtering if you have multiple taxonomy level inputs."
+                                title="The next selector adjusts the method used to filter features by a feature metadata / ranking field. Most of these methods should be self-explanatory; please see the Selection Tutorial (linked from Qurro's README) for information on the details of these methods, and some examples of using them."
                             >
                             </span>
                         </label>
@@ -595,6 +602,9 @@
                     <select class="custom-select num" id="topSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
+                            <option value="or"
+                                >contains text separated by | (pipe)</option
+                            >
                             <option value="nottext"
                                 >is provided, and does not contain the
                                 text</option
@@ -646,7 +656,7 @@
                                 class="questionmark mr-0"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="The next selector adjusts the method used to filter features by a metadata/ranking field. Most of these methods should be self-explanatory; note that 'contains the separated text fragment(s)' filters to features by 1) splitting up the selected field by commas, semicolons, and whitespace, 2) splitting up the input text (in the next text box) in the same way, and 3) selecting features where there's a 'fragment' that matches between that feature's field and the input text. This is useful for filtering on particular taxonomy levels, or by filtering if you have multiple taxonomy level inputs."
+                                title="The next selector adjusts the method used to filter features by a feature metadata / ranking field. Most of these methods should be self-explanatory; please see the Selection Tutorial (linked from Qurro's README) for information on the details of these methods, and some examples of using them."
                             >
                             </span>
                         </label>
@@ -654,6 +664,9 @@
                     <select class="custom-select den" id="botSearchType">
                         <optgroup label="Text searching (case insensitive)">
                             <option value="text">contains the text</option>
+                            <option value="or"
+                                >contains text separated by | (pipe)</option
+                            >
                             <option value="nottext"
                                 >is provided, and does not contain the
                                 text</option

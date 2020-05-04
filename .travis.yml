@@ -21,8 +21,11 @@ before_install:
     - travis_retry conda env create -n qiime2-dev --file qiime2-latest-py36-linux-conda.yml
     - source activate qiime2-dev
     # 3. Install Songbird and DEICODE
-    # (this will let us rerun the corresponding example notebooks)
-    - conda install -c conda-forge songbird deicode
+    # (this will let us rerun the Sleep Apnea, Moving Pictures, Qarcoal, and
+    # Red Sea example notebooks)
+    # These are installed using pip due to conda-forge-related problems at the
+    # moment: see https://github.com/biocore/songbird/issues/126.
+    - pip install songbird deicode
     # 4. Install seaborn so we can run the colors example notebook
     # (should be already installed in a QIIME 2 environment, but we may as well
     # make sure that this won't break in the future)
@@ -30,6 +33,11 @@ before_install:
     # 5. Install ALDEx2 and mygene
     # (this will let us rerun the ALDEx2 example notebook)
     - conda install -c bioconda bioconductor-aldex2 mygene
+    # 6. Update Node.js to the latest version, since Prettier relies on us
+    # having at least version 10.13 and the default on Travis as of writing is
+    # apparently 8.12.0. See https://github.com/nvm-sh/nvm#usage and
+    # https://github.com/travis-ci/travis-ci/issues/4090#issuecomment-122688955
+    - nvm install node
 install:
     - pip install -e .[dev]
     # Install various JS testing/stylechecking packages that we use for
