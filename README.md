@@ -170,7 +170,7 @@ The data shown here is already slightly outdated compared to the actual Qurro pa
 ### Dependencies
 
 Code files for the following projects are distributed within
-`qurro/support_file/vendor/`.
+`qurro/support_files/vendor/`.
 See the `qurro/dependency_licenses/` directory for copies of these software projects'
 licenses (each of which includes a respective copyright notice).
 - [Vega](https://vega.github.io/vega/)
