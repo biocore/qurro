@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.7.0 (TBD)
+## Qurro 0.7.0 (May 4, 2020)
 ### Features added
 - Added the ability to **easily search using multiple text queries at once**:
   this is done using the `contains text separated by | (pipe)` searching

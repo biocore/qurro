@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-<a href="https://travis-ci.org/biocore/qurro"><img src="https://travis-ci.org/biocore/qurro.svg?branch=master" alt="Build Status" /></a>
+<a href="https://travis-ci.com/biocore/qurro"><img src="https://travis-ci.com/biocore/qurro.svg?branch=master" alt="Build Status" /></a>
 <a href="https://codecov.io/gh/biocore/qurro"><img src="https://codecov.io/gh/biocore/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
 <a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
 <a href="https://pypi.org/project/qurro"><img src="https://img.shields.io/pypi/v/qurro.svg" alt="PyPI" /></a>
@@ -212,7 +212,7 @@ For JavaScript testing/style checking, Qurro uses
 [nyc](https://github.com/istanbuljs/nyc), [jshint](https://jshint.com/),
 and [prettier](https://prettier.io/).
 
-Qurro also uses [Travis-CI](https://travis-ci.org/) and
+Qurro also uses [Travis-CI](https://travis-ci.com/) and
 [Codecov](https://codecov.io/).
 
 The Jupyter notebooks in Qurro's `example_notebooks/` folder are automatically
