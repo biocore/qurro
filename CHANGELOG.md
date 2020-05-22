@@ -6,8 +6,9 @@
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
-- Small updates to the color composition tutorial about the minimum python
-  version needed ([#295](https://github.com/biocore/qurro/issues/295)).
+- Small documentation updates, including updating the color composition tutorial
+  about the minimum python version needed
+  ([#295](https://github.com/biocore/qurro/issues/295)).
 - Added citation information to Qurro's QIIME 2 plugin -- you can now
   run `qiime qurro --citations`, and citation information for Qurro-generated
   QZVs is now shown with other citation information at places like
