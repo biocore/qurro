@@ -21,7 +21,7 @@ from qurro._parameter_descriptions import (
     Q2_SAMPLE_METADATA,
     Q2_FEATURE_METADATA,
 )
-from qiime2.plugin import Metadata, Properties, Int, Bool, Str
+from qiime2.plugin import Metadata, Properties, Int, Bool, Str, Citations
 from ._type import LogRatios, LogRatiosDirFmt, LogRatiosFormat
 from qurro import _qarcoal_param_descriptions as QPD
 from q2_types.feature_data import Taxonomy
@@ -43,11 +43,13 @@ except ImportError:
         "to fix the current QIIME 2 environment."
     )
 
+citations = Citations.load("citations.bib", package="qurro")
+
 plugin = qiime2.plugin.Plugin(
     name="qurro",
     version=__version__,
     website="https://github.com/biocore/qurro",
-    # citations=[citations['martino-unpublished']],
+    citations=[citations["fedarko2020"]],
     short_description=(
         "Plugin for visualizing feature rankings and log-ratios."
     ),
