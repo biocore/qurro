@@ -194,7 +194,7 @@ define([
                     borderCheckbox: async function () {
                         await display.updateSamplePlotBorders();
                     },
-                    exclFieldsInSamplePlotDataCheckbox: function () {
+                    exclSMFieldsInExportCheckbox: function () {
                         display.updateExclSMFieldsInExport();
                     },
                     catColorScheme: async function () {
@@ -1158,7 +1158,7 @@ define([
          */
         updateExclSMFieldsInExport() {
             this.exclSMFieldsInExport = document.getElementById(
-                "exclFieldsInSamplePlotDataCheckbox"
+                "exclSMFieldsInExportCheckbox"
             ).checked;
         }
 
@@ -1537,7 +1537,7 @@ define([
                 document.getElementById("borderCheckbox").checked = false;
                 // ... And the "exclude metadata fields" checkbox
                 document.getElementById(
-                    "exclFieldsInSamplePlotDataCheckbox"
+                    "exclSMFieldsInExportCheckbox"
                 ).checked = false;
 
                 // Enable the elements that would've been disabled if we were

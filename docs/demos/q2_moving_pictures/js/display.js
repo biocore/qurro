@@ -1158,7 +1158,7 @@ define([
          */
         updateExclSMFieldsInExport() {
             this.exclSMFieldsInExport = document.getElementById(
-                "exclFieldsInSamplePlotDataCheckbox"
+                "exclSMFieldsInExportCheckbox"
             ).checked;
         }
 
@@ -1395,7 +1395,7 @@ define([
             var outputTSV = '"Sample ID"\tCurrent_Natural_Log_Ratio';
             if (inclSMFields) {
                 outputTSV +=
-                    '\t' +
+                    "\t" +
                     RRVDisplay.quoteTSVFieldIfNeeded(currXField) +
                     "\t" +
                     RRVDisplay.quoteTSVFieldIfNeeded(currColorField);
@@ -1536,8 +1536,9 @@ define([
                 // ... And the sample border checkbox
                 document.getElementById("borderCheckbox").checked = false;
                 // ... And the "exclude metadata fields" checkbox
-                document.getElementById("exclFieldsInSamplePlotDataCheckbox")
-                    .checked = false;
+                document.getElementById(
+                    "exclSMFieldsInExportCheckbox"
+                ).checked = false;
 
                 // Enable the elements that would've been disabled if we were
                 // in boxplot mode
