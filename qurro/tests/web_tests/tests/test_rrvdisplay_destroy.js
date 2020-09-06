@@ -112,6 +112,9 @@ define(["vega", "dom_utils", "mocha", "chai", "testing_utilities"], function (
             chai.assert.isFalse(
                 document.getElementById("boxplotCheckbox").checked
             );
+            chai.assert.isFalse(
+                document.getElementById("exclSMFieldsInExportCheckbox").checked
+            );
             // Check that boxplot mode "disabled" elements were enabled
             chai.assert.isFalse(document.getElementById("colorField").disabled);
             chai.assert.isFalse(document.getElementById("colorScale").disabled);
