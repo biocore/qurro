@@ -194,7 +194,7 @@ define([
                     borderCheckbox: async function () {
                         await display.updateSamplePlotBorders();
                     },
-                    exclFieldsInSamplePlotDataCheckbox: function () {
+                    exclSMFieldsInExportCheckbox: function () {
                         display.updateExclSMFieldsInExport();
                     },
                     catColorScheme: async function () {
