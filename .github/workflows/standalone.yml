@@ -36,7 +36,9 @@ jobs:
       # Just run the tests; don't bother running stylechecking / linting, since
       # that's already done in the QIIME 2 CI.
       - name: Run tests
-        run: make test
+        run: |
+          make pytest_standalone
+          make jstest
 
       - name: Upload code coverage information to Codecov
         uses: codecov/codecov-action@v2

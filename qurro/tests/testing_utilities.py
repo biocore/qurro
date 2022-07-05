@@ -4,8 +4,6 @@ import os
 from pytest import approx
 from click.testing import CliRunner
 from biom import load_table
-from qiime2 import Artifact, Metadata
-from qiime2.plugins import qurro as q2qurro
 import qurro.scripts._plot as rrvp
 from qurro._rank_utils import read_rank_file
 from qurro._metadata_utils import read_metadata_file
@@ -52,6 +50,8 @@ def run_integration_test(
 
     rrv_qzv = result = None
     if use_q2:
+        from qiime2 import Artifact, Metadata
+        from qiime2.plugins import qurro as q2qurro
         if q2_ranking_tool == "songbird":
             q2_action = q2qurro.actions.differential_plot
             q2_rank_type = "FeatureData[Differential]"
