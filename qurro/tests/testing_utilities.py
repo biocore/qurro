@@ -52,6 +52,7 @@ def run_integration_test(
     if use_q2:
         from qiime2 import Artifact, Metadata
         from qiime2.plugins import qurro as q2qurro
+
         if q2_ranking_tool == "songbird":
             q2_action = q2qurro.actions.differential_plot
             q2_rank_type = "FeatureData[Differential]"
