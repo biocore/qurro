@@ -78,7 +78,7 @@ setup(
         "biom-format[hdf5]",
         "click",
         "numpy >= 1.12.0",
-        "pandas >= 0.24.0, <1",
+        "pandas >= 1",
         "scikit-bio > 0.5.3",
     ],
     # Based on how Altair splits up its requirements:
@@ -98,5 +98,5 @@ setup(
         "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
-    python_requires=">=3.6,<3.8",
+    python_requires=">=3.6",
 )
