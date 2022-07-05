@@ -112,29 +112,21 @@ def replace_nan(df, new_nan_val=None):
 
 
 def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
-    """Loads a BIOM table as a pd.SparseDataFrame. Also calls validate_df().
+    """Loads a BIOM table as a (sparse) pd.DataFrame. Also calls validate_df().
 
-    We need to use a helper function for this because old versions of BIOM
-    accidentally produce an effectively-dense DataFrame when using
-    biom.Table.to_dataframe() -- see
-    https://github.com/biocore/biom-format/issues/808.
-
-    To get around this, we extract the scipy.sparse.csr_matrix data from the
-    BIOM table and directly convert that to a pandas SparseDataFrame.
+    In the past, we did this in a roundabout way to avoid a weird biom-format
+    issue (https://github.com/biocore/biom-format/issues/808), but now our min
+    biom-format version should mean that we never run into this problem.
     """
-    logging.debug("Creating a SparseDataFrame from BIOM table.")
-    table_sdf = pd.SparseDataFrame(table.matrix_data, default_fill_value=0.0)
+    logging.debug("Creating a DataFrame from BIOM table.")
 
-    # The csr_matrix doesn't include column/index IDs, so we manually add them
-    # in to the SparseDataFrame.
-    table_sdf.index = table.ids(axis="observation")
-    table_sdf.columns = table.ids(axis="sample")
+    table_sdf = table.to_dataframe(dense=False)
 
-    # Validate the table DataFrame -- should be ok since we loaded this through
-    # the biom module, but might as well check
+    # Validate the DataFrame -- should be ok since we loaded the table through
+    # biom, but might as well check
     validate_df(table_sdf, "BIOM table", min_row_ct, min_col_ct)
 
-    logging.debug("Converted BIOM table to SparseDataFrame.")
+    logging.debug("Converted BIOM table to DataFrame.")
     return table_sdf
 
 
