@@ -296,9 +296,12 @@ def validate_rank_plot_json(
         rank_json, id_field="Feature ID"
     )
 
+    # Convert the table to a dense DF (the horror!) so that we can use .loc[]
+    dense_table = table.sparse.to_dense()
+    
     for ref_feature_id in ref_feature_ranks.index:
         # If this feature is empty, it should have been filtered!
-        if sum(table.loc[ref_feature_id]) == 0:
+        if sum(dense_table.loc[ref_feature_id]) == 0:
             assert ref_feature_id not in rank_json_feature_data
             continue
         # ...If this feature isn't empty, though, it shouldn't have been
