@@ -74,10 +74,18 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
+        # Updating this pin will require updating the entire JS interface to
+        # work with later versions of Vega-Lite, which is doable but likely not
+        # worth the effort at the moment; see
+        # https://github.com/biocore/qurro/issues/315
         "altair == 3.1.0",
-        "biom-format[hdf5]",
+        # 2.1.9 is the earliest BIOM version that adds support for pandas >= 1.
+        # Also, it takes care of the issue where biom.Table.to_dataframe()
+        # produced a dense instead of a sparse DataFrame.
+        "biom-format[hdf5] >= 2.1.9",
         "click",
         "numpy >= 1.12.0",
+        # SparseDataFrame is dead, long live DataFrame
         "pandas >= 1",
         "scikit-bio > 0.5.3",
     ],
