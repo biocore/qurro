@@ -10,10 +10,19 @@ jobs:
 
     strategy:
       matrix:
-        # We could use a matrix of just QIIME 2 versions, but other stuff about
-        # the URLs change (e.g. the -py36- or -py38- thing), so it's easier to
-        # just have the matrix be the URLs to the YAMLs. That sentence has too
-        # many acronyms. Look, you get the point.
+        # Test on multiple QIIME 2 versions. This is a nice way of making sure
+        # that Qurro works on all of the QIIME 2 versions it actually, you
+        # know, supports.
+        #
+        # We could use a matrix of just QIIME 2 version strings (e.g.
+        # "2020.11", ...), but other stuff about the URLs change across QIIME 2
+        # versions (e.g. the "-py36-" or "-py38-" thing). It ends up being
+        # easier just have the variable here be the URLs to the YAMLs. That
+        # sentence has too many acronyms. Look, you get the point.
+        #
+        # Worth noting: the final of these URLs (with qiime2-latest) will
+        # always be set to the latest version of QIIME 2. Thanks @thermokarst
+        # for the heads up about this :)
         q2-yaml: [
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2020.11/release/qiime2-2020.11-py36-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/latest/staging/qiime2-latest-py38-linux-conda.yml"
@@ -26,8 +35,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # (See https://dev.qiime2.org/latest/quickstart, thanks @thermokarst for
-      # the heads up :)
       - name: Download the QIIME 2 conda environment YAML
         run: wget -O q2-env.yml ${{ matrix.q2-yaml }}
 
