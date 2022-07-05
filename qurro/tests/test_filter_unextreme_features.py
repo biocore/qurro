@@ -63,10 +63,15 @@ def test_filtering_basic():
         assert sid in filtered_table.columns
 
     # Check that the appropriate data is left in the table.
-    assert list(filtered_table.loc["F1"]) == [0, 1, 0, 3, 4]
-    assert list(filtered_table.loc["F2"]) == [5, 6, 0, 8, 9]
-    assert list(filtered_table.loc["F7"]) == [30, 31, 0, 33, 34]
-    assert list(filtered_table.loc["F8"]) == [35, 36, 0, 38, 39]
+    # Using .loc[] on DataFrames with sparse columns makes pandas get angry,
+    # so we can get around this by (just in this case) converting
+    # filtered_table to a dense DataFrame.
+    # See https://stackoverflow.com/q/49032856
+    ftd = filtered_table.sparse.to_dense()
+    assert list(ftd.loc["F1"]) == [0, 1, 0, 3, 4]
+    assert list(ftd.loc["F2"]) == [5, 6, 0, 8, 9]
+    assert list(ftd.loc["F7"]) == [30, 31, 0, 33, 34]
+    assert list(ftd.loc["F8"]) == [35, 36, 0, 38, 39]
 
     # Check that the rank filtering worked as expected.
     expected_filtered_ranks = DataFrame(
