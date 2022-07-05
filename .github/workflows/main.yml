@@ -1,0 +1,54 @@
+# Based on
+# https://github.com/fedarko/strainFlye/blob/main/.github/workflows/main.yml
+# (which was based on EMPress' workflow); some of the Node.js stuff based on
+# MetagenomeScope's JS workflow
+name: Qurro CI (Python, JS, example notebooks)
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Updating from v2 to v3 to match, as of writing,
+      # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # (See https://dev.qiime2.org/latest/quickstart, thanks @thermokarst for
+      # the heads up :)
+      - name: Download the latest QIIME 2 conda environment YAML
+        run: wget https://raw.githubusercontent.com/qiime2/environment-files/master/latest/staging/qiime2-latest-py38-linux-conda.yml
+
+      # https://github.com/conda-incubator/setup-miniconda#example-3-other-options
+      - name: Hit the yoinky sploinky (install QIIME 2)
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: qiime2-dev
+          environment-file: qiime2-latest-py38-linux-conda.yml
+
+      - name: Install Qurro (and its pip dependencies)
+        run: conda run -n qiime2-dev pip install -e .[dev]
+
+      - name: Install the example notebooks' dependencies
+        run: |
+          conda run -n qiime2-dev pip install songbird deicode
+          conda run -n qiime2-dev conda install --yes -c bioconda bioconductor-aldex2 mygene
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+
+      - name: Install Qurro's Node.js development dependencies
+        run: npm install -g mocha-headless-chrome nyc prettier@2.0.5 jshint
+
+      - name: Run tests
+        run: conda run -n qiime2-dev make test
+
+      - name: Verify that the example notebooks can be run without crashing
+        run: conda run -n qiime2-dev make notebooks
+
+      - name: Lint and stylecheck
+        run: conda run -n qiime2-dev make stylecheck
+
+      - name: Upload code coverage information to Codecov
+        uses: codecov/codecov-action@v2
