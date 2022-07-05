@@ -204,11 +204,11 @@ def print_if_dropped(
 
     Parameters
     ----------
-    df_old: pd.DataFrame (or pd.SparseDataFrame)
+    df_old: pd.DataFrame
          "Unfiltered" DataFrame -- used as the reference when trying to
          determine if df_new has been filtered.
 
-    df_new: pd.DataFrame (or pd.SparseDataFrame)
+    df_new: pd.DataFrame
          A potentially-filtered DataFrame.
 
     axis_num: int
@@ -256,7 +256,7 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     Parameters
     ----------
 
-    table: pd.DataFrame (or pd.SparseDataFrame)
+    table: pd.DataFrame
          A DataFrame created from a BIOM table. The index of this DataFrame
          should correspond to observations (i.e. features), and the columns
          should correspond to samples.
@@ -474,7 +474,7 @@ def add_sample_presence_count(feature_data, table_sdf):
          point in Qurro this is called, this will likely include both
          feature ranking information and feature metadata information.
 
-    table_sdf: pd.SparseDataFrame
+    table_sdf: pd.DataFrame
          Representation of a BIOM table containing count data. The index
          contains feature IDs, and the columns contain sample IDs.
          This table should only contain samples that will be used in the
@@ -607,7 +607,7 @@ def vibe_check(
          to feature IDs and the columns correspond to ranking names.
          Critically, every entry in this should be numeric.
 
-    table_sdf: pd.DataFrame (or pd.SparseDataFrame)
+    table_sdf: pd.DataFrame
          DataFrame representation of a feature table. Similarly to the
          feature rankings, every entry in this should be numeric.
 
