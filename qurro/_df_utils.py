@@ -8,7 +8,6 @@
 # ----------------------------------------------------------------------------
 
 import logging
-import pandas as pd
 
 
 def ensure_df_headers_unique(df, df_name):

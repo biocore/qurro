@@ -1,7 +1,8 @@
 import pytest
+import pandas as pd
+import numpy as np
 from pandas import DataFrame, Series
 from pandas.testing import assert_frame_equal, assert_series_equal
-import numpy as np
 from qurro._df_utils import (
     ensure_df_headers_unique,
     validate_df,
@@ -339,7 +340,7 @@ def test_remove_empty_samples_and_features_both():
         ftable, table[["Sample1", "Sample3"]].iloc[0:6], check_like=True
     )
     assert_frame_equal(
-        fmetadata, metadata.loc[set(["Sample1", "Sample3"])], check_like=True
+        fmetadata, metadata.loc[["Sample1", "Sample3"]], check_like=True
     )
     assert_frame_equal(franks, ranks.iloc[0:6])
 
@@ -662,7 +663,7 @@ def test_match_table_and_data_table_extra_feature(capsys):
         columns=table.columns,
         index=["FeatureInTableButNotRanks"],
     )
-    table = table.append(new_row, verify_integrity=True)
+    table = pd.concat([table, new_row], verify_integrity=True)
     m_table, m_metadata = match_table_and_data(table, ranks, metadata)
     # Only features in the ranks' index should be left in the table's index,
     # and the table and ranks' indices should line up.
@@ -715,7 +716,7 @@ def test_match_table_and_data_metadata_extra_sample(capsys):
         columns=metadata.columns,
         index=["SampleInMDButNotTable"],
     )
-    metadata = metadata.append(new_row, verify_integrity=True)
+    metadata = pd.concat([metadata, new_row], verify_integrity=True)
     m_table, m_metadata = match_table_and_data(table, ranks, metadata)
     assert len(set(m_table.columns) & set(m_metadata.index)) == len(
         table.columns
@@ -740,7 +741,7 @@ def test_match_table_and_data_ranked_features_not_in_table():
     # (...because that is not a good situation.)
     table, metadata, ranks = get_test_data()
     new_feature_row = DataFrame([[9, 0]], columns=ranks.columns, index=["F9"])
-    ranks_modified = ranks.append(new_feature_row, verify_integrity=True)
+    ranks_modified = pd.concat([ranks, new_feature_row], verify_integrity=True)
     with pytest.raises(ValueError) as exception_info:
         match_table_and_data(table, ranks_modified, metadata)
     expected_message = (
@@ -754,8 +755,8 @@ def test_match_table_and_data_ranked_features_not_in_table():
     new_feature_row = DataFrame(
         [[10, -1]], columns=ranks.columns, index=["F10"]
     )
-    ranks_modified = ranks_modified.append(
-        new_feature_row, verify_integrity=True
+    ranks_modified = pd.concat(
+        [ranks_modified, new_feature_row], verify_integrity=True
     )
     with pytest.raises(ValueError) as exception_info:
         match_table_and_data(table, ranks_modified, metadata)
@@ -789,7 +790,7 @@ def test_match_table_and_data_complex(capsys):
 
     # Add the extra feature to the table
     new_f_row = DataFrame([[1, 2, 3, 4]], columns=table.columns, index=["F9"])
-    table = table.append(new_f_row, verify_integrity=True)
+    table = pd.concat([table, new_f_row], verify_integrity=True)
 
     # Add the extra sample to the table
     table["Sample5"] = 5
@@ -798,7 +799,7 @@ def test_match_table_and_data_complex(capsys):
     new_s_row = DataFrame(
         [[4, 3, 2, 1]], columns=metadata.columns, index=["SampleM"]
     )
-    metadata = metadata.append(new_s_row, verify_integrity=True)
+    metadata = pd.concat([metadata, new_s_row], verify_integrity=True)
 
     # Ok, actually run the function!
     m_table, m_metadata = match_table_and_data(table, ranks, metadata)
