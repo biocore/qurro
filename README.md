@@ -57,8 +57,8 @@ Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
-`qiime tools view`). *Starting with Qurro v0.3.0, Qurro requires a QIIME 2
-version of at least 2019.7.*
+`qiime tools view`). *Starting with Qurro v0.8.0, Qurro requires a QIIME 2
+version of at least 2020.11.*
 
 Qurro should work with most modern web browsers. Firefox or Chrome are
 recommended.
@@ -84,7 +84,7 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 
 ## Installation and Usage
 
-You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 and less than 3.8 is required to use Qurro.
+You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 is required to use Qurro.
 
 ### Installing with `pip`
 ```bash
@@ -203,8 +203,7 @@ For python testing/style checking, Qurro uses
 [flake8](http://flake8.pycqa.org/en/latest/), and
 [black](https://github.com/ambv/black). You'll also need to have QIIME 2
 installed to run most of the python tests (your QIIME 2 version should be at
-least 2019.7, due to the `FeatureData[Differential]` type being merged into
-q2-types starting with this release).
+least 2020.11; this is the version which switched to pandas >= 1).
 
 For JavaScript testing/style checking, Qurro uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
