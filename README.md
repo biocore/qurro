@@ -85,7 +85,7 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 
 ## Installation and Usage
 
-You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 is required to use Qurro.
+You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 and less than 3.10 is required to use Qurro.
 
 ### Installing with `pip`
 ```bash

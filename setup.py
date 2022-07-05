@@ -106,5 +106,7 @@ setup(
         "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
-    python_requires=">=3.6",
+    # altair 3.1.0 uses the "collections" module in a way that isn't compatible
+    # with Python 3.10 and up. We should eventually un-pin altair to fix this.
+    python_requires=">=3.6,<3.10",
 )
