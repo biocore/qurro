@@ -11,13 +11,14 @@
     be duplicated, which would cause problems. (This problem comes up in
     [Gemelli](https://github.com/biocore/gemelli)'s tutorials.)
 ### Backward-incompatible changes
-- Switched to supporting `pandas >= 1`, and thus QIIME 2 >= `2020.11`.
-  This change makes Qurro now compatible with newer QIIME 2 versions, at the
-  cost of removing compatibility with older QIIME 2 versions.
-  (Notably, Songbird has not yet made this shift, so Songbird and Qurro will
-  need to be installed into separate environments; the "Red Sea" example
-  notebook details this process.)
-- TODO FINISH
+- Switched the required pandas version from `>= 0.24.0, <1` to `>= 1`.
+  This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!
+  - However, this change removes support for older QIIME 2 versions. (It may be
+    possible to get this version of Qurro installed into an older QIIME 2, but
+    we do not explicitly support this.)
+  - Notably, Songbird has not yet made the shift to pandas `>= 1`, so Songbird
+    and Qurro will need to be installed into separate environments; the "Red
+    Sea" example notebook details this process.)
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
