@@ -222,7 +222,7 @@ also.
 ### Data Sources
 
 The test data located in `qurro/tests/input/mackerel/` were exported from
-QIIME 2 artifacts in [this repository](https://github.com/knightlab-analyses/qurro-mackerel-analysis). These data are from Minich et al. 2019 [1].
+QIIME 2 artifacts in [this repository](https://github.com/knightlab-analyses/qurro-mackerel-analysis). These data are from Minich et al. 2020 [1].
 
 The test data located in `qurro/tests/input/byrd/` are from
 [this repository](https://github.com/knightlab-analyses/reference-frames).
@@ -291,22 +291,22 @@ Here's the BibTeX:
 ## References
 
 [1] Minich, J. J., Petrus, S., Michael, J. D., Michael, T. P., Knight, R., &
-Allen, E. E. (2019). Temporal, environmental, and biological
-drivers of the mucosal microbiome in a wild marine fish, Scomber japonicus.
-_bioRxiv_, page 721555. [Link](https://www.biorxiv.org/content/10.1101/721555v1).
+Allen, E. E. (2020). Temporal, environmental, and biological drivers of the
+mucosal microbiome in a wild marine fish, Scomber japonicus. _mSphere, 5_(3),
+e00401-20. [Link](https://journals.asm.org/doi/full/10.1128/mSphere.00401-20).
 
-[2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
+[2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science Translational Medicine, 9_(397), eaal4651.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/28679656).
 
 [3] Thompson, L. R., Williams, G. J., Haroon, M. F., Shibl, A., Larsen, P.,
 Shorenstein, J., ... & Stingl, U. (2017). Metagenomic covariation along densely
-sampled environmental gradients in the Red Sea. _The ISME journal, 11_(1), 138.
+sampled environmental gradients in the Red Sea. _The ISME Journal, 11_(1), 138.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/27420030).
 
 [4] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/29896566).
 
-[5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome biology, 12_(5), R50.
+[5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome Biology, 12_(5), R50.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/21624126).
 
 ## License
