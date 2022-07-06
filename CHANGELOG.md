@@ -1,5 +1,43 @@
 # Qurro changelog
 
+## Qurro 0.8.0 (date TBD)
+### Features added
+- Add an option to Qurro's visualization interface to exclude metadata columns
+  from the "sample plot data" output TSV
+  ([#306](https://github.com/biocore/qurro/issues/306),
+  [#313](https://github.com/biocore/qurro/pull/313)).
+  - This should make it easier to merge the sample log-ratios exported from
+    Qurro with a sample metadata file -- since now these metadata columns won't
+    be duplicated, which would cause problems. (This problem comes up in
+    [Gemelli](https://github.com/biocore/gemelli)'s tutorials.)
+### Backward-incompatible changes
+- Switched to supporting `pandas >= 1`, and thus QIIME 2 >= `2020.11`.
+  This change makes Qurro now compatible with newer QIIME 2 versions, at the
+  cost of removing compatibility with older QIIME 2 versions.
+  (Notably, Songbird has not yet made this shift, so Songbird and Qurro will
+  need to be installed into separate environments; the "Red Sea" example
+  notebook details this process.)
+- TODO FINISH
+### Bug fixes
+### Performance enhancements
+### Miscellaneous
+- Improve various parts of Qurro's code to remove various warnings (for
+  example, about certain things being deprecated).
+- Update Qurro's example notebooks:
+  - Updated the "Red Sea" notebook to explain how to use
+    Songbird and Qurro in different conda environments.
+  - Updated the "ALDEx2" notebook to explain how we recommend installing ALDEx2
+    nowadays.
+- Updated the documentation to refer to the published version of the Mackerel
+  data's paper ([Minich et al. 2020](https://journals.asm.org/doi/full/10.1128/mSphere.00401-20)).
+- Ported Qurro's continuous integration from Travis CI to GitHub Actions
+  ([#316](https://github.com/biocore/qurro/issues/316)).
+- Improved Qurro's continuous integration in multiple ways:
+  - Test on multiple QIIME 2 versions.
+  - Test the standalone Qurro functionality on multiple Python versions.
+  - Test the standalone Qurro functionality in a non-QIIME-2 environment
+    (similar to EMPress' "standalone" CI).
+
 ## Qurro 0.7.1 (May 22, 2020)
 ### Features added
 ### Backward-incompatible changes
