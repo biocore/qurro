@@ -14,11 +14,11 @@
 - Switched the required pandas version from `>= 0.24.0, <1` to `>= 1`.
   This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!
   - However, this change removes support for older QIIME 2 versions. (It may be
-    possible to get this version of Qurro installed into an older QIIME 2, but
-    we do not explicitly support this.)
+    possible to get this version of Qurro installed into an older QIIME 2
+    environment, but we do not explicitly support this.)
   - Notably, Songbird has not yet made the shift to pandas `>= 1`, so Songbird
     and Qurro will need to be installed into separate environments; the "Red
-    Sea" example notebook details this process.)
+    Sea" example notebook details this process.
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
