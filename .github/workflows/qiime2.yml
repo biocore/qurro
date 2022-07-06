@@ -48,11 +48,6 @@ jobs:
       - name: Install Qurro (and its pip dependencies)
         run: conda run -n qiime2-dev pip install -e .[dev]
 
-      # - name: Install the example notebooks' dependencies
-      #   run: |
-      #     conda run -n qiime2-dev pip install songbird deicode
-      #     conda run -n qiime2-dev conda install --yes -c bioconda bioconductor-aldex2 mygene
-          
       - name: Set up Node.js
         uses: actions/setup-node@v1
 
@@ -61,9 +56,6 @@ jobs:
 
       - name: Run tests
         run: conda run -n qiime2-dev make test
-
-      # - name: Verify that the example notebooks can be run without crashing
-      #   run: conda run -n qiime2-dev make notebooks
 
       - name: Lint and stylecheck
         run: conda run -n qiime2-dev make stylecheck
