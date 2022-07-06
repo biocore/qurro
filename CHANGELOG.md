@@ -38,6 +38,8 @@
   - Test the standalone Qurro functionality on multiple Python versions.
   - Test the standalone Qurro functionality in a non-QIIME-2 environment
     (similar to EMPress' "standalone" CI).
+- Updated the development documentation regarding the minimum QIIME 2 version,
+  incompatibilities between `black` and `click`, etc.
 
 ## Qurro 0.7.1 (May 22, 2020)
 ### Features added
