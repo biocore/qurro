@@ -61,14 +61,10 @@ QIIME 2. See [this q2cli issue](https://github.com/qiime2/q2cli/issues/259) for
 context. This can come up in development because one of Qurro's development
 dependencies is
 [Black](https://github.com/psf/black), and later versions of Black can rely
-on Click 8 (and as of writing QIIME 2 doesn't seem to support Click 8 yet).
+on Click 8 (and certain versions of QIIME 2 -- before 2022.8, I think -- do not
+support Click 8).
 
-If you run into this error, you can probably get around it by installing an
-older version of Black, although earlier versions of Click might disagree with
-the later versions that we use in the CI. There isn't a great solution for this
-yet that I know of (short of pinning Black to an earlier version and
-reformatting all the Python code accordingly...), but hopefully when QIIME 2
-supports Click 8 the problem will vanish.
+This problem seems to no longer be present as of October 19, 2022.
 
 ## Acknowledgements
 
