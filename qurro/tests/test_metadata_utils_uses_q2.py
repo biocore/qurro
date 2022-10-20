@@ -8,6 +8,11 @@ from qurro._df_utils import replace_nan
 from qurro._metadata_utils import read_metadata_file
 
 
+# Brief note: this file tests that our metadata reading functionality matches
+# QIIME 2's. For this reason, this test can only be performed in an environment
+# that has access to the "qiime2" module.
+
+
 def test_read_metadata_file_basic():
     """Tests that read_metadata_file() works + handles bools ok.
 

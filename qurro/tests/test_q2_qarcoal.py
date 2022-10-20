@@ -168,7 +168,7 @@ class TestErrors:
         s2 = [10, 15, 7, 0, 0, 0]
         s3 = [0, 0, 0, 0, 0, 0]
         s4 = [0, 0, 0, 6, 4, 2]
-        mat = np.matrix([s0, s1, s2, s3, s4]).T
+        mat = np.array([s0, s1, s2, s3, s4]).T
         table = biom.table.Table(mat, feats, samps).to_dataframe()
 
         tax_labels = [
@@ -432,9 +432,9 @@ class TestIrregularData:
         """
         samps = ["S{}".format(i) for i in range(3)]
         feats = ["F{}".format(i) for i in range(6)]
-        s0 = [x ** 53 for x in (2.0, 3.2, 4.1, 6.2, 4.3, 3.7)]
-        s1 = [x ** 53 for x in (2.5, 2.6, 2.9, 5.2, 2.1, 2.5)]
-        s2 = [x ** 53 for x in (2.2, 3.5, 3.1, 3.0, 2.2, 4.0)]
+        s0 = [x**53 for x in (2.0, 3.2, 4.1, 6.2, 4.3, 3.7)]
+        s1 = [x**53 for x in (2.5, 2.6, 2.9, 5.2, 2.1, 2.5)]
+        s2 = [x**53 for x in (2.2, 3.5, 3.1, 3.0, 2.2, 4.0)]
         confidence = ["0.99"] * 6
         tax_labels = [
             "Charmander",
@@ -444,7 +444,7 @@ class TestIrregularData:
             "Ivysaur",
             "Vensaur",
         ]
-        mat = np.matrix([s0, s1, s2]).T
+        mat = np.array([s0, s1, s2]).T
         table = biom.table.Table(mat, feats, samps)
 
         taxonomy = pd.DataFrame([feats, tax_labels, confidence]).T

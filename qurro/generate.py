@@ -86,7 +86,7 @@ def process_input(
        missing values are represented consistently with a None (which
        will be represented as a null in JSON/JavaScript).
 
-    3. Converts the BIOM table to a SparseDataFrame by calling
+    3. Converts the BIOM table to a DataFrame by calling
        biom_table_to_sparse_df().
 
     4. Runs vibe_check() on the feature ranks and BIOM table to ensure
@@ -122,7 +122,7 @@ def process_input(
     feature_metadata_cols: list
          The feature metadata columns' names in output_ranks.
 
-    output_table: pd.SparseDataFrame
+    output_table: pd.DataFrame
          The BIOM table, post matching with the feature ranks and sample
          metadata and with empty samples removed.
     """
@@ -217,7 +217,7 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
         IDs of the "feature metadata" columns in V (if there wasn't any
         feature metadata provided, this can just be an empty list).
 
-    table_sdf: pd.SparseDataFrame
+    table_sdf: pd.DataFrame
         A representation of the input BIOM table containing count data. This
         is used to calculate qurro_spc (the number of samples a feature is
         present in) for each feature in V. This should ONLY contain samples

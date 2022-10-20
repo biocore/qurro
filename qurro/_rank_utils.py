@@ -103,7 +103,7 @@ def differentials_to_df(differentials_loc):
 
 
 def filter_unextreme_features(
-    table: pd.SparseDataFrame, ranks: pd.DataFrame, extreme_feature_count: int
+    table: pd.DataFrame, ranks: pd.DataFrame, extreme_feature_count: int
 ) -> None:
     """Returns copies of the table and ranks with "unextreme" features removed.
 
@@ -115,8 +115,8 @@ def filter_unextreme_features(
     Parameters
     ----------
 
-    table: pd.SparseDataFrame
-         A SparseDataFrame representation of a BIOM table. This can be
+    table: pd.DataFrame
+         A DataFrame representation of a BIOM table. This can be
          generated easily from a biom.Table object using
          qurro._df_utils.biom_table_to_sparse_df().
 
@@ -134,7 +134,7 @@ def filter_unextreme_features(
     Returns
     -------
 
-    (table, ranks): (pandas.SparseDataFrame, pandas.DataFrame)
+    (table, ranks): (pandas.DataFrame, pandas.DataFrame)
          Filtered copies of the input table and ranks DataFrames.
 
     Behavior
@@ -206,6 +206,17 @@ def filter_unextreme_features(
         features_to_preserve |= set(upper_extrema)
         features_to_preserve |= set(lower_extrema)
 
+    # In the year of our lord 2022, using a set as an indexer for .loc[]
+    # makes pandas raise a warning. So, now that we've made use of the fact
+    # that features_to_preserve has no duplicates, we convert it back to a
+    # list. There's probably a more efficient way to do this, but I doubt this
+    # will be a bottleneck.
+    features_to_preserve_but_as_a_list = list(features_to_preserve)
+
+    # (NOTE FROM 2022: the below comment is old and I have no idea why I
+    # formatted it like that or if this benchmarking is even still accurate
+    # after pandas 1's changes to dataframe sparsity, idk)
+    #
     # Now, we actually filter the feature ranks and table. We do this using
     # .loc[]. I benchmarked it, and .loc was about 1.77x as fast as .filter --
     # >>> df = pd.SparseDataFrame(np.zeros(34000000).reshape(17000, 2000))
@@ -213,8 +224,8 @@ def filter_unextreme_features(
     # 460 ms +/- 17.6 ms per loop
     # >>> %timeit df.filter(items=set([16990, 8983, 8982]), axis="index")
     # 818 ms +/- 25.6 ms per loop
-    filtered_ranks = ranks.loc[features_to_preserve]
-    filtered_table = table.loc[features_to_preserve]
+    filtered_ranks = ranks.loc[features_to_preserve_but_as_a_list]
+    filtered_table = table.loc[features_to_preserve_but_as_a_list]
 
     filtered_feature_ct = filtered_ranks.shape[0]
     print(

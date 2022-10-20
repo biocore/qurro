@@ -4,8 +4,6 @@ import os
 from pytest import approx
 from click.testing import CliRunner
 from biom import load_table
-from qiime2 import Artifact, Metadata
-from qiime2.plugins import qurro as q2qurro
 import qurro.scripts._plot as rrvp
 from qurro._rank_utils import read_rank_file
 from qurro._metadata_utils import read_metadata_file
@@ -52,6 +50,9 @@ def run_integration_test(
 
     rrv_qzv = result = None
     if use_q2:
+        from qiime2 import Artifact, Metadata
+        from qiime2.plugins import qurro as q2qurro
+
         if q2_ranking_tool == "songbird":
             q2_action = q2qurro.actions.differential_plot
             q2_rank_type = "FeatureData[Differential]"
@@ -296,9 +297,12 @@ def validate_rank_plot_json(
         rank_json, id_field="Feature ID"
     )
 
+    # Convert the table to a dense DF (the horror!) so that we can use .loc[]
+    dense_table = table.sparse.to_dense()
+
     for ref_feature_id in ref_feature_ranks.index:
         # If this feature is empty, it should have been filtered!
-        if sum(table.loc[ref_feature_id]) == 0:
+        if sum(dense_table.loc[ref_feature_id]) == 0:
             assert ref_feature_id not in rank_json_feature_data
             continue
         # ...If this feature isn't empty, though, it shouldn't have been

@@ -51,12 +51,15 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
     num_indices = taxonomy_joined_df["Taxon"].str.contains(num_string)
     denom_indices = taxonomy_joined_df["Taxon"].str.contains(denom_string)
 
-    tax_num_df = taxonomy_joined_df.loc[num_indices]
-    tax_denom_df = taxonomy_joined_df.loc[denom_indices]
+    tax_num_df_with_extra_col = taxonomy_joined_df.loc[num_indices]
+    tax_denom_df_with_extra_col = taxonomy_joined_df.loc[denom_indices]
 
-    # want to drop Taxon column because we want the dfs to be only numeric
-    tax_num_df.drop(columns="Taxon", inplace=True)
-    tax_denom_df.drop(columns="Taxon", inplace=True)
+    # We need to drop the Taxon column because we want the dfs to be numeric
+    # Also, we don't use in-place operations to prevent pandas warnings about
+    # "A value is trying to be set on a copy of a slice from a DataFrame" --
+    # see https://stackoverflow.com/a/33727690
+    tax_num_df = tax_num_df_with_extra_col.drop(columns="Taxon")
+    tax_denom_df = tax_denom_df_with_extra_col.drop(columns="Taxon")
 
     # if _q suffix was added due to sample called Taxon, change back to Taxon
     if "Taxon_q" in taxonomy_joined_df:
@@ -89,8 +92,11 @@ def filter_and_join_taxonomy(feat_table, taxonomy, num_string, denom_string):
             "No samples contain both numerator and denominator features!"
         )
 
-    tax_num_df = tax_num_df[samp_to_keep]
-    tax_denom_df = tax_denom_df[samp_to_keep]
+    # using a set as an indexer is now deprecated, so we convert it to a list
+    samp_to_keep_but_as_a_list = list(samp_to_keep)
+
+    tax_num_df = tax_num_df[samp_to_keep_but_as_a_list]
+    tax_denom_df = tax_denom_df[samp_to_keep_but_as_a_list]
     return tax_num_df, tax_denom_df
 
 

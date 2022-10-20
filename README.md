@@ -5,7 +5,8 @@
 </div>
 
 <div align="center">
-<a href="https://travis-ci.com/biocore/qurro"><img src="https://travis-ci.com/biocore/qurro.svg?branch=master" alt="Build Status" /></a>
+<a href="https://github.com/biocore/qurro/actions/workflows/qiime2.yml"><img src="https://github.com/biocore/qurro/actions/workflows/qiime2.yml/badge.svg" alt="QIIME 2 CI" /></a>
+<a href="https://github.com/biocore/qurro/actions/workflows/standalone.yml"><img src="https://github.com/biocore/qurro/actions/workflows/standalone.yml/badge.svg" alt="Standalone CI" /></a>
 <a href="https://codecov.io/gh/biocore/qurro"><img src="https://codecov.io/gh/biocore/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
 <a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
 <a href="https://pypi.org/project/qurro"><img src="https://img.shields.io/pypi/v/qurro.svg" alt="PyPI" /></a>
@@ -57,8 +58,8 @@ Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
-`qiime tools view`). *Starting with Qurro v0.3.0, Qurro requires a QIIME 2
-version of at least 2019.7.*
+`qiime tools view`). *Starting with Qurro v0.8.0, Qurro requires a QIIME 2
+version of at least 2020.11.*
 
 Qurro should work with most modern web browsers. Firefox or Chrome are
 recommended.
@@ -84,7 +85,7 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 
 ## Installation and Usage
 
-You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 and less than 3.8 is required to use Qurro.
+You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 and less than 3.10 is required to use Qurro.
 
 ### Installing with `pip`
 ```bash
@@ -203,8 +204,7 @@ For python testing/style checking, Qurro uses
 [flake8](http://flake8.pycqa.org/en/latest/), and
 [black](https://github.com/ambv/black). You'll also need to have QIIME 2
 installed to run most of the python tests (your QIIME 2 version should be at
-least 2019.7, due to the `FeatureData[Differential]` type being merged into
-q2-types starting with this release).
+least 2020.11; this is the version which switched to pandas >= 1).
 
 For JavaScript testing/style checking, Qurro uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),
@@ -222,7 +222,7 @@ also.
 ### Data Sources
 
 The test data located in `qurro/tests/input/mackerel/` were exported from
-QIIME 2 artifacts in [this repository](https://github.com/knightlab-analyses/qurro-mackerel-analysis). These data are from Minich et al. 2019 [1].
+QIIME 2 artifacts in [this repository](https://github.com/knightlab-analyses/qurro-mackerel-analysis). These data are from Minich et al. 2020 [1].
 
 The test data located in `qurro/tests/input/byrd/` are from
 [this repository](https://github.com/knightlab-analyses/reference-frames).
@@ -291,22 +291,22 @@ Here's the BibTeX:
 ## References
 
 [1] Minich, J. J., Petrus, S., Michael, J. D., Michael, T. P., Knight, R., &
-Allen, E. E. (2019). Temporal, environmental, and biological
-drivers of the mucosal microbiome in a wild marine fish, Scomber japonicus.
-_bioRxiv_, page 721555. [Link](https://www.biorxiv.org/content/10.1101/721555v1).
+Allen, E. E. (2020). Temporal, environmental, and biological drivers of the
+mucosal microbiome in a wild marine fish, Scomber japonicus. _mSphere, 5_(3),
+e00401-20. [Link](https://journals.asm.org/doi/full/10.1128/mSphere.00401-20).
 
-[2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science translational medicine, 9_(397), eaal4651.
+[2] Byrd, A. L., Deming, C., Cassidy, S. K., Harrison, O. J., Ng, W. I., Conlan, S., ... & NISC Comparative Sequencing Program. (2017). Staphylococcus aureus and Staphylococcus epidermidis strain diversity underlying pediatric atopic dermatitis. _Science Translational Medicine, 9_(397), eaal4651.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/28679656).
 
 [3] Thompson, L. R., Williams, G. J., Haroon, M. F., Shibl, A., Larsen, P.,
 Shorenstein, J., ... & Stingl, U. (2017). Metagenomic covariation along densely
-sampled environmental gradients in the Red Sea. _The ISME journal, 11_(1), 138.
+sampled environmental gradients in the Red Sea. _The ISME Journal, 11_(1), 138.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/27420030).
 
 [4] Tripathi, A., Melnik, A. V., Xue, J., Poulsen, O., Meehan, M. J., Humphrey, G., ... & Haddad, G. (2018). Intermittent hypoxia and hypercapnia, a hallmark of obstructive sleep apnea, alters the gut microbiome and metabolome. _mSystems, 3_(3), e00020-18.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/29896566).
 
-[5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome biology, 12_(5), R50.
+[5] Caporaso, J. G., Lauber, C. L., Costello, E. K., Berg-Lyons, D., Gonzalez, A., Stombaugh, J., ... & Gordon, J. I. (2011). Moving pictures of the human microbiome. _Genome Biology, 12_(5), R50.
 [Link](https://www.ncbi.nlm.nih.gov/pubmed/21624126).
 
 ## License

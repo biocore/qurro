@@ -18,6 +18,14 @@ test: pytest jstest
 pytest:
 	python3 -B -m pytest qurro/tests --cov qurro
 
+# Ignore test files (and functions) that have q2 in the name
+# This way, we can run non-QIIME2-specific tests outside of a QIIME 2 conda
+# environment. (For some reason, -k "not q2" wasn't working, even though the
+# docs said that it should consider file names... well, this seems to work.)
+# https://stackoverflow.com/questions/11117062/how-to-tell-py-test-to-skip-certain-directories#comment113260122_41940247
+pytest_standalone:
+	python3 -B -m pytest qurro/tests --cov qurro --ignore-glob "*q2*"
+
 jstest:
 	@# Re-update specs for JS tests by running update_js_test_jsons.py
 	python3 qurro/tests/update_js_test_jsons.py

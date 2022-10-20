@@ -8,7 +8,6 @@
 # ----------------------------------------------------------------------------
 
 import logging
-import pandas as pd
 
 
 def ensure_df_headers_unique(df, df_name):
@@ -112,29 +111,21 @@ def replace_nan(df, new_nan_val=None):
 
 
 def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
-    """Loads a BIOM table as a pd.SparseDataFrame. Also calls validate_df().
+    """Loads a BIOM table as a (sparse) pd.DataFrame. Also calls validate_df().
 
-    We need to use a helper function for this because old versions of BIOM
-    accidentally produce an effectively-dense DataFrame when using
-    biom.Table.to_dataframe() -- see
-    https://github.com/biocore/biom-format/issues/808.
-
-    To get around this, we extract the scipy.sparse.csr_matrix data from the
-    BIOM table and directly convert that to a pandas SparseDataFrame.
+    In the past, we did this in a roundabout way to avoid a weird biom-format
+    issue (https://github.com/biocore/biom-format/issues/808), but now our min
+    biom-format version should mean that we never run into this problem.
     """
-    logging.debug("Creating a SparseDataFrame from BIOM table.")
-    table_sdf = pd.SparseDataFrame(table.matrix_data, default_fill_value=0.0)
+    logging.debug("Creating a DataFrame from BIOM table.")
 
-    # The csr_matrix doesn't include column/index IDs, so we manually add them
-    # in to the SparseDataFrame.
-    table_sdf.index = table.ids(axis="observation")
-    table_sdf.columns = table.ids(axis="sample")
+    table_sdf = table.to_dataframe(dense=False)
 
-    # Validate the table DataFrame -- should be ok since we loaded this through
-    # the biom module, but might as well check
+    # Validate the DataFrame -- should be ok since we loaded the table through
+    # biom, but might as well check
     validate_df(table_sdf, "BIOM table", min_row_ct, min_col_ct)
 
-    logging.debug("Converted BIOM table to SparseDataFrame.")
+    logging.debug("Converted BIOM table to DataFrame.")
     return table_sdf
 
 
@@ -213,11 +204,11 @@ def print_if_dropped(
 
     Parameters
     ----------
-    df_old: pd.DataFrame (or pd.SparseDataFrame)
+    df_old: pd.DataFrame
          "Unfiltered" DataFrame -- used as the reference when trying to
          determine if df_new has been filtered.
 
-    df_new: pd.DataFrame (or pd.SparseDataFrame)
+    df_new: pd.DataFrame
          A potentially-filtered DataFrame.
 
     axis_num: int
@@ -265,7 +256,7 @@ def match_table_and_data(table, feature_ranks, sample_metadata):
     Parameters
     ----------
 
-    table: pd.DataFrame (or pd.SparseDataFrame)
+    table: pd.DataFrame
          A DataFrame created from a BIOM table. The index of this DataFrame
          should correspond to observations (i.e. features), and the columns
          should correspond to samples.
@@ -483,7 +474,7 @@ def add_sample_presence_count(feature_data, table_sdf):
          point in Qurro this is called, this will likely include both
          feature ranking information and feature metadata information.
 
-    table_sdf: pd.SparseDataFrame
+    table_sdf: pd.DataFrame
          Representation of a BIOM table containing count data. The index
          contains feature IDs, and the columns contain sample IDs.
          This table should only contain samples that will be used in the
@@ -616,7 +607,7 @@ def vibe_check(
          to feature IDs and the columns correspond to ranking names.
          Critically, every entry in this should be numeric.
 
-    table_sdf: pd.DataFrame (or pd.SparseDataFrame)
+    table_sdf: pd.DataFrame
          DataFrame representation of a feature table. Similarly to the
          feature rankings, every entry in this should be numeric.
 
