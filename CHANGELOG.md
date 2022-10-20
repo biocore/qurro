@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.8.0 (date TBD)
+## Qurro 0.8.0 (October 19, 2022)
 ### Features added
 - Add an option to Qurro's visualization interface to exclude metadata columns
   from the "sample plot data" output TSV
@@ -12,13 +12,16 @@
     [Gemelli](https://github.com/biocore/gemelli)'s tutorials.)
 ### Backward-incompatible changes
 - Switched the required pandas version from `>= 0.24.0, <1` to `>= 1`.
-  This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!
+  **This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!**
   - However, this change removes support for older QIIME 2 versions. (It may be
     possible to get this version of Qurro installed into an older QIIME 2
     environment, but we do not explicitly support this.)
   - Notably, Songbird has not yet made the shift to pandas `>= 1`, so Songbird
     and Qurro will need to be installed into separate environments; the "Red
     Sea" example notebook details this process.
+- Updated a few other dependency versions to fix various problems (e.g.
+  explicitly requiring scipy and pinning it to `scipy < 1.9.0` to fix
+  [this scikit-bio issue](https://github.com/biocore/scikit-bio/issues/1818)).
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
@@ -31,6 +34,9 @@
     nowadays.
 - Updated the documentation to refer to the published version of the Mackerel
   data's paper ([Minich et al. 2020](https://journals.asm.org/doi/full/10.1128/mSphere.00401-20)).
+- Fixing various broken links in the documentation
+  ([#318](https://github.com/biocore/qurro/pull/318),
+  [#320](https://github.com/biocore/qurro/pull/320)).
 - Ported Qurro's continuous integration from Travis CI to GitHub Actions
   ([#316](https://github.com/biocore/qurro/issues/316)).
 - Improved Qurro's continuous integration in multiple ways:
@@ -39,7 +45,7 @@
   - Test the standalone Qurro functionality in a non-QIIME-2 environment
     (similar to EMPress' "standalone" CI).
 - Updated the development documentation regarding the minimum QIIME 2 version,
-  incompatibilities between `black` and `click`, etc.
+  dependency version issues, etc.
 
 ## Qurro 0.7.1 (May 22, 2020)
 ### Features added
