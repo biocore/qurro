@@ -2,8 +2,8 @@
 
 ## Qurro 0.8.0 (October 19, 2022)
 ### Features added
-- Add an option to Qurro's visualization interface to exclude metadata columns
-  from the "sample plot data" output TSV
+- Added an option to Qurro's visualization interface to exclude metadata
+  columns from the "sample plot data" output TSV
   ([#306](https://github.com/biocore/qurro/issues/306),
   [#313](https://github.com/biocore/qurro/pull/313)).
   - This should make it easier to merge the sample log-ratios exported from
@@ -29,16 +29,16 @@
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
-- Improve various parts of Qurro's code to remove various warnings (for
+- Updated various parts of Qurro's code to remove various warnings (for
   example, about certain things being deprecated).
-- Update Qurro's example notebooks:
+- Updated Qurro's example notebooks:
   - Updated the "Red Sea" notebook to explain how to use
     Songbird and Qurro in different conda environments.
   - Updated the "ALDEx2" notebook to explain how we recommend installing ALDEx2
     nowadays.
 - Updated the documentation to refer to the published version of the Mackerel
   data's paper ([Minich et al. 2020](https://journals.asm.org/doi/full/10.1128/mSphere.00401-20)).
-- Fixing various broken links in the documentation
+- Fixed various broken links in the documentation
   ([#318](https://github.com/biocore/qurro/pull/318),
   [#320](https://github.com/biocore/qurro/pull/320)).
 - Ported Qurro's continuous integration from Travis CI to GitHub Actions
@@ -48,8 +48,9 @@
   - Test the standalone Qurro functionality on multiple Python versions.
   - Test the standalone Qurro functionality in a non-QIIME-2 environment
     (similar to EMPress' "standalone" CI).
-- Updated the development documentation regarding the minimum QIIME 2 version,
-  dependency version issues, etc.
+- Updated the development documentation
+  ([`CONTRIBUTING.md`](https://github.com/biocore/qurro/blob/master/CONTRIBUTING.md))
+  regarding the minimum QIIME 2 version, dependency version issues, etc.
 
 ## Qurro 0.7.1 (May 22, 2020)
 ### Features added
