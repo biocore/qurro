@@ -10,6 +10,12 @@ in this repository or email the Qurro development team
 
 ## Setting up a development environment
 
+We'll use a QIIME 2 environment as the basis for creating our "development
+environment" -- this is convenient because some of Qurro's tests rely on QIIME
+2 being installed. (You could also create a development environment that does
+not use QIIME 2, some of Qurro's tests would not be able to be run in such an
+environment.)
+
 1. Fork Qurro.
 1. Clone your fork of Qurro's source code to your computer.
 2. Create a development conda environment for Qurro:
