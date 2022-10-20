@@ -88,6 +88,10 @@ setup(
         # SparseDataFrame is dead, long live DataFrame
         "pandas >= 1",
         "scikit-bio > 0.5.3",
+        # Due to scikit-bio problems -- pinning to < 1.9.0. Should be hopefully
+        # fixed when a new scikit-bio release comes out.
+        # (https://github.com/biocore/scikit-bio/issues/1818)
+        "scipy >= 1.3.0, < 1.9.0",
     ],
     # Based on how Altair splits up its requirements:
     # https://github.com/altair-viz/altair/blob/master/setup.py
