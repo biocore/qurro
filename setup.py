@@ -100,9 +100,13 @@ setup(
             "pytest >= 4.2",
             "pytest-cov >= 2.0",
             "flake8",
-            # If we don't pin black to being at least 22.3.0, then it and click
-            # will conflict w/ an error: https://github.com/psf/black/pull/2966
-            "black >= 22.3.0",
+            # Beginning with Black 22.1.0 (the release immediately after
+            # Black 21.12b0), Black requires Click >= 8.0. This breaks older
+            # QIIME 2 versions -- of those we support (2020.11 and after), all
+            # versions up until QIIME 2 2022.8 use Click == 7.1.2. So, we do
+            # not set a pin on the Click version above, and instead set a pin
+            # on the Black version. This compromise fixes things.
+            "black == 21.12b0",
             "nbconvert",
         ]
     },
