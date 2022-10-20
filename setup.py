@@ -100,9 +100,6 @@ setup(
             "pytest >= 4.2",
             "pytest-cov >= 2.0",
             "flake8",
-            # If we don't pin black to being at least 22.3.0, then it and click
-            # will conflict w/ an error: https://github.com/psf/black/pull/2966
-            "black >= 22.3.0",
             "nbconvert",
         ]
     },

@@ -1,9 +1,9 @@
 # Qurro changelog
 
-## Qurro 0.8.0 (date TBD)
+## Qurro 0.8.0 (October 19, 2022)
 ### Features added
-- Add an option to Qurro's visualization interface to exclude metadata columns
-  from the "sample plot data" output TSV
+- Added an option to Qurro's visualization interface to exclude metadata
+  columns from the "sample plot data" output TSV
   ([#306](https://github.com/biocore/qurro/issues/306),
   [#313](https://github.com/biocore/qurro/pull/313)).
   - This should make it easier to merge the sample log-ratios exported from
@@ -12,25 +12,35 @@
     [Gemelli](https://github.com/biocore/gemelli)'s tutorials.)
 ### Backward-incompatible changes
 - Switched the required pandas version from `>= 0.24.0, <1` to `>= 1`.
-  This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!
+  **This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!**
   - However, this change removes support for older QIIME 2 versions. (It may be
     possible to get this version of Qurro installed into an older QIIME 2
-    environment, but we do not explicitly support this.)
+    environment, but we do not explicitly support this.) If you need to use
+    Qurro in older QIIME 2 environments, you can install an older version of
+    Qurro (e.g. `pip install "qurro==0.7.1"`).
   - Notably, Songbird has not yet made the shift to pandas `>= 1`, so Songbird
     and Qurro will need to be installed into separate environments; the "Red
     Sea" example notebook details this process.
+- Updated a few other dependency versions to fix various problems (e.g.
+  explicitly requiring SciPy and pinning it to `scipy < 1.9.0` to fix
+  [this scikit-bio issue](https://github.com/biocore/scikit-bio/issues/1818),
+  removing Black from the development dependencies for reasons discussed in
+  [`CONTRIBUTING.md`](https://github.com/biocore/qurro/blob/master/CONTRIBUTING.md)).
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
-- Improve various parts of Qurro's code to remove various warnings (for
+- Updated various parts of Qurro's code to remove various warnings (for
   example, about certain things being deprecated).
-- Update Qurro's example notebooks:
+- Updated Qurro's example notebooks:
   - Updated the "Red Sea" notebook to explain how to use
     Songbird and Qurro in different conda environments.
   - Updated the "ALDEx2" notebook to explain how we recommend installing ALDEx2
     nowadays.
 - Updated the documentation to refer to the published version of the Mackerel
   data's paper ([Minich et al. 2020](https://journals.asm.org/doi/full/10.1128/mSphere.00401-20)).
+- Fixed various broken links in the documentation
+  ([#318](https://github.com/biocore/qurro/pull/318),
+  [#320](https://github.com/biocore/qurro/pull/320)).
 - Ported Qurro's continuous integration from Travis CI to GitHub Actions
   ([#316](https://github.com/biocore/qurro/issues/316)).
 - Improved Qurro's continuous integration in multiple ways:
@@ -38,8 +48,9 @@
   - Test the standalone Qurro functionality on multiple Python versions.
   - Test the standalone Qurro functionality in a non-QIIME-2 environment
     (similar to EMPress' "standalone" CI).
-- Updated the development documentation regarding the minimum QIIME 2 version,
-  incompatibilities between `black` and `click`, etc.
+- Updated the development documentation
+  ([`CONTRIBUTING.md`](https://github.com/biocore/qurro/blob/master/CONTRIBUTING.md))
+  regarding the minimum QIIME 2 version, dependency version issues, etc.
 
 ## Qurro 0.7.1 (May 22, 2020)
 ### Features added

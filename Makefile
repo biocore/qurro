@@ -32,11 +32,15 @@ jstest:
 	nyc instrument qurro/support_files/js/ qurro/tests/web_tests/instrumented_js/
 	mocha-headless-chrome -f qurro/tests/web_tests/index.html -c js_coverage.json
 
+stylecheck: stylecheck_not_black stylecheck_black
+
+stylecheck_black:
+	black --check -l 79 qurro/ setup.py
+
 # Assumes this is being run from the root directory of the qurro repo
 # (since that's where the .jshintrc is located).
-stylecheck:
+stylecheck_not_black:
 	flake8 --ignore=E203,W503 qurro/ setup.py
-	black --check -l 79 qurro/ setup.py
 	jshint $(JSLOCS)
 	prettier --check --tab-width 4 $(JSLOCS) $(HTMLCSSLOCS)
 
