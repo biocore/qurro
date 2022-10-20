@@ -14,7 +14,7 @@ in this repository or email the Qurro development team
 1. Clone your fork of Qurro's source code to your computer.
 2. Create a development conda environment for Qurro:
     1. Install the latest version of QIIME 2 natively,
-       [as you would normally](https://docs.qiime2.org/2022.2/install/native/).
+       [as you would normally](https://docs.qiime2.org/2022.8/install/native/).
        _You'll need to install a QIIME 2 version of at least 2020.11._
     2. In a terminal, navigate to the folder to which you cloned your fork of
        Qurro's source code above. Run `pip install -e .[dev]` inside this folder to
@@ -64,7 +64,8 @@ dependencies is
 on Click 8 (and certain versions of QIIME 2 -- before 2022.8, I think -- do not
 support Click 8).
 
-This problem seems to no longer be present as of October 19, 2022.
+In practice, you can avoid this issue by using a development QIIME 2
+environment of at least 2022.8.
 
 ## Acknowledgements
 
