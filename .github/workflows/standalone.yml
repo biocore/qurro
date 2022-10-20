@@ -40,5 +40,9 @@ jobs:
           make pytest_standalone
           make jstest
 
-      - name: Upload code coverage information to Codecov
-        uses: codecov/codecov-action@v2
+      # NOTE: For now, we only submit coverage reports from the QIIME 2 CI,
+      # since the tests that that CI runs are a superset of those ran by this
+      # "standalone" CI. (Also, Codecov wasn't merging them, which caused
+      # coverage to be underreported.)
+      # - name: Upload code coverage information to Codecov
+      #   uses: codecov/codecov-action@v2
