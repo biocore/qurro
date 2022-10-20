@@ -40,9 +40,9 @@ def test_dropping_all_samples():
 
 
 def test_dropping_all_samples_and_features():
-    """Tests Qurro's behavior when > 0 feature(s) and all samples are unsupported.
+    """Tests Qurro when > 0 feature(s) & all samples are unsupported.
 
-    In particular, qurro should just throw an error about the
+    In particular, Qurro should just throw an error about the
     feature(s) being unsupported -- the feature check should come before the
     sample check (not for any particular reason, that's just how I wrote the
     code).
