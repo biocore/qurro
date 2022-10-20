@@ -20,8 +20,10 @@
     and Qurro will need to be installed into separate environments; the "Red
     Sea" example notebook details this process.
 - Updated a few other dependency versions to fix various problems (e.g.
-  explicitly requiring scipy and pinning it to `scipy < 1.9.0` to fix
-  [this scikit-bio issue](https://github.com/biocore/scikit-bio/issues/1818)).
+  explicitly requiring SciPy and pinning it to `scipy < 1.9.0` to fix
+  [this scikit-bio issue](https://github.com/biocore/scikit-bio/issues/1818),
+  removing Black from the development dependencies for reasons discussed in
+  [`CONTRIBUTING.md`](https://github.com/biocore/qurro/blob/master/CONTRIBUTING.md)).
 ### Bug fixes
 ### Performance enhancements
 ### Miscellaneous
