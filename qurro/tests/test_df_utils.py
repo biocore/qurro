@@ -950,8 +950,8 @@ def test_vibe_check_failures():
     ) in str(exception_info.value)
 
     # Test failure, with the default safe range, on a few small cases.
-    lower_lim = -(2 ** 53) - 1
-    upper_lim = (2 ** 53) - 1
+    lower_lim = -(2**53) - 1
+    upper_lim = (2**53) - 1
 
     weird_small_values = [lower_lim - 1, lower_lim * 2, lower_lim * 3]
     for w in weird_small_values:

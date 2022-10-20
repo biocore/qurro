@@ -203,8 +203,11 @@ For python testing/style checking, Qurro uses
 [pytest-cov](https://github.com/pytest-dev/pytest-cov),
 [flake8](http://flake8.pycqa.org/en/latest/), and
 [black](https://github.com/ambv/black). You'll also need to have QIIME 2
-installed to run most of the python tests (your QIIME 2 version should be at
-least 2020.11; this is the version which switched to pandas >= 1).
+installed to run most of the python tests (note that, due to click vs. black
+vs. QIIME 2 dependency issues, you should use a QIIME 2 environment of at least
+2022.8; see
+[`CONTRIBUTING.md`](https://github.com/biocore/qurro/blob/master/CONTRIBUTING.md)
+for details).
 
 For JavaScript testing/style checking, Qurro uses
 [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/),

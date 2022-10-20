@@ -71,8 +71,8 @@ jobs:
       - name: Run tests
         run: conda run -n qiime2-dev make test
 
-      - name: Lint and stylecheck
-        run: conda run -n qiime2-dev make stylecheck
+      - name: Lint and stylecheck (not using Black to check Python code)
+        run: conda run -n qiime2-dev make stylecheck_not_black
 
       # It's possible to install packages that break QIIME 2's CLI (e.g.
       # installing Click >= 8 into a Q2 2022.2 environment seems to break it --

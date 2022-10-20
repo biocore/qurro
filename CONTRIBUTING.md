@@ -21,11 +21,14 @@ environment.)
 2. Create a development conda environment for Qurro:
     1. Install the latest version of QIIME 2 natively,
        [as you would normally](https://docs.qiime2.org/2022.8/install/native/).
-       _You'll need to install a QIIME 2 version of at least 2020.11._
+       _You'll need to install a QIIME 2 version of at least 2022.8._
     2. In a terminal, navigate to the folder to which you cloned your fork of
        Qurro's source code above. Run `pip install -e .[dev]` inside this folder to
        install Qurro along with its normal and development Python dependencies.
-    3. Install the various Node.js requirements for testing Qurro's JavaScript
+    3. Install Black: `pip install "black >= 22.3.0"`. We don't include this in
+       the development dependencies for reasons that are explained later in
+       this document.
+    4. Install the various Node.js requirements for testing Qurro's JavaScript
        code. This can be done by running
        `npm install -g mocha-headless-chrome jshint prettier@2.0.5 nyc`. Note that
        this will install these programs globally on your system.
@@ -65,12 +68,18 @@ This happens due to a [Click](https://click.palletsprojects.com/)
 version being installed that is unsupported by
 QIIME 2. See [this q2cli issue](https://github.com/qiime2/q2cli/issues/259) for
 context. This can come up in development because one of Qurro's development
-dependencies is
+dependencies (used for auto-formatting and format-checking the Python code) is
 [Black](https://github.com/psf/black), and later versions of Black rely
 on Click 8 (and versions of QIIME 2 before 2022.8 do not support Click 8).
 
-In practice, we avoid this issue by pinning our version of Black to a version
-that does not require Click 8. See `setup.py` for details.
+Pinning to an older version of Black causes another problem, because -- in this
+case -- the newer version of Click used in QIIME 2 2022.8 environments will
+break Black (with [this error](https://github.com/psf/black/issues/2964)).
+
+So, we get around this issue by removing Black from our development
+dependencies completely. If you installed a version of QIIME 2 of at least
+2022.8, then installing Black (in the directions above) should not cause
+problems (or at least it should not cause these particular problems).
 
 ## Acknowledgements
 
