@@ -74,5 +74,13 @@ jobs:
       - name: Lint and stylecheck
         run: conda run -n qiime2-dev make stylecheck
 
+      # It's possible to install packages that break QIIME 2's CLI (e.g.
+      # installing Click >= 8 into a Q2 2022.2 environment seems to break it --
+      # this is discussed in the developer documentation, CONTRIBUTING.md).
+      # Verify that, by installing Qurro, we have not "broken" QIIME 2 in this
+      # way.
+      - name: Test that QIIME 2's CLI works
+        run: conda run -n qiime2-dev qiime info
+
       - name: Upload code coverage information to Codecov
         uses: codecov/codecov-action@v2
