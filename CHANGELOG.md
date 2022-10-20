@@ -15,7 +15,9 @@
   **This makes Qurro now compatible with QIIME 2 versions `>= 2020.11`!**
   - However, this change removes support for older QIIME 2 versions. (It may be
     possible to get this version of Qurro installed into an older QIIME 2
-    environment, but we do not explicitly support this.)
+    environment, but we do not explicitly support this.) If you need to use
+    Qurro in older QIIME 2 environments, you can install an older version of
+    Qurro (e.g. `pip install "qurro==0.7.1"`).
   - Notably, Songbird has not yet made the shift to pandas `>= 1`, so Songbird
     and Qurro will need to be installed into separate environments; the "Red
     Sea" example notebook details this process.

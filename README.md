@@ -58,11 +58,7 @@ Qurro can be used standalone (as a Python 3 script that generates a
 folder containing a HTML/JS/CSS visualization) or as a
 [QIIME 2](https://qiime2.org/) plugin (that generates a QZV file that can be
 visualized at [view.qiime2.org](https://view.qiime2.org/) or by using
-`qiime tools view`). *Starting with Qurro v0.8.0, Qurro requires a QIIME 2
-version of at least 2020.11.*
-
-Qurro should work with most modern web browsers. Firefox or Chrome are
-recommended.
+`qiime tools view`).
 
 Qurro is still being developed, so backwards-incompatible changes might
 occur. If you have any bug reports, feature requests, questions, or if you just
@@ -85,7 +81,18 @@ can be viewed online [here](https://biocore.github.io/qurro/demos/red_sea/index.
 
 ## Installation and Usage
 
-You can install Qurro using [pip](https://pip.pypa.io/en/stable/) or [conda](https://docs.conda.io/en/latest/). In either case, a python version of at least 3.6 and less than 3.10 is required to use Qurro.
+You can install Qurro using [pip](https://pip.pypa.io/en/stable/)
+or [conda](https://docs.conda.io/en/latest/).
+
+### System requirements
+**If you're using Qurro within QIIME 2,** you will need a QIIME 2 version of at
+least 2020.11.
+
+**If you're using Qurro outside of QIIME 2,** you will need a Python version of
+at least 3.6 and less than 3.10.
+
+In either case, Qurro should work with most modern web browsers; Firefox or Chrome are
+recommended.
 
 ### Installing with `pip`
 ```bash
