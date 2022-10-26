@@ -222,7 +222,7 @@ For JavaScript testing/style checking, Qurro uses
 [nyc](https://github.com/istanbuljs/nyc), [jshint](https://jshint.com/),
 and [prettier](https://prettier.io/).
 
-Qurro also uses [Travis-CI](https://travis-ci.com/) and
+Qurro also uses [GitHub Actions](https://github.com/features/actions) and
 [Codecov](https://codecov.io/).
 
 The Jupyter notebooks in Qurro's `example_notebooks/` folder are automatically
