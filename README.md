@@ -105,7 +105,7 @@ pip install qurro
 conda install -c conda-forge qurro
 ```
 
-### Temporary Caveat
+### Slight name adjustments
 
 Certain characters in column names in the sample metadata, feature metadata (if passed), and feature differentials (if passed) will be replaced with similar characters or just removed entirely:
 
