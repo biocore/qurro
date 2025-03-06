@@ -781,11 +781,23 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                     document.getElementById("barSizeSlider").value = newValue;
                     await document.getElementById("barSizeSlider").onchange();
                 }
-                it("Getting double paddingOuter works", async function () {
+                it("Getting double paddingOuter works", function () {
                     chai.assert.equal(2, rrv.getRankPlotDoublePaddingOuter());
                 });
-                it("Getting effective number of features works", async function () {
+                it("Getting effective number of features works", function () {
                     chai.assert.equal(7, rrv.getRankPlotEffectiveNumFeatures());
+                });
+                it("The 'fixed width' rank plot takes up a third of the width", function () {
+                    var ww = $(window).width();
+                    // this asserts that ww > 0.
+                    // you know, i might have been swapping actual / expected in all of the
+                    // earlier chai asserts i wrote for this. huh. welp
+                    chai.assert.isAbove(ww, 0);
+                    chai.assert.equal(ww / 3, rrv.getRankPlotFixedWidth());
+                });
+                it("Setting the fixed width bar sizes works", function () {
+                    var ww = $(window).width();
+                    chai.assert.equal((ww / 3) / 7, rrv.getRankPlotFixedWidthBarSize());
                 });
                 it("Changing the bar width to a constant size updates JSON and DOM properly", async function () {
                     await triggerBarSizeUpdate("3");
