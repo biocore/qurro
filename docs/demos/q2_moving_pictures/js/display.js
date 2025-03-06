@@ -285,10 +285,7 @@ define([
                 // fitting actually increases the bar sizes to be reasonable to
                 // view/select.
                 // TODO: make this a separate func so we can unit-test it
-                if (
-                    this.featureIDs.length <=
-                    this.rankPlotJSON.config.view.width
-                ) {
+                if (this.getRankPlotEffectiveNumFeatures() <= this.getRankPlotFixedWidth()) {
                     document.getElementById(
                         "fitBarSizeCheckbox"
                     ).checked = true;
@@ -511,6 +508,60 @@ define([
             await this.makeRankPlot(true);
         }
 
+        /* Returns a reasonable rank plot width to use for the "constant
+         * plot width" checkbox.
+         *
+         * Previously, we could figure out the width of the rank plot using
+         * this.rankPlotJSON.config.view.width. This is no longer possible
+         * as of 2025. We *can* use .config.view.continuousWidth, but that's
+         * smaller and doesn't seem to actually do anything because the width
+         * of the plot is determined by the step sizes instead. huh. I guess
+         * that makes sense...? It makes you wonder what .config.view.width
+         * even was being set to in the first place.
+         *
+         * So! For the purposes of just, like, setting the bars in the rank
+         * plot to some sort of reasonably small-ish area to make the display
+         * look nice, we can just use jQuery to get a reasonable size for the
+         * rank plot. This is cool because the return value of
+         * $(window).width() scales as we resize the browser window, so
+         * as we call this function it should always give a reasonable-ish rank
+         * plot width. It won't be the SAME fixed width as before, but that
+         * shouldn't be a big deal. The units are the same, anyway (the output
+         * of $(window).width() is pixels).
+         *
+         * See: https://api.jquery.com/width/ and
+         * https://stackoverflow.com/a/1038765/10730311
+         */
+        getRankPlotFixedWidth() {
+            return $(window).width() / 3;
+        }
+
+        /* Returns the outer padding of the rank plot.
+         *
+         * See https://vega.github.io/vega-lite/docs/scale.html#band for a
+         * diagram. Basically, if this is 0, then the leftmost side of the
+         * leftmost feature's bar will be flush with the left side of the plot
+         * (same with the right side); and if this is 1, then we'll have an
+         * extra "bar" worth of space on both sides. And so on.
+         *
+         * This doesn't normally matter, but if there are very few features
+         * (as in e.g. the "matching" integration test) then we want to take
+         * this into account when scaling the plot. The value returned by
+         * this function can be "added on" to the number of features we have
+         * when figuring out how to scale the bar widths.
+         */
+        getRankPlotDoublePaddingOuter() {
+            return this.rankPlotJSON.encoding.x.scale.paddingOuter * 2;
+        }
+
+        getRankPlotEffectiveNumFeatures() {
+            return this.featureIDs.length + this.getRankPlotDoublePaddingOuter();
+        }
+
+        getRankPlotFixedWidthBarSize() {
+            return this.getRankPlotFixedWidth() / this.getRankPlotEffectiveNumFeatures();
+        }
+
         /* Syncs up the rank plot's bar width with whatever the slider says. */
         async updateRankPlotBarSizeToSlider(callRemakeRankPlot) {
             var sliderBarSize = Number(
@@ -524,12 +575,21 @@ define([
          * Adjusts the "disabled" status of the barSizeSlider accordingly --
          * this prevents users from triggering onchange events while "fitting"
          * the bar widths is enabled.
+         *
+         * At least in firefox, using floating-point steps for bar widths
+         * causes a weird kind of moire effect-looking pattern in the rank
+         * plot. but this (1) has been a thing forever (it is not new i think)
+         * and (2) is probably an artifact of however vega/d3/etc renders stuff
+         * under the hood. not a big deal -- i prefer the flexibility of
+         * allowing users to scrunch up the bar plot as needed, even if the
+         * aforementioned schrunched plots look a little quirky. (we COULD
+         * e.g. round off the widths to fix this, maybe, but then when there
+         * are tons and tons of features we'd either round to 0 [bad] or 1
+         * [too big].
          */
         async updateRankPlotBarFitting(callRemakeRankPlot) {
             if (document.getElementById("fitBarSizeCheckbox").checked) {
-                var fittedBarSize =
-                    this.rankPlotJSON.config.view.width /
-                    this.featureIDs.length;
+                var fittedBarSize = this.getRankPlotFixedWidthBarSize();
                 document.getElementById("barSizeSlider").disabled = true;
                 await this.updateRankPlotBarSize(
                     fittedBarSize,
@@ -548,7 +608,7 @@ define([
          * element invisible.)
          */
         async updateRankPlotBarSize(newBarSize, callRemakeRankPlot) {
-            this.rankPlotJSON.encoding.x.scale.rangeStep = newBarSize;
+            this.rankPlotJSON.width.step = newBarSize;
             if (newBarSize < 1) {
                 document
                     .getElementById("barSizeWarning")
