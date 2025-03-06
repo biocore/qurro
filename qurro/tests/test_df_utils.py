@@ -131,13 +131,13 @@ def test_replace_nan():
     """Tests replace_nan()."""
 
     # Basic case: other data are ints
-    df = DataFrame({"x": [1, np.NaN], "y": [3, 4]}, index=["a", "b"])
+    df = DataFrame({"x": [1, np.nan], "y": [3, 4]}, index=["a", "b"])
     dfC = DataFrame({"x": [1, None], "y": [3, 4]}, index=["a", "b"])
     assert_frame_equal(dfC, replace_nan(df), check_dtype=False)
 
     # Other data are strs
     df2 = DataFrame(
-        {"x": ["abc", np.NaN], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": ["abc", np.nan], "y": ["ghi", "jkl"]}, index=["a", "b"]
     )
     dfC2 = DataFrame(
         {"x": ["abc", None], "y": ["ghi", "jkl"]}, index=["a", "b"]
@@ -146,7 +146,7 @@ def test_replace_nan():
 
     # Entire Series of NaNs
     df3 = DataFrame(
-        {"x": [np.NaN, np.NaN], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": [np.nan, np.nan], "y": ["ghi", "jkl"]}, index=["a", "b"]
     )
     dfC3 = DataFrame(
         {"x": [None, None], "y": ["ghi", "jkl"]}, index=["a", "b"]
@@ -155,7 +155,7 @@ def test_replace_nan():
 
     # Entire DataFrame of NaNs
     df4 = DataFrame(
-        {"x": [np.NaN, np.NaN], "y": [np.NaN, np.NaN]}, index=["a", "b"]
+        {"x": [np.nan, np.nan], "y": [np.nan, np.nan]}, index=["a", "b"]
     )
     dfC4 = DataFrame({"x": [None, None], "y": [None, None]}, index=["a", "b"])
     assert_frame_equal(dfC4, replace_nan(df4), check_dtype=False)
@@ -163,14 +163,14 @@ def test_replace_nan():
     # If there are already Nones inside the DF for some reason (should never be
     # the case, but might as well be safe and check this)
     df5 = DataFrame(
-        {"x": [np.NaN, None], "y": [np.NaN, np.NaN]}, index=["a", "b"]
+        {"x": [np.nan, None], "y": [np.nan, np.nan]}, index=["a", "b"]
     )
     dfC5 = DataFrame({"x": [None, None], "y": [None, None]}, index=["a", "b"])
     assert_frame_equal(dfC5, replace_nan(df5), check_dtype=False)
 
     # Case where the user specifies an alternate value to replace NaNs with
     df6 = DataFrame(
-        {"x": [np.NaN, 3], "y": [np.NaN, np.NaN]}, index=["a", "b"]
+        {"x": [np.nan, 3], "y": [np.nan, np.nan]}, index=["a", "b"]
     )
     dfC6 = DataFrame({"x": ["lol", 3], "y": ["lol", "lol"]}, index=["a", "b"])
     assert_frame_equal(dfC6, replace_nan(df6, "lol"), check_dtype=False)
