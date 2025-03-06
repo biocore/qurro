@@ -27,10 +27,6 @@ jobs:
         # NOTE: this is work that should probably be delegated to the new
         # QIIME 2 library pages eventually
         q2-yaml: [
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2020.11/release/qiime2-2020.11-py36-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2021.8/release/qiime2-2021.8-py38-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.2/release/qiime2-2022.2-py38-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.8/release/qiime2-2022.8-py38-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.11/release/qiime2-2022.11-py38-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.2/release/qiime2-2023.2-py38-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.5/release/qiime2-2023.5-py38-linux-conda.yml",
