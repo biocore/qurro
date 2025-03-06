@@ -797,7 +797,10 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                 });
                 it("Setting the fixed width bar sizes works", function () {
                     var ww = $(window).width();
-                    chai.assert.equal((ww / 3) / 7, rrv.getRankPlotFixedWidthBarSize());
+                    chai.assert.equal(
+                        ww / 3 / 7,
+                        rrv.getRankPlotFixedWidthBarSize()
+                    );
                 });
                 it("Changing the bar width to a constant size updates JSON and DOM properly", async function () {
                     await triggerBarSizeUpdate("3");
