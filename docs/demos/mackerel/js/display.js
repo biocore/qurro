@@ -285,7 +285,10 @@ define([
                 // fitting actually increases the bar sizes to be reasonable to
                 // view/select.
                 // TODO: make this a separate func so we can unit-test it
-                if (this.getRankPlotEffectiveNumFeatures() <= this.getRankPlotFixedWidth()) {
+                if (
+                    this.getRankPlotEffectiveNumFeatures() <=
+                    this.getRankPlotFixedWidth()
+                ) {
                     document.getElementById(
                         "fitBarSizeCheckbox"
                     ).checked = true;
@@ -555,11 +558,16 @@ define([
         }
 
         getRankPlotEffectiveNumFeatures() {
-            return this.featureIDs.length + this.getRankPlotDoublePaddingOuter();
+            return (
+                this.featureIDs.length + this.getRankPlotDoublePaddingOuter()
+            );
         }
 
         getRankPlotFixedWidthBarSize() {
-            return this.getRankPlotFixedWidth() / this.getRankPlotEffectiveNumFeatures();
+            return (
+                this.getRankPlotFixedWidth() /
+                this.getRankPlotEffectiveNumFeatures()
+            );
         }
 
         /* Syncs up the rank plot's bar width with whatever the slider says. */
