@@ -299,8 +299,17 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
                 # Another 2025 note: for some reason, labelOverlap's default
                 # is False now. See above note w/r/t these changes being a
                 # form of divine punishment. Anyway setting this to True
-                # seems to bring back the old behavior
-                axis=alt.Axis(ticks=False, labelAngle=0, labelOverlap=True),
+                # seems to bring back the old behavior.
+                # Also! I'm not sure if this was an issue before, but sometimes
+                # x-axis labels on the rank plot won't technically overlap but
+                # will still be super close together. Increasing
+                # labelSeparation from the default of 0 to 2 seems to fix this.
+                axis=alt.Axis(
+                    ticks=False,
+                    labelAngle=0,
+                    labelOverlap=True,
+                    labelSeparation=2,
+                ),
             ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
