@@ -781,6 +781,12 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                     document.getElementById("barSizeSlider").value = newValue;
                     await document.getElementById("barSizeSlider").onchange();
                 }
+                it("Getting double paddingOuter works", async function () {
+                    chai.assert.equal(2, rrv.getRankPlotDoublePaddingOuter());
+                });
+                it("Getting effective number of features works", async function () {
+                    chai.assert.equal(7, rrv.getRankPlotEffectiveNumFeatures());
+                });
                 it("Changing the bar width to a constant size updates JSON and DOM properly", async function () {
                     await triggerBarSizeUpdate("3");
                     chai.assert.equal(3, rrv.rankPlotJSON.width.step);
