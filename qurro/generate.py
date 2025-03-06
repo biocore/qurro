@@ -270,6 +270,9 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
             title="Features",
             background="#FFFFFF",
             autosize=alt.AutoSizeParams(resize=True),
+            # New (circa 2025) way of setting rangeStep (i.e. the width of
+            # each bar)
+            width=alt.Step(1),
         )
         .mark_bar()
         .transform_window(
@@ -286,8 +289,18 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
                 "qurro_x",
                 title="Feature Rankings",
                 type="ordinal",
-                scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
-                axis=alt.Axis(ticks=False, labelAngle=0),
+                # Note from 2025 (!!!): previously, we would set rangeStep=1
+                # here to set the initial width of each bar to 1. This is no
+                # longer supported, so instead we have to set this as a
+                # top-level property of the chart. Presumably this is because
+                # god hates me personally. Anyway, search for "alt.Step" in
+                # this file to see the new thing.
+                scale=alt.Scale(paddingOuter=1, paddingInner=0),
+                # Another 2025 note: for some reason, labelOverlap's default
+                # is False now. See above note w/r/t these changes being a
+                # form of divine punishment. Anyway setting this to True
+                # seems to bring back the old behavior
+                axis=alt.Axis(ticks=False, labelAngle=0, labelOverlap=True),
             ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
@@ -408,8 +421,8 @@ def gen_sample_plot(metadata):
             tooltip=["Sample ID:N", "qurro_balance:Q"],
         )
         .configure_range(
-            ramp=alt.SchemeConfig(scheme="blues"),
-            category=alt.SchemeConfig(scheme="tableau10"),
+            ramp=alt.Color(scheme="blues"),
+            category=alt.Color(scheme="tableau10"),
         )
         .configure_axis(labelBound=True)
         .interactive()
