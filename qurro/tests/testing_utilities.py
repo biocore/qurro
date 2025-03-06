@@ -286,7 +286,7 @@ def validate_rank_plot_json(
     # (This is all handled by Altair, so these property tests aren't
     # exhaustive; they're mainly intended to verify that a general plot
     # matching our specs is being created)
-    assert rank_json["mark"] == "bar"
+    assert rank_json["mark"] == {"type": "bar"}
     assert rank_json["title"] == "Features"
     basic_vegalite_json_validation(rank_json)
 
