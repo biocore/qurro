@@ -548,7 +548,7 @@ define([
          * element invisible.)
          */
         async updateRankPlotBarSize(newBarSize, callRemakeRankPlot) {
-            this.rankPlotJSON.encoding.x.scale.rangeStep = newBarSize;
+            this.rankPlotJSON.width.step = newBarSize;
             if (newBarSize < 1) {
                 document
                     .getElementById("barSizeWarning")
