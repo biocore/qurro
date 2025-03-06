@@ -111,7 +111,8 @@ Certain characters in column names in the sample metadata, feature metadata (if 
 
 | Old Character(s) | New Character |
 | ------------- | ------------- |
-| `.`  | `:`  |
+| `.`  | `_`  |
+| `:`  | `;`  |
 | `]`  | `)`  |
 | `[`  | `(`  |
 | `\ ` | <code>\|</code>  |

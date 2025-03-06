@@ -70,7 +70,9 @@ def fix_id(fid):
     new_id = ""
     for c in fid:
         if c == ".":
-            new_id += ":"
+            new_id += "_"
+        elif c == ":":
+            new_id += ";"
         elif c == "]":
             new_id += ")"
         elif c == "[":
