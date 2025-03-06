@@ -285,7 +285,7 @@ define([
                 // fitting actually increases the bar sizes to be reasonable to
                 // view/select.
                 // TODO: make this a separate func so we can unit-test it
-                if (this.featureIDs.length <= this.getRankPlotFixedWidth()) {
+                if (this.getRankPlotEffectiveNumFeatures() <= this.getRankPlotFixedWidth()) {
                     document.getElementById(
                         "fitBarSizeCheckbox"
                     ).checked = true;
@@ -536,6 +536,32 @@ define([
             return $(window).width() / 3;
         }
 
+        /* Returns the outer padding of the rank plot.
+         *
+         * See https://vega.github.io/vega-lite/docs/scale.html#band for a
+         * diagram. Basically, if this is 0, then the leftmost side of the
+         * leftmost feature's bar will be flush with the left side of the plot
+         * (same with the right side); and if this is 1, then we'll have an
+         * extra "bar" worth of space on both sides. And so on.
+         *
+         * This doesn't normally matter, but if there are very few features
+         * (as in e.g. the "matching" integration test) then we want to take
+         * this into account when scaling the plot. The value returned by
+         * this function can be "added on" to the number of features we have
+         * when figuring out how to scale the bar widths.
+         */
+        getRankPlotDoublePaddingOuter() {
+            return this.rankPlotJSON.encoding.x.scale.paddingOuter * 2;
+        }
+
+        getRankPlotEffectiveNumFeatures() {
+            return this.featureIDs.length + this.getRankPlotDoublePaddingOuter();
+        }
+
+        getRankPlotFixedWidthBarSize() {
+            return this.getRankPlotFixedWidth() / this.getRankPlotEffectiveNumFeatures();
+        }
+
         /* Syncs up the rank plot's bar width with whatever the slider says. */
         async updateRankPlotBarSizeToSlider(callRemakeRankPlot) {
             var sliderBarSize = Number(
@@ -563,8 +589,7 @@ define([
          */
         async updateRankPlotBarFitting(callRemakeRankPlot) {
             if (document.getElementById("fitBarSizeCheckbox").checked) {
-                var fittedBarSize =
-                    this.getRankPlotFixedWidth() / this.featureIDs.length;
+                var fittedBarSize = this.getRankPlotFixedWidthBarSize();
                 document.getElementById("barSizeSlider").disabled = true;
                 await this.updateRankPlotBarSize(
                     fittedBarSize,
