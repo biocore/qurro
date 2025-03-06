@@ -1,5 +1,42 @@
 # Qurro changelog
 
+## Qurro 0.9.0 (March ???, 2025)
+
+Been a while!
+
+### Features added
+- Adjusted the `Fit bar widths to a constant plot width?` option to work better.
+  Now, the "constant plot width" is computed as a third of the window size upon
+  clicking this checkbox; for some displays, I think this is a larger value than
+  the previous setting here.
+  ([#32](https://github.com/biocore/qurro/issues/32),
+
+- Added support for jitter plots (aka strip plots).
+  ([#135](https://github.com/biocore/qurro/issues/135))
+
+### Backward-incompatible changes
+### Bug fixes
+### Performance enhancements
+- As a side effect of updating the Vega, Vega-Lite, etc. versions, the categorical color
+  legend used in the sample plot will now truncate entries (showing something
+  like `... 5 entries`) when there are many (I think the default is > 30)
+  entries in the legend.
+
+### Miscellaneous
+- Adjusted dependency "pins" to now support newer versions of Altair and SciPy.
+  **This should make Qurro now compatible with all Python versions `>= 3.6`,
+  and with all QIIME 2 versions `>= 2020.11`.**
+  ([#216](https://github.com/biocore/qurro/issues/216),
+  [#327](https://github.com/biocore/qurro/issues/327),
+  [#328](https://github.com/biocore/qurro/issues/328),
+  [#330](https://github.com/biocore/qurro/issues/330))
+
+- Along with the above changes, updated the versions of Vega, Vega-Lite, and
+  Vega-Embed in use.
+
+- Added more JavaScript tests.
+
+
 ## Qurro 0.8.0 (October 19, 2022)
 ### Features added
 - Added an option to Qurro's visualization interface to exclude metadata
