@@ -809,8 +809,11 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                         // We have 5 features in this test rank plot JSON, and
                         // paddingOuter is set to 1 by default. So, there are
                         // 7 "features" to allocate space for.
-                        var expectedWidth = ($(window).width() / 3) / 7;
-                        chai.assert.equal(expectedWidth, rrv.rankPlotJSON.width.step);
+                        var expectedWidth = $(window).width() / 3 / 7;
+                        chai.assert.equal(
+                            expectedWidth,
+                            rrv.rankPlotJSON.width.step
+                        );
                         chai.assert.isTrue(
                             document
                                 .getElementById("barSizeWarning")
