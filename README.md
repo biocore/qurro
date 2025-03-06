@@ -89,7 +89,7 @@ or [conda](https://docs.conda.io/en/latest/).
 least 2020.11.
 
 **If you're using Qurro outside of QIIME 2,** you will need a Python version of
-at least 3.6 and less than 3.10.
+at least 3.6.
 
 In either case, Qurro should work with most modern web browsers; Firefox or Chrome are
 recommended.
@@ -105,7 +105,7 @@ pip install qurro
 conda install -c conda-forge qurro
 ```
 
-### Slight name adjustments
+### Slight field name adjustments
 
 Certain characters in column names in the sample metadata, feature metadata (if passed), and feature differentials (if passed) will be replaced with similar characters or just removed entirely:
 
