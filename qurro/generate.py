@@ -291,24 +291,22 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
                 type="ordinal",
                 # Note from 2025 (!!!): previously, we would set rangeStep=1
                 # here to set the initial width of each bar to 1. This is no
-                # longer supported, so instead we have to set this as a
-                # top-level property of the chart. Presumably this is because
-                # god hates me personally. Anyway, search for "alt.Step" in
-                # this file to see the new thing.
+                # longer supported, since now the width of the ordinal chart
+                # is apparently determined entirely by the width of the bars.
+                # See "alt.Step" a bit above to see where step is now set.
                 scale=alt.Scale(paddingOuter=1, paddingInner=0),
                 # Another 2025 note: for some reason, labelOverlap's default
-                # is False now. See above note w/r/t these changes being a
-                # form of divine punishment. Anyway setting this to True
-                # seems to bring back the old behavior.
-                # Also! I'm not sure if this was an issue before, but sometimes
-                # x-axis labels on the rank plot won't technically overlap but
-                # will still be super close together. Increasing
-                # labelSeparation from the default of 0 to 2 seems to fix this.
+                # is False now. Was it always False? Not sure, but it seems
+                # different. Anyway setting it to True makes plot look like
+                # before. Also! I'm not sure if this was an issue before, but
+                # sometimes x-axis labels on the rank plot won't technically
+                # overlap but will still be super close together. Increasing
+                # labelSeparation from its default of 0 seems to fix this.
                 axis=alt.Axis(
                     ticks=False,
                     labelAngle=0,
                     labelOverlap=True,
-                    labelSeparation=2,
+                    labelSeparation=4,
                 ),
             ),
             y=alt.Y(default_rank_col, type="quantitative"),
