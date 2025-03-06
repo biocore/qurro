@@ -28,7 +28,13 @@ jobs:
       - name: Install Cython and NumPy
         run: pip install cython "numpy >= 1.12.0"
 
-      - name: Install a newer version of scikit-bio to get around installation issues
+      - name: Run pip list
+        run: pip list
+
+      - name: Install pandas
+        run: pip install "pandas >= 1.5"
+
+      - name: Install scikit-bio
         run: pip install "scikit-bio >= 0.5.8"
 
       - name: Install Qurro (and its pip dependencies)
