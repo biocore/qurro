@@ -23,7 +23,14 @@ from qurro._df_utils import escape_columns
 from qurro.__init__ import __version__
 
 
-@click.command()
+@click.command(
+    # Fancy CLI tweaks from
+    # https://github.com/fedarko/strainFlye/blob/main/strainflye/_cli.py --
+    # 1. make -h work as an alternative to --help
+    context_settings={"help_option_names": ["-h", "--help"]},
+    # 2. if the user just types "qurro", show help rather than yelling at them
+    no_args_is_help=True,
+)
 @click.option("-r", "--ranks", required=True, help=RANKS)
 @click.option("-t", "--table", required=True, help=TABLE)
 @click.option("-sm", "--sample-metadata", required=True, help=SAMPLE_METADATA)
