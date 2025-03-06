@@ -551,10 +551,10 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
             "{}".format(sugg)
         )
 
-    if "qurro_balance" in sm_cols:
+    if "qurro_balance" in sm_cols or "qurro_jitter" in sm_cols:
         raise ValueError(
             "Sample metadata can't contain any columns called "
-            '"qurro_balance".{}'.format(sugg)
+            '"qurro_balance" or "qurro_jitter".{}'.format(sugg)
         )
 
     if "qurro_classification" in fr_cols or "qurro_classification" in fm_cols:

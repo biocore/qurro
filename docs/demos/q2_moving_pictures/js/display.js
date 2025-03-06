@@ -142,6 +142,7 @@ define([
                 "colorField",
                 "colorScale",
                 "borderCheckbox",
+                "jitterCheckbox",
             ];
 
             // Set up relevant DOM bindings
@@ -190,6 +191,9 @@ define([
                     },
                     boxplotCheckbox: async function () {
                         await display.updateSamplePlotBoxplot();
+                    },
+                    jitterCheckbox: async function () {
+                        await display.updateSamplePlotJitter();
                     },
                     borderCheckbox: async function () {
                         await display.updateSamplePlotBorders();
@@ -979,6 +983,11 @@ define([
          * metadata values due to how Qurro's python code processes sample
          * metadata (replacing all NaN values with None, which gets converted
          * to null by json.dumps() in python).
+         *
+         * ... Also, this is unrelated, but while we are initializing the
+         * samplePlotJSON.transform, we also include a transform creating the
+         * "qurro_jitter" field randomly for use with jitter plots. Just in
+         * case the user wants to use those at some point.
          */
         updateSamplePlotFilters() {
             // Figure out the current [x-axis/color] [field/encoding type].
@@ -1012,7 +1021,10 @@ define([
                     " && isFinite(toNumber(" + datumColorField + "))";
             }
 
-            this.samplePlotJSON.transform = [{ filter: filterString }];
+            this.samplePlotJSON.transform = [
+                { filter: filterString },
+                { calculate: "random()", as: "qurro_jitter" },
+            ];
         }
 
         /* Update color so that color encoding matches the x-axis encoding
@@ -1213,11 +1225,22 @@ define([
         async updateSamplePlotBorders() {
             if (document.getElementById("borderCheckbox").checked) {
                 this.addSamplePlotBorders();
-                await this.remakeSamplePlot();
             } else {
                 this.removeSamplePlotBorders();
-                await this.remakeSamplePlot();
             }
+            await this.remakeSamplePlot();
+        }
+
+        /* Same deal, but for jitter. Can't believe this took my entire phd to
+         * get done lmao
+         */
+        async updateSamplePlotJitter() {
+            if (document.getElementById("jitterCheckbox").checked) {
+                this.addSamplePlotJitter();
+            } else {
+                this.removeSamplePlotJitter();
+            }
+            await this.remakeSamplePlot();
         }
 
         /* Updates this.exclSMFieldsInExport based on its corresponding
@@ -1245,6 +1268,22 @@ define([
             delete this.samplePlotJSON.encoding.color.legend;
         }
 
+        addSamplePlotJitter() {
+            // regarding the scale: qurro_jitter will be a random number
+            // in the range [0, 1]. We can increase padding between adjacent
+            // categories by reducing jitter - and we can do that by just
+            // using a slightly larger domain.
+            this.samplePlotJSON.encoding.xOffset = {
+                field: "qurro_jitter",
+                type: "quantitative",
+                scale: { domain: [-0.25, 1.25] },
+            };
+        }
+
+        removeSamplePlotJitter() {
+            delete this.samplePlotJSON.encoding.xOffset;
+        }
+
         /* Changes the sample plot JSON and DOM elements to get ready for
          * switching to "boxplot mode." If callRemakeSamplePlot is truthy, this
          * will actually call this.remakeSamplePlot(); otherwise, this won't do
@@ -1262,6 +1301,7 @@ define([
          */
         async changeSamplePlotToBoxplot(callRemakeSamplePlot) {
             this.removeSamplePlotBorders();
+            this.removeSamplePlotJitter();
             this.samplePlotJSON.mark.type = "boxplot";
             // Make the middle tick of the boxplot black. This makes boxes for
             // which only one sample is available show up on the white
@@ -1284,6 +1324,9 @@ define([
         async changeSamplePlotFromBoxplot(callRemakeSamplePlot) {
             if (document.getElementById("borderCheckbox").checked) {
                 this.addSamplePlotBorders();
+            }
+            if (document.getElementById("jitterCheckbox").checked) {
+                this.addSamplePlotJitter();
             }
             this.samplePlotJSON.mark.type = "circle";
             delete this.samplePlotJSON.mark.median;
