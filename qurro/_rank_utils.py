@@ -166,7 +166,7 @@ def filter_unextreme_features(
         return table, ranks
     elif extreme_feature_count < 1:
         raise ValueError("Extreme feature count must be at least 1.")
-    elif type(extreme_feature_count) != int:
+    elif type(extreme_feature_count) is not int:
         raise ValueError("Extreme feature count must be an integer.")
 
     efc2 = extreme_feature_count * 2

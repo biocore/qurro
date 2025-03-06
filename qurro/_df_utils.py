@@ -657,7 +657,7 @@ def vibe_check(
         "log-ratios outside of the Qurro visualization interface."
     ).format(safe_range[0])
 
-    for (df, df_name) in (
+    for df, df_name in (
         (table_sdf, "feature table"),
         (feature_ranks, "feature rankings data"),
     ):

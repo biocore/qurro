@@ -55,7 +55,7 @@ def get_q2_comment_lines(md_file_loc):
             line_num += 1
         return q2_lines
 
-    if type(md_file_loc) == StringIO:
+    if type(md_file_loc) is StringIO:
         q2_lines = iterate_over_file_obj_lines(md_file_loc)
         # HACK: Allow us to read through this StringIO again --
         # https://stackoverflow.com/a/27261215/10730311
