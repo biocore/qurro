@@ -40,11 +40,9 @@ jobs:
           
       - name: Set up Node.js
         uses: actions/setup-node@v4
-        with:
-          node-version: "12.x"
 
       - name: Install Qurro's Node.js development dependencies
-        run: npm install -g mocha-headless-chrome nyc prettier@2.0.5 jshint
+        run: npm install -g mocha-headless-chrome nyc@15.1.0 prettier@2.0.5 jshint
 
       - name: Run tests
         run: |
