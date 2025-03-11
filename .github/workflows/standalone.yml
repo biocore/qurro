@@ -1,6 +1,5 @@
-# Based on
-# https://github.com/fedarko/pyfastg/blob/master/.github/workflows/main.yml
-name: Standalone CI
+# Based on https://github.com/fedarko/pyfastg/blob/master/.github/workflows/main.yml
+name: Standalone CI (Python ≥ 3.8)
 on: [push, pull_request]
 jobs:
   build:
@@ -14,7 +13,7 @@ jobs:
       # Run all matrix jobs, even if one of them fails.
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
 
@@ -27,22 +26,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Cython and NumPy (Python >= 3.8 only)
-        if: matrix.python-version != '3.6' && matrix.python-version != '3.7'
+      - name: Install Cython and NumPy
         run: pip install cython "numpy >= 1.12.0"
-
-      # scikit-bio 0.5.7 can't be installed into python 3.7, so we could try
-      # scikit-bio 0.5.8, but then that requires pandas >= 1.5, and then
-      # pandas 1.4 imposed a min python version of 3.8. We could just be like
-      # "don't use python 3.6 or 3.7", but that's a foul thing to do due to a
-      # single dependency having issues, so we can special-case this to still
-      # test that python 3.6 and 3.7 work as expected.
-      - name: Install Cython, Numpy, and an old version of scikit-bio (Python < 3.8 only)
-        if: matrix.python-version == '3.6' || matrix.python-version == '3.7'
-        run: |
-          pip install cython
-          pip install "numpy < 1.13"
-          pip install "scikit-bio == 0.5.5"
 
       - name: Install Qurro (and its pip dependencies)
         run: pip install -e .[dev]
@@ -63,10 +48,3 @@ jobs:
 
       - name: Lint and stylecheck (including using Black to check Python code)
         run: make stylecheck
-
-      # NOTE: For now, we only submit coverage reports from the QIIME 2 CI,
-      # since the tests that that CI runs are a superset of those ran by this
-      # "standalone" CI. (Also, Codecov wasn't merging them, which caused
-      # coverage to be underreported.)
-      # - name: Upload code coverage information to Codecov
-      #   uses: codecov/codecov-action@v2
