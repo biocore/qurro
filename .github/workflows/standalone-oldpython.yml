@@ -34,9 +34,8 @@ jobs:
       # single dependency having issues, so we can special-case this to still
       # test that python 3.6 and 3.7 work as expected.
       # 
-      # Pinnin numpy < 1.14 per https://github.com/scikit-bio/scikit-bio/issues/1600
+      # Pinning numpy < 1.14 per https://github.com/scikit-bio/scikit-bio/issues/1600
       - name: Install Cython, NumPy, and an old version of scikit-bio
-        if: matrix.python-version != '3.6' && matrix.python-version != '3.7'
         run: |
           pip install cython "numpy < 1.14"
           pip install "scikit-bio == 0.5.5"
