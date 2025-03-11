@@ -37,7 +37,7 @@ jobs:
       # single dependency having issues, so we can special-case this to still
       # test that python 3.6 and 3.7 work as expected.
       - name: Install an old version of scikit-bio that works with Python ${{ matrix.python-version }}
-        if: ${{ matrix.python-version == "3.6" || matrix.python-version == "3.7" }}
+        if: matrix.python-version == "3.6" || matrix.python-version == "3.7"
         run: pip install "scikit-bio == 0.5.6"
 
       - name: Install Qurro (and its pip dependencies)
