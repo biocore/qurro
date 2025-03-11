@@ -11,10 +11,24 @@ Been a while!
   the previous setting here.
   ([#32](https://github.com/biocore/qurro/issues/32),
 
-- Added support for jitter plots (aka strip plots).
+- Added support for jitter plots (aka strip plots), thanks to our use of a new Vega-Lite
+  version.
   ([#135](https://github.com/biocore/qurro/issues/135))
 
+- As a side effect of updating the Vega, Vega-Lite, etc. versions, the colors of
+  outlier points in boxplots are now colored the same color as their corresponding
+  box.
+  ([vega/vega-lite#6818](https://github.com/vega/vega-lite/issues/6818))
+
 ### Backward-incompatible changes
+- Updated Altair pin to `>= 4.0`.
+
+- Newer versions of Altair assign special meaning to colon characters (`:`).
+  This causes issues with field names (e.g. sample metadata fields) that contain
+  `:`s.
+  - To avoid these issues, I now change `.` into `_` (rather than into `:`, as
+    was previously done), and change `:` into `;`.
+
 ### Bug fixes
 ### Performance enhancements
 - As a side effect of updating the Vega, Vega-Lite, etc. versions, the categorical color
@@ -36,6 +50,7 @@ Been a while!
 
 - Added more JavaScript tests.
 
+- Updated the build to test Python versions 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13.
 
 ## Qurro 0.8.0 (October 19, 2022)
 ### Features added
