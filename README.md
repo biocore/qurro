@@ -6,7 +6,8 @@
 
 <div align="center">
 <a href="https://github.com/biocore/qurro/actions/workflows/qiime2.yml"><img src="https://github.com/biocore/qurro/actions/workflows/qiime2.yml/badge.svg" alt="QIIME 2 CI" /></a>
-<a href="https://github.com/biocore/qurro/actions/workflows/standalone.yml"><img src="https://github.com/biocore/qurro/actions/workflows/standalone.yml/badge.svg" alt="Standalone CI" /></a>
+<a href="https://github.com/biocore/qurro/actions/workflows/standalone.yml"><img src="https://github.com/biocore/qurro/actions/workflows/standalone-oldpython.yml/badge.svg" alt="Standalone CI (Python 3.6 and 3.7)" /></a>
+<a href="https://github.com/biocore/qurro/actions/workflows/standalone.yml"><img src="https://github.com/biocore/qurro/actions/workflows/standalone.yml/badge.svg" alt="Standalone CI (Python ≥ 3.8)" /></a>
 <a href="https://codecov.io/gh/biocore/qurro"><img src="https://codecov.io/gh/biocore/qurro/branch/master/graph/badge.svg" alt="Code Coverage" /></a>
 <a href="https://zenodo.org/badge/latestdoi/158270494"><img src="https://zenodo.org/badge/158270494.svg" alt="DOI" /></a>
 <a href="https://pypi.org/project/qurro"><img src="https://img.shields.io/pypi/v/qurro.svg?color=006dad" alt="PyPI" /></a>

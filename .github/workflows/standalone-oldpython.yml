@@ -35,6 +35,8 @@ jobs:
       # test that python 3.6 and 3.7 work as expected.
       # 
       # Pinning numpy < 1.14 per https://github.com/scikit-bio/scikit-bio/issues/1600
+      # NOTE: for some reason installing numpy < 1.14 through pip fails, but through
+      # conda it succeeds. literally no idea why. not gonna question it.
       - name: Install Cython, NumPy, and an old version of scikit-bio
         run: |
           conda run -n qenv pip install cython
