@@ -42,7 +42,7 @@ jobs:
         run: |
           pip install cython
           pip install numpy
-          pip install "scikit-bio < 0.5.7"
+          pip install "scikit-bio == 0.5.5"
 
       - name: Install Qurro (and its pip dependencies)
         run: pip install -e .[dev]
