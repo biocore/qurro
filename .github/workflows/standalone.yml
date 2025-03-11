@@ -19,11 +19,11 @@ jobs:
     steps:
 
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
