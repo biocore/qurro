@@ -15,7 +15,22 @@ jobs:
         # that Qurro works on all of the QIIME 2 versions it actually, you
         # know, supports. It should work with Q2 >= 2020.11.
         #
-        # We could use a matrix of just QIIME 2 version strings (e.g.
+        # NOTE: Only testing a subset of these releases. Notably, the conda installer
+        # on GitHub Actions gives the following error (or something like it, with
+        # slightly different libhwloc versions) when trying to install
+        # the QIIME 2 2022.2 or 2022.8 environments.
+        #
+        # LibMambaUnsatisfiableError: Encountered problems while solving:
+        #   - nothing provides __cuda needed by libhwloc-2.10.0-cuda112_h1d65752_0
+        #
+        # ... So we just skip Q2 2022.2 and 2022.8 in the build for now, because
+        # I don't have time to finagle a workaround for just these (I assume that
+        # if you can get these environments installed then you can get Qurro
+        # running in them, since Qurro works in both older and newer versions of
+        # Q2). I think this might be a conda vs. mamba thing, but I don't think
+        # setup-miniconda is using mamba (???), so idk. Maybe it's just cursed.
+        #
+        # NOTE: We could use a matrix of just QIIME 2 version strings (e.g.
         # "2020.11", ...), but other stuff about the URLs change across QIIME 2
         # versions (e.g. the "-py36-" or "-py38-" thing). It ends up being
         # easier just have the variable here be the URLs to the YAMLs. That
@@ -32,8 +47,6 @@ jobs:
         q2-yaml: [
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2020.11/release/qiime2-2020.11-py36-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2021.8/release/qiime2-2021.8-py38-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.2/release/qiime2-2022.2-py38-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.8/release/qiime2-2022.8-py38-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.11/release/qiime2-2022.11-py38-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.2/release/qiime2-2023.2-py38-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.5/release/qiime2-2023.5-py38-linux-conda.yml",
