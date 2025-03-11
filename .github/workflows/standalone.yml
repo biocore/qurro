@@ -41,7 +41,7 @@ jobs:
         if: matrix.python-version == '3.6' || matrix.python-version == '3.7'
         run: |
           pip install cython
-          pip install numpy
+          pip install "numpy < 1.13"
           pip install "scikit-bio == 0.5.5"
 
       - name: Install Qurro (and its pip dependencies)
