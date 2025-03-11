@@ -42,7 +42,7 @@ jobs:
         run: |
           pip install cython
           # https://discuss.python.org/t/failed-to-build-numpy-wheel/45561
-          sudo apt install python3-numpy
+          sudo apt install -y python3-numpy
           pip install "scikit-bio < 0.5.7"
 
       - name: Install Qurro (and its pip dependencies)
