@@ -27,8 +27,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Cython and NumPy
+      - name: Install Cython and NumPy (for Python >= 3.8)
         run: pip install cython "numpy >= 1.12.0"
+        if: matrix.python-version != '3.6' && matrix.python-version != '3.7'
 
       # scikit-bio 0.5.7 can't be installed into python 3.7, so we could try
       # scikit-bio 0.5.8, but then that requires pandas >= 1.5, and then
@@ -36,12 +37,11 @@ jobs:
       # "don't use python 3.6 or 3.7", but that's a foul thing to do due to a
       # single dependency having issues, so we can special-case this to still
       # test that python 3.6 and 3.7 work as expected.
-      # ... For some reason, scikit-bio 0.5.6 doesn't work with python 3.7,
-      # but it works with python 3.6. Hopefully scikit-bio 0.5.5 works with
-      # both?
-      - name: Install an old version of scikit-bio that works with Python ${{ matrix.python-version }}
+      #
+      # Pinning numpy version per https://github.com/scikit-bio/scikit-bio/issues/1600#issuecomment-501502003
+      - name: Install Cython, Numpy, and an old version of scikit-bio (for Python < 3.8)
         if: matrix.python-version == '3.6' || matrix.python-version == '3.7'
-        run: pip install "scikit-bio == 0.5.5"
+        run: pip install cython "numpy < 1.14" "scikit-bio == 0.5.6"
 
       - name: Install Qurro (and its pip dependencies)
         run: pip install -e .[dev]
