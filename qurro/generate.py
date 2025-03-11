@@ -514,6 +514,7 @@ def gen_visualization(
         # distutils is deprecated, so this is the future-proof solution:
         # https://stackoverflow.com/a/73439464/10730311
         from shutil import copytree
+
         copytree(support_files_loc, output_dir, dirs_exist_ok=True)
     else:
         # The dirs_exist_ok flag for shutil.copytree() was only added in
@@ -521,6 +522,7 @@ def gen_visualization(
         # original solution for this, using distutils.
         # (Based on emperor.core.copy_support_files().)
         from distutils.dir_util import copy_tree
+
         copy_tree(support_files_loc, output_dir)
 
     index_path = os.path.join(output_dir, "index.html")
