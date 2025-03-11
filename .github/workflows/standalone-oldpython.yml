@@ -37,7 +37,8 @@ jobs:
       # Pinning numpy < 1.14 per https://github.com/scikit-bio/scikit-bio/issues/1600
       - name: Install Cython, NumPy, and an old version of scikit-bio
         run: |
-          conda run -n qenv pip install cython "numpy < 1.14"
+          conda run -n qenv pip install cython
+          conda run -n qenv conda install -y "numpy < 1.14"
           conda run -n qenv pip install "scikit-bio == 0.5.5"
 
       - name: Install Qurro (and its pip dependencies)
