@@ -15,8 +15,8 @@
 # ----------------------------------------------------------------------------
 
 import os
+import sys
 import logging
-import shutil
 
 import pandas as pd
 import altair as alt
@@ -506,13 +506,23 @@ def gen_visualization(
     # if these files make their way into the output directory -- they shouldn't
     # mess anything up -- but there's no need to include them.
 
-    # shutil.copytree() creates the output directory if it doesn't already
-    # exist. (When Qurro is running as a QIIME 2 plugin, output_dir already
-    # exists and we need to write stuff to it -- this is because output_dir is
-    # actually a temporary folder that QIIME 2 creates.)
-    # Previously we did this using distutils.copy_tree(), but that is no longer
-    # supported; see https://stackoverflow.com/a/73439464/10730311.
-    shutil.copytree(support_files_loc, output_dir, dirs_exist_ok=True)
+    # Create the output directory if it doesn't already exist. (When Qurro is
+    # running as a QIIME 2 plugin, output_dir already exists and we need to
+    # write stuff to it -- this is because output_dir is actually a temporary
+    # folder that QIIME 2 creates.)
+    if sys.version_info >= (3, 8):
+        # distutils is deprecated, so this is the future-proof solution:
+        # https://stackoverflow.com/a/73439464/10730311
+        from shutil import copytree
+        copytree(support_files_loc, output_dir, dirs_exist_ok=True)
+    else:
+        # The dirs_exist_ok flag for shutil.copytree() was only added in
+        # Python 3.8, so -- for older versions of Python -- we can use the
+        # original solution for this, using distutils.
+        # (Based on emperor.core.copy_support_files().)
+        from distutils.dir_util import copy_tree
+        copy_tree(support_files_loc, output_dir)
+
     index_path = os.path.join(output_dir, "index.html")
 
     # Write the plot and count JSONs to main.js so that they're loaded when
