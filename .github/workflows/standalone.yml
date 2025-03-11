@@ -14,9 +14,9 @@ jobs:
       # Run all matrix jobs, even if one of them fails.
       fail-fast: false
       matrix:
-        # Trying to pin python 3.7 version to 3.7.7 to prevent the numpy install from
+        # Trying to pin python 3.7 version to 3.7 to prevent the numpy install from
         # failing, per https://github.com/actions/runner-images/issues/1202
-        python-version: ["3.6", "3.7.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
 
@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Cython and NumPy (Python >= 3.8 only)
-        if: matrix.python-version != '3.6' && matrix.python-version != '3.7.7'
+        if: matrix.python-version != '3.6' && matrix.python-version != '3.7'
         run: pip install cython "numpy >= 1.12.0"
 
       # scikit-bio 0.5.7 can't be installed into python 3.7, so we could try
@@ -42,7 +42,7 @@ jobs:
       #
       # Pinning numpy version per https://github.com/scikit-bio/scikit-bio/issues/1600#issuecomment-501502003
       - name: Install Cython, Numpy, and an old version of scikit-bio (Python < 3.8 only)
-        if: matrix.python-version == '3.6' || matrix.python-version == '3.7.7'
+        if: matrix.python-version == '3.6' || matrix.python-version == '3.7'
         run: |
           pip install cython "numpy < 1.14"
           pip install "scikit-bio < 0.5.7"
