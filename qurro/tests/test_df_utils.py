@@ -228,7 +228,7 @@ def test_remove_empty_samples_and_features_samples():
 
     # TRY REMOVING 1 SAMPLE
     # Zero out Sample3 (it only has one count, for F1)
-    table["Sample3"]["F1"] = 0
+    table.loc["F1", "Sample3"] = 0
     # Check that just the one empty sample (Sample3) was removed, from both the
     # table and the sample metadata.
     ftable, fmetadata, franks = remove_empty_samples_and_features(
@@ -252,7 +252,7 @@ def test_remove_empty_samples_and_features_samples():
 
     # TRY REMOVING 2 SAMPLES
     # Now, zero out Sample4 (it only has one count in F4)
-    table["Sample4"]["F4"] = 0
+    table.loc["F4", "Sample4"] = 0
     ftable, fmetadata, franks = remove_empty_samples_and_features(
         table, metadata, ranks
     )
@@ -875,7 +875,7 @@ def test_add_sample_presence_count_zeros():
     verify_spc_data_integrity(ofd_2, ranks)
 
     # Test 3: just one count for one feature
-    table["Sample4"]["F2"] = 1
+    table.loc["F2", "Sample4"] = 1
     ofd_3 = add_sample_presence_count(ranks, table)
     assert_series_equal(
         ofd_3["qurro_spc"],
