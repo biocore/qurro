@@ -955,7 +955,7 @@ def test_vibe_check_failures():
 
     weird_small_values = [lower_lim - 1, lower_lim * 2, lower_lim * 3]
     for w in weird_small_values:
-        ranks["Rank 0"]["F3"] = w
+        ranks.loc["F3", "Rank 0"] = w
 
         with pytest.raises(OverflowError) as exception_info:
             vibe_check(ranks, table)
@@ -967,7 +967,7 @@ def test_vibe_check_failures():
     # Test failure, with the default safe range, on a few large cases.
     weird_large_values = [upper_lim + 1, upper_lim * 2, upper_lim * 3]
     for w in weird_large_values:
-        ranks["Rank 0"]["F3"] = w
+        ranks.loc["F3", "Rank 0"] = w
 
         with pytest.raises(OverflowError) as exception_info:
             vibe_check(ranks, table)
