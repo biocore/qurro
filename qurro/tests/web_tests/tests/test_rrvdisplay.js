@@ -59,6 +59,7 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
             testing_utilities.assertEnabled("colorField", false);
             testing_utilities.assertEnabled("colorScale", false);
             testing_utilities.assertEnabled("borderCheckbox", false);
+            testing_utilities.assertEnabled("jitterCheckbox", false);
         }
         before(async function () {
             rrv = testing_utilities.getNewRRVDisplay(
@@ -1123,6 +1124,7 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                     testing_utilities.assertEnabled("colorField", true);
                     testing_utilities.assertEnabled("colorScale", true);
                     testing_utilities.assertEnabled("borderCheckbox", true);
+                    testing_utilities.assertEnabled("jitterCheckbox", true);
                     // Fields should stay the same, and scales should stay
                     // categorical
                     chai.assert.equal(
