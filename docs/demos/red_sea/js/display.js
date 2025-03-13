@@ -1190,14 +1190,21 @@ define([
                 // labelAngle parameter.
                 if (newScale === "nominal") {
                     this.samplePlotJSON.encoding.x.axis = { labelAngle: -45 };
+                    // boxplots take precedence over jitter
                     if (document.getElementById("boxplotCheckbox").checked) {
                         this.changeSamplePlotToBoxplot(false);
+                    } else if (
+                        document.getElementById("jitterCheckbox").checked
+                    ) {
+                        this.addSamplePlotJitter();
                     }
                 } else {
                     this.changeSamplePlotFromBoxplot(false);
-                    // This should work even if the axis property is undefined
+                    // Un-rotate the x-axis labels.
+                    // This should work even if the .axis property is undefined
                     // -- it just won't do anything in that case.
                     delete this.samplePlotJSON.encoding.x.axis;
+                    this.removeSamplePlotJitter();
                 }
             } else {
                 this.samplePlotJSON.encoding.color.type = document.getElementById(
@@ -1235,12 +1242,14 @@ define([
          * get done lmao
          */
         async updateSamplePlotJitter() {
-            if (document.getElementById("jitterCheckbox").checked) {
-                this.addSamplePlotJitter();
-            } else {
-                this.removeSamplePlotJitter();
+            if (this.samplePlotJSON.encoding.x.type === "nominal") {
+                if (document.getElementById("jitterCheckbox").checked) {
+                    this.addSamplePlotJitter();
+                } else {
+                    this.removeSamplePlotJitter();
+                }
+                await this.remakeSamplePlot();
             }
-            await this.remakeSamplePlot();
         }
 
         /* Updates this.exclSMFieldsInExport based on its corresponding
@@ -1646,6 +1655,8 @@ define([
                 document.getElementById("boxplotCheckbox").checked = false;
                 // ... And the sample border checkbox
                 document.getElementById("borderCheckbox").checked = false;
+                // ... And the jitter checkbox
+                document.getElementById("jitterCheckbox").checked = false;
                 // ... And the "exclude metadata fields" checkbox
                 document.getElementById(
                     "exclSMFieldsInExportCheckbox"
