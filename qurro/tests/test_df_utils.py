@@ -434,9 +434,13 @@ def test_print_if_dropped(capsys):
 
 def test_merge_feature_metadata():
 
-    ranks = DataFrame({"R1": [1, 2], "R2": [2, 1]}, index=["F1", "F2"])
+    ranks = DataFrame(
+        {"R1": [1, 2], "R2": [2, 1]}, index=["F1", "F2"], dtype=object
+    )
     fm = DataFrame(
-        {"FM1": [None, None], "FM2": [1, 2], "FM3": [8, 7]}, index=["F1", "F2"]
+        {"FM1": [None, None], "FM2": [1, 2], "FM3": [8, 7]},
+        index=["F1", "F2"],
+        dtype=object,
     )
     # When feature metadata is None, the ranks DF should stay the same.
     result = merge_feature_metadata(ranks, None)
@@ -461,7 +465,7 @@ def test_merge_feature_metadata():
     expected["FM2"] = [1, None]
     expected["FM3"] = [8, None]
     result = merge_feature_metadata(ranks, fm)
-    assert_frame_equal(expected, result[0], check_dtype=False)
+    assert_frame_equal(replace_nan(expected), result[0], check_dtype=False)
     assert (result[1] == ["FM1", "FM2", "FM3"]).all()
 
     # Check that this works properly when no features match up exactly
