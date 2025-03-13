@@ -8,6 +8,7 @@
 # ----------------------------------------------------------------------------
 
 import logging
+import numpy as np
 
 
 def ensure_df_headers_unique(df, df_name):
@@ -102,14 +103,23 @@ def replace_nan(df, new_nan_val=None):
     """Replaces all occurrences of NaN values in the DataFrame with a specified
     value.
 
-    Note that this solution seems to result in the DataFrame's columns'
-    dtypes being changed to object. (This shouldn't change much due to how
-    we handle metadata files, though.)
+    Notes
+    -----
+    This solution seems to result in the DataFrame's columns' dtypes being
+    changed to object. (This shouldn't change much due to how we handle
+    metadata files, though.)
 
+    As of writing, None values that are present in the input DataFrame are also
+    treated as NaN values. This is fine, I think.
+
+    References
+    ----------
     Based on the solution described here:
-    https://stackoverflow.com/a/14163209/10730311
+    https://stackoverflow.com/a/14163209/10730311 --> (now, in 2025, this
+    points to https://stackoverflow.com/a/54403705/10730311, which is what
+    we now use here :)
     """
-    return df.where(df.notna(), new_nan_val)
+    return df.replace({np.nan: new_nan_val})
 
 
 def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):

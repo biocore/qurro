@@ -132,7 +132,12 @@ def test_replace_nan():
 
     # Basic case: other data are ints
     df = DataFrame({"x": [1, np.nan], "y": [3, 4]}, index=["a", "b"])
-    dfC = DataFrame({"x": [1, None], "y": [3, 4]}, index=["a", "b"])
+    # NOTE: as of 2025, it looks like modern pandas versions transform None
+    # to np.nan when loading this DF. we can force the None to remain by
+    # setting the dtype to object.
+    dfC = DataFrame(
+        {"x": [1, None], "y": [3, 4]}, index=["a", "b"], dtype=object
+    )
     assert_frame_equal(dfC, replace_nan(df), check_dtype=False)
 
     # Other data are strs
@@ -140,7 +145,9 @@ def test_replace_nan():
         {"x": ["abc", np.nan], "y": ["ghi", "jkl"]}, index=["a", "b"]
     )
     dfC2 = DataFrame(
-        {"x": ["abc", None], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": ["abc", None], "y": ["ghi", "jkl"]},
+        index=["a", "b"],
+        dtype=object,
     )
     assert_frame_equal(dfC2, replace_nan(df2), check_dtype=False)
 
@@ -149,7 +156,9 @@ def test_replace_nan():
         {"x": [np.nan, np.nan], "y": ["ghi", "jkl"]}, index=["a", "b"]
     )
     dfC3 = DataFrame(
-        {"x": [None, None], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": [None, None], "y": ["ghi", "jkl"]},
+        index=["a", "b"],
+        dtype=object,
     )
     assert_frame_equal(dfC3, replace_nan(df3), check_dtype=False)
 
@@ -157,15 +166,21 @@ def test_replace_nan():
     df4 = DataFrame(
         {"x": [np.nan, np.nan], "y": [np.nan, np.nan]}, index=["a", "b"]
     )
-    dfC4 = DataFrame({"x": [None, None], "y": [None, None]}, index=["a", "b"])
+    dfC4 = DataFrame(
+        {"x": [None, None], "y": [None, None]}, index=["a", "b"], dtype=object
+    )
     assert_frame_equal(dfC4, replace_nan(df4), check_dtype=False)
 
     # If there are already Nones inside the DF for some reason (should never be
     # the case, but might as well be safe and check this)
     df5 = DataFrame(
-        {"x": [np.nan, None], "y": [np.nan, np.nan]}, index=["a", "b"]
+        {"x": [np.nan, None], "y": [np.nan, np.nan]},
+        index=["a", "b"],
+        dtype=object,
     )
-    dfC5 = DataFrame({"x": [None, None], "y": [None, None]}, index=["a", "b"])
+    dfC5 = DataFrame(
+        {"x": [None, None], "y": [None, None]}, index=["a", "b"], dtype=object
+    )
     assert_frame_equal(dfC5, replace_nan(df5), check_dtype=False)
 
     # Case where the user specifies an alternate value to replace NaNs with
