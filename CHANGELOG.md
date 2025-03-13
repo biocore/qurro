@@ -1,6 +1,6 @@
 # Qurro changelog
 
-## Qurro 0.9.0 (March ???, 2025)
+## Qurro 0.9.0 (March 13, 2025)
 
 Been a while!
 
@@ -9,7 +9,7 @@ Been a while!
   Now, the "constant plot width" is computed as a third of the window size upon
   clicking this checkbox; for some displays, I think this is a larger value than
   the previous setting here.
-  ([#32](https://github.com/biocore/qurro/issues/32),
+  ([#32](https://github.com/biocore/qurro/issues/32)
 
 - Added support for jitter plots (aka strip plots), thanks to our use of a new Vega-Lite
   version.
@@ -20,6 +20,11 @@ Been a while!
   box.
   ([vega/vega-lite#6818](https://github.com/vega/vega-lite/issues/6818))
 
+- Now, running `qurro` from the command line by itself (without specifying any
+  parameters) will show the full help text, rather than yelling at you to specify
+  `-r/--ranks` or something.
+  - Similarly, `qurro -h` will also show you the full help text now.
+
 ### Backward-incompatible changes
 - Updated Altair pin to `>= 4.0`.
 
@@ -29,12 +34,23 @@ Been a while!
   - To avoid these issues, I now change `.` into `_` (rather than into `:`, as
     was previously done), and change `:` into `;`.
 
+- As a side effect of the jitter implementation, Qurro's python code will now raise
+  an error if your input sample metadata happens to include a column named `qurro_jitter`.
+  I am 99% sure this will not impact anyone, but I think I should at least make note of it...
+
 ### Bug fixes
+- Use `autocomplete="off"` on HTML checkboxes to prevent Firefox from keeping
+  checkboxes checked even on page reload
+  ([relevant Stack Overflow link](https://stackoverflow.com/a/471140/10730311))
+
 ### Performance enhancements
 - As a side effect of updating the Vega, Vega-Lite, etc. versions, the categorical color
   legend used in the sample plot will now truncate entries (showing something
   like `... 5 entries`) when there are many (I think the default is > 30)
   entries in the legend.
+
+- Removed an ancient comment block in the template HTML. This saves a tiny amount of space
+  in generated visualizations.
 
 ### Miscellaneous
 - Adjusted dependency "pins" to now support newer versions of Altair and SciPy.
@@ -48,9 +64,21 @@ Been a while!
 - Along with the above changes, updated the versions of Vega, Vega-Lite, and
   Vega-Embed in use.
 
-- Added more JavaScript tests.
+- Added more JavaScript tests regarding the new jittering feature and the
+  "constant plot width" updates.
 
-- Updated the build to test Python versions 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13.
+- Updated some of the Python code (mostly tests) to address warnings from pandas.
+  [#332](https://github.com/biocore/qurro/issues/332))
+
+- Various updates to the CI pipeline, including:
+  - Testing many more QIIME 2 versions (most of the releasese
+    from `2020.11` through `2024.10`, as of writing)
+  - Testing many more Python versions
+    (`3.6`, `3.7`, `3.8`, `3.9`, `3.10`, `3.11`, `3.12`, `3.13`)
+  - Splitting up the "standalone" CI into two YAML files (one for Python `3.8`
+    and later, and another for older Python versions), to account for how older
+    Python / NumPy / scikit-bio / etc. versions are apparently easier to install
+    nowadays via conda.
 
 ## Qurro 0.8.0 (October 19, 2022)
 ### Features added
