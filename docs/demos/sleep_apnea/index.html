@@ -118,13 +118,21 @@
                                 class="questionmark"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="When checked, this scales the widths of bars in the rank plot so that the rank plot takes up a constant width (ignoring what the bar width slider is set to). This is useful for displaying rank plots with either a ton of features or a tiny amount of features."
+                                title="When checked, this scales the widths of bars in the rank plot so that the rank plot takes up a constant width, relative to the current width of the browser window (and ignoring what the bar width slider is set to). Especially useful for rank plots with either a lot of features or very few features."
                             >
                             </span>
                             Fit bar widths to a constant plot width?
                         </label>
                         <div class="input-group-text">
-                            <input type="checkbox" id="fitBarSizeCheckbox" />
+                            <!-- set autocomplete="off" to prevent firefox from keeping
+                                 the checkbox checked even on page reload:
+                                 https://stackoverflow.com/a/471140/10730311
+                            -->
+                            <input
+                                autocomplete="off"
+                                type="checkbox"
+                                id="fitBarSizeCheckbox"
+                            />
                         </div>
                     </div>
                     <input
@@ -409,13 +417,39 @@
                                     class="questionmark"
                                     data-toggle="tooltip"
                                     data-placement="top"
-                                    title="When checked, the sample plot will display a boxplot (rather than a scatterplot) whenever the x-axis scale type is categorical."
+                                    title="When checked, the sample plot will display a box plot (rather than a scatterplot) whenever the x-axis scale type is categorical."
                                 >
                                 </span>
-                                Use boxplots for categorical data?
+                                Boxplots?
                             </label>
                             <div class="input-group-text">
-                                <input type="checkbox" id="boxplotCheckbox" />
+                                <input
+                                    autocomplete="off"
+                                    type="checkbox"
+                                    id="boxplotCheckbox"
+                                />
+                            </div>
+                        </div>
+                        <div class="input-group-prepend">
+                            <label
+                                class="input-group-text"
+                                for="jitterCheckbox"
+                            >
+                                <span
+                                    class="questionmark"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="When checked, the sample plot will apply a random offset to the x-axis positions of each sample; this helps to limit overlapping. Will only take effect when the sample plot is a scatterplot (not a boxplot) and the x-axis scale type is categorical."
+                                >
+                                </span>
+                                Jitter?
+                            </label>
+                            <div class="input-group-text">
+                                <input
+                                    autocomplete="off"
+                                    type="checkbox"
+                                    id="jitterCheckbox"
+                                />
                             </div>
                         </div>
                         <div class="input-group-prepend">
@@ -433,7 +467,11 @@
                                 Draw borders on scatterplot points?
                             </label>
                             <div class="input-group-text">
-                                <input type="checkbox" id="borderCheckbox" />
+                                <input
+                                    autocomplete="off"
+                                    type="checkbox"
+                                    id="borderCheckbox"
+                                />
                             </div>
                         </div>
                         <input
@@ -481,6 +519,7 @@
                             </label>
                             <div class="input-group-text">
                                 <input
+                                    autocomplete="off"
                                     type="checkbox"
                                     id="exclSMFieldsInExportCheckbox"
                                 />
@@ -756,30 +795,6 @@
                 </div>
             </div>
         </div>
-        <!--
-        <p>
-            <label for="selectMicrobesFileSelector">
-                <strong>
-                    Upload "Select Features" List:
-                </strong>
-            </label>
-            TODO make RRVDisplay get this input by ID
-                and set its onchange to the RRVDisplay instance's
-                particular select microbes or whatever function
-            <input type="file" id="selectMicrobesFileSelector"
-                onChange="ssmv.uploadSelectMicrobesFile();" />
-        </p>
-        <p>
-            <label for="zeroFillInput">
-                <strong>
-                    Value to fill in for zero-abundance features:
-                </strong>
-            </label>
-            <input type="number" id="zeroFillInput" min="0"
-                max="1000" value="0">
-            </input>
-        </p>
-        -->
         <!-- This file will be edited by the Qurro python script to
              contain definitions for the rank plot and sample plot JSON,
              and will use these to create an instance of RRVDisplay

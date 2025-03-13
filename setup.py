@@ -24,6 +24,9 @@ classes = """
     Programming Language :: Python :: 3.7
     Programming Language :: Python :: 3.8
     Programming Language :: Python :: 3.9
+    Programming Language :: Python :: 3.10
+    Programming Language :: Python :: 3.12
+    Programming Language :: Python :: 3.13
     Programming Language :: Python :: 3 :: Only
     Operating System :: Unix
     Operating System :: POSIX
@@ -76,11 +79,8 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        # Updating this pin will require updating the entire JS interface to
-        # work with later versions of Vega-Lite, which is doable but likely not
-        # worth the effort at the moment; see
-        # https://github.com/biocore/qurro/issues/315
-        "altair == 3.1.0",
+        # I think this ensures that rank_json["mark"] == {"type": "bar"}
+        "altair >= 4.0",
         # 2.1.9 is the earliest BIOM version that adds support for pandas >= 1.
         # Also, it takes care of the issue where biom.Table.to_dataframe()
         # produced a dense instead of a sparse DataFrame.
@@ -90,10 +90,10 @@ setup(
         # SparseDataFrame is dead, long live DataFrame
         "pandas >= 1",
         "scikit-bio > 0.5.3",
-        # Due to scikit-bio problems -- pinning to < 1.9.0. Should be hopefully
-        # fixed when a new scikit-bio release comes out.
-        # (https://github.com/biocore/scikit-bio/issues/1818)
-        "scipy >= 1.3.0, < 1.9.0",
+        # Due to scikit-bio problems, we USED to pin this to < 1.9.0; see
+        # https://github.com/biocore/scikit-bio/issues/1818. I think this is
+        # no longer an issue for modern QIIME 2 environments.
+        "scipy >= 1.3.0",
     ],
     # Based on how Altair splits up its requirements:
     # https://github.com/altair-viz/altair/blob/master/setup.py
@@ -111,7 +111,5 @@ setup(
         "console_scripts": ["qurro=qurro.scripts._plot:plot"],
     },
     zip_safe=False,
-    # altair 3.1.0 uses the "collections" module in a way that isn't compatible
-    # with Python 3.10 and up. We should eventually un-pin altair to fix this.
-    python_requires=">=3.6,<3.10",
+    python_requires=">=3.6",
 )

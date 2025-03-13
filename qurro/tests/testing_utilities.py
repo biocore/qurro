@@ -160,7 +160,7 @@ def validate_standalone_result(
         # The program should fail with a nonzero exit code (indicating some
         # sort of error).
         assert result.exit_code != 0
-        assert type(result.exception) == ValueError
+        assert type(result.exception) is ValueError
         word = "were"
         if expected_unsupported_features == 1:
             word = "was"
@@ -174,7 +174,7 @@ def validate_standalone_result(
         assert expected_message in result.exc_info[1].args[0]
     elif expect_all_unsupported_samples:
         assert result.exit_code != 0
-        assert type(result.exception) == ValueError
+        assert type(result.exception) is ValueError
         expected_message = (
             "No samples are shared between the sample metadata file and BIOM "
             "table."
@@ -286,7 +286,10 @@ def validate_rank_plot_json(
     # (This is all handled by Altair, so these property tests aren't
     # exhaustive; they're mainly intended to verify that a general plot
     # matching our specs is being created)
-    assert rank_json["mark"] == "bar"
+    # NOTE: {"type": "bar"} is from more recent Altair vsns; "bar" is from
+    # older ones. As of writing we don't rely on this particular property to
+    # be one way or another in the JS so either works
+    assert rank_json["mark"] == {"type": "bar"} or rank_json["mark"] == "bar"
     assert rank_json["title"] == "Features"
     basic_vegalite_json_validation(rank_json)
 

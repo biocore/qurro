@@ -26,8 +26,8 @@ def test_read_metadata_file_basic():
     )
     simple_df = read_metadata_file(simple_md)
     assert simple_df.index.dtype == "object"
-    assert simple_df.dtypes[0] == "object"
-    assert simple_df.dtypes[1] == "object"
+    assert simple_df.dtypes["MD1"] == "object"
+    assert simple_df.dtypes["MD2"] == "object"
     assert simple_df.at["S1", "MD1"] == "1.0"
     assert simple_df.at["S2", "MD1"] == "3.0"
     assert simple_df.at["S1", "MD2"] == "2.0"
@@ -41,8 +41,8 @@ def test_read_metadata_file_basic():
     # This should be an object, NOT a bool! This is because
     # read_metadata_file() explicitly converts bool columns to object columns
     # (containing strings).
-    assert has_bool_df.dtypes[0] == "object"
-    assert has_bool_df.dtypes[1] == "object"
+    assert has_bool_df.dtypes["MD1"] == "object"
+    assert has_bool_df.dtypes["MD2"] == "object"
     assert has_bool_df.at["S1", "MD1"] == "True"
     assert has_bool_df.at["S2", "MD1"] == "False"
     assert has_bool_df.at["S1", "MD2"] == "5"
@@ -53,8 +53,8 @@ def test_read_metadata_file_basic():
     )
     one_bool_df = read_metadata_file(one_bool_md)
     assert one_bool_df.index.dtype == "object"
-    assert one_bool_df.dtypes[0] == "object"
-    assert one_bool_df.dtypes[1] == "object"
+    assert one_bool_df.dtypes["MD1"] == "object"
+    assert one_bool_df.dtypes["MD2"] == "object"
     assert one_bool_df.at["S1", "MD1"] == "True"
     assert one_bool_df.at["S2", "MD1"] == "WHAAAT"
     assert one_bool_df.at["S1", "MD2"] == "5"

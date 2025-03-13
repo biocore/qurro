@@ -1,23 +1,28 @@
-# Based on
-# https://github.com/fedarko/pyfastg/blob/master/.github/workflows/main.yml
-name: Standalone CI
+# Based on https://github.com/fedarko/pyfastg/blob/master/.github/workflows/main.yml
+name: Standalone CI (Python ≥ 3.8)
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # https://github.com/fedarko/wotplot/blob/main/.github/workflows/main.yml -
+    # Pinning OS to Ubuntu 20.04, since "ubuntu-latest" (22.04, as of writing)
+    # dropped support for Python 3.6. Ideally we'd conditionally set the OS
+    # based on the Python version but I can't figure out how to do that :|
+    runs-on: ubuntu-20.04
 
     strategy:
+      # Run all matrix jobs, even if one of them fails.
+      fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
 
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -31,10 +36,10 @@ jobs:
         run: pip install "black >= 22.3.0"
           
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
 
       - name: Install Qurro's Node.js development dependencies
-        run: npm install -g mocha-headless-chrome nyc prettier@2.0.5 jshint
+        run: npm install -g mocha-headless-chrome nyc@15.1.0 prettier@2.0.5 jshint
 
       - name: Run tests
         run: |
@@ -43,10 +48,3 @@ jobs:
 
       - name: Lint and stylecheck (including using Black to check Python code)
         run: make stylecheck
-
-      # NOTE: For now, we only submit coverage reports from the QIIME 2 CI,
-      # since the tests that that CI runs are a superset of those ran by this
-      # "standalone" CI. (Also, Codecov wasn't merging them, which caused
-      # coverage to be underreported.)
-      # - name: Upload code coverage information to Codecov
-      #   uses: codecov/codecov-action@v2

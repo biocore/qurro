@@ -131,46 +131,61 @@ def test_replace_nan():
     """Tests replace_nan()."""
 
     # Basic case: other data are ints
-    df = DataFrame({"x": [1, np.NaN], "y": [3, 4]}, index=["a", "b"])
-    dfC = DataFrame({"x": [1, None], "y": [3, 4]}, index=["a", "b"])
+    df = DataFrame({"x": [1, np.nan], "y": [3, 4]}, index=["a", "b"])
+    # NOTE: as of 2025, it looks like modern pandas versions transform None
+    # to np.nan when loading this DF. we can force the None to remain by
+    # setting the dtype to object.
+    dfC = DataFrame(
+        {"x": [1, None], "y": [3, 4]}, index=["a", "b"], dtype=object
+    )
     assert_frame_equal(dfC, replace_nan(df), check_dtype=False)
 
     # Other data are strs
     df2 = DataFrame(
-        {"x": ["abc", np.NaN], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": ["abc", np.nan], "y": ["ghi", "jkl"]}, index=["a", "b"]
     )
     dfC2 = DataFrame(
-        {"x": ["abc", None], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": ["abc", None], "y": ["ghi", "jkl"]},
+        index=["a", "b"],
+        dtype=object,
     )
     assert_frame_equal(dfC2, replace_nan(df2), check_dtype=False)
 
     # Entire Series of NaNs
     df3 = DataFrame(
-        {"x": [np.NaN, np.NaN], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": [np.nan, np.nan], "y": ["ghi", "jkl"]}, index=["a", "b"]
     )
     dfC3 = DataFrame(
-        {"x": [None, None], "y": ["ghi", "jkl"]}, index=["a", "b"]
+        {"x": [None, None], "y": ["ghi", "jkl"]},
+        index=["a", "b"],
+        dtype=object,
     )
     assert_frame_equal(dfC3, replace_nan(df3), check_dtype=False)
 
     # Entire DataFrame of NaNs
     df4 = DataFrame(
-        {"x": [np.NaN, np.NaN], "y": [np.NaN, np.NaN]}, index=["a", "b"]
+        {"x": [np.nan, np.nan], "y": [np.nan, np.nan]}, index=["a", "b"]
     )
-    dfC4 = DataFrame({"x": [None, None], "y": [None, None]}, index=["a", "b"])
+    dfC4 = DataFrame(
+        {"x": [None, None], "y": [None, None]}, index=["a", "b"], dtype=object
+    )
     assert_frame_equal(dfC4, replace_nan(df4), check_dtype=False)
 
     # If there are already Nones inside the DF for some reason (should never be
     # the case, but might as well be safe and check this)
     df5 = DataFrame(
-        {"x": [np.NaN, None], "y": [np.NaN, np.NaN]}, index=["a", "b"]
+        {"x": [np.nan, None], "y": [np.nan, np.nan]},
+        index=["a", "b"],
+        dtype=object,
     )
-    dfC5 = DataFrame({"x": [None, None], "y": [None, None]}, index=["a", "b"])
+    dfC5 = DataFrame(
+        {"x": [None, None], "y": [None, None]}, index=["a", "b"], dtype=object
+    )
     assert_frame_equal(dfC5, replace_nan(df5), check_dtype=False)
 
     # Case where the user specifies an alternate value to replace NaNs with
     df6 = DataFrame(
-        {"x": [np.NaN, 3], "y": [np.NaN, np.NaN]}, index=["a", "b"]
+        {"x": [np.nan, 3], "y": [np.nan, np.nan]}, index=["a", "b"]
     )
     dfC6 = DataFrame({"x": ["lol", 3], "y": ["lol", "lol"]}, index=["a", "b"])
     assert_frame_equal(dfC6, replace_nan(df6, "lol"), check_dtype=False)
@@ -228,7 +243,7 @@ def test_remove_empty_samples_and_features_samples():
 
     # TRY REMOVING 1 SAMPLE
     # Zero out Sample3 (it only has one count, for F1)
-    table["Sample3"]["F1"] = 0
+    table.loc["F1", "Sample3"] = 0
     # Check that just the one empty sample (Sample3) was removed, from both the
     # table and the sample metadata.
     ftable, fmetadata, franks = remove_empty_samples_and_features(
@@ -252,7 +267,7 @@ def test_remove_empty_samples_and_features_samples():
 
     # TRY REMOVING 2 SAMPLES
     # Now, zero out Sample4 (it only has one count in F4)
-    table["Sample4"]["F4"] = 0
+    table.loc["F4", "Sample4"] = 0
     ftable, fmetadata, franks = remove_empty_samples_and_features(
         table, metadata, ranks
     )
@@ -419,9 +434,13 @@ def test_print_if_dropped(capsys):
 
 def test_merge_feature_metadata():
 
-    ranks = DataFrame({"R1": [1, 2], "R2": [2, 1]}, index=["F1", "F2"])
+    ranks = DataFrame(
+        {"R1": [1, 2], "R2": [2, 1]}, index=["F1", "F2"], dtype=object
+    )
     fm = DataFrame(
-        {"FM1": [None, None], "FM2": [1, 2], "FM3": [8, 7]}, index=["F1", "F2"]
+        {"FM1": [None, None], "FM2": [1, 2], "FM3": [8, 7]},
+        index=["F1", "F2"],
+        dtype=object,
     )
     # When feature metadata is None, the ranks DF should stay the same.
     result = merge_feature_metadata(ranks, None)
@@ -446,7 +465,7 @@ def test_merge_feature_metadata():
     expected["FM2"] = [1, None]
     expected["FM3"] = [8, None]
     result = merge_feature_metadata(ranks, fm)
-    assert_frame_equal(expected, result[0], check_dtype=False)
+    assert_frame_equal(replace_nan(expected), result[0], check_dtype=False)
     assert (result[1] == ["FM1", "FM2", "FM3"]).all()
 
     # Check that this works properly when no features match up exactly
@@ -875,7 +894,7 @@ def test_add_sample_presence_count_zeros():
     verify_spc_data_integrity(ofd_2, ranks)
 
     # Test 3: just one count for one feature
-    table["Sample4"]["F2"] = 1
+    table.loc["F2", "Sample4"] = 1
     ofd_3 = add_sample_presence_count(ranks, table)
     assert_series_equal(
         ofd_3["qurro_spc"],
@@ -955,7 +974,7 @@ def test_vibe_check_failures():
 
     weird_small_values = [lower_lim - 1, lower_lim * 2, lower_lim * 3]
     for w in weird_small_values:
-        ranks["Rank 0"]["F3"] = w
+        ranks.loc["F3", "Rank 0"] = w
 
         with pytest.raises(OverflowError) as exception_info:
             vibe_check(ranks, table)
@@ -967,7 +986,7 @@ def test_vibe_check_failures():
     # Test failure, with the default safe range, on a few large cases.
     weird_large_values = [upper_lim + 1, upper_lim * 2, upper_lim * 3]
     for w in weird_large_values:
-        ranks["Rank 0"]["F3"] = w
+        ranks.loc["F3", "Rank 0"] = w
 
         with pytest.raises(OverflowError) as exception_info:
             vibe_check(ranks, table)

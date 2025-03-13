@@ -1,0 +1,61 @@
+# Based on
+# https://github.com/fedarko/pyfastg/blob/master/.github/workflows/main.yml
+name: Standalone CI (Python 3.6 and 3.7)
+on: [push, pull_request]
+jobs:
+  build:
+    # https://github.com/fedarko/wotplot/blob/main/.github/workflows/main.yml -
+    # Pinning OS to Ubuntu 20.04, since "ubuntu-latest" (22.04, as of writing)
+    # dropped support for Python 3.6. Ideally we'd conditionally set the OS
+    # based on the Python version but I can't figure out how to do that :|
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.6", "3.7"]
+
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # https://github.com/conda-incubator/setup-miniconda#example-3-other-options
+      - name: Set up a conda environment using Python ${{ matrix.python-version }}
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: qenv
+          python-version: ${{ matrix.python-version }}
+
+      # scikit-bio 0.5.7 can't be installed into python 3.7, so we could try
+      # scikit-bio 0.5.8, but then that requires pandas >= 1.5, and then
+      # pandas 1.4 imposed a min python version of 3.8. We could just be like
+      # "don't use python 3.6 or 3.7", but that's a foul thing to do due to a
+      # single dependency having issues, so we can special-case this to still
+      # test that python 3.6 and 3.7 work as expected.
+      # 
+      # Pinning numpy < 1.14 per https://github.com/scikit-bio/scikit-bio/issues/1600
+      # NOTE: for some reason installing numpy < 1.14 through pip fails, but through
+      # conda it succeeds. literally no idea why. not gonna question it.
+      - name: Install Cython, NumPy, and an old version of scikit-bio
+        run: |
+          conda run -n qenv pip install cython
+          conda run -n qenv conda install -y "numpy < 1.14"
+          conda run -n qenv pip install "scikit-bio == 0.5.5"
+
+      - name: Install Qurro (and its pip dependencies)
+        run: conda run -n qenv pip install -e .[dev]
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install Qurro's Node.js development dependencies
+        run: npm install -g mocha-headless-chrome nyc@15.1.0 prettier@2.0.5 jshint
+
+      - name: Run tests
+        run: |
+          conda run -n qenv make pytest_standalone
+          conda run -n qenv make jstest
+
+      - name: Lint and stylecheck (not using Black to check Python code)
+        run: conda run -n qenv make stylecheck_not_black

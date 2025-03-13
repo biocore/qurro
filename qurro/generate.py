@@ -15,9 +15,9 @@
 # ----------------------------------------------------------------------------
 
 import os
+import sys
 import logging
 
-from distutils.dir_util import copy_tree
 import pandas as pd
 import altair as alt
 from qurro._rank_utils import filter_unextreme_features
@@ -270,6 +270,9 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
             title="Features",
             background="#FFFFFF",
             autosize=alt.AutoSizeParams(resize=True),
+            # New (circa 2025) way of setting rangeStep (i.e. the width of
+            # each bar)
+            width=alt.Step(1),
         )
         .mark_bar()
         .transform_window(
@@ -286,8 +289,25 @@ def gen_rank_plot(V, rank_type, ranking_ids, feature_metadata_cols, table_sdf):
                 "qurro_x",
                 title="Feature Rankings",
                 type="ordinal",
-                scale=alt.Scale(paddingOuter=1, paddingInner=0, rangeStep=1),
-                axis=alt.Axis(ticks=False, labelAngle=0),
+                # Note from 2025 (!!!): previously, we would set rangeStep=1
+                # here to set the initial width of each bar to 1. This is no
+                # longer supported, since now the width of the ordinal chart
+                # is apparently determined entirely by the width of the bars.
+                # See "alt.Step" a bit above to see where step is now set.
+                scale=alt.Scale(paddingOuter=1, paddingInner=0),
+                # Another 2025 note: for some reason, labelOverlap's default
+                # is False now. Was it always False? Not sure, but it seems
+                # different. Anyway setting it to True makes plot look like
+                # before. Also! I'm not sure if this was an issue before, but
+                # sometimes x-axis labels on the rank plot won't technically
+                # overlap but will still be super close together. Increasing
+                # labelSeparation from its default of 0 seems to fix this.
+                axis=alt.Axis(
+                    ticks=False,
+                    labelAngle=0,
+                    labelOverlap=True,
+                    labelSeparation=4,
+                ),
             ),
             y=alt.Y(default_rank_col, type="quantitative"),
             color=alt.Color(
@@ -408,8 +428,8 @@ def gen_sample_plot(metadata):
             tooltip=["Sample ID:N", "qurro_balance:Q"],
         )
         .configure_range(
-            ramp=alt.SchemeConfig(scheme="blues"),
-            category=alt.SchemeConfig(scheme="tableau10"),
+            ramp=alt.Color(scheme="blues"),
+            category=alt.Color(scheme="tableau10"),
         )
         .configure_axis(labelBound=True)
         .interactive()
@@ -486,14 +506,25 @@ def gen_visualization(
     # if these files make their way into the output directory -- they shouldn't
     # mess anything up -- but there's no need to include them.
 
-    # copy_tree() creates the output directory if it doesn't already exist.
-    # (When Qurro is running as a QIIME 2 plugin, output_dir already exists and
-    # we need to write stuff to it -- this is because output_dir is actually a
-    # temporary folder that QIIME 2 creates.)
-    # NOTE: Use of copy_tree() instead of shutil.copytree() (which throws an
-    # error if output_dir already exists) is based on how
-    # emperor.core.copy_support_files() works.
-    copy_tree(support_files_loc, output_dir)
+    # Create the output directory if it doesn't already exist. (When Qurro is
+    # running as a QIIME 2 plugin, output_dir already exists and we need to
+    # write stuff to it -- this is because output_dir is actually a temporary
+    # folder that QIIME 2 creates.)
+    if sys.version_info >= (3, 8):
+        # distutils is deprecated, so this is the future-proof solution:
+        # https://stackoverflow.com/a/73439464/10730311
+        from shutil import copytree
+
+        copytree(support_files_loc, output_dir, dirs_exist_ok=True)
+    else:
+        # The dirs_exist_ok flag for shutil.copytree() was only added in
+        # Python 3.8, so -- for older versions of Python -- we can use the
+        # original solution for this, using distutils.
+        # (Based on emperor.core.copy_support_files().)
+        from distutils.dir_util import copy_tree
+
+        copy_tree(support_files_loc, output_dir)
+
     index_path = os.path.join(output_dir, "index.html")
 
     # Write the plot and count JSONs to main.js so that they're loaded when

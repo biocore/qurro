@@ -6,40 +6,55 @@ name: QIIME 2 CI
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
+      fail-fast: false
       matrix:
         # Test on multiple QIIME 2 versions. This is a nice way of making sure
         # that Qurro works on all of the QIIME 2 versions it actually, you
-        # know, supports. As of writing, this includes QIIME 2 versions
+        # know, supports. It should work with Q2 >= 2020.11.
         #
-        # 1. 2020.11
-        # 2. 2021.2
-        # 3. 2021.4
-        # 4. 2021.8
-        # 5. 2021.11
-        # 6. 2022.2
-        # 7. 2022.8
+        # NOTE: Only testing a subset of these releases. Notably, the conda installer
+        # on GitHub Actions gives the following error (or something like it, with
+        # slightly different libhwloc versions) when trying to install
+        # the QIIME 2 2022.2 or 2022.8 environments.
         #
-        # We currently test just a subset of these versions, because each of
-        # these builds takes a while (and testing each of these would probs be
-        # overkill).
+        # LibMambaUnsatisfiableError: Encountered problems while solving:
+        #   - nothing provides __cuda needed by libhwloc-2.10.0-cuda112_h1d65752_0
         #
-        # We could use a matrix of just QIIME 2 version strings (e.g.
+        # ... So we just skip Q2 2022.2 and 2022.8 in the build for now, because
+        # I don't have time to finagle a workaround for just these (I assume that
+        # if you can get these environments installed then you can get Qurro
+        # running in them, since Qurro works in both older and newer versions of
+        # Q2). I think this might be a conda vs. mamba thing, but I don't think
+        # setup-miniconda is using mamba (???), so idk. Maybe it's just cursed.
+        #
+        # NOTE: We could use a matrix of just QIIME 2 version strings (e.g.
         # "2020.11", ...), but other stuff about the URLs change across QIIME 2
         # versions (e.g. the "-py36-" or "-py38-" thing). It ends up being
         # easier just have the variable here be the URLs to the YAMLs. That
         # sentence has too many acronyms. Look, you get the point.
         #
-        # Worth noting: the final of these URLs (with qiime2-latest) will
-        # always be set to the latest version of QIIME 2. Thanks @thermokarst
-        # for the heads up about this :)
+        # NOTE: this is work that should probably be delegated to the new
+        # QIIME 2 CI eventually. However, I can't figure out how to get the
+        # process described at https://develop.qiime2.org/en/latest/plugins/how-to-guides/automate-testing.html
+        # to actually use the checked-out version of code from Qurro's repo,
+        # rather than just downloading Qurro from pip or the main branch
+        # of the main repo or something. I'm sure there's a way around that
+        # but I don't have time to fight with this now so we're going with
+        # the jank solution.
         q2-yaml: [
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2020.11/release/qiime2-2020.11-py36-linux-conda.yml",
           "https://raw.githubusercontent.com/qiime2/environment-files/master/2021.8/release/qiime2-2021.8-py38-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.2/release/qiime2-2022.2-py38-linux-conda.yml",
-          "https://raw.githubusercontent.com/qiime2/environment-files/master/latest/staging/qiime2-latest-py38-linux-conda.yml"
+          "https://raw.githubusercontent.com/qiime2/environment-files/master/2022.11/release/qiime2-2022.11-py38-linux-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.2/release/qiime2-2023.2-py38-linux-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.5/release/qiime2-2023.5-py38-linux-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/environment-files/master/2023.7/release/qiime2-2023.7-py38-linux-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/distributions/dev/2023.9/amplicon/released/qiime2-amplicon-ubuntu-latest-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/distributions/dev/2024.2/amplicon/released/qiime2-amplicon-ubuntu-latest-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/distributions/dev/2024.5/amplicon/released/qiime2-amplicon-ubuntu-latest-conda.yml",
+          "https://raw.githubusercontent.com/qiime2/distributions/dev/2024.10/amplicon/released/qiime2-amplicon-ubuntu-latest-conda.yml"
         ]
 
     steps:
@@ -47,14 +62,14 @@ jobs:
       # Updating from v2 to v3 to match, as of writing,
       # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download the QIIME 2 conda environment YAML
         run: wget -O q2-env.yml ${{ matrix.q2-yaml }}
 
       # https://github.com/conda-incubator/setup-miniconda#example-3-other-options
-      - name: Hit the yoinky sploinky (install QIIME 2)
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Install this QIIME 2 version
+        uses: conda-incubator/setup-miniconda@v3
         with:
           activate-environment: qiime2-dev
           environment-file: q2-env.yml
@@ -63,10 +78,10 @@ jobs:
         run: conda run -n qiime2-dev pip install -e .[dev]
 
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
 
       - name: Install Qurro's Node.js development dependencies
-        run: npm install -g mocha-headless-chrome nyc prettier@2.0.5 jshint
+        run: npm install -g mocha-headless-chrome nyc@15.1.0 prettier@2.0.5 jshint
 
       - name: Run tests
         run: conda run -n qiime2-dev make test

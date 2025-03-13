@@ -8,6 +8,7 @@
 # ----------------------------------------------------------------------------
 
 import logging
+import numpy as np
 
 
 def ensure_df_headers_unique(df, df_name):
@@ -70,7 +71,9 @@ def fix_id(fid):
     new_id = ""
     for c in fid:
         if c == ".":
-            new_id += ":"
+            new_id += "_"
+        elif c == ":":
+            new_id += ";"
         elif c == "]":
             new_id += ")"
         elif c == "[":
@@ -100,14 +103,23 @@ def replace_nan(df, new_nan_val=None):
     """Replaces all occurrences of NaN values in the DataFrame with a specified
     value.
 
-    Note that this solution seems to result in the DataFrame's columns'
-    dtypes being changed to object. (This shouldn't change much due to how
-    we handle metadata files, though.)
+    Notes
+    -----
+    This solution seems to result in the DataFrame's columns' dtypes being
+    changed to object. (This shouldn't change much due to how we handle
+    metadata files, though.)
 
+    As of writing, None values that are present in the input DataFrame are also
+    treated as NaN values. This is fine, I think.
+
+    References
+    ----------
     Based on the solution described here:
-    https://stackoverflow.com/a/14163209/10730311
+    https://stackoverflow.com/a/14163209/10730311 --> (now, in 2025, this
+    points to https://stackoverflow.com/a/54403705/10730311, which is what
+    we now use here :)
     """
-    return df.where(df.notna(), new_nan_val)
+    return df.replace({np.nan: new_nan_val})
 
 
 def biom_table_to_sparse_df(table, min_row_ct=2, min_col_ct=1):
@@ -549,10 +561,10 @@ def check_column_names(sample_metadata, feature_ranks, feature_metadata=None):
             "{}".format(sugg)
         )
 
-    if "qurro_balance" in sm_cols:
+    if "qurro_balance" in sm_cols or "qurro_jitter" in sm_cols:
         raise ValueError(
             "Sample metadata can't contain any columns called "
-            '"qurro_balance".{}'.format(sugg)
+            '"qurro_balance" or "qurro_jitter".{}'.format(sugg)
         )
 
     if "qurro_classification" in fr_cols or "qurro_classification" in fm_cols:
@@ -657,7 +669,7 @@ def vibe_check(
         "log-ratios outside of the Qurro visualization interface."
     ).format(safe_range[0])
 
-    for (df, df_name) in (
+    for df, df_name in (
         (table_sdf, "feature table"),
         (feature_ranks, "feature rankings data"),
     ):

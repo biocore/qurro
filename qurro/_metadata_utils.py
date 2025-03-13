@@ -55,7 +55,7 @@ def get_q2_comment_lines(md_file_loc):
             line_num += 1
         return q2_lines
 
-    if type(md_file_loc) == StringIO:
+    if type(md_file_loc) is StringIO:
         q2_lines = iterate_over_file_obj_lines(md_file_loc)
         # HACK: Allow us to read through this StringIO again --
         # https://stackoverflow.com/a/27261215/10730311
@@ -76,7 +76,7 @@ def read_metadata_file(md_file_loc):
     strings, due to the use of dtype=object.
 
     NOTE THAT THIS WILL CONVERT empty cells in the TSV file to
-    np.NaN values in the output DataFrame -- this is done to be
+    np.nan values in the output DataFrame -- this is done to be
     consistent with QIIME2's Metadata utilities. If you don't want
     NaNs in your DataFrame, just call qurro._df_utils.replace_nan()
     on the DataFrame you get from this function: e.g.
@@ -100,7 +100,7 @@ def read_metadata_file(md_file_loc):
         metadata_df[column] = metadata_df[column].str.strip()
     # Sorta the opposite of replace_nan(). Find all of the ""s resulting from
     # removing values with just-whitespace, and convert them to NaNs.
-    metadata_df.where(metadata_df != "", np.NaN, inplace=True)
+    metadata_df.where(metadata_df != "", np.nan, inplace=True)
 
     # If there are any NaNs in the first column (that will end up being the
     # index column), then the user supplied at least one empty ID
