@@ -79,7 +79,6 @@ setup(
     # for details.
     include_package_data=True,
     install_requires=[
-        # I think this ensures that rank_json["mark"] == {"type": "bar"}
         "altair >= 4.0",
         # 2.1.9 is the earliest BIOM version that adds support for pandas >= 1.
         # Also, it takes care of the issue where biom.Table.to_dataframe()
