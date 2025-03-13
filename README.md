@@ -87,7 +87,8 @@ or [conda](https://docs.conda.io/en/latest/).
 
 ### System requirements
 **If you're using Qurro within QIIME 2,** you will need a QIIME 2 version of at
-least 2020.11.
+least 2020.11. It has been tested with QIIME 2 versions up through the most recent
+release, as of writing (QIIME 2 2024.10).
 
 **If you're using Qurro outside of QIIME 2,** you will need a Python version of
 at least 3.6.
