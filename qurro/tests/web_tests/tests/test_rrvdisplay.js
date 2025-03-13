@@ -1241,5 +1241,77 @@ define(["vega", "mocha", "chai", "testing_utilities", "dom_utils"], function (
                 });
             });
         });
+        describe("Adding jitter to points in the sample plot", function () {
+            beforeEach(async function () {
+                await resetRRVDisplay();
+            });
+            function checkJitterAdded() {
+                chai.assert.exists(rrv.samplePlotJSON.encoding.xOffset);
+                chai.assert.equal(
+                    "qurro_jitter",
+                    rrv.samplePlotJSON.encoding.xOffset.field
+                );
+            }
+            function checkJitterRemoved() {
+                chai.assert.notExists(rrv.samplePlotJSON.encoding.xOffset);
+            }
+            async function testAddJitter() {
+                await document.getElementById("jitterCheckbox").click();
+                checkJitterAdded();
+            }
+            describe("Adding jitter...", function () {
+                it("...By checking the jitter checkbox", async function () {
+                    await testAddJitter();
+                });
+                it("...By unchecking the boxplot checkbox", async function () {
+                    await testAddJitter();
+                    await testSwitchToBoxplot("Metadata1");
+                    checkJitterRemoved();
+                    // Switch *out* of boxplot mode
+                    await document.getElementById("boxplotCheckbox").click();
+                    // Now, verify that the sample border checkbox being
+                    // checked was "preserved", and that the borders are back
+                    checkJitterAdded();
+                });
+                it("...By changing the x-axis scale to categorical", async function () {
+                    // change x-axis scale to quantitative
+                    var xScaleEle = document.getElementById("xAxisScale");
+                    xScaleEle.value = "quantitative";
+                    await xScaleEle.onchange();
+                    await document.getElementById("jitterCheckbox").click();
+                    // should not be any jitter applied, since the axis is quantitative
+                    checkJitterRemoved();
+
+                    // change x-axis scale to categorical
+                    xScaleEle.value = "nominal";
+                    await xScaleEle.onchange();
+                    // okay NOW there should be jitter now that the axis is categorical
+                    checkJitterAdded();
+                });
+            });
+            describe("Removing jitter...", function () {
+                it("...By unchecking the jitter checkbox", async function () {
+                    await testAddJitter();
+                    checkJitterAdded();
+                    await document.getElementById("jitterCheckbox").click();
+                    checkJitterRemoved();
+                });
+                it("...By checking the boxplot checkbox", async function () {
+                    await testAddJitter();
+                    checkJitterAdded();
+                    await testSwitchToBoxplot("Metadata1");
+                    checkJitterRemoved();
+                });
+                it("...By changing the x-axis scale to quantitative", async function () {
+                    await testAddJitter();
+                    checkJitterAdded();
+                    // change x-axis scale
+                    var xScaleEle = document.getElementById("xAxisScale");
+                    xScaleEle.value = "quantitative";
+                    await xScaleEle.onchange();
+                    checkJitterRemoved();
+                });
+            });
+        });
     });
 });
