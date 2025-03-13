@@ -68,7 +68,7 @@ Been a while!
   "constant plot width" updates.
 
 - Updated some of the Python code (mostly tests) to address warnings from pandas.
-  [#332](https://github.com/biocore/qurro/issues/332))
+  ([#332](https://github.com/biocore/qurro/issues/332))
 
 - Various updates to the CI pipeline, including:
   - Testing many more QIIME 2 versions (most of the releasese
