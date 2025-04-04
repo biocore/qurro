@@ -9,7 +9,7 @@ Been a while!
   Now, the "constant plot width" is computed as a third of the window size upon
   clicking this checkbox; for some displays, I think this is a larger value than
   the previous setting here.
-  ([#32](https://github.com/biocore/qurro/issues/32)
+  ([#32](https://github.com/biocore/qurro/issues/32))
 
 - Added support for jitter plots (aka strip plots), thanks to our use of a new Vega-Lite
   version.
